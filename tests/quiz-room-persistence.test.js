@@ -40,7 +40,7 @@ async function startServer(stateFile) {
     }
     try {
       const response = await fetch(`${baseUrl}/healthz`);
-      if (response.status === 200) return { child, baseUrl };
+      if (response.status === 200 || response.status === 503) return { child, baseUrl };
     } catch {}
     await delay(50);
   }
@@ -143,12 +143,117 @@ test("Railway再起動後も、明示退出していないルームへ同じ端�
   assert.equal(participantState.ok, true);
   assert.equal(participantState.isHost, false);
 
-  returningHost.emit("quiz:leave");
-  await delay(50);
+  const left = await emitWithAck(returningHost, "quiz:leave", {});
+  assert.equal(left.ok, true);
   const roomInfo = await emitWithAck(returningParticipant, "quiz:roomInfo", { roomCode: room.roomCode });
   assert.match(roomInfo.error, /ルームが見つかりません/);
   const persisted = JSON.parse(fs.readFileSync(stateFile, "utf8"));
   assert.deepEqual(persisted.rooms, {});
+
+  returningHost.disconnect();
+  returningParticipant.disconnect();
+  await stopServer(second.child);
+
+  const third = await startServer(stateFile);
+  children.push(third.child);
+  const afterClose = await connect(third.baseUrl);
+  sockets.push(afterClose);
+  const resurrected = await emitWithAck(afterClose, "quiz:rejoin", {
+    roomCode: room.roomCode,
+    playerId: room.playerId,
+    sessionToken: room.sessionToken,
+  });
+  assert.equal(resurrected.ok, false, "成功応答した退出ルームは再起動後に復活しない");
+});
+
+test("保存先が利用不能ならルーム作成を成功扱いにせずhealthzを失敗させる", async (t) => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-unwritable-"));
+  const blockingFile = path.join(tempDir, "not-a-directory");
+  const stateFile = path.join(blockingFile, "quiz-rooms.json");
+  fs.writeFileSync(blockingFile, "block directory creation");
+
+  const { child, baseUrl } = await startServer(stateFile);
+  const socket = await connect(baseUrl);
+  t.after(async () => {
+    socket.disconnect();
+    await stopServer(child);
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  const created = await emitWithAck(socket, "quiz:createRoom", { category: "clacel", name: "ホスト" });
+  assert.match(created.error, /保存できません/);
+  assert.equal(created.roomCode, undefined, "保存失敗時は復帰情報を発行しない");
+  const health = await fetch(`${baseUrl}/healthz`);
+  assert.equal(health.status, 503);
+  assert.deepEqual(await health.json(), { ok: false, error: "quiz persistence unavailable" });
+});
+
+test("運営者退出の保存に失敗したら通知も成功応答もせず、復帰情報を有効なまま保つ", async (t) => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-close-failure-"));
+  const stateDir = path.join(tempDir, "state");
+  const backupDir = path.join(tempDir, "state-backup");
+  const stateFile = path.join(stateDir, "quiz-rooms.json");
+  const sockets = [];
+  const children = [];
+
+  t.after(async () => {
+    for (const socket of sockets) socket.disconnect();
+    for (const child of children) await stopServer(child);
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  const first = await startServer(stateFile);
+  children.push(first.child);
+  const host = await connect(first.baseUrl);
+  const participant = await connect(first.baseUrl);
+  sockets.push(host, participant);
+  const room = await emitWithAck(host, "quiz:createRoom", { category: "clacel", name: "ホスト" });
+  const entered = await emitWithAck(participant, "quiz:joinRoom", { roomCode: room.roomCode, name: "参加者" });
+
+  fs.renameSync(stateDir, backupDir);
+  fs.writeFileSync(stateDir, "block persistence");
+  let roomClosedObserved = false;
+  participant.on("quiz:roomClosed", () => { roomClosedObserved = true; });
+
+  const left = await emitWithAck(host, "quiz:leave", {});
+  await delay(100);
+  assert.equal(left.ok, false);
+  assert.match(left.error, /保存できません/);
+  assert.equal(roomClosedObserved, false, "永続化前に終了通知を送らない");
+  assert.equal((await fetch(`${first.baseUrl}/healthz`)).status, 503, "直近保存失敗をhealthzへ反映する");
+
+  const stillPresent = await emitWithAck(participant, "quiz:roomInfo", { roomCode: room.roomCode });
+  assert.equal(stillPresent.category, "clacel", "保存失敗時はメモリ上の削除も戻す");
+  const hostCanStillRejoin = await emitWithAck(host, "quiz:rejoin", {
+    roomCode: room.roomCode,
+    playerId: room.playerId,
+    sessionToken: room.sessionToken,
+  });
+  assert.equal(hostCanStillRejoin.ok, true, "保存失敗時は元の復帰資格を保つ");
+
+  host.disconnect();
+  participant.disconnect();
+  await stopServer(first.child);
+  fs.rmSync(stateDir, { force: true });
+  fs.renameSync(backupDir, stateDir);
+
+  const second = await startServer(stateFile);
+  children.push(second.child);
+  const returningHost = await connect(second.baseUrl);
+  const returningParticipant = await connect(second.baseUrl);
+  sockets.push(returningHost, returningParticipant);
+  const hostState = await emitWithAck(returningHost, "quiz:rejoin", {
+    roomCode: room.roomCode,
+    playerId: room.playerId,
+    sessionToken: room.sessionToken,
+  });
+  const participantState = await emitWithAck(returningParticipant, "quiz:rejoin", {
+    roomCode: room.roomCode,
+    playerId: entered.playerId,
+    sessionToken: entered.sessionToken,
+  });
+  assert.equal(hostState.ok, true, "失敗応答した退出は再起動後も復帰可能");
+  assert.equal(participantState.ok, true);
 });
 
 test("進行中のテストは再起動後も期限を復元し、期限到来時に未提出者を確定する", async (t) => {

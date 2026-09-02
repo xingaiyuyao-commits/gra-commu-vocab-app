@@ -158,7 +158,7 @@ test("参加者の復帰情報はタブを閉じても残り、ルーム終了�
   assert.equal(window.localStorage.getItem("quizSession"), null);
 });
 
-test("運営者は各コースのルームを明示的に終了できる", () => {
+test("運営者の復帰情報はルーム終了の成功応答後にだけ削除する", () => {
   const { window, document, fakeSockets } = loadQuizPage({ url: "http://localhost/quiz.html?mode=create" });
   window.confirm = () => true;
   setValue(window, document.getElementById("name"), "ホスト");
@@ -174,8 +174,48 @@ test("運営者は各コースのルームを明示的に終了できる", () =>
   });
 
   document.getElementById("mh-clacel-close").dispatchEvent(new window.Event("click", { bubbles: true }));
-  assert.equal(hostSocket.emitted.some((entry) => entry.event === "quiz:leave"), true);
+  const leaveCall = hostSocket.emitted.find((entry) => entry.event === "quiz:leave");
+  assert.ok(leaveCall);
+  assert.deepEqual(JSON.parse(window.localStorage.getItem("quizHostRooms") || "{}"), {
+    clacel: { roomCode: "ABCD", playerId: "host-id", sessionToken: "host-token" },
+  }, "応答前は復帰情報を残す");
+
+  leaveCall.cb({ ok: false, error: "ルーム状態を保存できませんでした" });
+  assert.deepEqual(JSON.parse(window.localStorage.getItem("quizHostRooms") || "{}"), {
+    clacel: { roomCode: "ABCD", playerId: "host-id", sessionToken: "host-token" },
+  }, "失敗応答後も復帰情報を残す");
+  assert.equal(document.getElementById("mh-clacel-error").textContent, "ルーム状態を保存できませんでした");
+
+  document.getElementById("mh-clacel-close").dispatchEvent(new window.Event("click", { bubbles: true }));
+  const successfulLeave = hostSocket.emitted.filter((entry) => entry.event === "quiz:leave").at(-1);
+  successfulLeave.cb({ ok: true });
   assert.deepEqual(JSON.parse(window.localStorage.getItem("quizHostRooms") || "{}"), {});
+  assert.equal(document.getElementById("mh-clacel-error").textContent, "ルームを終了しました。");
+});
+
+test("参加者の復帰情報も退出成功応答まで保持し、失敗理由を表示する", () => {
+  const { window, document, emitted } = loadQuizPage({ url: "http://localhost/quiz.html?room=ab3k9p&cat=clacel" });
+  window.confirm = () => true;
+  let shownError = "";
+  window.alert = (message) => { shownError = message; };
+  setValue(window, document.getElementById("name"), "参加者A");
+  document.getElementById("btn-join").dispatchEvent(new window.Event("click", { bubbles: true }));
+  emitted.find((entry) => entry.event === "quiz:joinRoom").cb({
+    roomCode: "AB3K9P",
+    category: "clacel",
+    playerId: "participant-id",
+    sessionToken: "participant-token",
+    seriesNames: ["Day 1"],
+  });
+
+  window.leaveRoom(false);
+  const leaveCall = emitted.find((entry) => entry.event === "quiz:leave");
+  assert.ok(leaveCall);
+  assert.notEqual(window.localStorage.getItem("quizSession"), null, "応答前は復帰情報を残す");
+  leaveCall.cb({ ok: false, error: "ルーム状態を保存できませんでした" });
+  assert.notEqual(window.localStorage.getItem("quizSession"), null, "失敗時も復帰情報を残す");
+  assert.equal(document.getElementById("entry-error").textContent, "ルーム状態を保存できませんでした");
+  assert.equal(shownError, "ルーム状態を保存できませんでした", "表示中の画面で失敗理由を知らせる");
 });
 
 test("参加画面: 旧参加リンクでも参加ボタンを表示し、ルーム情報のコース名を名前より上に表示する", () => {

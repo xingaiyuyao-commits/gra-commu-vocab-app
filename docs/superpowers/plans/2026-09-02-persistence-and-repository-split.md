@@ -62,11 +62,11 @@
 - Consumes: reviewed commit on `codex/persistent-quiz-rooms` and the tracked `osh-vocab-test` subtree.
 - Produces: app `main` and content `main` repositories.
 
-- [ ] Push the feature branch and merge it only after GitHub Actions succeeds.
-- [ ] Create a clean application snapshot containing tracked runtime, tests, and deployment documentation but no `osh-vocab-test` or patch artifacts.
-- [ ] Initialize and push `gra-commu-vocab-app` as a public repository.
-- [ ] Run `git subtree split --prefix=osh-vocab-test main` and push the result to private `osh-vocab-content`.
-- [ ] Compare file counts and run `npm ci && npm run test:deploy` in a fresh clone of the app repository.
+- [x] Push the feature branch and merge it only after GitHub Actions succeeds.
+- [x] Create a clean application snapshot containing tracked runtime, tests, and deployment documentation but no `osh-vocab-test` or patch artifacts.
+- [x] Initialize and push `gra-commu-vocab-app` as a public repository.
+- [x] Run `git subtree split --prefix=osh-vocab-test main` and push the result to private `osh-vocab-content`.
+- [x] Compare file counts and run `npm ci && npm run test:deploy` in a fresh clone of the app repository.
 
 ### Task 4: Protect the new main branch
 
@@ -77,8 +77,8 @@
 - Consumes: successful `deploy-check / test` on the new app repository.
 - Produces: required pull request and `test` status, with force push and deletion disabled.
 
-- [ ] Apply branch protection through the GitHub API with zero required approvals.
-- [ ] Read the protection settings back and verify the required context, PR rule, force-push rule, and deletion rule.
+- [x] Apply branch protection through the GitHub API with zero required approvals.
+- [x] Read the protection settings back and verify the required context, PR rule, force-push rule, and deletion rule.
 
 ### Task 5: Switch Railway source safely
 
@@ -89,12 +89,12 @@
 - Consumes: `xingaiyuyao-commits/gra-commu-vocab-app` `main` and service ID `592009e6-2f6f-4a9d-bd57-bda47f2c2f38`.
 - Produces: the existing production URL served from the new repository.
 
-- [ ] Record the current source, latest healthy deployment ID, and commit SHA through read-only Railway queries.
-- [ ] Verify Railway can access the new GitHub repository.
-- [ ] Run `serviceConnect(id, {repo, branch})` for the existing service; do not create a second service.
-- [ ] Wait for CI and Railway deployment success and verify the exact GitHub commit SHA.
-- [ ] Test `/healthz`, the 1440 by 800 home, a participant join, a restart and token rejoin, and organizer room closure on production.
-- [ ] If any check fails, reconnect the recorded old source and redeploy it.
+- [x] Record the current source, latest healthy deployment ID, and commit SHA through read-only Railway queries.
+- [x] Verify Railway can access the new GitHub repository.
+- [x] Run `serviceConnect(id, {repo, branch})` for the existing service; do not create a second service.
+- [x] Wait for CI and Railway deployment success and verify the exact GitHub commit SHA.
+- [x] Test `/healthz`, the 1440 by 800 home, a participant join, a restart and token rejoin, and organizer room closure on production.
+- [x] If any check fails, reconnect the recorded old source and redeploy it.
 
 ### Task 6: Cleanup and archive
 
@@ -107,7 +107,7 @@
 - Consumes: verified new-source production deployment.
 - Produces: canonical documentation, archived old repo, and no completed worktree.
 
-- [ ] Mark the old `railway up` note as superseded by `DEPLOYMENT.md` without rewriting historical results.
-- [ ] Archive `xingaiyuyao-commits/gra-commu-vocab-test` only after all production checks pass.
-- [ ] Confirm all untracked local files still exist and remain uncommitted.
-- [ ] Remove the completed worktree and prune worktree metadata.
+- [x] Mark the old `railway up` note as superseded by `DEPLOYMENT.md` without rewriting historical results.
+- [x] Archive `xingaiyuyao-commits/gra-commu-vocab-test` only after all production checks pass.
+- [x] Confirm all untracked local files still exist and remain uncommitted.
+- [x] Remove the completed worktree and prune worktree metadata.
