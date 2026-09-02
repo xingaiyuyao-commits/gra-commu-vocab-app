@@ -1,0 +1,4 @@
+node_modules/
+highscore.json
+.DS_Store
+.worktrees/

@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🪙 コインタワー — 英単語協力ゲーム</title>
+<style>
+  /* 元サイト（shadcn/ui）のテーマ変数に合わせている */
+  :root {
+    --background: oklch(98.5% .002 247);
+    --foreground: oklch(14.5% .02 265);
+    --card: oklch(100% 0 0);
+    --card-foreground: oklch(14.5% .02 265);
+    --primary: oklch(45% .18 265);
+    --primary-foreground: oklch(98.5% .002 247);
+    --secondary: oklch(96% .01 265);
+    --muted-foreground: oklch(50% .02 265);
+    --accent: oklch(94% .02 265);
+    --destructive: oklch(57.7% .245 27.325);
+    --border: oklch(90% .01 265);
+    --green: oklch(62.7% .194 149.214);
+    --gold: oklch(79.5% .184 86.047);
+    --gold-dark: oklch(55.5% .163 48.998);
+    --radius: .625rem;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    background: linear-gradient(135deg, var(--background), var(--background) 60%, oklch(45% .18 265 / .05));
+    color: var(--foreground);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { width: 100%; max-width: 42rem; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  h1 { text-align: center; font-size: 1.875rem; font-weight: 700; letter-spacing: -.025em; margin: 24px 0 8px; }
+  .subtitle { text-align: center; color: var(--muted-foreground); font-size: .875rem; margin-bottom: 24px; }
+  .card {
+    background: var(--card);
+    color: var(--card-foreground);
+    border: 1px solid var(--border);
+    border-radius: .75rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1);
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  label { font-size: .875rem; font-weight: 500; display: block; margin-bottom: 6px; }
+  input, select {
+    width: 100%;
+    height: 2.5rem;
+    padding: 0 12px;
+    border-radius: calc(var(--radius) - 2px);
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--foreground);
+    font-size: .95rem;
+    margin-bottom: 14px;
+  }
+  input:focus, select:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
+  input::placeholder { color: var(--muted-foreground); }
+  button {
+    width: 100%;
+    height: 2.5rem;
+    border: none;
+    border-radius: calc(var(--radius) - 2px);
+    font-size: .9rem;
+    font-weight: 500;
+    cursor: pointer;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / .05);
+    transition: opacity .15s, transform .1s;
+  }
+  button:hover { opacity: .9; }
+  button:active { transform: scale(.98); }
+  button.secondary {
+    background: var(--card);
+    color: var(--foreground);
+    border: 1px solid var(--border);
+    margin-top: 10px;
+  }
+  button.secondary:hover { background: var(--accent); opacity: 1; }
+  button:disabled { opacity: .5; cursor: default; pointer-events: none; }
+  .error { color: var(--destructive); text-align: center; margin-top: 8px; min-height: 1.2em; font-size: .875rem; }
+
+  /* 待機画面 */
+  .room-code { text-align: center; font-size: 2.25rem; letter-spacing: .3em; font-weight: 700; color: var(--primary); margin: 4px 0 12px; }
+  .player-list { list-style: none; margin: 4px 0 16px; }
+  .player-list li {
+    padding: 10px 14px;
+    background: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - 2px);
+    margin-bottom: 6px;
+    font-size: .9rem;
+  }
+
+  /* ゲーム画面 */
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin: 8px 2px 12px; }
+  .progress { color: var(--muted-foreground); font-size: .85rem; }
+  .timer {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    font-size: 1.05rem;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    background: var(--secondary);
+    border: 1px solid var(--border);
+  }
+  .timer.warning { background: oklch(57.7% .245 27.325 / .1); color: var(--destructive); border-color: var(--destructive); }
+  .coin-area {
+    height: 190px;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    overflow: hidden;
+    margin-bottom: 4px;
+  }
+  .coin {
+    width: 64px; height: 14px;
+    background: linear-gradient(180deg, oklch(85% .17 86), var(--gold) 60%, var(--gold-dark));
+    border-radius: 50% / 40%;
+    border: 1px solid var(--gold-dark);
+    margin-top: -4px;
+    animation: drop .35s ease-out;
+  }
+  @keyframes drop {
+    from { transform: translateY(-120px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .coin-count { text-align: center; font-size: 1.4rem; font-weight: 700; color: var(--gold-dark); margin-bottom: 12px; }
+  .sentence { font-size: 1.15rem; line-height: 1.7; margin-bottom: 6px; }
+  .ja { color: var(--muted-foreground); font-size: .875rem; margin-bottom: 12px; }
+  .hint { color: var(--primary); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 1.05rem; letter-spacing: .15em; margin-bottom: 14px; }
+  .feedback { text-align: center; font-size: 1.05rem; font-weight: 700; min-height: 1.5em; margin-top: 10px; }
+  .feedback.ok { color: var(--green); }
+  .feedback.ng { color: var(--destructive); }
+  .waiting-note, .ticker { text-align: center; color: var(--muted-foreground); font-size: .85rem; margin-top: 8px; min-height: 1.3em; }
+  .leave-link {
+    display: block; width: fit-content; margin: 4px auto 16px;
+    background: none; border: none; box-shadow: none;
+    color: var(--muted-foreground); font-size: .85rem;
+    text-decoration: underline; cursor: pointer; height: auto; padding: 4px 8px;
+  }
+  .leave-link:hover { color: var(--destructive); opacity: 1; }
+
+  /* 結果画面 */
+  .result-coins { text-align: center; font-size: 3rem; font-weight: 700; color: var(--gold-dark); margin: 8px 0; }
+  .record-box {
+    display: flex; justify-content: center; gap: 24px;
+    background: var(--secondary); border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - 2px);
+    padding: 12px; margin-bottom: 16px; text-align: center;
+  }
+  .record-box .num { font-size: 1.3rem; font-weight: 700; }
+  .record-box .lbl { font-size: .75rem; color: var(--muted-foreground); }
+  .new-record { text-align: center; color: var(--gold-dark); font-weight: 700; margin-bottom: 12px; }
+  .section-title { font-size: .8rem; font-weight: 600; color: var(--muted-foreground); margin: 16px 0 8px; }
+  .podium { list-style: none; margin-bottom: 4px; }
+  .podium li {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 14px; margin-bottom: 6px;
+    background: var(--secondary); border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - 2px); font-size: .9rem;
+  }
+  .podium li:first-child { background: oklch(79.5% .184 86.047 / .15); border-color: var(--gold-dark); }
+  .my-score {
+    display: flex; justify-content: space-around; text-align: center;
+    padding: 12px; border: 1px solid var(--primary);
+    border-radius: calc(var(--radius) - 2px); margin-bottom: 4px;
+    background: oklch(45% .18 265 / .05);
+  }
+  .my-score .num { font-size: 1.2rem; font-weight: 700; }
+  .my-score .lbl { font-size: .75rem; color: var(--muted-foreground); }
+  .result-msg { text-align: center; font-size: 1.1rem; margin-bottom: 8px; }
+  .result-sub { text-align: center; color: var(--muted-foreground); font-size: .875rem; margin-bottom: 16px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); font-size: .9rem; }
+  th { color: var(--muted-foreground); font-weight: 500; font-size: .8rem; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🪙 コインタワー</h1>
+  <p class="subtitle">みんなで単語を当てて、コインを積み上げよう（正解 +1 / 不正解 -1）</p>
+
+  <!-- 入口 -->
+  <div id="screen-entry" class="screen active">
+    <div class="card">
+      <label for="name-input">ニックネーム</label>
+      <input id="name-input" placeholder="例: たろう" maxlength="12" />
+      <div id="create-section">
+        <button id="btn-create">ルームを作成</button>
+      </div>
+      <div id="join-section">
+        <label for="code-input" style="margin-top:20px">ルームコードで参加</label>
+        <input id="code-input" placeholder="例: AB3K" maxlength="4" />
+        <button id="btn-join" class="secondary">参加する</button>
+      </div>
+      <p id="entry-error" class="error"></p>
+      <button class="leave-link" onclick="location.href='/'">← ゲーム選択に戻る</button>
+    </div>
+  </div>
+
+  <!-- 待機 -->
+  <div id="screen-wait" class="screen">
+    <div class="card">
+      <p style="text-align:center;color:var(--muted-foreground);font-size:.85rem">ルームコードを友達に伝えよう</p>
+      <p id="room-code" class="room-code"></p>
+      <ul id="player-list" class="player-list"></ul>
+      <div id="host-controls" style="display:none">
+        <label for="time-select">全体の制限時間</label>
+        <select id="time-select">
+          <option value="60">1分</option>
+          <option value="120">2分</option>
+          <option value="180" selected>3分</option>
+          <option value="300">5分</option>
+        </select>
+        <button id="btn-start">ゲーム開始</button>
+      </div>
+      <p id="wait-note" class="waiting-note"></p>
+      <button class="leave-link" onclick="leaveRoom(false)">ルームを退出する</button>
+    </div>
+  </div>
+
+  <!-- ゲーム -->
+  <div id="screen-game" class="screen">
+    <div class="topbar">
+      <p id="progress" class="progress"></p>
+      <span id="timer" class="timer">--:--</span>
+    </div>
+    <div id="coin-area" class="coin-area"></div>
+    <p id="coin-count" class="coin-count"></p>
+    <div class="card">
+      <p id="sentence" class="sentence"></p>
+      <p id="ja" class="ja"></p>
+      <p id="hint" class="hint"></p>
+      <input id="answer-input" placeholder="答えを入力" autocomplete="off" />
+      <button id="btn-answer">回答する</button>
+      <p id="feedback" class="feedback"></p>
+      <p id="ticker" class="ticker"></p>
+    </div>
+    <button class="leave-link" onclick="leaveRoom(true)">ゲームを退出する</button>
+  </div>
+
+  <!-- 結果 -->
+  <div id="screen-result" class="screen">
+    <div class="card">
+      <p id="result-title" class="result-msg">🎉 ゲーム終了！</p>
+      <p id="result-coins" class="result-coins"></p>
+      <p id="new-record" class="new-record"></p>
+      <div class="record-box">
+        <div><p id="rec-now" class="num"></p><p class="lbl">今回（1人あたり平均）</p></div>
+        <div><p id="rec-best" class="num"></p><p class="lbl">過去最高（1人あたり平均）</p></div>
+      </div>
+      <p id="result-msg" class="result-msg"></p>
+      <p id="result-sub" class="result-sub"></p>
+      <p class="section-title">あなたのスコア</p>
+      <div class="my-score">
+        <div><p id="my-correct" class="num"></p><p class="lbl">正解</p></div>
+        <div><p id="my-wrong" class="num"></p><p class="lbl">ミス</p></div>
+        <div><p id="my-net" class="num"></p><p class="lbl">積んだコイン</p></div>
+      </div>
+      <p class="section-title">貢献度トップ3</p>
+      <ul id="podium" class="podium"></ul>
+      <p class="section-title">全員の成績</p>
+      <table>
+        <thead><tr><th>プレイヤー</th><th>正解</th><th>ミス</th></tr></thead>
+        <tbody id="result-table"></tbody>
+      </table>
+      <button onclick="location.reload()" style="margin-top:18px">もう一度あそぶ</button>
+      <button onclick="location.href='/'" class="secondary">ゲーム選択に戻る</button>
+    </div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+const $ = (id) => document.getElementById(id);
+let isHost = false;
+let deadline = 0;
+let timerInterval = null;
+
+function show(screenId) {
+  document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
+  $(screenId).classList.add("active");
+}
+
+function leaveRoom(needConfirm) {
+  if (needConfirm && !confirm("ゲームの途中ですが退出しますか？")) return;
+  location.href = "/"; // ページを離れると自動で切断され、サーバー側が退出処理する
+}
+
+// ホームのボタンに応じて「参加」または「作成」だけを表示する
+const mode = new URLSearchParams(location.search).get("mode");
+if (mode === "create") {
+  $("join-section").style.display = "none";
+} else if (mode === "join") {
+  $("create-section").style.display = "none";
+  $("code-input").parentElement.querySelector("label").style.marginTop = "0";
+  $("btn-join").classList.remove("secondary");
+}
+
+// --- 入口 ---
+$("btn-create").onclick = () => {
+  socket.emit("createRoom", { name: $("name-input").value }, onJoined);
+};
+$("btn-join").onclick = () => {
+  socket.emit("joinRoom", { roomCode: $("code-input").value, name: $("name-input").value }, onJoined);
+};
+function onJoined(res) {
+  if (res.error) { $("entry-error").textContent = res.error; return; }
+  isHost = res.isHost;
+  $("room-code").textContent = res.roomCode;
+  $("host-controls").style.display = isHost ? "block" : "none";
+  $("wait-note").textContent = isHost ? "" : "ホストの開始を待っています…";
+  show("screen-wait");
+}
+
+// --- 待機 ---
+socket.on("playersUpdate", ({ players, hostId }) => {
+  $("player-list").innerHTML = players
+    .map((p) => `<li>${esc(p.name)}${p.id === hostId ? " 👑" : ""}</li>`)
+    .join("");
+  // ホストが退出したら次の人に開始ボタンを引き継ぐ
+  if (!isHost && hostId === socket.id) {
+    isHost = true;
+    $("host-controls").style.display = "block";
+    $("wait-note").textContent = "あなたが新しいホストになりました";
+  }
+});
+$("btn-start").onclick = () => {
+  socket.emit("startGame", { timeLimitSec: Number($("time-select").value) });
+};
+
+// --- タイマー ---
+function startTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(renderTimer, 250);
+  renderTimer();
+}
+function renderTimer() {
+  const remain = Math.max(0, deadline - Date.now());
+  const sec = Math.ceil(remain / 1000);
+  const m = String(Math.floor(sec / 60)).padStart(1, "0");
+  const s = String(sec % 60).padStart(2, "0");
+  const t = $("timer");
+  t.textContent = `${m}:${s}`;
+  t.classList.toggle("warning", sec <= 10);
+}
+
+// --- ゲーム ---
+socket.on("question", (q) => {
+  show("screen-game");
+  deadline = q.deadline;
+  startTimer();
+  $("progress").textContent = `第 ${q.index + 1} 問 / ${q.total} 問`;
+  $("sentence").textContent = q.sentence;
+  $("ja").textContent = q.ja;
+  $("hint").textContent = "ヒント: " + q.hint;
+  $("answer-input").value = "";
+  $("answer-input").disabled = false;
+  $("btn-answer").disabled = false;
+  $("feedback").textContent = "";
+  $("feedback").className = "feedback";
+  renderCoins(q.coins);
+  $("answer-input").focus();
+});
+
+function submitAnswer() {
+  const text = $("answer-input").value.trim();
+  if (!text) return;
+  socket.emit("answer", { text });
+  $("answer-input").disabled = true;
+  $("btn-answer").disabled = true;
+}
+$("btn-answer").onclick = submitAnswer;
+$("answer-input").addEventListener("keydown", (e) => { if (e.key === "Enter") submitAnswer(); });
+
+socket.on("answerResult", ({ correct }) => {
+  const fb = $("feedback");
+  fb.textContent = correct ? "⭕ 正解！コイン +1" : "❌ 不正解… コイン -1";
+  fb.className = "feedback " + (correct ? "ok" : "ng");
+});
+
+socket.on("coinsUpdate", ({ coins, lastEvent }) => {
+  renderCoins(coins);
+  if (lastEvent) {
+    $("ticker").textContent = lastEvent.correct
+      ? `${lastEvent.name} が正解！ 🪙`
+      : `${lastEvent.name} がミス… 💥`;
+  }
+});
+
+socket.on("reveal", ({ answer }) => {
+  $("ticker").textContent = `正解は「${answer}」でした。次の問題へ…`;
+});
+
+function renderCoins(count) {
+  $("coin-count").textContent = `🪙 × ${count}`;
+  const area = $("coin-area");
+  const shown = Math.min(count, 12); // 表示上限
+  area.innerHTML = "";
+  for (let i = 0; i < shown; i++) {
+    const c = document.createElement("div");
+    c.className = "coin";
+    area.appendChild(c);
+  }
+}
+
+// --- 結果 ---
+socket.on("gameOver", ({ coins, maxCoins, players, timedOut, questionsCompleted, totalQuestions, topContributors, avgCoins, prevBestAvg, isNewRecord }) => {
+  clearInterval(timerInterval);
+  show("screen-result");
+  $("result-title").textContent = timedOut ? "⏰ 時間切れ！" : "🎉 ゲーム終了！";
+  $("result-coins").textContent = `🪙 × ${coins}`;
+
+  // 記録比較（1人あたり平均コイン数）
+  $("new-record").textContent = isNewRecord ? "🏆 新記録達成！" : "";
+  $("rec-now").textContent = `🪙 ${avgCoins.toFixed(1)}`;
+  $("rec-best").textContent = `🪙 ${(isNewRecord ? avgCoins : prevBestAvg).toFixed(1)}`;
+
+  const rate = maxCoins > 0 ? coins / maxCoins : 0;
+  $("result-msg").textContent =
+    rate >= 0.9 ? "パーフェクトに近い！すごい！" :
+    rate >= 0.7 ? "ナイスチームワーク！" :
+    rate >= 0.4 ? "いい調子！次はもっと積めるはず" :
+    "まだまだこれから！もう一回挑戦しよう";
+  $("result-sub").textContent = timedOut
+    ? `${totalQuestions}問中 ${questionsCompleted}問まで進みました`
+    : "";
+
+  // 自分のスコア
+  const me = players.find((p) => p.id === socket.id);
+  if (me) {
+    $("my-correct").textContent = me.correct;
+    $("my-wrong").textContent = me.wrong;
+    $("my-net").textContent = `🪙 ${me.net}`;
+  }
+
+  // 貢献度トップ3
+  const medals = ["🥇", "🥈", "🥉"];
+  $("podium").innerHTML = topContributors
+    .map((p, i) => `<li><span>${medals[i]} ${esc(p.name)}${p.id === socket.id ? "（あなた）" : ""}</span><span>🪙 ${p.net}</span></li>`)
+    .join("");
+
+  $("result-table").innerHTML = players
+    .map((p) => `<tr><td>${esc(p.name)}</td><td>${p.correct}</td><td>${p.wrong}</td></tr>`)
+    .join("");
+});
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, (m) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+}
+</script>
+</body>
+</html>

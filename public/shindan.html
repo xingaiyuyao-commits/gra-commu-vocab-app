@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>英語タイプ診断 — 7問でわかるあなたの英語キャラ</title>
+<style>
+  :root {
+    --bg: oklch(98.8% .003 250);
+    --fg: oklch(22% .02 260);
+    --muted: oklch(52% .02 260);
+    --pill: oklch(95.5% .012 255);
+    --track: oklch(92% .015 255);
+    --blue: oklch(48% .2 262);
+    --blue-soft: oklch(48% .2 262 / .1);
+    --blue-band: oklch(48% .2 262 / .07);
+    --red: oklch(57.7% .245 27.325);
+    --green: oklch(62% .17 145);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    display: flex;
+    justify-content: center;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container {
+    width: 100%; max-width: 64rem;
+    min-height: 100svh;
+    padding: 32px 24px 36px;
+    display: flex; flex-direction: column;
+  }
+  .screen { display: none; }
+  .screen.active { display: flex; flex-direction: column; flex: 1; }
+
+  /* 出題・結果はデスクトップでも読みやすい中央カラムに */
+  .narrow { width: 100%; max-width: 36rem; margin: 0 auto; display: flex; flex-direction: column; flex: 1; }
+
+  button { font-family: inherit; cursor: pointer; border: none; }
+
+  /* 大きなピルボタン（デスクトップでは幅を絞って中央に） */
+  .bottom-area { margin-top: auto; padding-top: 28px; display: flex; flex-direction: column; align-items: center; }
+  .pill-btn {
+    width: 100%; max-width: 24rem; min-height: 3.6rem;
+    border-radius: 9999px;
+    background: var(--blue); color: #fff;
+    font-size: 1.05rem; font-weight: 700;
+    transition: opacity .15s, transform .1s;
+  }
+  .pill-btn:hover { opacity: .92; }
+  .pill-btn:active { transform: scale(.98); }
+
+  /* プログレスバー（上部・細い角丸） */
+  .progress-bar {
+    height: 6px; background: var(--track);
+    border-radius: 9999px; overflow: hidden;
+    margin: 4px 8px 28px;
+  }
+  .progress-fill { height: 100%; width: 0%; background: var(--blue); border-radius: 9999px; transition: width .3s; }
+
+  /* ===== スタート画面（ヒーロー → ベネフィット3つ → CTA） ===== */
+  .hero {
+    background: var(--blue-band);
+    border-radius: 24px;
+    padding: 56px 32px;
+    text-align: center;
+    margin-bottom: 28px;
+    /* イラストは後日ここに追加予定（右側配置 or 背景） */
+  }
+  h1 { font-size: clamp(1.6rem, 3.2vw, 2.1rem); font-weight: 800; letter-spacing: -.02em; line-height: 1.4; margin-bottom: 14px; }
+  .subtitle { color: var(--muted); font-size: clamp(.92rem, 1.6vw, 1.05rem); line-height: 1.8; }
+
+  .benefits {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .benefit {
+    background: var(--pill);
+    border-radius: 18px;
+    padding: 26px 22px;
+    text-align: center;
+  }
+  .benefit .b-icon {
+    width: 64px; height: 64px; border-radius: 18px;
+    background: oklch(48% .2 262 / .08);
+    color: var(--blue);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+  }
+  .benefit .b-icon svg { width: 38px; height: 38px; }
+  .benefit .b-title { font-size: 1.02rem; font-weight: 700; margin-bottom: 8px; }
+  .benefit .b-desc { font-size: .85rem; color: var(--muted); line-height: 1.7; }
+
+  .start-note { font-size: .8rem; color: var(--muted); margin-top: 12px; text-align: center; line-height: 1.7; }
+  /* 文節単位でのみ折り返す（単語の途中で改行させない） */
+  .subtitle span, .b-desc span, .start-note span { display: inline-block; }
+
+  @media (max-width: 640px) {
+    .benefits { grid-template-columns: 1fr; }
+    .hero { padding: 40px 24px; }
+  }
+
+  /* ===== 出題画面 ===== */
+  .q-tag {
+    align-self: center;
+    font-size: .78rem; font-weight: 700; padding: 5px 14px; border-radius: 9999px;
+    background: var(--blue-soft); color: var(--blue);
+    margin-bottom: 14px;
+  }
+  .q-situation { text-align: center; font-size: .88rem; color: var(--muted); margin-bottom: 10px; }
+  .q-text {
+    text-align: center;
+    font-size: clamp(1.35rem, 3vw, 1.6rem); font-weight: 800;
+    letter-spacing: -.01em; line-height: 1.45;
+    margin-bottom: 8px;
+  }
+  .q-phonetic {
+    text-align: center;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 1.9rem; font-weight: 600; margin: 10px 0 12px;
+  }
+  .q-ja { text-align: center; font-size: .9rem; color: var(--muted); margin-bottom: 8px; }
+  .q-spacer { height: 20px; }
+
+  /* リスニングの再生ボタン */
+  .audio-btn {
+    align-self: center;
+    background: var(--bg); color: var(--blue);
+    border: 2px solid var(--blue);
+    border-radius: 9999px;
+    font-size: 1rem; font-weight: 700;
+    padding: 14px 36px; margin: 8px 0 4px;
+    transition: background .15s, transform .1s;
+  }
+  .audio-btn:hover { background: var(--blue-soft); }
+  .audio-btn:active { transform: scale(.97); }
+  .audio-btn:disabled { opacity: .4; cursor: not-allowed; }
+  .audio-note { font-size: .78rem; color: var(--muted); text-align: center; margin-bottom: 14px; }
+
+  /* 選択肢ピル（正誤は見せず、選択のハイライトのみ） */
+  .choices { display: flex; flex-direction: column; gap: 12px; }
+  .choices button {
+    position: relative;
+    background: var(--pill); color: var(--fg);
+    border-radius: 16px;
+    text-align: left; padding: 19px 44px 19px 20px;
+    font-size: 1.02rem; font-weight: 600;
+    transition: background .15s, transform .1s;
+  }
+  .choices button:hover { background: var(--track); }
+  .choices button:active { transform: scale(.99); }
+  .choices button.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .choices button.selected { background: var(--blue-soft); box-shadow: inset 0 0 0 2px var(--blue); }
+  .choices.answered button { pointer-events: none; }
+  .choices button.correct { background: oklch(62% .17 145 / .15); box-shadow: inset 0 0 0 2px var(--green); }
+  .choices button.incorrect { background: oklch(57.7% .245 27.325 / .12); box-shadow: inset 0 0 0 2px var(--red); }
+  .choices button.correct::after,
+  .choices button.incorrect::after {
+    position: absolute; right: 18px; top: 50%; transform: translateY(-50%);
+    font-size: 1.15rem; font-weight: 800;
+  }
+  .choices button.correct::after { content: "○"; color: var(--green); }
+  .choices button.incorrect::after { content: "✕"; color: var(--red); }
+
+  /* 語彙チェックグリッド（知っている単語を選ぶ） */
+  .word-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+    gap: 10px;
+  }
+  .word-grid button {
+    background: var(--pill); color: var(--fg);
+    border-radius: 14px;
+    padding: 16px 8px; text-align: center;
+    font-size: .95rem; font-weight: 600;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    transition: background .15s, transform .1s;
+  }
+  .word-grid button:hover { background: var(--track); }
+  .word-grid button:active { transform: scale(.97); }
+  .word-grid button.selected { background: var(--blue-soft); box-shadow: inset 0 0 0 2px var(--blue); color: var(--blue); }
+
+  #btn-next { display: none; }
+  #btn-next.show { display: block; }
+
+  /* ===== 結果画面 ===== */
+  /* MBTI診断のような「キャラが大きく出る」結果カード。スクショ1枚で完結するのが理想 */
+  .result-hero {
+    background: var(--blue-band);
+    border-radius: 24px;
+    padding: 36px 24px 28px;
+    text-align: center;
+    margin: 12px 0 20px;
+  }
+  .result-label { text-align: center; font-size: .88rem; color: var(--muted); margin: 0 0 6px; }
+  .result-type { text-align: center; font-size: clamp(2.2rem, 9vw, 3.2rem); font-weight: 900; letter-spacing: -.03em; line-height: 1.15; margin-bottom: 10px; color: var(--blue); }
+  .result-catch { text-align: center; font-size: clamp(1rem, 2.6vw, 1.15rem); font-weight: 700; color: var(--fg); margin-bottom: 14px; }
+  .result-rarity {
+    display: inline-block;
+    font-size: .8rem; font-weight: 700; color: var(--blue);
+    background: var(--pill);
+    padding: 6px 16px; border-radius: 9999px;
+  }
+  .result-desc { font-size: .95rem; line-height: 1.9; margin-bottom: 24px; }
+  .panel { background: var(--pill); border-radius: 20px; padding: 22px; margin-bottom: 16px; }
+  .axis-title { font-size: .8rem; font-weight: 700; color: var(--muted); margin-bottom: 14px; text-align: center; }
+  .radar-svg { width: 100%; max-width: 20rem; display: block; margin: 0 auto; }
+  .radar-grid { fill: none; stroke: var(--track); stroke-width: 1; }
+  .radar-axis-line { stroke: var(--track); stroke-width: 1; }
+  .radar-data { fill: var(--blue-soft); stroke: var(--blue); stroke-width: 2; }
+  .radar-dot { fill: var(--blue); }
+  .radar-label { fill: var(--muted); font-size: 8.5px; font-weight: 600; }
+  .growth-note { text-align: center; font-size: .82rem; color: var(--muted); margin-top: 10px; }
+  .stat-cards { display: flex; gap: 12px; margin-bottom: 16px; }
+  .stat-card { flex: 1; background: var(--pill); border-radius: 16px; padding: 16px 12px; text-align: center; }
+  .stat-card-label { font-size: .74rem; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
+  .stat-card-value { font-size: 1.6rem; font-weight: 800; color: var(--blue); letter-spacing: -.02em; }
+  .stat-card-value span { font-size: .95rem; font-weight: 700; }
+  .stat-card-note { font-size: .68rem; color: var(--muted); margin-top: 4px; }
+  .cta-lead { font-size: .92rem; line-height: 1.8; margin-bottom: 16px; text-align: center; max-width: 30rem; }
+  .cta-btn {
+    display: block; text-decoration: none; text-align: center;
+    width: 100%; max-width: 24rem;
+    background: var(--blue); color: #fff;
+    border-radius: 9999px;
+    padding: 18px; font-weight: 700; font-size: 1.05rem;
+    transition: opacity .15s, transform .1s;
+  }
+  .cta-btn:hover { opacity: .92; }
+  .cta-btn:active { transform: scale(.98); }
+  .cta-note { font-size: .75rem; color: var(--muted); margin-top: 10px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- スタート画面 -->
+  <div id="screen-start" class="screen active">
+    <div class="hero">
+      <h1>英語タイプ診断</h1>
+      <p class="subtitle"><span>7問に答えるだけで、</span><span>あなたの英語力の</span><span>「タイプ」が</span><span>わかります</span></p>
+    </div>
+    <div class="benefits">
+      <div class="benefit">
+        <div class="b-icon" aria-hidden="true">
+          <!-- 弱点タイプ判定: プロフィールカード＋虫めがね -->
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="6" y="8" width="28" height="32" rx="4" fill="oklch(48% .2 262 / .12)"/>
+            <rect x="6" y="8" width="28" height="32" rx="4" stroke="currentColor" stroke-width="2.5"/>
+            <circle cx="20" cy="18" r="4" stroke="currentColor" stroke-width="2.5"/>
+            <path d="M13 30c1.4-3 4-4.5 7-4.5s5.6 1.5 7 4.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="33" cy="31" r="7" fill="var(--bg, #fff)" stroke="currentColor" stroke-width="2.5"/>
+            <path d="M38 36l5 5" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            <path d="M30 31l2.2 2.2 3.8-4.4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <p class="b-title">英語タイプ判定</p>
+        <p class="b-desc"><span>回答パターンから、</span><span>あなたのタイプを</span><span>4タイプで判定します</span></p>
+      </div>
+      <div class="benefit">
+        <div class="b-icon" aria-hidden="true">
+          <!-- 4つの力のバランス表示: 4本のバーグラフ -->
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 42h36" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            <rect x="8" y="24" width="6" height="14" rx="2" fill="oklch(48% .2 262 / .35)"/>
+            <rect x="17.5" y="14" width="6" height="24" rx="2" fill="currentColor"/>
+            <rect x="27" y="28" width="6" height="10" rx="2" fill="oklch(48% .2 262 / .35)"/>
+            <rect x="36.5" y="19" width="6" height="19" rx="2" fill="oklch(48% .2 262 / .6)"/>
+          </svg>
+        </div>
+        <p class="b-title">4つの力のバランス表示</p>
+        <p class="b-desc"><span>単語力・コロケーション・</span><span>発音記号・リスニングを</span><span>見える化</span></p>
+      </div>
+      <div class="benefit">
+        <div class="b-icon" aria-hidden="true">
+          <!-- タイプ別の学習アドバイス: ひらめきの電球 -->
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 6a12 12 0 0 0-6.5 22.1c1.3.9 2 2.3 2 3.9h9c0-1.6.7-3 2-3.9A12 12 0 0 0 24 6z" fill="oklch(48% .2 262 / .12)"/>
+            <path d="M24 6a12 12 0 0 0-6.5 22.1c1.3.9 2 2.3 2 3.9h9c0-1.6.7-3 2-3.9A12 12 0 0 0 24 6z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>
+            <path d="M21 32v-6l-3-4h12l-3 4v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M20 37h8M21.5 42h5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M5 12l3.5 1.8M43 12l-3.5 1.8M24 1v2.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <p class="b-title">タイプ別の学習アドバイス</p>
+        <p class="b-desc"><span>診断結果に合わせて、</span><span>次にやるべき</span><span>単語学習を提案します</span></p>
+      </div>
+    </div>
+    <div class="bottom-area">
+      <button class="pill-btn" onclick="startQuiz()">診断をはじめる</button>
+      <p class="start-note"><span>所要時間 約2分（全7問）・</span><span>リスニング問題では</span><span>音声が流れます</span></p>
+    </div>
+  </div>
+
+  <!-- 出題画面 -->
+  <div id="screen-quiz" class="screen">
+    <div class="narrow">
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      <span id="q-tag" class="q-tag"></span>
+      <p id="q-situation" class="q-situation"></p>
+      <p id="q-text" class="q-text"></p>
+      <p id="q-phonetic" class="q-phonetic"></p>
+      <p id="q-ja" class="q-ja"></p>
+      <div class="q-spacer"></div>
+      <div id="q-body"></div>
+      <div class="bottom-area">
+        <button id="btn-next" class="pill-btn">次へ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 結果画面 -->
+  <div id="screen-result" class="screen">
+    <div class="narrow">
+      <div class="result-hero">
+        <p class="result-label">あなたの英語タイプは…</p>
+        <p id="result-type" class="result-type"></p>
+        <p id="result-catch" class="result-catch"></p>
+        <p id="result-rarity" class="result-rarity"></p>
+      </div>
+      <p id="result-desc" class="result-desc"></p>
+      <div class="stat-cards">
+        <div class="stat-card">
+          <p class="stat-card-label">総合スコア</p>
+          <p class="stat-card-value" id="stat-overall">-<span>%</span></p>
+        </div>
+      </div>
+      <div class="panel">
+        <p class="axis-title">5つの力のバランス</p>
+        <div id="axis-chart"></div>
+        <p id="growth-note" class="growth-note"></p>
+      </div>
+      <div class="bottom-area">
+        <p id="cta-lead" class="cta-lead"></p>
+        <!-- TODO: clacelの正式URL・訴求文言に差し替える（現在プレースホルダ） -->
+        <a id="cta-btn" class="cta-btn" href="#" target="_blank" rel="noopener">clacelで単語力を伸ばす</a>
+        <p class="cta-note">※ 英単語帳アプリ「clacel」の紹介ページに移動します</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+
+// 軸: vocab=語彙 / collocation=コロケーション / phonics=発音記号 / listening=リスニング
+const AXES = {
+  vocab:       { label: "単語力",         tag: "単語" },
+  collocation: { label: "コロケーション", tag: "コロケーション" },
+  phonics:     { label: "発音記号",       tag: "発音記号" },
+  listening:   { label: "リスニング",     tag: "リスニング" },
+};
+
+const QUESTIONS = [
+  {
+    axis: "vocab", type: "wordgrid",
+    situation: "まず語彙力を確認しましょう",
+    text: "知っている単語を選んでください",
+    // 易しい→難しい順の18語（レベル帯: A1×3 / A2×3 / B1×3 / B2×3 / C1×3 / 最難関×3）。選んだ数で語彙スコアを判定
+    words: [
+      "weather", "family", "hobby",
+      "borrow", "arrive", "expensive",
+      "schedule", "purchase", "improve",
+      "negotiate", "efficient", "apologize",
+      "legislation", "inevitable", "hypothesis",
+      "procurement", "epitome", "flabbergast",
+    ],
+  },
+  {
+    axis: "phonics", type: "choice",
+    situation: "発音記号を読んでみよう",
+    text: "この発音記号のとおりに読む単語はどれ？",
+    phonetic: "/ˈkʌv.ɚ/",
+    choices: ["cover", "covet", "carver", "curve"],
+    answer: "cover",
+    mono: true,
+  },
+  {
+    axis: "listening", type: "choice",
+    situation: "双子を見て、何と言っているでしょう？2人の会話を聞いて選ぼう",
+    audio: [
+      { speaker: "F", text: "Look at those two over there — are they twins?" },
+      { speaker: "M", text: "Yeah, they are. Wow, I can't tell the difference between them at all!" },
+    ],
+    choices: [
+      "双子の見分けが全然つかない、と言っている。",
+      "双子とはうまく話せない、と言っている。",
+      "双子の性格が全然違う、と言っている。",
+      "双子と会うのは久しぶりだ、と言っている。",
+    ],
+    answer: "双子の見分けが全然つかない、と言っている。",
+  },
+  {
+    axis: "collocation", type: "choice",
+    situation: "「旅行」だけじゃない意味で",
+    text: "How far did you have to ___ to get here today?",
+    ja: "（今日ここに来るのに、どれくらいの距離を移動しましたか？）",
+    choices: ["travel", "ship", "transport", "deliver"],
+    answer: "travel",
+    mono: true,
+  },
+  {
+    axis: "phonics", type: "choice",
+    situation: "発音記号を読んでみよう",
+    text: "followの発音記号はどれ？",
+    choices: ["/ˈfɑːloʊ/", "/ˈfæloʊ/", "/ˈfɑːlaʊ/", "/ˈfoʊloʊ/"],
+    answer: "/ˈfɑːloʊ/",
+    mono: true,
+  },
+  {
+    axis: "listening", type: "choice",
+    situation: "「詰まる」だけじゃない意味で。なぜ男性は遅刻したのでしょう？2人の会話を聞いて選ぼう",
+    audio: [
+      { speaker: "F", text: "Hey, you're late! Let me guess — the trains again?" },
+      { speaker: "M", text: "No, actually the trains were fine today. I got stuck in a terrible jam on the highway." },
+      { speaker: "F", text: "Oh no, that's the worst. Did you miss anything important?" },
+      { speaker: "M", text: "Luckily, no — the meeting hadn't started yet." },
+    ],
+    choices: [
+      "There were too many cars on the road.",
+      "The trains stopped running.",
+      "He got stuck in an elevator.",
+      "He overslept.",
+    ],
+    answer: "There were too many cars on the road.",
+  },
+  {
+    axis: "collocation", type: "choice",
+    situation: "「立つ」だけじゃない意味で",
+    text: "I can't ___ waiting in long lines.",
+    ja: "（長い行列で待つのが我慢できない）",
+    choices: ["stand", "wait", "hold", "keep"],
+    answer: "stand",
+    mono: true,
+  },
+];
+
+// 結果4タイプ（広さ=単語の知識量 / 深さ=知っている単語を隠れた意味まで使いこなせているか の2軸マトリクス）
+// 深さはQ4(travel)+Q7(stand)の正答数で判定（知っている単語でも使いこなせていない、というclacelの核となる価値提案に直結する軸）
+// rarityPctは実測値ではなく、エンタメ診断としての体感バランスを狙った目安の出現率
+const RESULTS = {
+  wastedTreasure: {
+    name: "宝の持ち腐れタイプ",
+    catch: "単語はたっぷり持ってる。あとは中身を使うだけ。",
+    rarityPct: 30,
+    desc: "知っている単語の数はかなり豊富。ただ、その単語が持っている「隠れた意味」や本来の使い方まではまだ活かしきれていないタイプ。持っている宝物の使い道を知れば、一気に化けます。",
+    cta: "単語を増やすフェーズはもう卒業。英単語帳「clacel」で、知っている単語の「意外な使い方」までインプットし直しましょう。",
+    weakGroup: ["collocation"],
+  },
+  nativeReserve: {
+    name: "ネイティブ予備軍タイプ",
+    catch: "あとはネイティブの細かいニュアンスを拾うだけ。",
+    rarityPct: 15,
+    desc: "単語の数も、隠れた意味の使いこなしも、どちらもハイレベル。基礎はすでに合格点で、次のステージはネイティブが自然に使う細かいニュアンスや言い回しです。",
+    cta: "単語も使い方も、土台はできているネイティブ予備軍タイプ。clacelで、ネイティブ的な細部まで押さえて仕上げていきましょう。",
+    weakGroup: [],
+  },
+  craftsman: {
+    name: "こだわり職人タイプ",
+    catch: "数は少なくても、選んだ単語は完璧に使える。",
+    rarityPct: 20,
+    desc: "知っている単語の数はまだ少なめですが、知っている単語は隠れた意味まできっちり使いこなせているタイプ。量を増やせば、そのままレベルアップできる伸びしろの塊です。",
+    cta: "使い方の感覚はすでに身についているこだわり職人タイプ。英単語帳「clacel」で、この精度のまま単語のストックを増やしていきましょう。",
+    weakGroup: ["vocab"],
+  },
+  roughGem: {
+    name: "原石タイプ",
+    catch: "まだ磨かれていないだけ、伸びしろは無限大。",
+    rarityPct: 35,
+    desc: "単語の数も、隠れた意味の使いこなしも、これからじっくり伸ばしていける段階。裏を返せば、今から始めれば一番変化を実感しやすいタイプです。",
+    cta: "何から始めるか迷ったら、まずは単語のストックから。英単語帳「clacel」で、基礎から着実に積み上げていきましょう。",
+    weakGroup: ["vocab", "collocation"],
+  },
+};
+
+let current = 0;
+let answered = false;
+let pendingBtn = null; // 選択済みだがまだ「決定」前のボタン
+let knownWordCount = 0; // Q1で選んだ「知っている単語」の数（18語中）
+// 軸ごとの成績 { 出題数, 正答数 }（語彙はグリッドの選択数を2点満点に換算）
+const stats = {
+  vocab: { total: 0, correct: 0 },
+  collocation: { total: 0, correct: 0 },
+  phonics: { total: 0, correct: 0 },
+  listening: { total: 0, correct: 0 },
+};
+
+function show(screenId) {
+  document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
+  $(screenId).classList.add("active");
+}
+
+function startQuiz() {
+  warmUpSpeech();
+  current = 0;
+  show("screen-quiz");
+  renderQuestion();
+}
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// リスニング音声（ブラウザの音声合成を使用・追加ファイル不要）
+// Chromeはvoiceリストが非同期ロードのため、先に読み込んでキャッシュしておく
+let cachedVoices = [];
+if ("speechSynthesis" in window) {
+  const loadVoices = () => { cachedVoices = speechSynthesis.getVoices(); };
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+// macOSのローカル音声には Albert / Bad News / Zarvox などの
+// ジョーク・ノベルティ音声（掠れた老人声・ロボット声等）が混ざっているため除外する
+const NOVELTY_VOICE_PREFIXES = [
+  "Albert", "Bad News", "Bahh", "Bells", "Boing", "Bubbles", "Cellos",
+  "Deranged", "Good News", "Grandma", "Grandpa", "Hysterical", "Jester",
+  "Organ", "Pipe Organ", "Trinoids", "Whisper", "Zarvox", "Wobble",
+  "Superstar", "Junior", "Ralph",
+];
+// 明瞭さで優先する音声名（見つかれば最優先で使う。話者の性別ごとに候補を分ける）
+// 名前は前方一致・lang==="en-US"で判定する（同じ名前がen-GB版でも存在し、
+// OSの表示言語によって「Reed (英語（アメリカ合衆国）)」のように末尾にロケール名が付くため、
+// 表示名の完全一致では正しく米語版を拾えない）
+const PREFERRED_FEMALE_VOICE_NAMES = ["Google US English", "Samantha"];
+const PREFERRED_MALE_VOICE_NAMES = ["Evan", "Google UK English Male", "Reed", "Eddy", "Daniel"];
+
+function pickVoice(enVoices, speaker) {
+  const preferredNames = speaker === "M" ? PREFERRED_MALE_VOICE_NAMES : PREFERRED_FEMALE_VOICE_NAMES;
+  for (const name of preferredNames) {
+    const usMatch = enVoices.find((v) => v.name.startsWith(name) && v.lang === "en-US");
+    if (usMatch) return usMatch;
+    const anyMatch = enVoices.find((v) => v.name.startsWith(name));
+    if (anyMatch) return anyMatch;
+  }
+  const clean = enVoices.filter((v) => !NOVELTY_VOICE_PREFIXES.some((p) => v.name.startsWith(p)));
+  return clean.find((v) => v.lang === "en-US") || clean[0] || enVoices[0];
+}
+
+function speakNow(text, speaker, onend) {
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "en-US";
+  u.rate = 0.9;
+  const enVoices = (cachedVoices.length ? cachedVoices : speechSynthesis.getVoices()).filter((v) => v.lang.startsWith("en"));
+  const en = pickVoice(enVoices, speaker);
+  if (en) u.voice = en;
+  if (onend) u.onend = onend;
+  speechSynthesis.speak(u);
+}
+
+// audioは会話のセリフ配列 [{ speaker: "M"|"F", text }] を想定し、話者ごとに声を切り替えながら順番に再生する
+function speakSequence(turns) {
+  let i = 0;
+  const playNext = () => {
+    if (i >= turns.length) return;
+    const turn = turns[i++];
+    speakNow(turn.text, turn.speaker, playNext);
+  };
+  playNext();
+}
+
+function speak(turns) {
+  if (!("speechSynthesis" in window)) return false;
+  // cancel()直後にspeak()すると発話の頭が欠ける（Chromeの既知の挙動）ため、
+  // 何か再生中/待機中の時だけキャンセルし、少し間を空けてから話す
+  if (speechSynthesis.speaking || speechSynthesis.pending) {
+    speechSynthesis.cancel();
+    setTimeout(() => speakSequence(turns), 120);
+  } else {
+    speakSequence(turns);
+  }
+  return true;
+}
+
+// 初回発話は音声エンジンのウォームアップ不足で掠れやすいため、
+// クイズ開始ボタン（最初のユーザー操作）で無音に近い発話を1回流して温めておく
+function warmUpSpeech() {
+  if (!("speechSynthesis" in window)) return;
+  const u = new SpeechSynthesisUtterance(" ");
+  u.volume = 0;
+  speechSynthesis.speak(u);
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[current];
+  answered = false;
+  $("q-tag").textContent = `${AXES[q.axis].tag} ・ Q${current + 1}/${QUESTIONS.length}`;
+  $("progress-fill").style.width = (current / QUESTIONS.length) * 100 + "%";
+  $("q-situation").textContent = q.situation;
+  $("q-text").textContent = q.text || "";
+  $("q-text").style.display = q.text ? "block" : "none";
+  $("q-phonetic").textContent = q.phonetic || "";
+  $("q-phonetic").style.display = q.phonetic ? "block" : "none";
+  $("q-ja").textContent = q.ja || "";
+  $("q-ja").style.display = q.ja ? "block" : "none";
+
+  const next = $("btn-next");
+  next.classList.remove("show");
+
+  const body = $("q-body");
+  body.innerHTML = "";
+  body.style.display = "flex";
+  body.style.flexDirection = "column";
+
+  if (q.type === "wordgrid") {
+    const grid = document.createElement("div");
+    grid.className = "word-grid";
+    grid.id = "word-grid";
+    q.words.forEach((w) => {
+      const btn = document.createElement("button");
+      btn.textContent = w;
+      btn.onclick = () => btn.classList.toggle("selected");
+      grid.appendChild(btn);
+    });
+    body.appendChild(grid);
+    next.textContent = "次へ";
+    next.classList.add("show");
+    next.onclick = () => {
+      const known = grid.querySelectorAll(".selected").length;
+      knownWordCount = known;
+      // 18語中の選択数を2点満点に換算（13語以上=2 / 7〜12語=1 / 6語以下=0）
+      stats.vocab.total += 2;
+      stats.vocab.correct += known >= 13 ? 2 : known >= 7 ? 1 : 0;
+      nextQuestion();
+    };
+    return;
+  }
+
+  if (q.audio) {
+    const MAX_PLAYS = 2;
+    let playCount = 1; // 出題時の自動再生で1回消費済み
+    const play = document.createElement("button");
+    play.className = "audio-btn";
+    play.textContent = "音声を再生";
+    const note = document.createElement("p");
+    note.className = "audio-note";
+    const updateNote = () => {
+      const remaining = MAX_PLAYS - playCount;
+      if (remaining > 0) {
+        note.textContent = `あと${remaining}回聞けます`;
+      } else {
+        note.textContent = "再生回数の上限に達しました";
+        play.disabled = true;
+      }
+    };
+    play.onclick = () => {
+      if (playCount >= MAX_PLAYS) return;
+      const ok = speak(q.audio);
+      if (!ok) { note.textContent = "このブラウザは音声再生に対応していません"; return; }
+      playCount++;
+      updateNote();
+    };
+    body.appendChild(play);
+    body.appendChild(note);
+    updateNote();
+    // 出題時に1回自動再生（ユーザー操作起点なのでブロックされない）
+    speak(q.audio);
+  }
+
+  pendingBtn = null;
+  const box = document.createElement("div");
+  box.className = "choices";
+  box.id = "choices";
+  body.appendChild(box);
+  shuffle(q.choices).forEach((c) => {
+    const btn = document.createElement("button");
+    btn.textContent = c;
+    if (q.mono) btn.classList.add("mono");
+    btn.onclick = () => selectChoice(btn, c);
+    box.appendChild(btn);
+  });
+}
+
+// 選択肢をタップした時点では確定せず、選び直しができる状態にする
+function selectChoice(btn, choice) {
+  if (answered) return;
+  Array.from($("choices").children).forEach((b) => b.classList.remove("selected"));
+  btn.classList.add("selected");
+  pendingBtn = btn;
+  pendingBtn.dataset.choice = choice;
+  const next = $("btn-next");
+  next.textContent = "決定";
+  next.classList.add("show");
+  next.onclick = confirmChoice;
+}
+
+// 「決定」ボタンを押した時点で正誤を確定し、○×と正解を表示する
+function confirmChoice() {
+  if (answered || !pendingBtn) return;
+  answered = true;
+  const q = QUESTIONS[current];
+  const choice = pendingBtn.dataset.choice;
+  stats[q.axis].total++;
+  const isCorrect = choice === q.answer;
+  if (isCorrect) stats[q.axis].correct++;
+  $("choices").classList.add("answered");
+  pendingBtn.classList.add(isCorrect ? "correct" : "incorrect");
+  if (!isCorrect) {
+    const correctBtn = Array.from($("choices").children).find((b) => b.textContent === q.answer);
+    if (correctBtn) correctBtn.classList.add("correct");
+  }
+  const next = $("btn-next");
+  next.textContent = "次へ";
+  next.onclick = nextQuestion;
+}
+
+function nextQuestion() {
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+  current++;
+  if (current < QUESTIONS.length) renderQuestion();
+  else showResult();
+}
+
+// --- 診断ロジック ---
+// 広さ（Q1単語グリッド、0-2点）× 深さ（Q4travel+Q7standの正答数、0-2点）の2軸で判定する。
+// 深さは「知っている単語でも使いこなせていない」というclacelの核となる価値提案を直接測る軸。
+// 発音記号(phonics)・リスニング(listening)はタイプ判定には使わず、レーダーチャートの参考スコアとして表示するのみ。
+function decideType() {
+  const isBroad = stats.vocab.correct >= 2;
+  const isDeep = stats.collocation.correct >= 2;
+  if (isBroad && isDeep) return "nativeReserve";
+  if (isBroad && !isDeep) return "wastedTreasure";
+  if (!isBroad && isDeep) return "craftsman";
+  return "roughGem";
+}
+
+// レーダーチャート（5軸: 単語・コロケーション・発音記号・リスニング・総合）
+const RADAR_AXES = [
+  { key: "vocab", label: "単語力" },
+  { key: "collocation", label: "コロケーション" },
+  { key: "phonics", label: "発音記号" },
+  { key: "listening", label: "リスニング" },
+  { key: "overall", label: "総合" },
+];
+
+function polarPoint(cx, cy, r, index, total, ratio) {
+  const angle = (Math.PI * 2 * index) / total - Math.PI / 2;
+  const dist = r * ratio;
+  return [cx + dist * Math.cos(angle), cy + dist * Math.sin(angle)];
+}
+
+function renderRadar(ratios) {
+  const cx = 110, cy = 105, r = 78;
+  const n = RADAR_AXES.length;
+  let svg = `<svg viewBox="0 0 220 220" class="radar-svg">`;
+  [1, 0.66, 0.33].forEach((lvl) => {
+    const pts = RADAR_AXES.map((_, i) => polarPoint(cx, cy, r, i, n, lvl).join(",")).join(" ");
+    svg += `<polygon points="${pts}" class="radar-grid" />`;
+  });
+  RADAR_AXES.forEach((_, i) => {
+    const [x, y] = polarPoint(cx, cy, r, i, n, 1);
+    svg += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" class="radar-axis-line" />`;
+  });
+  const dataPts = ratios.map((v, i) => polarPoint(cx, cy, r, i, n, v).join(",")).join(" ");
+  svg += `<polygon points="${dataPts}" class="radar-data" />`;
+  ratios.forEach((v, i) => {
+    const [x, y] = polarPoint(cx, cy, r, i, n, v);
+    svg += `<circle cx="${x}" cy="${y}" r="3" class="radar-dot" />`;
+  });
+  RADAR_AXES.forEach((axis, i) => {
+    const [x, y] = polarPoint(cx, cy, r + 22, i, n, 1);
+    svg += `<text x="${x}" y="${y}" class="radar-label" text-anchor="middle" dominant-baseline="middle">${axis.label}</text>`;
+  });
+  svg += `</svg>`;
+  return svg;
+}
+
+function showResult() {
+  const type = decideType();
+  const r = RESULTS[type];
+  show("screen-result");
+  $("result-type").textContent = r.name;
+  $("result-catch").textContent = r.catch;
+  $("result-rarity").textContent = `同じタイプは全体の${r.rarityPct}%`;
+  $("result-desc").textContent = r.desc;
+  $("cta-lead").textContent = r.cta;
+
+  // 単語力は「13語以上=満点」という粗い3段階バケットのため、
+  // 総合スコア・レーダーの単語力軸は実際に選んだ語数の連続値（知っている語数÷18）を使う。
+  // タイプ判定(decideType)はバケット済みのstats.vocab.correctのまま維持する。
+  const vocabRatio = knownWordCount / 18;
+  const otherRatios = ["collocation", "phonics", "listening"].map((key) => {
+    const s = stats[key];
+    return s.total ? s.correct / s.total : 0;
+  });
+  const overallRatio = (vocabRatio + otherRatios.reduce((a, b) => a + b, 0)) / 4;
+  const overallPct = Math.round(overallRatio * 100);
+  $("stat-overall").innerHTML = `${overallPct}<span>%</span>`;
+
+  const ratios = RADAR_AXES.map((axis) => {
+    if (axis.key === "overall") return overallRatio;
+    if (axis.key === "vocab") return vocabRatio;
+    const s = stats[axis.key];
+    return s.total ? s.correct / s.total : 0;
+  });
+  $("axis-chart").innerHTML = renderRadar(ratios);
+
+  const growthLabels = r.weakGroup.map((key) => AXES[key].label);
+  $("growth-note").textContent = growthLabels.length
+    ? `伸びしろ: ${growthLabels.join("・")}`
+    : "大きな穴なし、どの力もバランスが取れています";
+}
+</script>
+</body>
+</html>

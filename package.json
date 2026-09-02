@@ -1,0 +1,22 @@
+{
+  "name": "vocab-coin-coop",
+  "version": "1.0.0",
+  "description": "みんなでコインを積み上げる英単語協力ゲーム",
+  "main": "server.js",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test tests/*.test.js",
+    "test:deploy": "node --test --test-concurrency=1 tests/healthz.test.js tests/home-screen.test.js tests/home-viewport.test.js tests/join-course-label.test.js tests/participant-join.test.js tests/quiz-room-persistence.test.js tests/quiz-screen.test.js tests/ui-logic.test.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "jsdom": "^29.1.1",
+    "socket.io-client": "^4.8.3"
+  }
+}

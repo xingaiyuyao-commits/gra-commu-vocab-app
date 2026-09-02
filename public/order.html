@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🧩 並べ替えバトル — チーム対抗</title>
+<style>
+  :root {
+    --background: oklch(98.5% .002 247);
+    --foreground: oklch(14.5% .02 265);
+    --card: oklch(100% 0 0);
+    --primary: oklch(45% .18 265);
+    --primary-foreground: oklch(98.5% .002 247);
+    --secondary: oklch(96% .01 265);
+    --muted-foreground: oklch(50% .02 265);
+    --accent: oklch(94% .02 265);
+    --destructive: oklch(57.7% .245 27.325);
+    --border: oklch(90% .01 265);
+    --green: oklch(62.7% .194 149.214);
+    --red-team: oklch(57.7% .245 27.325);
+    --blue-team: oklch(48.8% .243 264.376);
+    --radius: .625rem;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    background: linear-gradient(135deg, var(--background), var(--background) 60%, oklch(45% .18 265 / .05));
+    color: var(--foreground);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .container { width: 100%; max-width: 42rem; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  h1 { text-align: center; font-size: 1.875rem; font-weight: 700; letter-spacing: -.025em; margin: 24px 0 8px; }
+  .subtitle { text-align: center; color: var(--muted-foreground); font-size: .875rem; margin-bottom: 24px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: .75rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1);
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  label { font-size: .875rem; font-weight: 500; display: block; margin-bottom: 6px; }
+  input {
+    width: 100%; height: 2.5rem; padding: 0 12px;
+    border-radius: calc(var(--radius) - 2px);
+    border: 1px solid var(--border);
+    background: var(--card); color: var(--foreground);
+    font-size: .95rem; margin-bottom: 14px;
+  }
+  input:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
+  button {
+    width: 100%; height: 2.5rem; border: none;
+    border-radius: calc(var(--radius) - 2px);
+    font-size: .9rem; font-weight: 500; cursor: pointer;
+    background: var(--primary); color: var(--primary-foreground);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / .05);
+    transition: opacity .15s, transform .1s;
+  }
+  button:hover { opacity: .9; }
+  button:active { transform: scale(.98); }
+  button.secondary { background: var(--card); color: var(--foreground); border: 1px solid var(--border); margin-top: 10px; }
+  button.secondary:hover { background: var(--accent); opacity: 1; }
+  .error { color: var(--destructive); text-align: center; margin-top: 8px; min-height: 1.2em; font-size: .875rem; }
+
+  .room-code { text-align: center; font-size: 2.25rem; letter-spacing: .3em; font-weight: 700; color: var(--primary); margin: 4px 0 12px; }
+  .player-list { list-style: none; margin: 4px 0 16px; }
+  .player-list li {
+    padding: 10px 14px; background: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - 2px);
+    margin-bottom: 6px; font-size: .9rem;
+  }
+  .waiting-note { text-align: center; color: var(--muted-foreground); font-size: .85rem; margin-top: 8px; min-height: 1.3em; }
+  .leave-link {
+    display: block; width: fit-content; margin: 4px auto 16px;
+    background: none; border: none; box-shadow: none;
+    color: var(--muted-foreground); font-size: .85rem;
+    text-decoration: underline; cursor: pointer; height: auto; padding: 4px 8px;
+  }
+  .leave-link:hover { color: var(--destructive); opacity: 1; }
+
+  /* ゲーム画面 */
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin: 8px 2px 12px; }
+  .progress-label { color: var(--muted-foreground); font-size: .85rem; }
+  .timer {
+    font-variant-numeric: tabular-nums; font-weight: 700; font-size: 1.05rem;
+    padding: 4px 12px; border-radius: 9999px;
+    background: var(--secondary); border: 1px solid var(--border);
+  }
+  .timer.warning { background: oklch(57.7% .245 27.325 / .1); color: var(--destructive); border-color: var(--destructive); }
+  .scoreboard {
+    display: flex; justify-content: center; align-items: center; gap: 14px;
+    font-weight: 700; font-size: 1.2rem; margin-bottom: 14px;
+  }
+  .scoreboard .red { color: var(--red-team); }
+  .scoreboard .blue { color: var(--blue-team); }
+  .team-badge {
+    text-align: center; font-size: .8rem; font-weight: 600;
+    margin-bottom: 10px; padding: 4px 12px; border-radius: 9999px;
+    display: table; margin-left: auto; margin-right: auto;
+  }
+  .team-badge.red { background: oklch(57.7% .245 27.325 / .12); color: var(--red-team); }
+  .team-badge.blue { background: oklch(48.8% .243 264.376 / .12); color: var(--blue-team); }
+  .ja-text { text-align: center; font-size: 1rem; margin-bottom: 14px; }
+  .slots { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 12px; min-height: 2.2rem; }
+  .slot {
+    padding: 6px 10px; border-radius: 6px; font-size: .95rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .slot.filled { background: oklch(62.7% .194 149.214 / .15); border: 1px solid var(--green); color: var(--foreground); }
+  .slot.empty { background: var(--secondary); border: 1px dashed var(--border); color: var(--muted-foreground); min-width: 2.6rem; text-align: center; }
+  .opp-bar-wrap { margin: 4px 0 14px; }
+  .opp-label { font-size: .75rem; color: var(--muted-foreground); margin-bottom: 4px; text-align: center; }
+  .opp-bar { height: 8px; background: var(--secondary); border-radius: 9999px; overflow: hidden; }
+  .opp-bar-fill { height: 100%; width: 0%; border-radius: 9999px; transition: width .3s; }
+  .hand-title { font-size: .8rem; font-weight: 600; color: var(--muted-foreground); margin-bottom: 8px; }
+  .hand { display: flex; flex-wrap: wrap; gap: 8px; min-height: 2.6rem; align-items: flex-start; }
+  .chip {
+    width: auto; height: auto; padding: 8px 14px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 1rem;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+  }
+  .chip .holder { font-size: .65rem; font-family: inherit; opacity: .8; }
+  .chip.other {
+    background: var(--secondary); color: var(--muted-foreground);
+    border: 1px solid var(--border); box-shadow: none;
+    cursor: default; pointer-events: none;
+  }
+  .hand.frozen .chip.mine { opacity: .4; pointer-events: none; }
+  .freeze-note { text-align: center; color: var(--destructive); font-weight: 700; min-height: 1.4em; margin-top: 10px; font-size: .9rem; }
+  .ticker { text-align: center; color: var(--muted-foreground); font-size: .85rem; margin-top: 6px; min-height: 1.3em; }
+
+  /* ラウンド結果 */
+  .round-result { text-align: center; }
+  .round-winner { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+  .full-sentence { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 1.05rem; margin-bottom: 6px; }
+
+  /* 結果画面 */
+  .final-banner { text-align: center; font-size: 1.6rem; font-weight: 700; margin-bottom: 8px; }
+  .final-score { text-align: center; font-size: 2.4rem; font-weight: 800; margin-bottom: 16px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); font-size: .9rem; }
+  th { color: var(--muted-foreground); font-weight: 500; font-size: .8rem; }
+  .tag { font-size: .75rem; font-weight: 600; padding: 2px 8px; border-radius: 9999px; }
+  .tag.red { background: oklch(57.7% .245 27.325 / .12); color: var(--red-team); }
+  .tag.blue { background: oklch(48.8% .243 264.376 / .12); color: var(--blue-team); }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🧩 並べ替えバトル</h1>
+  <p class="subtitle">配られた自分の単語を正しいタイミングで置いて、チームで文章を完成させよう</p>
+
+  <!-- 入口 -->
+  <div id="screen-entry" class="screen active">
+    <div class="card">
+      <label for="name-input">ニックネーム</label>
+      <input id="name-input" placeholder="例: たろう" maxlength="12" />
+      <div id="create-section">
+        <button id="btn-create">ルームを作成</button>
+      </div>
+      <div id="join-section">
+        <label for="code-input" style="margin-top:20px">ルームコードで参加</label>
+        <input id="code-input" placeholder="例: AB3K" maxlength="4" />
+        <button id="btn-join" class="secondary">参加する</button>
+      </div>
+      <p id="entry-error" class="error"></p>
+      <button class="leave-link" onclick="location.href='/'">← ゲーム選択に戻る</button>
+    </div>
+  </div>
+
+  <!-- 待機 -->
+  <div id="screen-wait" class="screen">
+    <div class="card">
+      <p style="text-align:center;color:var(--muted-foreground);font-size:.85rem">ルームコードを友達に伝えよう（2人以上で開始・自動で2チームに分かれます）</p>
+      <p id="room-code" class="room-code"></p>
+      <ul id="player-list" class="player-list"></ul>
+      <button id="btn-start" style="display:none">ゲーム開始</button>
+      <p id="wait-note" class="waiting-note"></p>
+      <button class="leave-link" onclick="leaveRoom(false)">ルームを退出する</button>
+    </div>
+  </div>
+
+  <!-- ゲーム -->
+  <div id="screen-game" class="screen">
+    <div class="topbar">
+      <p id="round-label" class="progress-label"></p>
+      <span id="timer" class="timer">--:--</span>
+    </div>
+    <div class="scoreboard">
+      <span class="red">🔴 <span id="score-red">0</span></span>
+      <span>—</span>
+      <span class="blue"><span id="score-blue">0</span> 🔵</span>
+    </div>
+    <div class="card">
+      <p id="team-badge" class="team-badge"></p>
+      <p id="ja-text" class="ja-text"></p>
+      <div id="slots" class="slots"></div>
+      <div class="opp-bar-wrap">
+        <p class="opp-label">相手チームの進み具合: <span id="opp-count">0</span> / <span id="opp-total">0</span></p>
+        <div class="opp-bar"><div id="opp-fill" class="opp-bar-fill"></div></div>
+      </div>
+      <p class="hand-title">チームの単語 — 自分の単語だけタップで置ける。仲間の単語は名前入りで見えるので助言しよう！</p>
+      <div id="hand" class="hand"></div>
+      <p id="freeze-note" class="freeze-note"></p>
+      <p id="ticker" class="ticker"></p>
+    </div>
+    <button class="leave-link" onclick="leaveRoom(true)">ゲームを退出する</button>
+  </div>
+
+  <!-- ラウンド結果 -->
+  <div id="screen-round" class="screen">
+    <div class="card round-result">
+      <p id="round-winner" class="round-winner"></p>
+      <p id="round-sentence" class="full-sentence"></p>
+      <p id="round-ja" class="ja-text" style="color:var(--muted-foreground)"></p>
+      <p class="waiting-note">まもなく次のラウンド…</p>
+    </div>
+  </div>
+
+  <!-- 最終結果 -->
+  <div id="screen-result" class="screen">
+    <div class="card">
+      <p id="final-banner" class="final-banner"></p>
+      <p id="final-score" class="final-score"></p>
+      <p class="hand-title">単語を置いた数</p>
+      <table>
+        <thead><tr><th>プレイヤー</th><th>チーム</th><th>置いた数</th></tr></thead>
+        <tbody id="contrib-table"></tbody>
+      </table>
+      <button onclick="location.reload()" style="margin-top:18px">もう一度あそぶ</button>
+      <button onclick="location.href='/'" class="secondary">ゲーム選択に戻る</button>
+    </div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+const $ = (id) => document.getElementById(id);
+let isHost = false;
+let myTeam = null;
+let board = []; // チーム全員の単語 [{word, holderId, holderName}]
+let wordCount = 0;
+let placedWords = [];
+let deadline = 0;
+let timerInterval = null;
+let freezeInterval = null;
+
+function show(screenId) {
+  document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
+  $(screenId).classList.add("active");
+}
+
+function leaveRoom(needConfirm) {
+  if (needConfirm && !confirm("ゲームの途中ですが退出しますか？チームの単語は仲間に引き継がれます。")) return;
+  location.href = "/"; // ページを離れると自動で切断され、サーバー側が退出処理する
+}
+
+// ホームのボタンに応じて「参加」または「作成」だけを表示する
+const mode = new URLSearchParams(location.search).get("mode");
+if (mode === "create") {
+  $("join-section").style.display = "none";
+} else if (mode === "join") {
+  $("create-section").style.display = "none";
+  $("code-input").parentElement.querySelector("label").style.marginTop = "0";
+  $("btn-join").classList.remove("secondary");
+}
+
+// --- 入口 ---
+$("btn-create").onclick = () => {
+  socket.emit("order:createRoom", { name: $("name-input").value }, onJoined);
+};
+$("btn-join").onclick = () => {
+  socket.emit("order:joinRoom", { roomCode: $("code-input").value, name: $("name-input").value }, onJoined);
+};
+function onJoined(res) {
+  if (res.error) { $("entry-error").textContent = res.error; return; }
+  isHost = res.isHost;
+  $("room-code").textContent = res.roomCode;
+  $("btn-start").style.display = isHost ? "block" : "none";
+  $("wait-note").textContent = isHost ? "" : "ホストの開始を待っています…";
+  show("screen-wait");
+}
+socket.on("order:playersUpdate", ({ players, hostName, hostId }) => {
+  $("player-list").innerHTML = players
+    .map((n) => `<li>${esc(n)}${n === hostName ? " 👑" : ""}</li>`)
+    .join("");
+  // ホストが退出したら次の人に開始ボタンを引き継ぐ
+  if (!isHost && hostId === socket.id) {
+    isHost = true;
+    $("btn-start").style.display = "block";
+    $("wait-note").textContent = "あなたが新しいホストになりました";
+  }
+});
+$("btn-start").onclick = () => socket.emit("order:startGame");
+socket.on("order:error", ({ message }) => { $("wait-note").textContent = message; });
+
+// --- タイマー ---
+function startTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(renderTimer, 250);
+  renderTimer();
+}
+function renderTimer() {
+  const sec = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+  $("timer").textContent = `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}`;
+  $("timer").classList.toggle("warning", sec <= 10);
+}
+
+// --- ラウンド ---
+socket.on("order:roundStart", (r) => {
+  show("screen-game");
+  myTeam = r.yourTeam;
+  board = r.board;
+  wordCount = r.wordCount;
+  placedWords = [];
+  deadline = r.deadline;
+  startTimer();
+  clearInterval(freezeInterval);
+  $("hand").classList.remove("frozen");
+  $("freeze-note").textContent = "";
+  $("ticker").textContent = "";
+  $("round-label").textContent = `ラウンド ${r.round + 1} / ${r.totalRounds}`;
+  $("score-red").textContent = r.scores.red;
+  $("score-blue").textContent = r.scores.blue;
+  const badge = $("team-badge");
+  badge.textContent = myTeam === "red" ? "🔴 あなたは赤チーム" : "🔵 あなたは青チーム";
+  badge.className = "team-badge " + myTeam;
+  $("ja-text").textContent = "「" + r.ja + "」";
+  $("opp-total").textContent = wordCount;
+  renderSlots();
+  renderOpp(0);
+  renderHand();
+});
+
+function renderSlots() {
+  const slots = [];
+  for (let i = 0; i < wordCount; i++) {
+    if (i < placedWords.length) slots.push(`<span class="slot filled">${esc(placedWords[i])}</span>`);
+    else slots.push(`<span class="slot empty">･･･</span>`);
+  }
+  $("slots").innerHTML = slots.join("");
+}
+function renderHand() {
+  if (board.length === 0) {
+    $("hand").innerHTML = `<p class="waiting-note">全部置けた！🎉</p>`;
+    return;
+  }
+  $("hand").innerHTML = board
+    .map((b, i) => {
+      const mine = b.holderId === socket.id;
+      return mine
+        ? `<button class="chip mine" data-i="${i}">${esc(b.word)}<span class="holder">あなた</span></button>`
+        : `<button class="chip other" tabindex="-1">${esc(b.word)}<span class="holder">${esc(b.holderName)}</span></button>`;
+    })
+    .join("");
+  $("hand").querySelectorAll(".chip.mine").forEach((btn) => {
+    btn.onclick = () => socket.emit("order:place", { word: board[Number(btn.dataset.i)].word });
+  });
+}
+function renderOpp(count) {
+  $("opp-count").textContent = count;
+  const fill = $("opp-fill");
+  fill.style.width = wordCount ? (count / wordCount) * 100 + "%" : "0%";
+  fill.style.background = myTeam === "red" ? "var(--blue-team)" : "var(--red-team)";
+}
+
+socket.on("order:progress", ({ team, count, words, by }) => {
+  if (team === myTeam) {
+    if (words) placedWords = words;
+    // 置かれた単語をチームの単語一覧から取り除く
+    const placed = placedWords[placedWords.length - 1];
+    const bi = board.findIndex((b) => b.word === placed);
+    if (bi !== -1) board.splice(bi, 1);
+    renderSlots();
+    renderHand();
+    if (by) $("ticker").textContent = `${by} が「${placed}」を置いた！`;
+  } else {
+    renderOpp(count);
+  }
+});
+
+socket.on("order:frozen", ({ until, word }) => {
+  $("hand").classList.add("frozen");
+  clearInterval(freezeInterval);
+  const tick = () => {
+    const sec = Math.ceil((until - Date.now()) / 1000);
+    if (sec <= 0) {
+      clearInterval(freezeInterval);
+      $("hand").classList.remove("frozen");
+      $("freeze-note").textContent = "";
+      return;
+    }
+    $("freeze-note").textContent = `「${word}」は今じゃない！ ${sec}秒お休み…`;
+  };
+  tick();
+  freezeInterval = setInterval(tick, 250);
+});
+
+socket.on("order:teammateMiss", ({ name }) => {
+  $("ticker").textContent = `${name} がミス！ 3秒お休み中…`;
+});
+
+socket.on("order:handUpdate", ({ board: newBoard }) => {
+  if (newBoard) board = newBoard;
+  renderHand();
+  $("ticker").textContent = "退出した仲間の単語を引き継ぎました";
+});
+
+socket.on("order:roundResult", ({ winner, reason, sentence, ja, scores }) => {
+  clearInterval(timerInterval);
+  show("screen-round");
+  $("score-red").textContent = scores.red;
+  $("score-blue").textContent = scores.blue;
+  const label =
+    winner === "draw" ? "引き分け！" :
+    winner === myTeam ? "🎉 このラウンドはあなたのチームの勝ち！" :
+    "😢 このラウンドは相手チームの勝ち…";
+  $("round-winner").textContent = label + (reason === "timeout" ? "（時間切れ）" : "");
+  $("round-sentence").textContent = sentence;
+  $("round-ja").textContent = "「" + ja + "」";
+});
+
+// --- 最終結果 ---
+socket.on("order:gameOver", ({ winner, forced, scores, contributions }) => {
+  clearInterval(timerInterval);
+  show("screen-result");
+  $("final-banner").textContent =
+    winner === "draw" ? "🤝 引き分け！" :
+    winner === myTeam ? "🏆 あなたのチームの勝利！" :
+    "😢 あなたのチームの負け…";
+  if (forced) $("final-banner").textContent += "（相手チームが退出）";
+  $("final-score").innerHTML =
+    `<span style="color:var(--red-team)">🔴 ${scores.red}</span> — <span style="color:var(--blue-team)">${scores.blue} 🔵</span>`;
+  $("contrib-table").innerHTML = contributions
+    .map((c) => `<tr><td>${esc(c.name)}</td><td><span class="tag ${c.team}">${c.team === "red" ? "赤" : "青"}</span></td><td>${c.placed}</td></tr>`)
+    .join("");
+});
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, (m) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+}
+</script>
+</body>
+</html>

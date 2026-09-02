@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ÖSH Vocabulary Challenge</title>
+<style>
+  :root { --paper:#fff; --ink:#202020; --muted:#7b7b7b; --line:#dededb; --gold:#c99820; }
+  * { box-sizing: border-box; }
+  html { background: var(--paper); }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:Arial,"Helvetica Neue","Hiragino Sans","Yu Gothic UI","Yu Gothic",sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; }
+  .page { width:min(100%,1920px); margin:0 auto; padding:12px 36px; }
+  h1 { margin:0 0 14px; font-size:clamp(3.5rem,5.5vw,5rem); font-weight:800; letter-spacing:-.075em; line-height:.86; text-align:center; white-space:nowrap; }
+  .join-cta { display:flex; align-items:center; justify-content:center; gap:24px; min-height:60px; padding:12px 20px; background:var(--ink); color:#fff; font-size:clamp(1.1rem,2vw,1.4rem); font-weight:700; text-align:center; text-decoration:none; }
+  .join-cta { width:min(680px,100%); margin-inline:auto; }
+  .join-cta .arrow { color:#d59b12; font-size:1.5em; font-weight:400; }
+  .join-cta:focus-visible,.course-row:focus-visible,.operator-link:focus-visible { outline:3px solid var(--gold); outline-offset:4px; }
+  .today-card { display:flex; align-items:center; justify-content:space-between; width:min(920px,100%); min-height:64px; margin:14px auto 18px; padding:10px 20px; border:2px solid var(--line); }
+  .today-card[hidden] { display:none; }
+  .today-label { margin:0 0 3px; color:var(--muted); font-size:.95rem; font-weight:600; letter-spacing:.04em; }
+  .today-date { margin:0; font-size:1.05rem; }
+  .today-day { margin:0; font-size:1.8rem; font-weight:800; white-space:nowrap; }
+  .home-content { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(500px,.85fr); align-items:center; gap:clamp(32px,4vw,64px); }
+  .home-illustration { display:flex; align-items:center; justify-content:center; margin:0; }
+  .home-illustration img { display:block; width:100%; height:auto; max-height:min(375px,calc(100vh - 275px)); object-fit:contain; }
+  .course-panel h2 { margin:0 0 10px; color:var(--muted); font-size:1rem; font-weight:600; letter-spacing:.18em; }
+  .course-row { display:grid; grid-template-columns:60px 1fr; align-items:start; min-height:44px; padding:10px 0 12px; border-top:2px solid var(--ink); text-decoration:none; }
+  .course-row + .course-row { border-top:1px solid var(--line); }
+  .course-number { color:var(--gold); font-size:1.15rem; font-weight:800; letter-spacing:.08em; }
+  .course-row strong { font-size:1.75rem; font-weight:800; letter-spacing:-.035em; line-height:1.1; }
+  .course-row b { margin-top:4px; font-size:.95rem; line-height:1.35; }
+  .course-row small { margin-top:2px; color:#646464; font-size:.85rem; line-height:1.4; }
+  .course-row strong,.course-row b,.course-row small { display:block; }
+  .operator-link { display:block; min-height:32px; padding:10px 0 0; border-top:1px solid var(--line); color:#8a8a8a; font-size:.9rem; text-decoration:none; }
+  @media (hover:hover) {
+    .join-cta:hover { background:#303030; }
+    .course-row:hover strong,.operator-link:hover { text-decoration:underline; text-underline-offset:7px; }
+  }
+  @media (max-width:900px) {
+    .page { padding:30px 16px 56px; }
+    h1 { margin-bottom:28px; padding-top:0; font-size:clamp(3rem,16vw,5.2rem); white-space:normal; }
+    .join-cta { min-height:82px; gap:16px; padding:18px 12px; font-size:1.05rem; }
+    .today-card { min-height:96px; margin:28px 0 36px; padding:17px 18px; }
+    .today-label { margin-bottom:8px; font-size:.95rem; }
+    .today-date { font-size:1.1rem; }
+    .today-day { font-size:1.75rem; }
+    .home-content { grid-template-columns:1fr; }
+    .home-illustration { margin:0 0 36px; }
+    .course-panel h2 { margin-bottom:20px; font-size:1rem; }
+    .course-row { grid-template-columns:48px 1fr; padding:23px 0 25px; }
+    .course-number { font-size:1.15rem; }
+    .course-row strong { font-size:1.8rem; }
+    .course-row b { margin-top:9px; font-size:1.05rem; }
+    .course-row small { margin-top:3px; font-size:1rem; line-height:1.6; }
+    .operator-link { padding-top:25px; }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <h1>ÖSH Vocabulary Challenge</h1>
+  <a class="join-cta" href="/quiz.html?mode=join">
+    <span>ルームコードを入力して参加する</span><span class="arrow" aria-hidden="true">→</span>
+  </a>
+  <section class="today-card" id="today-card" aria-labelledby="today-heading" hidden>
+    <div><h2 class="today-label" id="today-heading">今日の学習</h2><p class="today-date" id="today-date"></p></div>
+    <p class="today-day" id="today-day"></p>
+  </section>
+  <div class="home-content">
+    <figure class="home-illustration">
+      <img src="/assets/osh-vocab-home-illustration.png" alt="Clacel・TOEIC・IELTSの単語学習チャレンジ" width="898" height="518" />
+    </figure>
+    <section class="course-panel" aria-labelledby="course-heading">
+      <h2 id="course-heading">CHOOSE YOUR COURSE</h2>
+      <a class="course-row" href="/quiz.html?mode=create"><span class="course-number">01</span><span><strong>Clacel</strong><b>日常から仕事まで、使える英語を。</b><small>基礎を積み上げながら、英語を自分の言葉にしていくコースです。</small></span></a>
+      <a class="course-row" href="/quiz.html?mode=create"><span class="course-number">02</span><span><strong>TOEIC</strong><b>スコアと実務につながる英語を。</b><small>頻出語を確実に身につけ、試験にも仕事にも活かします。</small></span></a>
+      <a class="course-row" href="/quiz.html?mode=create"><span class="course-number">03</span><span><strong>IELTS</strong><b>海外で学び、暮らすための英語を。</b><small>アカデミックな語彙を鍛え、世界へ踏み出す力を育てます。</small></span></a>
+      <a class="operator-link" href="/quiz.html?mode=create">運営用</a>
+    </section>
+  </div>
+</main>
+<script src="/ui-logic.js"></script>
+<script>
+  const studyDay = QuizUi.getStudyDay(new Date());
+  if (studyDay !== null) {
+    const today = new Date();
+    document.getElementById("today-date").textContent = `${today.getMonth() + 1}月${today.getDate()}日`;
+    document.getElementById("today-day").textContent = `Day ${studyDay}`;
+    document.getElementById("today-card").hidden = false;
+  }
+</script>
+</body>
+</html>
