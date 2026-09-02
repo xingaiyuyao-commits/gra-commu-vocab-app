@@ -649,9 +649,16 @@
   }
   function leaveRoom(needConfirm) {
     if (needConfirm && !confirm("テストの途中ですが退出しますか？")) return;
-    socket.emit("quiz:leave");
-    clearSession();
-    location.href = "/";
+    socket.emit("quiz:leave", {}, (res) => {
+      if (!res?.ok) {
+        const message = res?.error || "ルームを退出できませんでした";
+        $("entry-error").textContent = message;
+        alert(message);
+        return;
+      }
+      clearSession();
+      location.href = "/";
+    });
   }
 
   function clearQuizTimer() {
@@ -696,7 +703,13 @@
     const pending = loadPendingSubmission();
     const answersToSend = pending ? pending.answers : fallbackAnswers;
     socket.emit("quiz:submit", { answers: answersToSend }, (res) => {
-      if (!res?.ok) return;
+      if (!res?.ok) {
+        const message = res?.error || "回答を保存できませんでした";
+        $("entry-error").textContent = message;
+        renderWaitingStatus();
+        $("waiting-status").textContent = message;
+        return;
+      }
       clearPendingSubmission();
       renderWaitingStatus();
     });
@@ -1031,6 +1044,7 @@
       $(`mh-${category}-error`).textContent = "ルームを終了しました。";
     });
     s.on("quiz:startError", ({ error }) => { $(`mh-${category}-error`).textContent = error; });
+    s.on("quiz:actionError", ({ error }) => { $(`mh-${category}-error`).textContent = error; });
     s.on("connect", () => {
       if (!mh[category].roomCode) return;
       s.emit("quiz:rejoin", {
@@ -1144,11 +1158,16 @@
 
     $(`mh-${category}-close`).addEventListener("click", () => {
       if (!confirm(`${CATEGORY_LABEL[category]}のルームを終了しますか？参加者も退出します。`)) return;
-      mh[category].socket?.emit("quiz:leave");
-      mhForgetRoom(category);
-      mh[category].roomCode = null;
-      mhShow(category, "idle");
-      $(`mh-${category}-error`).textContent = "ルームを終了しました。";
+      mh[category].socket?.emit("quiz:leave", {}, (res) => {
+        if (!res?.ok) {
+          $(`mh-${category}-error`).textContent = res?.error || "ルームを終了できませんでした";
+          return;
+        }
+        mhForgetRoom(category);
+        mh[category].roomCode = null;
+        mhShow(category, "idle");
+        $(`mh-${category}-error`).textContent = "ルームを終了しました。";
+      });
     });
   }
 
@@ -1208,6 +1227,11 @@
 
   socket.on("quiz:startError", ({ error }) => {
     $("entry-error").textContent = error;
+  });
+
+  socket.on("quiz:actionError", ({ error }) => {
+    $("entry-error").textContent = error;
+    alert(error);
   });
 
   $("btn-reveal-results").addEventListener("click", () => {

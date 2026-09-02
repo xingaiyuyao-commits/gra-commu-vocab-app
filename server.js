@@ -29,13 +29,26 @@ function saveHighscore(hs) {
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
+const quizPersistenceHealth = {
+  required: false,
+  configured: false,
+  ready: true,
+  lastError: null,
+  restoreFailed: false,
+};
 
 // ソケットイベント内の例外はNode側で捕捉されずプロセス全体を落とすため、
 // ここで受け止めて他の進行中ルームを巻き込まないようにする（復旧不能な状態異常より全断のほうが実害が大きい）
 process.on("uncaughtException", (err) => console.error("uncaughtException:", err));
 process.on("unhandledRejection", (err) => console.error("unhandledRejection:", err));
 
-app.get("/healthz", (_req, res) => res.status(200).json({ ok: true }));
+app.get("/healthz", (_req, res) => {
+  const ok = !quizPersistenceHealth.required
+    || (quizPersistenceHealth.configured && quizPersistenceHealth.ready && !quizPersistenceHealth.lastError);
+  res.status(ok ? 200 : 503).json(ok
+    ? { ok: true }
+    : { ok: false, error: "quiz persistence unavailable" });
+});
 app.use(express.static(path.join(__dirname, "public")));
 
 const TOTAL_QUESTIONS = 20;
@@ -618,8 +631,23 @@ app.post("/api/admin/wordtests/:category", express.json({ limit: "2mb" }), check
 });
 
 const QUIZ_CATEGORIES = ["clacel", "ielts", "toeic"];
+const IS_RAILWAY_RUNTIME = Boolean(
+  process.env.RAILWAY_ENVIRONMENT_ID
+  || process.env.RAILWAY_SERVICE_ID
+  || process.env.RAILWAY_PROJECT_ID
+);
+const QUIZ_ROOM_PERSISTENCE_REQUIRED = Boolean(process.env.QUIZ_ROOM_STATE_FILE) || IS_RAILWAY_RUNTIME;
 const QUIZ_ROOM_STATE_FILE = process.env.QUIZ_ROOM_STATE_FILE
   || (fs.existsSync("/data") ? "/data/quiz-rooms.json" : null);
+const QUIZ_PERSISTENCE_ERROR = "ルーム状態を保存できませんでした。しばらくしてからもう一度お試しください。";
+
+quizPersistenceHealth.required = QUIZ_ROOM_PERSISTENCE_REQUIRED;
+quizPersistenceHealth.configured = Boolean(QUIZ_ROOM_STATE_FILE);
+if (QUIZ_ROOM_PERSISTENCE_REQUIRED && !QUIZ_ROOM_STATE_FILE) {
+  quizPersistenceHealth.ready = false;
+  quizPersistenceHealth.lastError = "persistent volume is not mounted";
+  console.error("quiz room persistence unavailable: persistent volume is not mounted");
+}
 
 function loadQuizRooms() {
   if (!QUIZ_ROOM_STATE_FILE) return {};
@@ -650,7 +678,12 @@ function loadQuizRooms() {
     }
     return restored;
   } catch (error) {
-    if (error.code !== "ENOENT") console.error("quiz room restore failed:", error.message);
+    if (error.code !== "ENOENT") {
+      quizPersistenceHealth.ready = false;
+      quizPersistenceHealth.lastError = error.message;
+      quizPersistenceHealth.restoreFailed = true;
+      console.error("quiz room restore failed:", error.message);
+    }
     return {};
   }
 }
@@ -658,7 +691,15 @@ function loadQuizRooms() {
 const quizRooms = loadQuizRooms(); // roomCode -> room state
 
 function persistQuizRooms() {
-  if (!QUIZ_ROOM_STATE_FILE) return;
+  if (!QUIZ_ROOM_STATE_FILE) {
+    if (QUIZ_ROOM_PERSISTENCE_REQUIRED) {
+      quizPersistenceHealth.ready = false;
+      quizPersistenceHealth.lastError = "persistence is not configured";
+      return false;
+    }
+    return true;
+  }
+  if (quizPersistenceHealth.restoreFailed) return false;
   const rooms = {};
   for (const [code, room] of Object.entries(quizRooms)) {
     rooms[code] = {
@@ -684,11 +725,40 @@ function persistQuizRooms() {
     fs.mkdirSync(directory, { recursive: true });
     fs.writeFileSync(temporaryFile, JSON.stringify({ version: 1, rooms }), { mode: 0o600 });
     fs.renameSync(temporaryFile, QUIZ_ROOM_STATE_FILE);
+    quizPersistenceHealth.ready = true;
+    quizPersistenceHealth.lastError = null;
+    return true;
   } catch (error) {
+    quizPersistenceHealth.ready = false;
+    quizPersistenceHealth.lastError = error.message;
     console.error("quiz room save failed:", error.message);
     try { fs.unlinkSync(temporaryFile); } catch {}
+    return false;
   }
 }
+
+function cloneQuizRoom(room) {
+  if (!room) return null;
+  return {
+    ...room,
+    players: Object.fromEntries(Object.entries(room.players).map(([id, player]) => [id, { ...player }])),
+    questions: room.questions.slice(),
+    results: room.results ? JSON.parse(JSON.stringify(room.results)) : null,
+  };
+}
+
+function persistQuizMutation(roomCode, mutate) {
+  const before = cloneQuizRoom(quizRooms[roomCode]);
+  mutate();
+  if (persistQuizRooms()) return true;
+  const current = quizRooms[roomCode];
+  if (current?.timeoutHandle && current.timeoutHandle !== before?.timeoutHandle) clearTimeout(current.timeoutHandle);
+  if (before) quizRooms[roomCode] = before;
+  else delete quizRooms[roomCode];
+  return false;
+}
+
+if (QUIZ_ROOM_STATE_FILE && !quizPersistenceHealth.restoreFailed) persistQuizRooms();
 
 function makeQuizRoomCode() {
   const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
@@ -762,13 +832,20 @@ function quizParticipants(room) {
 function quizForceFinish(roomCode) {
   const room = quizRooms[roomCode];
   if (!room || room.phase !== "playing") return;
-  for (const p of quizParticipants(room)) {
-    if (p.submittedAt === null) {
-      room.players[p.id].score = 0;
-      room.players[p.id].submittedAt = Date.now();
+  const saved = persistQuizMutation(roomCode, () => {
+    room.timeoutHandle = null;
+    for (const p of quizParticipants(room)) {
+      if (p.submittedAt === null) {
+        room.players[p.id].score = 0;
+        room.players[p.id].submittedAt = Date.now();
+      }
     }
+  });
+  if (!saved) {
+    const restored = quizRooms[roomCode];
+    if (restored?.phase === "playing") restored.timeoutHandle = setTimeout(() => quizForceFinish(roomCode), 1_000);
+    return;
   }
-  persistQuizRooms();
   quizCheckAllSubmitted(roomCode);
 }
 
@@ -789,10 +866,9 @@ function quizCheckAllSubmitted(roomCode) {
 // ホストの操作で結果発表を確定させる。参加者全員が提出済みであることを再確認してから発表する。
 function quizRevealResults(roomCode) {
   const room = quizRooms[roomCode];
-  if (!room || room.phase !== "playing") return;
+  if (!room || room.phase !== "playing") return false;
   const participants = quizParticipants(room);
-  if (participants.length === 0 || !participants.every((p) => p.submittedAt !== null)) return;
-  room.phase = "finished";
+  if (participants.length === 0 || !participants.every((p) => p.submittedAt !== null)) return false;
   const total = room.questions.length;
   const entries = participants.map((p) => ({
     id: p.id,
@@ -806,46 +882,50 @@ function quizRevealResults(roomCode) {
     .sort((a, b) => a.timeMs - b.timeMs)
     .map((e) => ({ id: e.id, name: e.name, timeMs: e.timeMs }));
   const others = entries.filter((e) => e.score !== e.total);
-  room.results = {
-    setLabel: room.setLabel,
-    perfect,
-    others,
-    review: room.questions.map((q) => ({ sentence: q.sentence, answer: q.answer, altAnswers: q.altAnswers, ja: q.ja, sentenceJa: q.sentenceJa })),
-  };
-  persistQuizRooms();
+  const saved = persistQuizMutation(roomCode, () => {
+    room.phase = "finished";
+    room.results = {
+      setLabel: room.setLabel,
+      perfect,
+      others,
+      review: room.questions.map((q) => ({ sentence: q.sentence, answer: q.answer, altAnswers: q.altAnswers, ja: q.ja, sentenceJa: q.sentenceJa })),
+    };
+  });
+  if (!saved) return false;
   io.to(roomCode).emit("quiz:results", room.results);
+  return true;
 }
 
 // 通信切断では呼ばず、画面の「退出」操作だけで参加者またはルームを削除する。
 function quizFinalizePlayerLeave(roomCode, playerId) {
   const room = quizRooms[roomCode];
-  if (!room) return;
+  if (!room) return { ok: true, wasHost: false };
   const player = room.players[playerId];
-  if (player && player.leaveTimer) clearTimeout(player.leaveTimer);
   if (room.host === playerId) {
-    if (room.timeoutHandle) clearTimeout(room.timeoutHandle);
-    io.to(roomCode).emit("quiz:roomClosed");
-    delete quizRooms[roomCode];
-    persistQuizRooms();
-    return;
+    const timeoutHandle = room.timeoutHandle;
+    if (!persistQuizMutation(roomCode, () => { delete quizRooms[roomCode]; })) {
+      return { ok: false, error: QUIZ_PERSISTENCE_ERROR };
+    }
+    if (timeoutHandle) clearTimeout(timeoutHandle);
+    if (player?.leaveTimer) clearTimeout(player.leaveTimer);
+    return { ok: true, wasHost: true };
   }
-  delete room.players[playerId];
-  if (Object.keys(room.players).length === 0) {
-    if (room.timeoutHandle) clearTimeout(room.timeoutHandle);
-    delete quizRooms[roomCode];
-    persistQuizRooms();
-    return;
+  if (!player) return { ok: true, wasHost: false };
+  const saved = persistQuizMutation(roomCode, () => { delete room.players[playerId]; });
+  if (!saved) return { ok: false, error: QUIZ_PERSISTENCE_ERROR };
+  if (player.leaveTimer) clearTimeout(player.leaveTimer);
+  if (quizRooms[roomCode]) {
+    quizPlayersUpdate(roomCode);
+    if (room.phase === "playing") quizCheckAllSubmitted(roomCode);
   }
-  persistQuizRooms();
-  quizPlayersUpdate(roomCode);
-  if (room.phase === "playing") quizCheckAllSubmitted(roomCode);
+  return { ok: true, wasHost: false };
 }
 
 io.on("connection", (socket) => {
   socket.on("quiz:createRoom", ({ category, name } = {}, cb = () => {}) => {
     if (!QUIZ_CATEGORIES.includes(category)) return cb({ error: "カテゴリが不正です" });
     const roomCode = makeQuizRoomCode();
-    quizRooms[roomCode] = {
+    const newRoom = {
       category,
       host: null,
       phase: "lobby",
@@ -854,7 +934,7 @@ io.on("connection", (socket) => {
       startedAt: 0,
       results: null,
     };
-    quizJoin(socket, roomCode, name, cb);
+    quizJoin(socket, roomCode, name, cb, newRoom);
   });
 
   socket.on("quiz:roomInfo", ({ roomCode } = {}, cb = () => {}) => {
@@ -911,26 +991,34 @@ io.on("connection", (socket) => {
     quizPlayersUpdate(code);
   });
 
-  socket.on("quiz:startGame", ({ seriesIndex } = {}) => {
+  socket.on("quiz:startGame", ({ seriesIndex } = {}, cb = () => {}) => {
     const roomCode = socket.data.quizRoomCode;
     const room = quizRooms[roomCode];
-    if (!room || room.host !== socket.data.quizPlayerId || room.phase !== "lobby") return;
+    if (!room || room.host !== socket.data.quizPlayerId || room.phase !== "lobby") return cb({ ok: false, error: "開始できませんでした" });
     const cat = WORDTESTS[room.category];
     const series = cat && cat.series[Number(seriesIndex)];
-    if (!series) return;
-    room.questions = shuffle(series.items).slice(0, QUIZ_QUESTION_COUNT);
-    room.phase = "playing";
-    room.startedAt = Date.now();
-    room.endsAt = room.startedAt + QUIZ_TIME_LIMIT_SEC * 1000;
-    room.setLabel = `${cat.label} ${series.name}`;
-    room.results = null;
-    if (room.timeoutHandle) clearTimeout(room.timeoutHandle);
-    room.timeoutHandle = setTimeout(() => quizForceFinish(roomCode), QUIZ_TIME_LIMIT_SEC * 1000);
-    for (const p of Object.values(room.players)) {
-      p.submittedAt = null;
-      p.score = 0;
+    if (!series) return cb({ ok: false, error: "問題セットが見つかりません" });
+    const previousTimeout = room.timeoutHandle;
+    const saved = persistQuizMutation(roomCode, () => {
+      room.questions = shuffle(series.items).slice(0, QUIZ_QUESTION_COUNT);
+      room.phase = "playing";
+      room.startedAt = Date.now();
+      room.endsAt = room.startedAt + QUIZ_TIME_LIMIT_SEC * 1000;
+      room.setLabel = `${cat.label} ${series.name}`;
+      room.results = null;
+      room.timeoutHandle = null;
+      for (const p of Object.values(room.players)) {
+        p.submittedAt = null;
+        p.score = 0;
+      }
+    });
+    if (!saved) {
+      socket.emit("quiz:startError", { error: QUIZ_PERSISTENCE_ERROR });
+      return cb({ ok: false, error: QUIZ_PERSISTENCE_ERROR });
     }
-    persistQuizRooms();
+    if (previousTimeout) clearTimeout(previousTimeout);
+    room.timeoutHandle = setTimeout(() => quizForceFinish(roomCode), QUIZ_TIME_LIMIT_SEC * 1000);
+    cb({ ok: true });
     io.to(roomCode).emit("quiz:started", {
       setLabel: room.setLabel,
       total: room.questions.length,
@@ -939,20 +1027,24 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("quiz:submit", ({ answers } = {}) => {
+  socket.on("quiz:submit", ({ answers } = {}, cb = () => {}) => {
     const roomCode = socket.data.quizRoomCode;
     const room = quizRooms[roomCode];
-    if (!room || room.phase !== "playing") return;
-    if (socket.data.quizPlayerId === room.host) return; // ホストは開催者であり回答しない
+    if (!room || room.phase !== "playing") return cb({ ok: false, error: "提出できませんでした" });
+    if (socket.data.quizPlayerId === room.host) return cb({ ok: false, error: "運営者は提出できません" }); // ホストは開催者であり回答しない
     const player = room.players[socket.data.quizPlayerId];
-    if (!player || player.submittedAt !== null) return;
+    if (!player) return cb({ ok: false, error: "参加者が見つかりません" });
+    if (player.submittedAt !== null) return cb({ ok: true });
     const arr = Array.isArray(answers) ? answers : [];
-    player.score = room.questions.reduce(
-      (n, q, i) => n + (quizAnswerMatches(q, arr[i]) ? 1 : 0),
-      0
-    );
-    player.submittedAt = Date.now();
-    persistQuizRooms();
+    const saved = persistQuizMutation(roomCode, () => {
+      player.score = room.questions.reduce(
+        (n, q, i) => n + (quizAnswerMatches(q, arr[i]) ? 1 : 0),
+        0
+      );
+      player.submittedAt = Date.now();
+    });
+    if (!saved) return cb({ ok: false, error: QUIZ_PERSISTENCE_ERROR });
+    cb({ ok: true });
     const participants = quizParticipants(room);
     io.to(roomCode).emit("quiz:submitProgress", {
       submitted: participants.filter((p) => p.submittedAt !== null).length,
@@ -963,53 +1055,73 @@ io.on("connection", (socket) => {
 
   // ホストの操作で結果発表を確定させる。全員提出済みであることをここでも確認する
   // （制限時間が来ても自動では発表せず、必ずホストのこの操作を経由する）
-  socket.on("quiz:revealResults", () => {
+  socket.on("quiz:revealResults", (cb = () => {}) => {
     const roomCode = socket.data.quizRoomCode;
     const room = quizRooms[roomCode];
-    if (!room || room.host !== socket.data.quizPlayerId || room.phase !== "playing") return;
-    quizRevealResults(roomCode);
+    if (!room || room.host !== socket.data.quizPlayerId || room.phase !== "playing") return cb({ ok: false, error: "結果を発表できませんでした" });
+    if (!quizRevealResults(roomCode)) {
+      socket.emit("quiz:actionError", { error: QUIZ_PERSISTENCE_ERROR });
+      return cb({ ok: false, error: QUIZ_PERSISTENCE_ERROR });
+    }
+    cb({ ok: true });
   });
 
-  socket.on("quiz:playAgain", () => {
+  socket.on("quiz:playAgain", (cb = () => {}) => {
     const roomCode = socket.data.quizRoomCode;
     const room = quizRooms[roomCode];
-    if (!room || room.host !== socket.data.quizPlayerId || room.phase !== "finished") return;
-    room.phase = "lobby";
-    room.questions = [];
-    room.results = null;
-    for (const p of Object.values(room.players)) {
-      p.submittedAt = null;
-      p.score = 0;
+    if (!room || room.host !== socket.data.quizPlayerId || room.phase !== "finished") return cb({ ok: false, error: "ロビーに戻れませんでした" });
+    const saved = persistQuizMutation(roomCode, () => {
+      room.phase = "lobby";
+      room.questions = [];
+      room.results = null;
+      for (const p of Object.values(room.players)) {
+        p.submittedAt = null;
+        p.score = 0;
+      }
+    });
+    if (!saved) {
+      socket.emit("quiz:actionError", { error: QUIZ_PERSISTENCE_ERROR });
+      return cb({ ok: false, error: QUIZ_PERSISTENCE_ERROR });
     }
-    persistQuizRooms();
+    cb({ ok: true });
     io.to(roomCode).emit("quiz:backToLobby");
     quizPlayersUpdate(roomCode);
   });
 
-  socket.on("quiz:leave", () => {
+  socket.on("quiz:leave", (payload, acknowledgement) => {
+    const cb = typeof payload === "function"
+      ? payload
+      : (typeof acknowledgement === "function" ? acknowledgement : () => {});
     const roomCode = socket.data.quizRoomCode;
     const playerId = socket.data.quizPlayerId;
+    if (!roomCode || !playerId) return cb({ ok: true });
+    const result = quizFinalizePlayerLeave(roomCode, playerId);
+    if (!result.ok) return cb(result);
     socket.data.quizRoomCode = null;
     socket.data.quizPlayerId = null;
-    if (!roomCode || !playerId) return;
-    quizFinalizePlayerLeave(roomCode, playerId);
+    cb({ ok: true });
+    if (result.wasHost) socket.to(roomCode).emit("quiz:roomClosed");
+    socket.leave(roomCode);
   });
 
-  function quizJoin(sock, roomCode, name, cb) {
-    const room = quizRooms[roomCode];
+  function quizJoin(sock, roomCode, name, cb, newRoom = null) {
+    const room = newRoom || quizRooms[roomCode];
     const id = makeQuizPlayerId(room);
+    const saved = persistQuizMutation(roomCode, () => {
+      if (newRoom) quizRooms[roomCode] = room;
+      room.players[id] = {
+        name: String(name || "名無し").slice(0, 12),
+        sessionToken: makeQuizSessionToken(),
+        submittedAt: null,
+        score: 0,
+        leaveTimer: null,
+      };
+      if (!room.host) room.host = id;
+    });
+    if (!saved) return cb({ error: QUIZ_PERSISTENCE_ERROR });
     sock.join(roomCode);
     sock.data.quizRoomCode = roomCode;
     sock.data.quizPlayerId = id;
-    room.players[id] = {
-      name: String(name || "名無し").slice(0, 12),
-      sessionToken: makeQuizSessionToken(),
-      submittedAt: null,
-      score: 0,
-      leaveTimer: null,
-    };
-    if (!room.host) room.host = id;
-    persistQuizRooms();
     const seriesNames = WORDTESTS[room.category].series.map((s) => s.name);
     cb({
       roomCode,
