@@ -2,7 +2,7 @@ const express = require("express");
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
-const { randomBytes, timingSafeEqual } = require("crypto");
+const { createHash, createHmac, randomBytes, timingSafeEqual } = require("crypto");
 const { Server } = require("socket.io");
 const QUESTIONS = require("./questions");
 const SENTENCES = require("./sentences");
@@ -734,6 +734,13 @@ function loadQuizState() {
 const quizState = loadQuizState();
 const quizRooms = quizState.rooms; // roomCode -> room state
 const resultHistory = quizState.resultHistory; // yyyy-mm-dd:category -> daily result
+const RESULTS_ADMIN_PASSWORD = process.env.RESULTS_ADMIN_PASSWORD || "";
+const RESULTS_HISTORY_COOKIE = "results_history_session";
+const RESULTS_HISTORY_SESSION_MS = 12 * 60 * 60 * 1000;
+const RESULTS_LOGIN_FAILURE_LIMIT = 5;
+const RESULTS_LOGIN_FAILURE_WINDOW_MS = 15 * 60 * 1000;
+const RESULTS_LOGIN_FAILURE_MAX_IPS = 2_048;
+const resultsLoginFailures = new Map();
 
 function persistQuizState() {
   if (!QUIZ_ROOM_STATE_FILE) {
@@ -814,6 +821,183 @@ function persistQuizMutation(roomCode, mutate) {
   Object.assign(resultHistory, before.resultHistory);
   return false;
 }
+
+function resultsPasswordMatches(provided) {
+  if (typeof provided !== "string") return false;
+  const expectedHash = createHash("sha256").update(RESULTS_ADMIN_PASSWORD).digest();
+  const providedHash = createHash("sha256").update(provided).digest();
+  return timingSafeEqual(expectedHash, providedHash);
+}
+
+function resultsCookieSignature(payload) {
+  const key = createHmac("sha256", RESULTS_ADMIN_PASSWORD)
+    .update("results-history-session-v1")
+    .digest();
+  return createHmac("sha256", key).update(payload).digest("base64url");
+}
+
+function makeResultsSessionToken(expiresAt) {
+  const payload = `${expiresAt}.${randomBytes(16).toString("base64url")}`;
+  return `${payload}.${resultsCookieSignature(payload)}`;
+}
+
+function resultsSessionTokenIsValid(token) {
+  if (typeof token !== "string") return false;
+  const parts = token.split(".");
+  if (parts.length !== 3 || !/^\d+$/.test(parts[0]) || !parts[1] || !parts[2]) return false;
+  const expiresAt = Number(parts[0]);
+  if (!Number.isSafeInteger(expiresAt) || expiresAt <= Date.now()) return false;
+  const payload = `${parts[0]}.${parts[1]}`;
+  const expected = Buffer.from(resultsCookieSignature(payload));
+  const provided = Buffer.from(parts[2]);
+  return expected.length === provided.length && timingSafeEqual(expected, provided);
+}
+
+function requestCookie(req, name) {
+  for (const part of String(req.headers.cookie || "").split(";")) {
+    const separator = part.indexOf("=");
+    if (separator === -1 || part.slice(0, separator).trim() !== name) continue;
+    return part.slice(separator + 1).trim();
+  }
+  return "";
+}
+
+function resultsCookieAttributes() {
+  const attributes = ["HttpOnly", "SameSite=Strict", "Path=/"];
+  if (IS_RAILWAY_RUNTIME || process.env.NODE_ENV === "production") attributes.push("Secure");
+  return attributes;
+}
+
+function setResultsSessionCookie(res) {
+  const expiresAt = Date.now() + RESULTS_HISTORY_SESSION_MS;
+  res.setHeader("Set-Cookie", [
+    `${RESULTS_HISTORY_COOKIE}=${makeResultsSessionToken(expiresAt)}`,
+    `Max-Age=${RESULTS_HISTORY_SESSION_MS / 1000}`,
+    `Expires=${new Date(expiresAt).toUTCString()}`,
+    ...resultsCookieAttributes(),
+  ].join("; "));
+}
+
+function clearResultsSessionCookie(res) {
+  res.setHeader("Set-Cookie", [
+    `${RESULTS_HISTORY_COOKIE}=`,
+    "Max-Age=0",
+    "Expires=Thu, 01 Jan 1970 00:00:00 GMT",
+    ...resultsCookieAttributes(),
+  ].join("; "));
+}
+
+function cleanupResultsLoginFailures(now) {
+  for (const [ip, entry] of resultsLoginFailures) {
+    if (entry.resetAt <= now) resultsLoginFailures.delete(ip);
+  }
+  while (resultsLoginFailures.size > RESULTS_LOGIN_FAILURE_MAX_IPS) {
+    resultsLoginFailures.delete(resultsLoginFailures.keys().next().value);
+  }
+}
+
+function resultsLoginFailureState(ip, now) {
+  cleanupResultsLoginFailures(now);
+  return resultsLoginFailures.get(ip);
+}
+
+function recordResultsLoginFailure(ip, now) {
+  const current = resultsLoginFailures.get(ip);
+  const next = current && current.resetAt > now
+    ? { count: current.count + 1, resetAt: current.resetAt }
+    : { count: 1, resetAt: now + RESULTS_LOGIN_FAILURE_WINDOW_MS };
+  resultsLoginFailures.delete(ip);
+  if (resultsLoginFailures.size >= RESULTS_LOGIN_FAILURE_MAX_IPS) {
+    resultsLoginFailures.delete(resultsLoginFailures.keys().next().value);
+  }
+  resultsLoginFailures.set(ip, next);
+}
+
+function requireResultsHistoryAuth(req, res, next) {
+  const token = requestCookie(req, RESULTS_HISTORY_COOKIE);
+  if (!resultsSessionTokenIsValid(token)) return res.status(401).json({ error: "認証が必要です" });
+  next();
+}
+
+function validHistoryMonth(month) {
+  return /^\d{4}-(0[1-9]|1[0-2])$/.test(String(month || ""));
+}
+
+function validHistoryDate(date) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(date || ""));
+  if (!match) return false;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const value = new Date(Date.UTC(year, month - 1, day));
+  return value.getUTCFullYear() === year
+    && value.getUTCMonth() === month - 1
+    && value.getUTCDate() === day;
+}
+
+function sanitizedHistoryRecord(record) {
+  const participantCount = Number(record?.participantCount);
+  return {
+    date: String(record?.date || ""),
+    category: String(record?.category || ""),
+    setLabel: String(record?.setLabel || ""),
+    participantCount: Number.isFinite(participantCount) ? Math.max(0, Math.trunc(participantCount)) : 0,
+    perfectNames: Array.isArray(record?.perfectNames) ? record.perfectNames.map((name) => String(name)) : [],
+    updatedAt: String(record?.updatedAt || ""),
+  };
+}
+
+app.use("/api/results-history", (_req, res, next) => {
+  res.set("Cache-Control", "no-store");
+  if (!RESULTS_ADMIN_PASSWORD) {
+    return res.status(503).json({ error: "結果履歴の認証が設定されていません" });
+  }
+  next();
+});
+
+app.post("/api/results-history/login", express.json({ limit: "1kb" }), (req, res) => {
+  const now = Date.now();
+  const ip = req.ip || req.socket.remoteAddress || "unknown";
+  const failure = resultsLoginFailureState(ip, now);
+  if (failure && failure.count >= RESULTS_LOGIN_FAILURE_LIMIT) {
+    return res.status(429).json({ error: "ログイン試行が多すぎます。しばらくしてから再度お試しください" });
+  }
+  if (!resultsPasswordMatches(req.body?.password)) {
+    recordResultsLoginFailure(ip, now);
+    return res.status(401).json({ error: "認証に失敗しました" });
+  }
+  resultsLoginFailures.delete(ip);
+  setResultsSessionCookie(res);
+  res.json({ ok: true });
+});
+
+app.post("/api/results-history/logout", (_req, res) => {
+  clearResultsSessionCookie(res);
+  res.json({ ok: true });
+});
+
+app.get("/api/results-history", requireResultsHistoryAuth, (req, res) => {
+  const month = String(req.query.month || "");
+  if (!validHistoryMonth(month)) return res.status(400).json({ error: "monthはYYYY-MM形式で指定してください" });
+  const records = Object.values(resultHistory)
+    .filter((record) => record && String(record.date || "").startsWith(`${month}-`))
+    .map(sanitizedHistoryRecord)
+    .sort((a, b) => a.date.localeCompare(b.date) || a.category.localeCompare(b.category));
+  res.json(records);
+});
+
+app.delete("/api/results-history/:date/:category", requireResultsHistoryAuth, (req, res) => {
+  const { date, category } = req.params;
+  if (!validHistoryDate(date) || !QUIZ_CATEGORIES.includes(category)) {
+    return res.status(400).json({ error: "日付またはコースが不正です" });
+  }
+  const key = `${date}:${category}`;
+  if (!Object.hasOwn(resultHistory, key)) return res.status(404).json({ error: "記録が見つかりません" });
+  if (!persistQuizMutation(null, () => { delete resultHistory[key]; })) {
+    return res.status(500).json({ error: QUIZ_PERSISTENCE_ERROR });
+  }
+  res.json({ ok: true });
+});
 
 if (QUIZ_ROOM_STATE_FILE && !quizPersistenceHealth.restoreFailed) persistQuizState();
 
