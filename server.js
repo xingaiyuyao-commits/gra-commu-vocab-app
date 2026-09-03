@@ -2,6 +2,7 @@ const express = require("express");
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+const { isIP, SocketAddress } = require("net");
 const { createHash, createHmac, randomBytes, timingSafeEqual } = require("crypto");
 const { Server } = require("socket.io");
 const QUESTIONS = require("./questions");
@@ -638,7 +639,6 @@ const IS_RAILWAY_RUNTIME = Boolean(
   || process.env.RAILWAY_SERVICE_ID
   || process.env.RAILWAY_PROJECT_ID
 );
-if (IS_RAILWAY_RUNTIME) app.set("trust proxy", 1);
 const QUIZ_ROOM_PERSISTENCE_REQUIRED = Boolean(process.env.QUIZ_ROOM_STATE_FILE) || IS_RAILWAY_RUNTIME;
 const QUIZ_ROOM_STATE_FILE = process.env.QUIZ_ROOM_STATE_FILE
   || (fs.existsSync("/data") ? "/data/quiz-rooms.json" : null);
@@ -914,6 +914,34 @@ function recordResultsLoginFailure(ip, now) {
   resultsLoginFailures.set(ip, next);
 }
 
+function normalizeResultsHistoryIp(value) {
+  const candidate = typeof value === "string" ? value.trim() : "";
+  if (!candidate || candidate.includes("%")) return "";
+  const version = isIP(candidate);
+  if (!version) return "";
+  try {
+    const normalized = new SocketAddress({
+      address: candidate,
+      family: version === 4 ? "ipv4" : "ipv6",
+      port: 0,
+    }).address.toLowerCase();
+    return normalized;
+  } catch {
+    return "";
+  }
+}
+
+function resultsHistoryClientIp(req) {
+  const socketIp = normalizeResultsHistoryIp(req.socket?.remoteAddress);
+  if (!IS_RAILWAY_RUNTIME) {
+    return normalizeResultsHistoryIp(req.ip) || socketIp || "unknown";
+  }
+  const forwardedHeader = req.headers["x-forwarded-for"];
+  const forwardedValue = Array.isArray(forwardedHeader) ? forwardedHeader[0] : forwardedHeader;
+  const leftmostIp = String(forwardedValue || "").split(",", 1)[0].trim();
+  return normalizeResultsHistoryIp(leftmostIp) || socketIp || "unknown";
+}
+
 function requireResultsHistoryAuth(req, res, next) {
   const token = requestCookie(req, RESULTS_HISTORY_COOKIE);
   if (!resultsSessionTokenIsValid(token)) return res.status(401).json({ error: "認証が必要です" });
@@ -958,7 +986,7 @@ app.use("/api/results-history", (_req, res, next) => {
 
 app.post("/api/results-history/login", express.json({ limit: "1kb" }), (req, res) => {
   const now = Date.now();
-  const ip = req.ip || req.socket.remoteAddress || "unknown";
+  const ip = resultsHistoryClientIp(req);
   const failure = resultsLoginFailureState(ip, now);
   if (failure && failure.count >= RESULTS_LOGIN_FAILURE_LIMIT) {
     return res.status(429).json({ error: "ログイン試行が多すぎます。しばらくしてから再度お試しください" });
