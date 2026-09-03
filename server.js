@@ -651,34 +651,68 @@ if (QUIZ_ROOM_PERSISTENCE_REQUIRED && !QUIZ_ROOM_STATE_FILE) {
   console.error("quiz room persistence unavailable: persistent volume is not mounted");
 }
 
+function sanitizeRestoredQuizResults(results, roomIsTrial) {
+  if (!results || typeof results !== "object") return null;
+  const perfect = Array.isArray(results.perfect)
+    ? results.perfect.filter((entry) => entry && typeof entry === "object").map((entry) => ({
+      id: entry.id,
+      name: entry.name,
+    }))
+    : [];
+  const others = Array.isArray(results.others)
+    ? results.others.filter((entry) => entry && typeof entry === "object").map((entry) => ({
+      id: entry.id,
+      name: entry.name,
+      score: entry.score,
+      total: entry.total,
+    }))
+    : [];
+  return {
+    setLabel: String(results.setLabel || ""),
+    perfect,
+    others,
+    review: Array.isArray(results.review) ? results.review : [],
+    mistakes: Array.isArray(results.mistakes) ? results.mistakes : [],
+    isTrial: results.isTrial === true || roomIsTrial === true,
+  };
+}
+
 function loadQuizState() {
   if (!QUIZ_ROOM_STATE_FILE) return { rooms: {}, resultHistory: {} };
   try {
     const saved = JSON.parse(fs.readFileSync(QUIZ_ROOM_STATE_FILE, "utf8"));
+    const isVersionOne = saved.version === 1;
     const restored = {};
     for (const [code, room] of Object.entries(saved.rooms || {})) {
       if (!/^[A-Z2-9]{4}$/.test(code) || !room || !QUIZ_CATEGORIES.includes(room.category)) continue;
       if (!room.players || typeof room.players !== "object" || !room.players[room.host]) continue;
+      const phase = ["lobby", "playing", "finished"].includes(room.phase) ? room.phase : "lobby";
+      const isTrial = room.isTrial === true;
       restored[code] = {
         category: room.category,
         host: room.host,
-        phase: ["lobby", "playing", "finished"].includes(room.phase) ? room.phase : "lobby",
-        players: Object.fromEntries(Object.entries(room.players).map(([id, player]) => [id, {
-          name: String(player.name || "名無し").slice(0, 12),
-          sessionToken: String(player.sessionToken || ""),
-          submittedAt: player.submittedAt ?? null,
-          score: Number(player.score) || 0,
-          wrongQuestionIndexes: Array.isArray(player.wrongQuestionIndexes)
-            ? player.wrongQuestionIndexes.filter((index) => Number.isInteger(index) && index >= 0)
-            : [],
-          leaveTimer: null,
-        }])),
+        phase,
+        players: Object.fromEntries(Object.entries(room.players).map(([id, player]) => {
+          const resetLegacySubmission = isVersionOne && phase === "playing" && id !== String(room.host);
+          return [id, {
+            name: String(player.name || "名無し").slice(0, 12),
+            sessionToken: String(player.sessionToken || ""),
+            submittedAt: resetLegacySubmission ? null : (player.submittedAt ?? null),
+            score: resetLegacySubmission ? 0 : (Number(player.score) || 0),
+            wrongQuestionIndexes: resetLegacySubmission
+              ? []
+              : (Array.isArray(player.wrongQuestionIndexes)
+                ? player.wrongQuestionIndexes.filter((index) => Number.isInteger(index) && index >= 0)
+                : []),
+            leaveTimer: null,
+          }];
+        })),
         questions: Array.isArray(room.questions) ? room.questions : [],
         startedAt: Number(room.startedAt) || 0,
         endsAt: Number(room.endsAt) || 0,
         setLabel: String(room.setLabel || ""),
-        isTrial: room.isTrial === true,
-        results: room.results || null,
+        isTrial,
+        results: sanitizeRestoredQuizResults(room.results, isTrial),
         timeoutHandle: null,
       };
     }

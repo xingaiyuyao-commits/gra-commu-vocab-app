@@ -103,15 +103,6 @@ function emitWithoutPayloadWithAck(socket, event) {
   });
 }
 
-function tokyoDate() {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Tokyo",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(new Date());
-}
-
 function fixedQuestions() {
   return [
     { sentence: "Say ___.", answer: "alpha", base: "alpha", hint: "a____", ja: "アルファ", sentenceJa: "アルファと言う。" },
@@ -187,20 +178,126 @@ test("version 1のルームを履歴なしのversion 2へ移行して復帰で�
   assert.equal(migrated.rooms.ABCD.players.host.name, "ホスト");
 });
 
+test("version 1の進行中ルームは提出状態を安全にリセットし、期限切れなら全問誤答で確定する", async (t) => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-v1-playing-"));
+  const stateFile = path.join(tempDir, "quiz-rooms.json");
+  fs.writeFileSync(stateFile, JSON.stringify({
+    version: 1,
+    rooms: {
+      ABCD: playingRoom({
+        players: {
+          host: player("ホスト", "host-token"),
+          participant: player("参加者", "participant-token", {
+            submittedAt: Date.now() - 500,
+            score: 2,
+            wrongQuestionIndexes: undefined,
+          }),
+        },
+      }),
+      EFGH: {
+        ...playingRoom({
+          players: {
+            host: player("期限切れホスト", "expired-host-token"),
+            participant: player("期限切れ参加者", "expired-participant-token", {
+              submittedAt: Date.now() - 500,
+              score: 2,
+              wrongQuestionIndexes: undefined,
+            }),
+          },
+        }),
+        endsAt: Date.now() - 1_000,
+      },
+    },
+  }));
+
+  const { child, baseUrl } = await startServer(stateFile);
+  const participant = await connect(baseUrl);
+  const expiredParticipant = await connect(baseUrl);
+  t.after(async () => {
+    participant.disconnect();
+    expiredParticipant.disconnect();
+    await stopServer(child);
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  const futureState = await rejoin(participant, "ABCD", "participant", "participant-token");
+  assert.equal(futureState.ok, true);
+  assert.equal(futureState.submitted, false, "誤答番号を復元できない旧提出は再提出可能に戻す");
+
+  await delay(100);
+  const expiredState = await rejoin(expiredParticipant, "EFGH", "participant", "expired-participant-token");
+  assert.equal(expiredState.ok, true);
+  assert.equal(expiredState.submitted, true, "期限切れの旧提出はタイマー復元後に0点で確定する");
+
+  const migrated = JSON.parse(fs.readFileSync(stateFile, "utf8"));
+  assert.equal(migrated.rooms.ABCD.players.participant.submittedAt, null);
+  assert.equal(migrated.rooms.ABCD.players.participant.score, 0);
+  assert.deepEqual(migrated.rooms.ABCD.players.participant.wrongQuestionIndexes, []);
+  assert.deepEqual(
+    migrated.rooms.EFGH.players.participant.wrongQuestionIndexes,
+    [0, 1, 2, 3],
+    "期限切れの参加者は全問を誤答として履歴集計できる"
+  );
+});
+
+test("version 1の完了結果から回答時間を除き、新しい結果形を復元する", async (t) => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-v1-finished-"));
+  const stateFile = path.join(tempDir, "quiz-rooms.json");
+  const review = fixedQuestions().map(({ sentence, answer, ja, sentenceJa }) => ({ sentence, answer, ja, sentenceJa }));
+  const mistakes = [{ index: 1, answer: "bravo", ja: "ブラボー", count: 1 }];
+  fs.writeFileSync(stateFile, JSON.stringify({
+    version: 1,
+    rooms: {
+      ABCD: {
+        ...playingRoom({
+          setLabel: "Clacel 体験会",
+          isTrial: true,
+          players: {
+            host: player("ホスト", "host-token"),
+            perfect: player("満点者", "perfect-token", { submittedAt: Date.now() - 100, score: 4 }),
+            other: player("参加者", "other-token", { submittedAt: Date.now() - 50, score: 3 }),
+          },
+        }),
+        phase: "finished",
+        results: {
+          setLabel: "Clacel 体験会",
+          perfect: [{ id: "perfect", name: "満点者", timeMs: 900 }],
+          others: [{ id: "other", name: "参加者", score: 3, total: 4, timeMs: 950 }],
+          review,
+          mistakes,
+          isTrial: true,
+        },
+      },
+    },
+  }));
+
+  const { child, baseUrl } = await startServer(stateFile);
+  const host = await connect(baseUrl);
+  t.after(async () => {
+    host.disconnect();
+    await stopServer(child);
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  const restored = await rejoin(host, "ABCD", "host", "host-token");
+  assert.deepEqual(restored.results, {
+    setLabel: "Clacel 体験会",
+    perfect: [{ id: "perfect", name: "満点者" }],
+    others: [{ id: "other", name: "参加者", score: 3, total: 4 }],
+    review,
+    mistakes,
+    isTrial: true,
+  });
+  const migrated = JSON.parse(fs.readFileSync(stateFile, "utf8"));
+  assert.deepEqual(migrated.rooms.ABCD.results, restored.results, "移行後の保存データにも回答時間を残さない");
+});
+
 test("結果確定は同日同コースを置換し、別コースとホスト退出後の履歴を再起動後も保持する", async (t) => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-history-"));
   const stateFile = path.join(tempDir, "quiz-rooms.json");
-  const date = tokyoDate();
-  const oldClacel = {
-    date,
-    category: "clacel",
-    setLabel: "Clacel 古い結果",
-    participantCount: 99,
-    perfectNames: ["古い満点者"],
-    updatedAt: "2026-09-01T00:00:00.000Z",
-  };
+  const toeicKey = "2026-01-01:toeic";
   const toeic = {
-    date,
+    date: "2026-01-01",
     category: "toeic",
     setLabel: "TOEIC Day 1",
     participantCount: 8,
@@ -218,10 +315,20 @@ test("結果確定は同日同コースを置換し、別コースとホスト�
           missB: player("Miss B", "miss-b-token"),
         },
       }),
+      EFGH: playingRoom({
+        setLabel: "Clacel Day 2",
+        players: {
+          host: player("別ホスト", "second-host-token"),
+          replacement: player("Replacement", "replacement-token", {
+            submittedAt: Date.now() - 100,
+            score: 4,
+            wrongQuestionIndexes: [],
+          }),
+        },
+      }),
     },
     resultHistory: {
-      [`${date}:clacel`]: oldClacel,
-      [`${date}:toeic`]: toeic,
+      [toeicKey]: toeic,
     },
   }));
 
@@ -239,11 +346,15 @@ test("結果確定は同日同コースを置換し、別コースとホスト�
   const perfect = await connect(first.baseUrl);
   const missA = await connect(first.baseUrl);
   const missB = await connect(first.baseUrl);
-  sockets.push(host, perfect, missA, missB);
+  const secondHost = await connect(first.baseUrl);
+  const replacement = await connect(first.baseUrl);
+  sockets.push(host, perfect, missA, missB, secondHost, replacement);
   assert.equal((await rejoin(host, "ABCD", "host", "host-token")).ok, true);
   assert.equal((await rejoin(perfect, "ABCD", "perfect", "perfect-token")).ok, true);
   assert.equal((await rejoin(missA, "ABCD", "missA", "miss-a-token")).ok, true);
   assert.equal((await rejoin(missB, "ABCD", "missB", "miss-b-token")).ok, true);
+  assert.equal((await rejoin(secondHost, "EFGH", "host", "second-host-token")).ok, true);
+  assert.equal((await rejoin(replacement, "EFGH", "replacement", "replacement-token")).ok, true);
 
   assert.deepEqual(await emitWithAck(perfect, "quiz:submit", { answers: ["alpha", "bravo", "charlie", "delta"] }), { ok: true });
   assert.deepEqual(await emitWithAck(missA, "quiz:submit", { answers: ["wrong", "wrong", "wrong", "delta"] }), { ok: true });
@@ -270,8 +381,13 @@ test("結果確定は同日同コースを置換し、別コースとホスト�
 
   const finalized = JSON.parse(fs.readFileSync(stateFile, "utf8"));
   assert.equal(finalized.version, 2);
-  assert.deepEqual(finalized.resultHistory[`${date}:toeic`], toeic, "別コースの同日結果を残す");
-  const current = finalized.resultHistory[`${date}:clacel`];
+  assert.deepEqual(finalized.resultHistory[toeicKey], toeic, "別コースの結果を残す");
+  const clacelKeys = Object.keys(finalized.resultHistory).filter((key) => key.endsWith(":clacel"));
+  assert.equal(clacelKeys.length, 1);
+  const historyKey = clacelKeys[0];
+  const date = historyKey.slice(0, -":clacel".length);
+  const current = finalized.resultHistory[historyKey];
+  assert.match(date, /^\d{4}-\d{2}-\d{2}$/);
   assert.equal(current.date, date);
   assert.equal(current.category, "clacel");
   assert.equal(current.setLabel, "Clacel Day 1");
@@ -281,15 +397,27 @@ test("結果確定は同日同コースを置換し、別コースとホスト�
   assert.equal(Object.hasOwn(current, "timeMs"), false);
   assert.equal(Object.hasOwn(current, "others"), false);
 
+  assert.deepEqual(await emitWithoutPayloadWithAck(secondHost, "quiz:revealResults"), { ok: true });
+  const afterReplacement = JSON.parse(fs.readFileSync(stateFile, "utf8"));
+  assert.equal(Object.keys(afterReplacement.resultHistory).filter((key) => key.endsWith(":clacel")).length, 1);
+  const replaced = afterReplacement.resultHistory[historyKey];
+  assert.equal(replaced.setLabel, "Clacel Day 2");
+  assert.equal(replaced.participantCount, 1);
+  assert.deepEqual(replaced.perfectNames, ["Replacement"]);
+
   assert.deepEqual(await emitWithAck(host, "quiz:leave", {}), { ok: true });
+  assert.deepEqual(await emitWithAck(secondHost, "quiz:leave", {}), { ok: true });
   const afterClose = JSON.parse(fs.readFileSync(stateFile, "utf8"));
   assert.equal(afterClose.rooms.ABCD, undefined);
-  assert.deepEqual(afterClose.resultHistory[`${date}:clacel`], current, "ホスト退出後も結果を残す");
+  assert.equal(afterClose.rooms.EFGH, undefined);
+  assert.deepEqual(afterClose.resultHistory[historyKey], replaced, "ホスト退出後も結果を残す");
 
   host.disconnect();
   perfect.disconnect();
   missA.disconnect();
   missB.disconnect();
+  secondHost.disconnect();
+  replacement.disconnect();
   await stopServer(first.child);
 
   const second = await startServer(stateFile);
@@ -297,8 +425,8 @@ test("結果確定は同日同コースを置換し、別コースとホスト�
   const restarted = JSON.parse(fs.readFileSync(stateFile, "utf8"));
   assert.equal(restarted.version, 2);
   assert.deepEqual(restarted.rooms, {});
-  assert.deepEqual(restarted.resultHistory[`${date}:clacel`], current);
-  assert.deepEqual(restarted.resultHistory[`${date}:toeic`], toeic);
+  assert.deepEqual(restarted.resultHistory[historyKey], replaced);
+  assert.deepEqual(restarted.resultHistory[toeicKey], toeic);
 });
 
 test("全員正解なら誤答上位を空配列で保存する", async (t) => {
@@ -342,9 +470,9 @@ test("結果保存失敗時はfinished状態と履歴更新を同時にロール
   const stateDir = path.join(tempDir, "state");
   const backupDir = path.join(tempDir, "state-backup");
   const stateFile = path.join(stateDir, "quiz-rooms.json");
-  const date = tokyoDate();
+  const historyKey = "2026-01-01:clacel";
   const oldHistory = {
-    date,
+    date: "2026-01-01",
     category: "clacel",
     setLabel: "Clacel 古い結果",
     participantCount: 4,
@@ -366,7 +494,7 @@ test("結果保存失敗時はfinished状態と履歴更新を同時にロール
         },
       }),
     },
-    resultHistory: { [`${date}:clacel`]: oldHistory },
+    resultHistory: { [historyKey]: oldHistory },
   }));
 
   const { child, baseUrl } = await startServer(stateFile);
@@ -393,7 +521,7 @@ test("結果保存失敗時はfinished状態と履歴更新を同時にロール
   const rolledBack = JSON.parse(fs.readFileSync(stateFile, "utf8"));
   assert.equal(rolledBack.rooms.ABCD.phase, "playing");
   assert.equal(rolledBack.rooms.ABCD.results, null);
-  assert.deepEqual(rolledBack.resultHistory[`${date}:clacel`], oldHistory);
+  assert.deepEqual(rolledBack.resultHistory, { [historyKey]: oldHistory });
 });
 
 test("Railway再起動後も、明示退出していないルームへ同じ端末から復帰できる", async (t) => {
