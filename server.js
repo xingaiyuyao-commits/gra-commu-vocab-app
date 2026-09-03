@@ -932,6 +932,15 @@ function tokyoDateKey(date) {
   return `${value.year}-${value.month}-${value.day}`;
 }
 
+function quizResultNow() {
+  const fixedIso = process.env.QUIZ_TEST_NOW_ISO;
+  if (fixedIso) {
+    const fixed = new Date(fixedIso);
+    if (!Number.isNaN(fixed.getTime())) return fixed;
+  }
+  return new Date();
+}
+
 // ホストの操作で結果発表を確定させる。参加者全員が提出済みであることを再確認してから発表する。
 function quizRevealResults(roomCode) {
   const room = quizRooms[roomCode];
@@ -970,7 +979,7 @@ function quizRevealResults(roomCode) {
       ja: room.questions[index].ja,
       count,
     }));
-  const now = new Date();
+  const now = quizResultNow();
   const date = tokyoDateKey(now);
   const saved = persistQuizMutation(roomCode, () => {
     room.phase = "finished";

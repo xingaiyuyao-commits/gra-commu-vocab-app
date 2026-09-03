@@ -22,13 +22,13 @@ function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function startServer(stateFile) {
+async function startServer(stateFile, envOverrides = {}) {
   const port = await reservePort();
   const baseUrl = `http://127.0.0.1:${port}`;
   let stderr = "";
   const child = spawn(process.execPath, ["server.js"], {
     cwd: path.join(__dirname, ".."),
-    env: { ...process.env, PORT: String(port), QUIZ_ROOM_STATE_FILE: stateFile },
+    env: { ...process.env, PORT: String(port), QUIZ_ROOM_STATE_FILE: stateFile, ...envOverrides },
     stdio: ["ignore", "ignore", "pipe"],
   });
   child.stderr.on("data", (chunk) => { stderr += chunk.toString(); });
@@ -295,6 +295,8 @@ test("version 1の完了結果から回答時間を除き、新しい結果形�
 test("結果確定は同日同コースを置換し、別コースとホスト退出後の履歴を再起動後も保持する", async (t) => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-history-"));
   const stateFile = path.join(tempDir, "quiz-rooms.json");
+  const fixedNow = "2040-12-31T15:00:00.000Z";
+  const historyKey = "2041-01-01:clacel";
   const toeicKey = "2026-01-01:toeic";
   const toeic = {
     date: "2026-01-01",
@@ -340,7 +342,7 @@ test("結果確定は同日同コースを置換し、別コースとホスト�
     fs.rmSync(tempDir, { recursive: true, force: true });
   });
 
-  const first = await startServer(stateFile);
+  const first = await startServer(stateFile, { QUIZ_TEST_NOW_ISO: fixedNow });
   children.push(first.child);
   const host = await connect(first.baseUrl);
   const perfect = await connect(first.baseUrl);
@@ -382,18 +384,14 @@ test("結果確定は同日同コースを置換し、別コースとホスト�
   const finalized = JSON.parse(fs.readFileSync(stateFile, "utf8"));
   assert.equal(finalized.version, 2);
   assert.deepEqual(finalized.resultHistory[toeicKey], toeic, "別コースの結果を残す");
-  const clacelKeys = Object.keys(finalized.resultHistory).filter((key) => key.endsWith(":clacel"));
-  assert.equal(clacelKeys.length, 1);
-  const historyKey = clacelKeys[0];
-  const date = historyKey.slice(0, -":clacel".length);
   const current = finalized.resultHistory[historyKey];
-  assert.match(date, /^\d{4}-\d{2}-\d{2}$/);
-  assert.equal(current.date, date);
+  assert.equal(Object.keys(finalized.resultHistory).filter((key) => key.endsWith(":clacel")).length, 1);
+  assert.equal(current.date, "2041-01-01");
   assert.equal(current.category, "clacel");
   assert.equal(current.setLabel, "Clacel Day 1");
   assert.equal(current.participantCount, 3);
   assert.deepEqual(current.perfectNames, ["Perfect"]);
-  assert.equal(typeof current.updatedAt, "string");
+  assert.equal(current.updatedAt, fixedNow);
   assert.equal(Object.hasOwn(current, "timeMs"), false);
   assert.equal(Object.hasOwn(current, "others"), false);
 
