@@ -933,13 +933,8 @@ function normalizeResultsHistoryIp(value) {
 
 function resultsHistoryClientIp(req) {
   const socketIp = normalizeResultsHistoryIp(req.socket?.remoteAddress);
-  if (!IS_RAILWAY_RUNTIME) {
-    return normalizeResultsHistoryIp(req.ip) || socketIp || "unknown";
-  }
-  const forwardedHeader = req.headers["x-forwarded-for"];
-  const forwardedValue = Array.isArray(forwardedHeader) ? forwardedHeader[0] : forwardedHeader;
-  const leftmostIp = String(forwardedValue || "").split(",", 1)[0].trim();
-  return normalizeResultsHistoryIp(leftmostIp) || socketIp || "unknown";
+  if (!IS_RAILWAY_RUNTIME) return socketIp || "unknown";
+  return normalizeResultsHistoryIp(req.headers["x-real-ip"]) || socketIp || "unknown";
 }
 
 function requireResultsHistoryAuth(req, res, next) {

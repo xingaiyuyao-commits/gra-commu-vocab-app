@@ -162,24 +162,26 @@ test("誤パスワードをIP単位で制限し、入力値を応答や永続状
   assert.equal(fs.readFileSync(stateFile, "utf8").includes(password), false);
 });
 
-test("非Railway環境ではX-Forwarded-Forを偽装しても失敗制限を回避できない", async (t) => {
+test("非Railway環境では両IPヘッダーを偽装しても失敗制限を回避できない", async (t) => {
   const password = "local-proxy-secret";
   const { baseUrl } = await startServer(t, { password });
 
   for (let attempt = 1; attempt <= 5; attempt++) {
     const request = jsonRequest("POST", { password: "wrong" });
     request.headers["X-Forwarded-For"] = `198.51.100.${attempt}`;
+    request.headers["X-Real-IP"] = `203.0.113.${attempt}`;
     const response = await fetch(`${baseUrl}/api/results-history/login`, request);
     assert.equal(response.status, 401, `attempt ${attempt}`);
   }
 
   const bypass = jsonRequest("POST", { password });
   bypass.headers["X-Forwarded-For"] = "203.0.113.200";
+  bypass.headers["X-Real-IP"] = "198.51.100.200";
   const limited = await fetch(`${baseUrl}/api/results-history/login`, bypass);
   assert.equal(limited.status, 429);
 });
 
-test("Railwayの可変長プロキシチェーンでは左端のクライアントIPごとに失敗制限を分離する", async (t) => {
+test("Railwayでは有効なX-Real-IPごとに失敗制限を分離する", async (t) => {
   const password = "railway-proxy-secret";
   const { baseUrl } = await startServer(t, {
     password,
@@ -188,24 +190,49 @@ test("Railwayの可変長プロキシチェーンでは左端のクライアン�
 
   for (let attempt = 1; attempt <= 5; attempt++) {
     const request = jsonRequest("POST", { password: "wrong" });
-    request.headers["X-Forwarded-For"] = "198.51.100.10, 192.0.2.250";
+    request.headers["X-Real-IP"] = "198.51.100.10";
+    request.headers["X-Forwarded-For"] = "192.0.2.250";
     const response = await fetch(`${baseUrl}/api/results-history/login`, request);
     assert.equal(response.status, 401, `client A attempt ${attempt}`);
   }
 
   const blockedRequest = jsonRequest("POST", { password });
-  blockedRequest.headers["X-Forwarded-For"] = "198.51.100.10, 192.0.2.250";
+  blockedRequest.headers["X-Real-IP"] = "198.51.100.10";
+  blockedRequest.headers["X-Forwarded-For"] = "192.0.2.250";
   const blocked = await fetch(`${baseUrl}/api/results-history/login`, blockedRequest);
   assert.equal(blocked.status, 429, "client A remains limited");
 
   const independentRequest = jsonRequest("POST", { password });
-  independentRequest.headers["X-Forwarded-For"] = "203.0.113.20, 192.0.2.250";
+  independentRequest.headers["X-Real-IP"] = "203.0.113.20";
+  independentRequest.headers["X-Forwarded-For"] = "192.0.2.250";
   const independent = await fetch(`${baseUrl}/api/results-history/login`, independentRequest);
   assert.equal(independent.status, 200, "client B has an independent bucket");
   assert.match(responseCookie(independent).setCookie, /;\s*Secure/i, "Railway cookie remains Secure");
 });
 
-test("Railwayの空または不正な転送IPは接続元へ集約して失敗制限を回避させない", async (t) => {
+test("RailwayではX-Forwarded-Forを変えても同じX-Real-IPの失敗制限を回避できない", async (t) => {
+  const password = "railway-ignore-xff-secret";
+  const { baseUrl } = await startServer(t, {
+    password,
+    envOverrides: { RAILWAY_ENVIRONMENT_ID: "railway-test" },
+  });
+
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    const request = jsonRequest("POST", { password: "wrong" });
+    request.headers["X-Real-IP"] = "198.51.100.50";
+    request.headers["X-Forwarded-For"] = `203.0.113.${attempt}, 192.0.2.250`;
+    const response = await fetch(`${baseUrl}/api/results-history/login`, request);
+    assert.equal(response.status, 401, `attempt ${attempt}`);
+  }
+
+  const bypass = jsonRequest("POST", { password });
+  bypass.headers["X-Real-IP"] = "198.51.100.50";
+  bypass.headers["X-Forwarded-For"] = "203.0.113.200, 192.0.2.250";
+  const limited = await fetch(`${baseUrl}/api/results-history/login`, bypass);
+  assert.equal(limited.status, 429);
+});
+
+test("Railwayの空または不正なX-Real-IPは接続元へ集約して失敗制限を回避させない", async (t) => {
   const password = "railway-invalid-proxy-secret";
   const { baseUrl } = await startServer(t, {
     password,
@@ -213,15 +240,17 @@ test("Railwayの空または不正な転送IPは接続元へ集約して失敗�
   });
   const malformedValues = [null, "", "not-an-ip", "999.999.999.999", "2001:db8:::bad"];
 
-  for (const [index, forwardedFor] of malformedValues.entries()) {
+  for (const [index, realIp] of malformedValues.entries()) {
     const request = jsonRequest("POST", { password: "wrong" });
-    if (forwardedFor !== null) request.headers["X-Forwarded-For"] = forwardedFor;
+    if (realIp !== null) request.headers["X-Real-IP"] = realIp;
+    request.headers["X-Forwarded-For"] = `203.0.113.${index + 1}`;
     const response = await fetch(`${baseUrl}/api/results-history/login`, request);
     assert.equal(response.status, 401, `malformed attempt ${index + 1}`);
   }
 
   const bypass = jsonRequest("POST", { password });
-  bypass.headers["X-Forwarded-For"] = "another-arbitrary-key";
+  bypass.headers["X-Real-IP"] = "another-arbitrary-key";
+  bypass.headers["X-Forwarded-For"] = "203.0.113.200";
   const limited = await fetch(`${baseUrl}/api/results-history/login`, bypass);
   assert.equal(limited.status, 429);
 });
@@ -242,13 +271,15 @@ test("Railwayの同じIPv6クライアント表記を正規化して同じ失敗
 
   for (const [index, clientIp] of equivalentClientIps.entries()) {
     const request = jsonRequest("POST", { password: "wrong" });
-    request.headers["X-Forwarded-For"] = `${clientIp}, 192.0.2.250`;
+    request.headers["X-Real-IP"] = clientIp;
+    request.headers["X-Forwarded-For"] = `203.0.113.${index + 1}`;
     const response = await fetch(`${baseUrl}/api/results-history/login`, request);
     assert.equal(response.status, 401, `IPv6 attempt ${index + 1}`);
   }
 
   const finalRequest = jsonRequest("POST", { password });
-  finalRequest.headers["X-Forwarded-For"] = "2001:db8::1, 192.0.2.250";
+  finalRequest.headers["X-Real-IP"] = "2001:db8::1";
+  finalRequest.headers["X-Forwarded-For"] = "203.0.113.200";
   const limited = await fetch(`${baseUrl}/api/results-history/login`, finalRequest);
   assert.equal(limited.status, 429);
 });
