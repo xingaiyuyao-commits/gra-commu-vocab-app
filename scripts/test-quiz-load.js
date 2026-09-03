@@ -212,6 +212,7 @@ async function runLoadTest(resources) {
   const resultsEvent = waitForEvent(host, "quiz:results");
   assert.deepEqual(await emitWithoutPayloadWithAck(host, "quiz:revealResults"), { ok: true });
   const results = await resultsEvent;
+  assert.equal(results.resultAt, FIXED_NOW);
   assert.equal(results.perfect.length, 1);
   assert.equal(results.perfect[0].name, "Load-001");
   assert.equal(results.others.length, 98);
@@ -223,6 +224,7 @@ async function runLoadTest(resources) {
 
   const saved = readState(resources.stateFile);
   assert.equal(saved.version, 2);
+  assert.equal(saved.rooms[created.roomCode].results.resultAt, FIXED_NOW);
   assert.deepEqual(saved.rooms[created.roomCode].results.mistakes, results.mistakes);
   assert.deepEqual(saved.resultHistory[HISTORY_KEY], {
     date: "2042-01-02",
@@ -233,15 +235,23 @@ async function runLoadTest(resources) {
     updatedAt: FIXED_NOW,
   });
 
+  assert.deepEqual(await emitWithAck(host, "quiz:leave", {}), { ok: true });
+  const afterRoomEnd = readState(resources.stateFile);
+  assert.equal(Object.hasOwn(afterRoomEnd.rooms, created.roomCode), false);
+  assert.deepEqual(afterRoomEnd.resultHistory[HISTORY_KEY], saved.resultHistory[HISTORY_KEY]);
+
   return {
     connections: { hosts: 1, participants: participants.length },
-    actions: { joined: participants.filter(Boolean).length, submitted, resultRevealed: true },
+    actions: { joined: participants.filter(Boolean).length, submitted, resultRevealed: true, roomEnded: true },
     topMistakes: results.mistakes,
     history: {
       stateVersion: saved.version,
       key: HISTORY_KEY,
       participantCount: saved.resultHistory[HISTORY_KEY].participantCount,
       perfectNames: saved.resultHistory[HISTORY_KEY].perfectNames,
+      roomRemoved: !Object.hasOwn(afterRoomEnd.rooms, created.roomCode),
+      retainedAfterRoomEnd: JSON.stringify(afterRoomEnd.resultHistory[HISTORY_KEY])
+        === JSON.stringify(saved.resultHistory[HISTORY_KEY]),
     },
   };
 }

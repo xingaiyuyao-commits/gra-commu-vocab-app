@@ -90,7 +90,7 @@ test("週間復習の件数専用ヘルパーは現在週の語数だけを数�
   assert.equal(countWeeklyMistakes(raw, new Date("2026-09-13T19:30:00+09:00")), 0);
 });
 
-test("週間復習は不正な記録または単語を文書ごと拒否し、件数も0にする", () => {
+test("週間復習の完全読込は不正な記録または単語を文書ごと拒否する", () => {
   const now = new Date("2026-09-08T19:30:00+09:00");
   const validWord = {
     answer: "drink", altAnswers: [], ja: "飲む", sentence: "I ___ tea.", sentenceJa: "私はお茶を飲む。",
@@ -121,7 +121,55 @@ test("週間復習は不正な記録または単語を文書ごと拒否し、�
   for (const document of documents) {
     const raw = JSON.stringify(document);
     assert.deepEqual(readWeeklyMistakes(raw, now), { weekId: "2026-09-06", records: [] });
-    assert.equal(countWeeklyMistakes(raw, now), 0);
+  }
+});
+
+test("週間復習の件数読込は記録メタデータと語数だけを確認し、単語本文へ触れない", () => {
+  const now = new Date("2026-09-08T19:30:00+09:00");
+  const unreadableWord = new Proxy({}, {
+    get() { throw new Error("startup count accessed a word body"); },
+  });
+  const document = {
+    weekId: "2026-09-06",
+    records: [{
+      at: "2026-09-07T10:30:00.000Z",
+      category: "clacel",
+      setLabel: "Day 2",
+      words: [unreadableWord],
+    }],
+  };
+
+  assert.equal(countWeeklyMistakes(document, now), 1);
+  assert.equal(countWeeklyMistakes({ ...document, records: [{ ...document.records[0], words: "bad" }] }, now), 0);
+  assert.equal(countWeeklyMistakes({
+    ...document,
+    records: [{ ...document.records[0], category: "unknown" }],
+  }, now), 0);
+  assert.equal(countWeeklyMistakes({
+    ...document,
+    records: [{ ...document.records[0], at: "not-a-timestamp" }],
+  }, now), 0);
+  assert.equal(countWeeklyMistakes({
+    ...document,
+    records: [{ ...document.records[0], words: [{ answer: "" }] }],
+  }, now), 1, "件数表示では単語本文の完全検証を行わない");
+});
+
+test("週間復習は9月13日19時30分の直前の結果を次週へ入れず、ちょうどと直後だけを受理する", () => {
+  const now = new Date("2026-09-13T19:31:00+09:00");
+  const word = { answer: "keep", altAnswers: [], ja: "保つ", sentence: "I ___ it.", sentenceJa: "私はそれを保つ。" };
+  const cases = [
+    { at: "2026-09-13T10:29:59.999Z", expected: 0 },
+    { at: "2026-09-13T10:30:00.000Z", expected: 1 },
+    { at: "2026-09-13T10:30:00.001Z", expected: 1 },
+  ];
+
+  for (const { at, expected } of cases) {
+    const record = { at, category: "clacel", setLabel: "Day 1", words: [word] };
+    const raw = JSON.stringify({ weekId: "2026-09-13", records: [record] });
+    assert.equal(readWeeklyMistakes(raw, now).records.length, expected, at);
+    assert.equal(countWeeklyMistakes(raw, now), expected, at);
+    assert.equal(writeWeeklyMistakeRecord(null, record, now).records.length, expected, at);
   }
 });
 

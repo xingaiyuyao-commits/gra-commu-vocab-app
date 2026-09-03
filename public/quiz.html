@@ -174,6 +174,8 @@
     margin-bottom: 6px; font-size: .95rem;
   }
   .rank-list .me { outline: 2px solid var(--primary); }
+  .mh-mistake-meaning, .mh-mistake-count { display: block; }
+  .mh-mistake-count { margin-top: 3px; color: var(--muted-foreground); }
   .review-item { padding: 14px 0; border-bottom: 1px solid var(--border); font-size: .95rem; line-height: 1.6; }
   .review-item:last-child { border-bottom: none; }
   /* 提出確認: 未回答と提出ボタンを先に置き、回答済みは畳む */
@@ -387,7 +389,7 @@
     </div>
     <div class="card" id="weekly-review-entry" hidden>
       <button type="button" id="btn-weekly-review"></button>
-      <p class="weekly-review-note">同じ端末・同じブラウザでのみ利用できます。次週のDay 1 19:30を過ぎると期限切れになります。</p>
+      <p class="weekly-review-note">同じ端末・同じブラウザでのみ利用できます。次週のDay 1 19:30を過ぎると期限切れになります。ブラウザデータを削除した場合や、シークレット／プライベートモードでは復元できません。</p>
     </div>
     <button class="leave" onclick="leaveRoom(false)">← ゲーム選択に戻る</button>
   </div>
@@ -717,6 +719,7 @@
   }
 
   const WEEKLY_MISTAKE_KEY = "oshQuizWeeklyMistakesV1";
+  try { localStorage.removeItem("quizMistakeHistory"); } catch { /* 旧形式は移行せず削除する */ }
 
   function loadWeeklyMistakes(now = new Date()) {
     try {
@@ -1016,7 +1019,7 @@
     const topMistakes = mistakes.slice(0, 3);
     $(`mh-${category}-mistake-section`).hidden = topMistakes.length === 0;
     $(`mh-${category}-mistakes`).innerHTML = topMistakes.map((item) =>
-      `<li><span>${escapeHtml(item.answer)}<br><small>${escapeHtml(item.ja)}</small><small>${Number(item.count) || 0}人が間違えました</small></span></li>`
+      `<li><span>${escapeHtml(item.answer)}<small class="mh-mistake-meaning">${escapeHtml(item.ja)}</small><small class="mh-mistake-count">${Number(item.count) || 0}人が間違えました</small></span></li>`
     ).join("");
     mhShow(category, "results");
   }
@@ -1384,7 +1387,7 @@
   });
 
   // --- 結果 ---
-  function renderResults({ setLabel, perfect, review, isTrial = false }) {
+  function renderResults({ resultAt, setLabel, perfect, review, isTrial = false }) {
     clearQuizTimer();
     clearWaitingTimer();
     clearPendingSubmission();
@@ -1449,7 +1452,7 @@
     // 正式回の誤答だけを、そのプロジェクト週の間この端末に残す
     if (hasWrong && !isTrial) {
       saveWeeklyMistakeRecord({
-        at: new Date().toISOString(),
+        at: resultAt,
         category: selectedCategory || "",
         setLabel: setLabel || currentSetLabel || "",
         words: wrongReviews.map(({ r }) => ({

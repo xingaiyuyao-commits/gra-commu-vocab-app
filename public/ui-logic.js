@@ -71,20 +71,26 @@
     );
   }
 
-  function isValidWeeklyRecord(record) {
+  function timestampBelongsToWeek(value, week) {
+    if (!isIsoTimestamp(value) || !week) return false;
+    const timestamp = Date.parse(value);
+    return timestamp >= week.startsAt && timestamp < week.endsAt;
+  }
+
+  function isValidWeeklyRecord(record, week, validateWords = true) {
     return Boolean(
       record
       && typeof record === "object"
       && !Array.isArray(record)
-      && isIsoTimestamp(record.at)
+      && timestampBelongsToWeek(record.at, week)
       && WEEKLY_CATEGORIES.has(record.category)
       && isNonemptyString(record.setLabel)
       && Array.isArray(record.words)
-      && record.words.every(isValidWeeklyWord)
+      && (!validateWords || record.words.every(isValidWeeklyWord))
     );
   }
 
-  function parseWeeklyDocument(raw, week) {
+  function parseWeeklyDocument(raw, week, validateWords = true) {
     let parsed;
     try {
       parsed = typeof raw === "string" ? JSON.parse(raw) : raw;
@@ -93,7 +99,7 @@
     }
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)
       || parsed.weekId !== week.id || !Array.isArray(parsed.records)
-      || !parsed.records.every(isValidWeeklyRecord)) {
+      || !parsed.records.every((record) => isValidWeeklyRecord(record, week, validateWords))) {
       return null;
     }
     return parsed;
@@ -110,8 +116,8 @@
     };
   }
 
-  function normalizeWeeklyRecord(record) {
-    if (!isValidWeeklyRecord(record)) return null;
+  function normalizeWeeklyRecord(record, week) {
+    if (!isValidWeeklyRecord(record, week)) return null;
     return {
       at: record.at,
       category: record.category,
@@ -139,7 +145,7 @@
   function countWeeklyMistakes(raw, date) {
     const week = getProjectWeek(date);
     if (!week) return 0;
-    const parsed = parseWeeklyDocument(raw, week);
+    const parsed = parseWeeklyDocument(raw, week, false);
     if (!parsed) return 0;
     let count = 0;
     for (const record of parsed.records) count += record.words.length;
@@ -151,15 +157,16 @@
     if (!week) return emptyWeeklyMistakes(week);
     const parsed = parseWeeklyDocument(raw, week);
     if (!parsed) return emptyWeeklyMistakes(week);
-    const records = parsed.records.map(normalizeWeeklyRecord);
+    const records = parsed.records.map((record) => normalizeWeeklyRecord(record, week));
     records.sort((a, b) => String(a.at || "").localeCompare(String(b.at || "")));
     return { weekId: week.id, records: capWeeklyMistakeWords(records) };
   }
 
   function writeWeeklyMistakeRecord(raw, record, date) {
+    const week = getProjectWeek(date);
     const state = readWeeklyMistakes(raw, date);
-    if (!state.weekId) return state;
-    const normalized = normalizeWeeklyRecord(record);
+    if (!week || !state.weekId) return state;
+    const normalized = normalizeWeeklyRecord(record, week);
     if (!normalized || normalized.words.length === 0) return state;
     const records = state.records
       .filter((existing) => existing.category !== normalized.category || existing.setLabel !== normalized.setLabel)

@@ -38,7 +38,10 @@
 - [ ] **Step 1: Write failing tests for trial sets and the new Day 1.** Assert each trial has exactly 20 unique bases; every trial item deep-equals an item in an existing formal Day series; formal series names/items remain unchanged; Sep 5 has no formal Day and Sep 6 is Day 1.
 - [ ] **Step 2: Run `node --test tests/trial-wordtests.test.js tests/ui-logic.test.js` and verify failures mention the missing trial series and old Sep 1 anchor.**
 - [ ] **Step 3: Add hand-selected easy existing items to each trial series and change the pure calendar helpers.** The week helper returns `null` before `2026-09-06T19:30:00+09:00`, otherwise `{ id, startsAt, endsAt }` for seven-day intervals.
-- [ ] **Step 4: Re-run the two tests and `node scripts/validate-wordtests.js`; verify all pass.**
+- [ ] **Step 4: Re-run the two tests and all three validators; verify all pass.**
+  - `node scripts/validate-wordtests.js wordtests-clacel.js 20,20,19,20,20,20,20,20,12,20,20,20,20,20,20,20,19,20,20,20,20,20,20,20,20,19,20`
+  - `node scripts/validate-wordtests.js wordtests-toeic.js 20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20`
+  - `node scripts/validate-wordtests.js wordtests-ielts.js 20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20,20`
 - [ ] **Step 5: Commit `feat: add September trial quiz sets`.**
 
 ### Task 2: Version-2 persistence and result history transaction
@@ -148,4 +151,3 @@
 - [ ] **Step 6: Push the feature branch, open a PR, verify required GitHub checks, merge through protected `main`, and confirm Railway deploys that exact merge SHA.**
 - [ ] **Step 7: Set a generated strong `RESULTS_ADMIN_PASSWORD` in Railway without logging it, then verify production login, trial set selection, a disposable history record, restart restoration, deletion, and cleanup.**
 - [ ] **Step 8: Commit documentation/test harness changes as `docs: add results history operations guide` before PR creation.**
-

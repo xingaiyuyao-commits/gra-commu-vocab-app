@@ -5,6 +5,7 @@ const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
 const net = require("node:net");
+const { createHmac } = require("node:crypto");
 
 function reservePort() {
   return new Promise((resolve, reject) => {
@@ -33,12 +34,20 @@ async function stopServer(child) {
   });
 }
 
-async function startServer(t, { resultHistory = {}, password, envOverrides = {} } = {}) {
+async function startServer(t, {
+  resultHistory = {},
+  password,
+  envOverrides = {},
+  rawState = null,
+  expectedHealthStatus = 200,
+} = {}) {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-results-history-api-"));
   const stateDir = path.join(tempDir, "state");
   const stateFile = path.join(stateDir, "quiz-rooms.json");
   fs.mkdirSync(stateDir);
-  fs.writeFileSync(stateFile, JSON.stringify({ version: 2, rooms: {}, resultHistory }));
+  fs.writeFileSync(stateFile, rawState === null
+    ? JSON.stringify({ version: 2, rooms: {}, resultHistory })
+    : rawState);
 
   const port = await reservePort();
   const baseUrl = `http://127.0.0.1:${port}`;
@@ -72,7 +81,7 @@ async function startServer(t, { resultHistory = {}, password, envOverrides = {} 
     }
     try {
       const response = await fetch(`${baseUrl}/healthz`);
-      if (response.status === 200) {
+      if (response.status === expectedHealthStatus) {
         t.after(async () => {
           await stopServer(child);
           fs.rmSync(tempDir, { recursive: true, force: true });
@@ -121,6 +130,14 @@ function historyRecord(date, category, overrides = {}) {
   };
 }
 
+function signedResultsCookie(password, expiresAt) {
+  const nonce = "deterministic-expired-token";
+  const payload = `${expiresAt}.${nonce}`;
+  const key = createHmac("sha256", password).update("results-history-session-v1").digest();
+  const signature = createHmac("sha256", key).update(payload).digest("base64url");
+  return `results_history_session=${payload}.${signature}`;
+}
+
 test("専用パスワード未設定時は全履歴APIを503にして公開しない", async (t) => {
   const { baseUrl } = await startServer(t);
   const requests = [
@@ -134,6 +151,25 @@ test("専用パスワード未設定時は全履歴APIを503にして公開し�
     assert.equal(response.status, 503);
     assert.equal(response.headers.get("cache-control"), "no-store");
   }
+});
+
+test("状態復元に失敗した場合は結果履歴APIを空の200として公開せず503にする", async (t) => {
+  const { baseUrl } = await startServer(t, {
+    password: "restore-failure-secret",
+    rawState: "{broken-json",
+    expectedHealthStatus: 503,
+  });
+
+  const loginResponse = await fetch(
+    `${baseUrl}/api/results-history/login`,
+    jsonRequest("POST", { password: "restore-failure-secret" })
+  );
+  assert.equal(loginResponse.status, 503);
+  assert.equal(loginResponse.headers.get("cache-control"), "no-store");
+
+  const historyResponse = await fetch(`${baseUrl}/api/results-history?month=2026-09`);
+  assert.equal(historyResponse.status, 503);
+  assert.equal(historyResponse.headers.get("cache-control"), "no-store");
 });
 
 test("誤パスワードをIP単位で制限し、入力値を応答や永続状態へ残さない", async (t) => {
@@ -369,6 +405,18 @@ test("本番ログインCookieだけにSecure属性を付ける", async (t) => {
 
   const { setCookie } = await login(baseUrl, password);
   assert.match(setCookie, /;\s*Secure/i);
+});
+
+test("正しい署名でも期限切れのCookieは実APIで拒否する", async (t) => {
+  const password = "expired-cookie-secret";
+  const { baseUrl } = await startServer(t, { password });
+  const expiredCookie = signedResultsCookie(password, 1);
+
+  const response = await fetch(`${baseUrl}/api/results-history?month=2026-09`, {
+    headers: { Cookie: expiredCookie },
+  });
+  assert.equal(response.status, 401);
+  assert.equal(response.headers.get("cache-control"), "no-store");
 });
 
 test("認証済み削除を原子的に保存し、ログアウトでCookieを失効させる", async (t) => {

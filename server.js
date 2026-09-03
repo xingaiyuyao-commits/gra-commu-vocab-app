@@ -654,6 +654,9 @@ if (QUIZ_ROOM_PERSISTENCE_REQUIRED && !QUIZ_ROOM_STATE_FILE) {
 
 function sanitizeRestoredQuizResults(results, roomIsTrial) {
   if (!results || typeof results !== "object") return null;
+  const resultAt = typeof results.resultAt === "string" && !Number.isNaN(Date.parse(results.resultAt))
+    ? results.resultAt
+    : null;
   const perfect = Array.isArray(results.perfect)
     ? results.perfect.filter((entry) => entry && typeof entry === "object").map((entry) => ({
       id: entry.id,
@@ -669,6 +672,7 @@ function sanitizeRestoredQuizResults(results, roomIsTrial) {
     }))
     : [];
   return {
+    ...(resultAt ? { resultAt } : {}),
     setLabel: String(results.setLabel || ""),
     perfect,
     others,
@@ -976,6 +980,9 @@ app.use("/api/results-history", (_req, res, next) => {
   if (!RESULTS_ADMIN_PASSWORD) {
     return res.status(503).json({ error: "結果履歴の認証が設定されていません" });
   }
+  if (quizPersistenceHealth.restoreFailed) {
+    return res.status(503).json({ error: "結果履歴を復元できませんでした" });
+  }
   next();
 });
 
@@ -1188,10 +1195,12 @@ function quizRevealResults(roomCode) {
       count,
     }));
   const now = quizResultNow();
+  const resultAt = now.toISOString();
   const date = tokyoDateKey(now);
   const saved = persistQuizMutation(roomCode, () => {
     room.phase = "finished";
     room.results = {
+      resultAt,
       setLabel: room.setLabel,
       perfect,
       others,
@@ -1205,7 +1214,7 @@ function quizRevealResults(roomCode) {
       setLabel: room.setLabel,
       participantCount: participants.length,
       perfectNames: perfect.map((entry) => entry.name),
-      updatedAt: now.toISOString(),
+      updatedAt: resultAt,
     };
   });
   if (!saved) return false;

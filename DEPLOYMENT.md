@@ -44,6 +44,12 @@ Do not use `railway up` for production. It uploads the local working tree and ca
 
 ## Rollback
 
-Use `git revert <bad-commit>` and push the revert. Do not deploy an older local folder with `railway up`.
+Only deploy rollback code that remains compatible with the version-2 `/data/quiz-rooms.json` schema. Prefer a forward fix. If a code revert is necessary, build and review a revert that retains the version-2 persistence reader/writer and result-history adapter.
 
-After the revert is merged, confirm Railway reports SUCCESS for that exact merge SHA. Then verify `/healthz` returns 200, the existing `/data` volume is still mounted, `RESULTS_ADMIN_PASSWORD` is still configured, results-history login succeeds, existing history remains visible, and the normal host/participant flow still reaches result reveal. If persistence or history checks fail, stop and restore from the protected backup before creating or deleting more records.
+1. Stop the Railway service before taking the rollback backup so no process can write while the file is copied.
+2. Back up `/data/quiz-rooms.json` to approved private storage and verify that the backup is readable JSON with `version: 2`.
+3. Confirm the proposed rollback artifact reads and writes version 2 without discarding `resultHistory`. Never start a version-1 writer against the mounted version-2 file, and never revert away the version-2 adapter while that file is mounted.
+4. Deploy the reviewed schema-compatible forward fix or code revert through GitHub. Do not deploy an older local folder with `railway up`.
+5. Start the service only after the compatible artifact is deployed. Confirm Railway reports SUCCESS for that exact merge SHA, then verify `/healthz` returns 200, the existing `/data` volume is still mounted, `RESULTS_ADMIN_PASSWORD` is still configured, results-history login succeeds, existing history remains visible, and the normal host/participant flow still reaches result reveal.
+
+If no schema-compatible artifact is ready, keep the service stopped and prepare a forward fix; do not test an older writer on the live volume. If persistence or history checks fail after startup, stop the service again before restoring the protected version-2 backup or creating/deleting any records.

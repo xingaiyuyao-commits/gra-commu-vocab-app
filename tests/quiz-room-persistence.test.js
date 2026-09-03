@@ -292,6 +292,56 @@ test("version 1の完了結果から回答時間を除き、新しい結果形�
   assert.deepEqual(migrated.rooms.ABCD.results, restored.results, "移行後の保存データにも回答時間を残さない");
 });
 
+test("結果確定時刻を保存し、同じ週の再起動・再参加でも同じ値を返す", async (t) => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-result-at-"));
+  const stateFile = path.join(tempDir, "quiz-rooms.json");
+  const resultAt = "2026-09-07T10:30:00.000Z";
+  fs.writeFileSync(stateFile, JSON.stringify({
+    version: 2,
+    rooms: {
+      ABCD: playingRoom({
+        players: {
+          host: player("ホスト", "host-token"),
+          participant: player("参加者", "participant-token", {
+            submittedAt: Date.now() - 100,
+            score: 3,
+            wrongQuestionIndexes: [1],
+          }),
+        },
+      }),
+    },
+    resultHistory: {},
+  }));
+  const sockets = [];
+  const children = [];
+  t.after(async () => {
+    for (const socket of sockets) socket.disconnect();
+    for (const child of children) await stopServer(child);
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  const first = await startServer(stateFile, { QUIZ_TEST_NOW_ISO: resultAt });
+  children.push(first.child);
+  const host = await connect(first.baseUrl);
+  sockets.push(host);
+  assert.equal((await rejoin(host, "ABCD", "host", "host-token")).ok, true);
+  const resultsEvent = waitForEvent(host, "quiz:results");
+  assert.deepEqual(await emitWithoutPayloadWithAck(host, "quiz:revealResults"), { ok: true });
+  const [revealed] = await resultsEvent;
+  assert.equal(revealed.resultAt, resultAt);
+  assert.equal(JSON.parse(fs.readFileSync(stateFile, "utf8")).rooms.ABCD.results.resultAt, resultAt);
+
+  host.disconnect();
+  await stopServer(first.child);
+  const second = await startServer(stateFile, { QUIZ_TEST_NOW_ISO: "2026-09-08T10:30:00.000Z" });
+  children.push(second.child);
+  const participant = await connect(second.baseUrl);
+  sockets.push(participant);
+  const restored = await rejoin(participant, "ABCD", "participant", "participant-token");
+  assert.equal(restored.results.resultAt, resultAt);
+  assert.equal(JSON.parse(fs.readFileSync(stateFile, "utf8")).rooms.ABCD.results.resultAt, resultAt);
+});
+
 test("結果確定は同日同コースを置換し、別コースとホスト退出後の履歴を再起動後も保持する", async (t) => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-history-"));
   const stateFile = path.join(tempDir, "quiz-rooms.json");
