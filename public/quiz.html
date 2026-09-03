@@ -128,6 +128,7 @@
   .retest-feedback.ng { color: var(--destructive); }
   .retest-answer { text-align: center; color: var(--muted-foreground); font-size: .88rem; min-height: 1.4em; margin-bottom: 10px; }
   .retest-done { text-align: center; font-size: 1.2rem; font-weight: 800; margin: 18px 0 10px; }
+  .weekly-review-note { color: var(--muted-foreground); font-size: .78rem; line-height: 1.55; margin-top: 10px; }
 
   .action-confirm { position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(0, 0, 0, .35); }
   .action-confirm[hidden] { display: none; }
@@ -163,16 +164,6 @@
   .waiting-who { border-top: 1px solid var(--border); padding-top: 16px; text-align: center; }
   .waiting-line { color: var(--muted-foreground); font-size: .88rem; margin: 0; }
   .waiting-remain { font-weight: 700; margin: 4px 0 0; }
-  .peek { margin-top: 16px; border: 1px solid var(--border); border-radius: calc(var(--radius) - 2px); }
-  .peek > summary { cursor: pointer; padding: 13px 14px; font-size: .92rem; font-weight: 700; list-style: none; }
-  .peek > summary::-webkit-details-marker { display: none; }
-  .peek > summary::after { content: " ▾"; color: var(--muted-foreground); }
-  .peek-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px;
-               list-style: none; padding: 0 14px 14px; }
-  .peek-list li { padding: 7px 9px; background: var(--secondary); border-radius: 8px; font-size: .82rem; overflow-wrap: anywhere; }
-  .peek-list strong { display: block; font-size: .88rem; }
-  .peek-list span { color: var(--muted-foreground); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .78rem; }
-  @media (max-width: 480px) { .peek-list { grid-template-columns: 1fr; } }
   .waiting-set { text-align: center; font-size: 1.3rem; font-weight: 700; color: var(--primary); margin: 0 0 4px; }
   .perfect-title { font-size: 1.25rem; font-weight: 700; text-align: center; margin-bottom: 12px; }
   .rank-list { list-style: none; }
@@ -183,6 +174,8 @@
     margin-bottom: 6px; font-size: .95rem;
   }
   .rank-list .me { outline: 2px solid var(--primary); }
+  .mh-mistake-meaning, .mh-mistake-count { display: block; }
+  .mh-mistake-count { margin-top: 3px; color: var(--muted-foreground); }
   .review-item { padding: 14px 0; border-bottom: 1px solid var(--border); font-size: .95rem; line-height: 1.6; }
   .review-item:last-child { border-bottom: none; }
   /* 提出確認: 未回答と提出ボタンを先に置き、回答済みは畳む */
@@ -309,8 +302,10 @@
             <p class="perfect-title">🏆 満点者</p>
             <ul class="rank-list" id="mh-clacel-perfect"></ul>
             <p class="mh-progress" id="mh-clacel-noperfect" hidden>今回、満点の人はいませんでした</p>
-            <p class="mh-progress" style="margin-top:14px;">みんながつまずいた単語 上位3つ</p>
-            <ul class="rank-list" id="mh-clacel-mistakes"></ul>
+            <div id="mh-clacel-mistake-section">
+              <p class="mh-progress" style="margin-top:14px;">みんながつまずいた単語 上位3つ</p>
+              <ul class="rank-list" id="mh-clacel-mistakes"></ul>
+            </div>
             <button id="mh-clacel-again" class="secondary">もう一度（ロビーに戻る）</button>
           </div>
           <button id="mh-clacel-close" class="secondary" hidden>Clacelのルームを終了</button>
@@ -341,8 +336,10 @@
             <p class="perfect-title">🏆 満点者</p>
             <ul class="rank-list" id="mh-toeic-perfect"></ul>
             <p class="mh-progress" id="mh-toeic-noperfect" hidden>今回、満点の人はいませんでした</p>
-            <p class="mh-progress" style="margin-top:14px;">みんながつまずいた単語 上位3つ</p>
-            <ul class="rank-list" id="mh-toeic-mistakes"></ul>
+            <div id="mh-toeic-mistake-section">
+              <p class="mh-progress" style="margin-top:14px;">みんながつまずいた単語 上位3つ</p>
+              <ul class="rank-list" id="mh-toeic-mistakes"></ul>
+            </div>
             <button id="mh-toeic-again" class="secondary">もう一度（ロビーに戻る）</button>
           </div>
           <button id="mh-toeic-close" class="secondary" hidden>TOEICのルームを終了</button>
@@ -373,8 +370,10 @@
             <p class="perfect-title">🏆 満点者</p>
             <ul class="rank-list" id="mh-ielts-perfect"></ul>
             <p class="mh-progress" id="mh-ielts-noperfect" hidden>今回、満点の人はいませんでした</p>
-            <p class="mh-progress" style="margin-top:14px;">みんながつまずいた単語 上位3つ</p>
-            <ul class="rank-list" id="mh-ielts-mistakes"></ul>
+            <div id="mh-ielts-mistake-section">
+              <p class="mh-progress" style="margin-top:14px;">みんながつまずいた単語 上位3つ</p>
+              <ul class="rank-list" id="mh-ielts-mistakes"></ul>
+            </div>
             <button id="mh-ielts-again" class="secondary">もう一度（ロビーに戻る）</button>
           </div>
           <button id="mh-ielts-close" class="secondary" hidden>IELTSのルームを終了</button>
@@ -387,6 +386,10 @@
         <button id="btn-join" class="secondary">URLから参加</button>
       </div>
       <p class="error" id="entry-error" role="alert"></p>
+    </div>
+    <div class="card" id="weekly-review-entry" hidden>
+      <button type="button" id="btn-weekly-review"></button>
+      <p class="weekly-review-note">同じ端末・同じブラウザでのみ利用できます。次週のDay 1 19:30を過ぎると期限切れになります。ブラウザデータを削除した場合や、シークレット／プライベートモードでは復元できません。</p>
     </div>
     <button class="leave" onclick="leaveRoom(false)">← ゲーム選択に戻る</button>
   </div>
@@ -413,10 +416,6 @@
       </div>
       <p class="lobby-players-label" id="lobby-players-label"></p>
       <ul class="player-list" id="lobby-players"></ul>
-      <details class="peek" id="last-mistakes" hidden>
-        <summary id="last-mistakes-summary">前回の間違い</summary>
-        <ul class="peek-list" id="last-mistakes-list"></ul>
-      </details>
     </div>
     <button class="leave" onclick="leaveRoom(false)">退出する</button>
   </div>
@@ -489,6 +488,7 @@
         <p class="q-ja" id="retest-ja"></p>
         <p class="q-hint" id="retest-hint"></p>
         <p class="q-sentence" id="retest-sentence"></p>
+        <p class="q-sentence-ja" id="retest-sentence-ja"></p>
         <input class="answer-input" id="retest-answer" autocomplete="off" autocapitalize="off" placeholder="単語を入力" />
         <p class="retest-feedback" id="retest-feedback"></p>
         <p class="retest-answer" id="retest-correct"></p>
@@ -496,12 +496,14 @@
       </div>
       <p class="retest-done" id="retest-done" hidden></p>
       <button type="button" class="secondary" id="retest-quit">結果に戻る</button>
+      <p class="error" id="retest-room-closed-notice" hidden></p>
     </div>
   </div>
 
   <!-- 結果 -->
   <div class="screen" id="screen-results">
     <p class="results-set" id="results-set"></p>
+    <p class="error" id="results-room-closed-notice" hidden></p>
     <div class="result-layout" id="result-layout">
       <div class="card summary-bar" id="summary-card">
         <div class="summary-score" id="summary-score">
@@ -583,6 +585,7 @@
   let questions = [];
   let answers = [];
   let idx = 0;
+  let editingFromConfirmation = false;
   let quizEndsAt = 0;
   let timerInterval = null;
   let waitingTimerInterval = null;
@@ -715,37 +718,46 @@
     });
   }
 
-  // 間違えた単語はルームと一緒に24時間で消えるので、この端末にも残しておく
-  const MISTAKE_KEY = "quizMistakeHistory";
-  const MISTAKE_MAX = 30;
+  const WEEKLY_MISTAKE_KEY = "oshQuizWeeklyMistakesV1";
+  try { localStorage.removeItem("quizMistakeHistory"); } catch { /* 旧形式は移行せず削除する */ }
 
-  function loadMistakeHistory() {
+  function loadWeeklyMistakes(now = new Date()) {
     try {
-      const parsed = JSON.parse(localStorage.getItem(MISTAKE_KEY) || "[]");
-      return Array.isArray(parsed) ? parsed : [];
-    } catch { return []; }
+      const raw = localStorage.getItem(WEEKLY_MISTAKE_KEY);
+      const state = QuizUi.readWeeklyMistakes(raw, now);
+      if (!state.weekId || state.records.length === 0) {
+        if (raw !== null) localStorage.removeItem(WEEKLY_MISTAKE_KEY);
+      } else {
+        const normalized = JSON.stringify(state);
+        if (normalized !== raw) localStorage.setItem(WEEKLY_MISTAKE_KEY, normalized);
+      }
+      return state;
+    } catch {
+      return QuizUi.readWeeklyMistakes(null, now);
+    }
   }
 
-  function saveMistakeRecord(record) {
+  function saveWeeklyMistakeRecord(record, now = new Date()) {
     try {
-      const list = loadMistakeHistory();
-      // 結果画面は再接続でも描き直されるので、同じ回を二重に積まない
-      const latest = list[0];
-      if (latest && latest.roomCode === record.roomCode && latest.setLabel === record.setLabel) list.shift();
-      list.unshift(record);
-      localStorage.setItem(MISTAKE_KEY, JSON.stringify(list.slice(0, MISTAKE_MAX)));
+      const state = QuizUi.writeWeeklyMistakeRecord(localStorage.getItem(WEEKLY_MISTAKE_KEY), record, now);
+      if (state.weekId && state.records.length) {
+        localStorage.setItem(WEEKLY_MISTAKE_KEY, JSON.stringify(state));
+      } else {
+        localStorage.removeItem(WEEKLY_MISTAKE_KEY);
+      }
+      renderWeeklyReviewEntry(now);
     } catch { /* 保存できない端末でも、テスト自体は続けられるようにする */ }
   }
 
-  function renderLastMistakes() {
-    const box = $("last-mistakes");
-    const latest = loadMistakeHistory()[0];
-    if (!latest || !Array.isArray(latest.words) || !latest.words.length) return (box.hidden = true);
-    box.hidden = false;
-    box.open = false;
-    $("last-mistakes-summary").textContent = `前回の間違い ${latest.words.length}語（${latest.setLabel || "前回のテスト"}）`;
-    $("last-mistakes-list").innerHTML = latest.words.map((w) =>
-      `<li><strong>${escapeHtml(w.answer)}</strong><span>${escapeHtml(w.ja)}</span></li>`).join("");
+  function renderWeeklyReviewEntry(now = new Date()) {
+    let count = 0;
+    try {
+      const raw = localStorage.getItem(WEEKLY_MISTAKE_KEY);
+      count = QuizUi.countWeeklyMistakes(raw, now);
+      if (count === 0 && raw !== null) localStorage.removeItem(WEEKLY_MISTAKE_KEY);
+    } catch { /* 保存領域を読めない場合は、復習入口だけを隠す */ }
+    $("weekly-review-entry").hidden = count === 0;
+    $("btn-weekly-review").textContent = `今週の間違いを解く（${count}語）`;
   }
 
   // ルームコードを手入力させずに済むよう、参加URLとQRを出す
@@ -794,7 +806,6 @@
     const container = document.querySelector(".container");
     container.classList.toggle("results-wide", id === "screen-results");
     container.classList.toggle("in-room", IN_ROOM_SCREENS.includes(id));
-    if (id === "screen-lobby") renderLastMistakes();
   }
 
   // ホストは回答・提出をしない進行役なので、待機画面の文言も「自分が提出した」体にしない
@@ -821,6 +832,7 @@
   let savedSession;
   try { savedSession = JSON.parse(localStorage.getItem("quizSession") || "null"); } catch { savedSession = null; }
   if (!savedSession || !savedSession.roomCode) show("screen-entry");
+  renderWeeklyReviewEntry();
 
   // --- 参加/作成 ---
   const entryMode = new URLSearchParams(location.search).get("mode");
@@ -1004,17 +1016,11 @@
       $(`mh-${category}-perfect`).hidden = true;
       $(`mh-${category}-noperfect`).hidden = false;
     }
-    $(`mh-${category}-mistakes`).innerHTML = mistakes.slice(0, 3).length
-      ? mistakes.slice(0, 3).map((item) => {
-        const types = item.mistakeTypes || {};
-        const labels = [
-          ["スペルミス", types.spelling],
-          ["活用系のミス", types.inflection],
-          ["別の単語・未回答", types.different],
-        ].filter(([, count]) => count).map(([label, count]) => `${label} ${count}`).join("　");
-        return `<li><span>${escapeHtml(item.answer)}<br><small>${escapeHtml(item.ja)}</small>${labels ? `<small>${labels}</small>` : ""}</span></li>`;
-      }).join("")
-      : "<li><span>全員正解でした</span></li>";
+    const topMistakes = mistakes.slice(0, 3);
+    $(`mh-${category}-mistake-section`).hidden = topMistakes.length === 0;
+    $(`mh-${category}-mistakes`).innerHTML = topMistakes.map((item) =>
+      `<li><span>${escapeHtml(item.answer)}<small class="mh-mistake-meaning">${escapeHtml(item.ja)}</small><small class="mh-mistake-count">${Number(item.count) || 0}人が間違えました</small></span></li>`
+    ).join("");
     mhShow(category, "results");
   }
 
@@ -1189,8 +1195,17 @@
   });
 
   socket.on("quiz:roomClosed", () => {
-    alert("運営者がルームを終了しました");
+    const activeScreen = document.querySelector(".screen.active")?.id;
     clearSession();
+    if (activeScreen === "screen-results" || activeScreen === "screen-retest") {
+      const message = "ルームは終了しました。この結果と解き直しは、この端末だけで引き続き利用できます。";
+      $("results-room-closed-notice").textContent = message;
+      $("results-room-closed-notice").hidden = false;
+      $("retest-room-closed-notice").textContent = message;
+      $("retest-room-closed-notice").hidden = false;
+      return;
+    }
+    alert("運営者がルームを終了しました");
     location.href = "/";
   });
 
@@ -1249,6 +1264,7 @@
     questions = qs;
     answers = Array(total).fill("");
     idx = 0;
+    editingFromConfirmation = false;
     persistAnswers();
     quizEndsAt = endsAt;
     currentSetLabel = setLabel;
@@ -1285,7 +1301,9 @@
     $("q-sentence-ja").textContent = q.sentenceJa || "";
     $("answer").value = answers[idx];
     $("btn-back").disabled = idx === 0;
-    $("btn-next").textContent = idx === total - 1 ? "回答を確認" : "次へ";
+    $("btn-next").textContent = editingFromConfirmation
+      ? "確認一覧へ戻る"
+      : (idx === total - 1 ? "回答を確認" : "次へ");
   }
 
   function saveCurrent() { answers[idx] = $("answer").value; persistAnswers(); }
@@ -1316,6 +1334,7 @@
     document.querySelectorAll("#screen-confirm [data-question-index]").forEach((button) => {
       button.addEventListener("click", () => {
         idx = Number(button.dataset.questionIndex);
+        editingFromConfirmation = true;
         persistAnswers();
         renderQuestion();
         show("screen-quiz");
@@ -1335,6 +1354,11 @@
 
   $("btn-next").addEventListener("click", () => {
     saveCurrent();
+    if (editingFromConfirmation) {
+      editingFromConfirmation = false;
+      showSubmitConfirmation();
+      return;
+    }
     if (idx < questions.length - 1) {
       idx++;
       persistAnswers();
@@ -1363,7 +1387,7 @@
   });
 
   // --- 結果 ---
-  function renderResults({ setLabel, perfect, review }) {
+  function renderResults({ resultAt, setLabel, perfect, review, isTrial = false }) {
     clearQuizTimer();
     clearWaitingTimer();
     clearPendingSubmission();
@@ -1421,16 +1445,23 @@
       altAnswers: Array.isArray(r.altAnswers) ? r.altAnswers : [],
       ja: r.ja,
       sentence: r.sentence,
+      sentenceJa: r.sentenceJa || "",
     }));
     $("btn-retest").style.display = hasWrong ? "" : "none";
 
-    // ルームは24時間で消えるので、間違えた単語はこの端末にも残す
-    if (hasWrong) {
-      saveMistakeRecord({
-        at: new Date().toISOString(),
-        roomCode: currentRoomCode || "",
+    // 正式回の誤答だけを、そのプロジェクト週の間この端末に残す
+    if (hasWrong && !isTrial) {
+      saveWeeklyMistakeRecord({
+        at: resultAt,
+        category: selectedCategory || "",
         setLabel: setLabel || currentSetLabel || "",
-        words: wrongReviews.map(({ r, mine }) => ({ answer: r.answer, ja: r.ja, mine: mine || "" })),
+        words: wrongReviews.map(({ r }) => ({
+          answer: r.answer,
+          altAnswers: Array.isArray(r.altAnswers) ? r.altAnswers : [],
+          ja: r.ja,
+          sentence: r.sentence,
+          sentenceJa: r.sentenceJa || "",
+        })),
       });
     }
 
@@ -1449,6 +1480,7 @@
   let retestIdx = 0;
   let retestCorrect = 0;
   let retestChecked = false;
+  let retestReturnScreen = "screen-results";
 
   function renderRetest() {
     const item = retestItems[retestIdx];
@@ -1458,6 +1490,7 @@
     const initial = String(item.answer || "").slice(0, 1);
     $("retest-hint").innerHTML = `${escapeHtml(initial)}<span class="hint-line" aria-label="スペルのヒントの線"></span>`;
     $("retest-sentence").innerHTML = item.sentence.replace("___", '<span class="blank">___</span>');
+    $("retest-sentence-ja").textContent = item.sentenceJa;
     $("retest-answer").value = "";
     $("retest-answer").disabled = false;
     $("retest-feedback").textContent = "";
@@ -1489,16 +1522,29 @@
     $("retest-done").textContent = `${retestItems.length}語中 ${retestCorrect}語 正解`;
   }
 
-  $("btn-retest").addEventListener("click", () => {
-    if (!retestSource.length) return;
-    retestItems = retestSource.slice();
+  function startRetest(source, returnScreen) {
+    if (!source.length) return;
+    retestItems = source.slice();
     retestIdx = 0;
     retestCorrect = 0;
+    retestReturnScreen = returnScreen;
     $("retest-done").hidden = true;
     $("retest-question").hidden = false;
+    $("retest-quit").textContent = returnScreen === "screen-entry" ? "クイズ入口に戻る" : "結果に戻る";
     renderRetest();
     show("screen-retest");
     $("retest-answer").focus();
+  }
+
+  $("btn-retest").addEventListener("click", () => {
+    startRetest(retestSource, "screen-results");
+  });
+
+  $("btn-weekly-review").addEventListener("click", () => {
+    const state = loadWeeklyMistakes();
+    const words = state.records.flatMap((record) => record.words);
+    if (!words.length) return renderWeeklyReviewEntry();
+    startRetest(words, "screen-entry");
   });
 
   $("retest-next").addEventListener("click", () => {
@@ -1513,7 +1559,10 @@
     if (e.key === "Enter") $("retest-next").click();
   });
 
-  $("retest-quit").addEventListener("click", () => show("screen-results"));
+  $("retest-quit").addEventListener("click", () => {
+    if (retestReturnScreen === "screen-entry") renderWeeklyReviewEntry();
+    show(retestReturnScreen);
+  });
 
   socket.on("quiz:results", (data) => {
     renderResults(data);

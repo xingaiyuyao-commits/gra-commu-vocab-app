@@ -5,6 +5,32 @@ module.exports = {
   label: "TOEIC",
   series: [
     {
+      name: "体験会",
+      isTrial: true,
+      items: [
+        { sentence: "Last week, the magazine ___ an article about local businesses.", answer: "published", base: "publish", hint: "p______", ja: "出版する、公表する", sentenceJa: "先週、その雑誌は地元企業についての記事を掲載した。" },
+        { sentence: "Yesterday, she ___ a photo with her letter.", answer: "enclosed", base: "enclose", hint: "e______", ja: "同封する", sentenceJa: "昨日、彼女は手紙に写真を同封した。" },
+        { sentence: "We will ___ you as soon as your order ships.", answer: "notify", base: "notify", hint: "n_____", ja: "通知する", sentenceJa: "ご注文の発送準備が整い次第、ご連絡いたします。" },
+        { sentence: "Every night, the last bus ___ at 11 p.m.", answer: "departs", base: "depart", hint: "d_____", ja: "出発する", sentenceJa: "毎晩、最終バスは午後11時に出発する。" },
+        { sentence: "She ___ her passport last month.", answer: "renewed", base: "renew", hint: "r____", ja: "更新する", sentenceJa: "彼女は先月パスポートを更新した。" },
+        { sentence: "Currently, this coupon ___ at the end of the week.", answer: "expires", base: "expire", hint: "e_____", ja: "期限が切れる", sentenceJa: "現在、このクーポンは今週末に期限が切れる。" },
+        { sentence: "A technician will ___ the equipment tomorrow.", answer: "inspect", base: "inspect", hint: "i______", ja: "検査する", sentenceJa: "明日、技術者が設備を点検する予定です。" },
+        { sentence: "Could you ___ your reservation by Friday?", answer: "confirm", base: "confirm", hint: "c______", ja: "確認する、確定する", sentenceJa: "金曜日までにご予約を確認していただけますか？" },
+        { sentence: "Please ___ your report by the end of the day.", answer: "submit", base: "submit", hint: "s_____", ja: "提出する", sentenceJa: "今日中にレポートを提出してください。" },
+        { sentence: "You can ___ tickets at the front counter.", answer: "purchase", base: "purchase", hint: "p_______", ja: "購入する", sentenceJa: "フロントカウンターでチケットを購入できます。" },
+        { sentence: "All managers must ___ the monthly meeting.", answer: "attend", base: "attend", hint: "a_____", ja: "出席する", sentenceJa: "すべてのマネージャーは月例会議に出席しなければならない。" },
+        { sentence: "She is taking a two-week ___ in July.", answer: "vacation", base: "vacation", hint: "v_______", ja: "休暇", sentenceJa: "彼女は7月に2週間の休暇を取る予定だ。" },
+        { sentence: "Our biggest ___ signed a new contract today.", answer: "client", base: "client", hint: "c_____", ja: "顧客、依頼人", sentenceJa: "今日、私たちの最大の顧客が新しい契約に署名した。" },
+        { sentence: "Customers can request a full ___ within 30 days.", answer: "refund", base: "refund", hint: "r_____", ja: "返金", sentenceJa: "顧客は30日以内であれば全額返金を請求できる。" },
+        { sentence: "We must finish the project before the ___.", answer: "deadline", base: "deadline", hint: "d_______", ja: "締め切り", sentenceJa: "私たちは締め切り前にプロジェクトを終わらせなければならない。" },
+        { sentence: "The supplier sent an ___ for last month's order.", answer: "invoice", base: "invoice", hint: "i______", ja: "請求書", sentenceJa: "仕入先は先月分の注文の請求書を送ってきた。" },
+        { sentence: "Keep your ___ in case you return the item.", answer: "receipt", base: "receipt", hint: "r______", ja: "領収書", sentenceJa: "商品を返品する場合に備えてレシートを保管しておいてください。" },
+        { sentence: "Our bank opened a new ___ downtown.", answer: "branch", base: "branch", hint: "b_____", ja: "支店", sentenceJa: "私たちの銀行は繁華街に新しい支店を開いた。" },
+        { sentence: "Free ___ is available for orders over $50.", answer: "delivery", base: "delivery", hint: "d_______", ja: "配達", sentenceJa: "50   ドルを超える注文には無料配達が利用できる。" },
+        { sentence: "Employees received a ___ for their hard work.", answer: "bonus", base: "bonus", hint: "b____", ja: "ボーナス", sentenceJa: "従業員は頑張りに対してボーナスを受け取った。" },
+      ],
+    },
+    {
       name: "Day 1",
       items: [
         { sentence: "Last week, the magazine ___ an article about local businesses.", answer: "published", base: "publish", hint: "p______", ja: "出版する、公表する", sentenceJa: "先週、その雑誌は地元企業についての記事を掲載した。" },

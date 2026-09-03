@@ -21,3 +21,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run test:deploy
+      - name: Run 100-client quiz load gate
+        run: npm run test:load
+        timeout-minutes: 2
+        env:
+          QUIZ_LOAD_TIMEOUT_MS: "60000"

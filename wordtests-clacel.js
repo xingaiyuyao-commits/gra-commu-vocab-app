@@ -5,6 +5,32 @@ module.exports = {
   label: "Clacel",
   series: [
     {
+      name: "体験会",
+      isTrial: true,
+      items: [
+        { sentence: "The dog likes to ___ holes in the garden.", answer: "dig", base: "dig", hint: "d__", ja: "掘る", sentenceJa: "その犬は庭に穴を掘るのが好きだ。" },
+        { sentence: "She ___ her umbrella on the train yesterday.", answer: "left", base: "leave", hint: "l____", ja: "去る、残す、置き忘れる", sentenceJa: "彼女は昨日、電車に傘を置き忘れた。" },
+        { sentence: "She likes to ___ pictures of animals.", answer: "draw", base: "draw", hint: "d___", ja: "描く、引く", sentenceJa: "彼女は動物の絵を描くのが好きだ。" },
+        { sentence: "This textbook ___ all the basic grammar rules.", answer: "covers", base: "cover", hint: "c____", ja: "覆う、（話題を）扱う", sentenceJa: "この教科書は基本的な文法規則をすべて扱っている。" },
+        { sentence: "Smith is a very ___ family name in England.", answer: "common", base: "common", hint: "c_____", ja: "一般的な、共通の", sentenceJa: "スミスはイギリスでとても一般的な姓だ。" },
+        { sentence: "Sushi is made with ___ fish.", answer: "raw", base: "raw", hint: "r__", ja: "生の、未加工の", sentenceJa: "寿司は生の魚で作られる。" },
+        { sentence: "The earth is a large ___ object.", answer: "round", base: "round", hint: "r____", ja: "丸い", sentenceJa: "地球は大きな丸い物体だ。" },
+        { sentence: "Do we have ___ chairs for everyone?", answer: "enough", base: "enough", hint: "e_____", ja: "十分な", sentenceJa: "全員分の十分な椅子はあるだろうか？" },
+        { sentence: "We need a ___ surface to set up the tent.", answer: "flat", base: "flat", hint: "f___", ja: "平らな", sentenceJa: "テントを張るには平らな地面が必要だ。" },
+        { sentence: "Only a ___ students came to the early class.", answer: "few", base: "few", hint: "f__", ja: "ほとんどない、少しの", sentenceJa: "早朝の授業に来た学生はほとんどいなかった。" },
+        { sentence: "Cut the bread into ___ slices.", answer: "thin", base: "thin", hint: "t___", ja: "薄い、細い", sentenceJa: "パンを薄く切ってください。" },
+        { sentence: "My best friend lives ___ to my house.", answer: "close", base: "close", hint: "c____", ja: "近い、親しい", sentenceJa: "私の親友は私の家の近くに住んでいる。" },
+        { sentence: "The bottle is completely ___.", answer: "empty", base: "empty", hint: "e____", ja: "空の", sentenceJa: "そのボトルは完全に空だ。" },
+        { sentence: "Try to eat ___ and exercise more.", answer: "less", base: "less", hint: "l___", ja: "より少なく", sentenceJa: "食べる量を減らして、もっと運動するようにしてください。" },
+        { sentence: "The movie was ___ good, actually.", answer: "pretty", base: "pretty", hint: "p_____", ja: "かなり、なかなか", sentenceJa: "その映画は実際、かなり良かった。" },
+        { sentence: "He lives ___ in a small apartment.", answer: "alone", base: "alone", hint: "a____", ja: "一人で", sentenceJa: "彼は小さなアパートに一人で住んでいる。" },
+        { sentence: "Have you finished your homework ___?", answer: "yet", base: "yet", hint: "y__", ja: "まだ、もう", sentenceJa: "もう宿題は終わった？" },
+        { sentence: "Please ___ the door before you leave.", answer: "lock", base: "lock", hint: "l___", ja: "鍵をかける", sentenceJa: "出かける前にドアに鍵をかけてください。" },
+        { sentence: "Last spring, they ___ trees along the road.", answer: "planted", base: "plant", hint: "p____", ja: "植える、仕込む", sentenceJa: "去年の春、彼らは道路沿いに木を植えた。" },
+        { sentence: "He ___ more confident as the weeks passed.", answer: "grew", base: "grow", hint: "g___", ja: "育つ、〜になっていく", sentenceJa: "彼は数週間が経つにつれて自信を持つようになった。" },
+      ],
+    },
+    {
       name: "Day 1",
       items: [
         { sentence: "Yesterday, the children ___ to be superheroes.", answer: "pretended", base: "pretend", hint: "p______", ja: "ふりをする", sentenceJa: "昨日、子供たちはスーパーヒーローのふりをした。" },

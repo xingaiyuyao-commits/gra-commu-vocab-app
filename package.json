@@ -9,7 +9,8 @@
   "scripts": {
     "start": "node server.js",
     "test": "node --test tests/*.test.js",
-    "test:deploy": "node --test --test-concurrency=1 tests/healthz.test.js tests/home-screen.test.js tests/home-viewport.test.js tests/join-course-label.test.js tests/participant-join.test.js tests/quiz-room-persistence.test.js tests/quiz-screen.test.js tests/ui-logic.test.js"
+    "test:deploy": "node --test --test-concurrency=1 tests/healthz.test.js tests/home-screen.test.js tests/home-viewport.test.js tests/join-course-label.test.js tests/participant-join.test.js tests/quiz-room-persistence.test.js tests/quiz-screen.test.js tests/results-history-api.test.js tests/results-history-screen.test.js tests/trial-wordtests.test.js tests/ui-logic.test.js",
+    "test:load": "node scripts/test-quiz-load.js"
   },
   "dependencies": {
     "express": "^4.19.2",

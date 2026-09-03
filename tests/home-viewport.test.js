@@ -60,10 +60,17 @@ async function waitForDevtools(userDataDir, child) {
   while (Date.now() < deadline) {
     if (child.exitCode !== null || child.signalCode !== null) throw new Error("Chrome exited early");
     if (fs.existsSync(activePortFile)) {
-      const [port] = fs.readFileSync(activePortFile, "utf8").split("\n");
-      const pages = await fetch(`http://127.0.0.1:${port}/json/list`).then((response) => response.json());
-      const page = pages.find((entry) => entry.type === "page");
-      if (page) return page.webSocketDebuggerUrl;
+      try {
+        const [port] = fs.readFileSync(activePortFile, "utf8").split("\n");
+        if (/^\d+$/.test(port)) {
+          const response = await fetch(`http://127.0.0.1:${port}/json/list`);
+          if (response.ok) {
+            const pages = await response.json();
+            const page = pages.find((entry) => entry.type === "page");
+            if (page) return page.webSocketDebuggerUrl;
+          }
+        }
+      } catch { /* Chrome may still be writing the port file or opening DevTools. */ }
     }
     await delay(50);
   }
@@ -144,11 +151,12 @@ test("PCホームは1440×800で主要内容が縦スクロールなしに収ま
       }))()`,
       returnByValue: true,
     });
-    metrics = result.result.value;
-    if (metrics.ready === "complete" && metrics.operatorBottom) break;
+    metrics = result?.result?.value;
+    if (metrics?.ready === "complete" && metrics.operatorBottom) break;
     await delay(50);
   }
 
+  assert.ok(metrics, "Chrome did not return page metrics before the deadline");
   assert.equal(metrics.scrollWidth, metrics.innerWidth, "横スクロールがない");
   assert.ok(metrics.scrollHeight <= metrics.innerHeight, `縦スクロールあり: ${JSON.stringify(metrics)}`);
   assert.ok(metrics.operatorBottom <= metrics.innerHeight, "運営用リンクが一画面内にある");

@@ -25,9 +25,99 @@ function assertVisible(element, message) {
   assert.notEqual(element.style.display, "none", `${message}: display:noneではない`);
 }
 
+function setWindowTime(window, iso) {
+  const RealDate = window.Date;
+  const fixedNow = RealDate.parse(iso);
+  window.Date = class extends RealDate {
+    constructor(...args) {
+      super(...(args.length ? args : [fixedNow]));
+    }
+    static now() { return fixedNow; }
+  };
+}
+
 test("参加・作成画面: 名前入力のラベル文言が仕様通り", () => {
   const { document } = loadQuizPage();
   assert.equal(document.querySelector('label[for="name"]').textContent, "名前");
+});
+
+test("ロビー: 旧『前回の間違い』カードを表示しない", () => {
+  const { document } = loadQuizPage();
+
+  assert.equal(document.getElementById("last-mistakes"), null);
+  assert.doesNotMatch(document.getElementById("screen-lobby").textContent, /前回の間違い/);
+});
+
+test("週間復習入口: 今週の保存語があるクイズ入口だけに正確な件数を表示する", () => {
+  const { window, document } = loadQuizPage();
+  setWindowTime(window, "2026-09-08T19:30:00+09:00");
+  window.localStorage.setItem("oshQuizWeeklyMistakesV1", JSON.stringify({
+    weekId: "2026-09-06",
+    records: [
+      { at: "2026-09-07T10:30:00.000Z", category: "clacel", setLabel: "Day 1", words: [
+        { answer: "drink", altAnswers: [], ja: "飲む", sentence: "I ___ tea.", sentenceJa: "私はお茶を飲む。" },
+      ] },
+      { at: "2026-09-08T10:30:00.000Z", category: "toeic", setLabel: "Day 2", words: [
+        { answer: "read", altAnswers: ["reads"], ja: "読む", sentence: "I ___ books.", sentenceJa: "私は本を読む。" },
+      ] },
+    ],
+  }));
+
+  window.eval("renderWeeklyReviewEntry()");
+
+  const entry = document.getElementById("weekly-review-entry");
+  const button = document.getElementById("btn-weekly-review");
+  assertVisible(entry, "週間復習入口");
+  assert.equal(button.textContent, "今週の間違いを解く（2語）");
+  assert.equal(entry.closest(".screen").id, "screen-entry");
+  assert.match(entry.textContent, /同じ端末・同じブラウザ/);
+  assert.match(entry.textContent, /期限切れ/);
+  assert.match(entry.textContent, /ブラウザデータを削除/);
+  assert.match(entry.textContent, /シークレット|プライベート/);
+});
+
+test("週間復習: 起動時に生回答とルームコードを含む旧保存キーを削除し、新形式へ移行しない", () => {
+  const legacy = JSON.stringify({ roomCode: "RAW-ROOM-CODE", answers: ["personal raw answer"] });
+  const { window } = loadQuizPage({ storedValues: { quizMistakeHistory: legacy } });
+
+  assert.equal(window.localStorage.getItem("quizMistakeHistory"), null);
+  assert.equal(window.localStorage.getItem("oshQuizWeeklyMistakesV1"), null);
+  for (let index = 0; index < window.localStorage.length; index++) {
+    const value = window.localStorage.getItem(window.localStorage.key(index));
+    assert.doesNotMatch(value, /RAW-ROOM-CODE|personal raw answer/);
+  }
+});
+
+test("週間復習入口: 今週の保存語が0語なら表示しない", () => {
+  const { window, document } = loadQuizPage();
+  setWindowTime(window, "2026-09-08T19:30:00+09:00");
+  window.eval("renderWeeklyReviewEntry()");
+
+  assert.equal(document.getElementById("weekly-review-entry").hidden, true);
+});
+
+test("週間復習入口: ブラウザ保存領域を読めない場合もクイズ入口を利用できる", () => {
+  const { window, document } = loadQuizPage();
+  setWindowTime(window, "2026-09-08T19:30:00+09:00");
+  window.Storage.prototype.getItem = () => { throw new window.DOMException("blocked", "SecurityError"); };
+
+  assert.doesNotThrow(() => window.eval("renderWeeklyReviewEntry()"));
+  assert.equal(document.getElementById("weekly-review-entry").hidden, true);
+});
+
+test("週間復習入口: 初期件数表示では完全読込ヘルパーを呼ばない", () => {
+  const { window, document } = loadQuizPage();
+  setWindowTime(window, "2026-09-08T19:30:00+09:00");
+  window.localStorage.setItem("oshQuizWeeklyMistakesV1", JSON.stringify({
+    weekId: "2026-09-06",
+    records: [{ at: "2026-09-07T10:30:00.000Z", category: "clacel", setLabel: "Day 2", words: [
+      { answer: "drink", altAnswers: [], ja: "飲む", sentence: "I ___ tea.", sentenceJa: "私はお茶を飲む。" },
+    ] }],
+  }));
+  window.QuizUi.readWeeklyMistakes = () => { throw new Error("full reader called"); };
+
+  assert.doesNotThrow(() => window.eval("renderWeeklyReviewEntry()"));
+  assert.equal(document.getElementById("btn-weekly-review").textContent, "今週の間違いを解く（1語）");
 });
 
 test("参加・作成画面: Clacel/TOEIC/IELTSそれぞれの作成ボタンが横並びで表示される", () => {
@@ -326,6 +416,66 @@ test("参加・作成画面: ホストの複数コース作成パネルは開始
   assert.equal(document.getElementById("mh-toeic-results").hidden, true);
 });
 
+test("複数ルーム結果: つまずいた単語の上位3件と間違えた人数を表示する", () => {
+  const { window, document, fakeSockets } = loadQuizPage({ url: "http://localhost/quiz.html?mode=create" });
+  setValue(window, document.getElementById("name"), "ホスト");
+  document.getElementById("mh-toeic-create").dispatchEvent(new window.Event("click", { bubbles: true }));
+  const hostSocket = fakeSockets[1];
+  hostSocket.emitted.find((entry) => entry.event === "quiz:createRoom").cb({
+    roomCode: "WXYZ", category: "toeic", playerId: "host", sessionToken: "token", seriesNames: ["Day 1"],
+  });
+
+  hostSocket.fire("quiz:results", {
+    setLabel: "TOEIC Day 1",
+    perfect: [],
+    others: [],
+    review: [],
+    mistakes: [
+      { index: 6, answer: "seventh", ja: "7番目", count: 4 },
+      { index: 11, answer: "twelfth", ja: "12番目", count: 3 },
+      { index: 2, answer: "third", ja: "3番目", count: 2 },
+      { index: 0, answer: "first", ja: "1番目", count: 1 },
+    ],
+    isTrial: false,
+  });
+
+  const section = document.getElementById("mh-toeic-mistake-section");
+  const rows = [...document.querySelectorAll("#mh-toeic-mistakes li")];
+  assert.ok(section, "誤答上位セクションがある");
+  assert.equal(section.hidden, false);
+  assert.equal(rows.length, 3);
+  assert.match(rows[0].textContent, /seventh/);
+  assert.match(rows[0].textContent, /4人/);
+  assert.equal(rows[0].querySelector(".mh-mistake-meaning").textContent, "7番目");
+  assert.equal(rows[0].querySelector(".mh-mistake-count").textContent, "4人が間違えました");
+  assert.equal(window.getComputedStyle(rows[0].querySelector(".mh-mistake-count")).display, "block");
+  assert.match(rows[1].textContent, /twelfth/);
+  assert.match(rows[1].textContent, /3人/);
+  assert.match(rows[2].textContent, /third/);
+  assert.match(rows[2].textContent, /2人/);
+  assert.doesNotMatch(document.getElementById("mh-toeic-results").textContent, /first/);
+});
+
+test("複数ルーム結果: つまずいた単語が空なら上位3件セクションを隠し、『全員正解でした』を表示しない", () => {
+  const { window, document, fakeSockets } = loadQuizPage({ url: "http://localhost/quiz.html?mode=create" });
+  setValue(window, document.getElementById("name"), "ホスト");
+  document.getElementById("mh-clacel-create").dispatchEvent(new window.Event("click", { bubbles: true }));
+  const hostSocket = fakeSockets[1];
+  hostSocket.emitted.find((entry) => entry.event === "quiz:createRoom").cb({
+    roomCode: "ABCD", category: "clacel", playerId: "host", sessionToken: "token", seriesNames: ["Day 1"],
+  });
+
+  hostSocket.fire("quiz:results", {
+    setLabel: "Clacel Day 1", perfect: [], others: [], review: [], mistakes: [], isTrial: false,
+  });
+
+  const mistakeSection = document.getElementById("mh-clacel-mistake-section");
+  assert.ok(mistakeSection, "誤答上位セクションがある");
+  assert.equal(mistakeSection.hidden, true);
+  assert.doesNotMatch(document.getElementById("mh-clacel-results").textContent, /全員正解でした/);
+  assert.match(document.getElementById("mh-clacel-noperfect").textContent, /満点の人はいませんでした/);
+});
+
 test("提出確認: 最終問題で「回答を確認」を押すと確認画面を表示する（即提出しない）", () => {
   const { window, document, fireSocketEvent, emitted } = loadQuizPage();
 
@@ -384,6 +534,41 @@ test("提出確認: 未回答がある場合は回答済み数・未回答数・
   assert.match(document.getElementById("confirm-unanswered").textContent, /3/);
 });
 
+test("提出確認: 確認一覧から第7問と最終の第12問を修正すると、それぞれ1問の保存後に確認一覧へ直接戻る", () => {
+  const { window, document, fireSocketEvent } = loadQuizPage();
+  const questions = Array.from({ length: 12 }, (_, i) => ({
+    sentence: `Question ${i + 1}: ___`,
+    answer: `answer${i + 1}`,
+    base: `answer${i + 1}`,
+    hint: "a____",
+    ja: `意味${i + 1}`,
+    sentenceJa: `第${i + 1}問の和訳`,
+  }));
+  fireSocketEvent("quiz:started", {
+    setLabel: "Day 1", total: questions.length, endsAt: Date.now() + 60000, questions,
+  });
+  for (let i = 0; i < questions.length; i += 1) {
+    document.getElementById("answer").value = `old${i + 1}`;
+    document.getElementById("btn-next").dispatchEvent(new window.Event("click", { bubbles: true }));
+  }
+
+  document.querySelector('#screen-confirm [data-question-index="6"]').dispatchEvent(new window.Event("click", { bubbles: true }));
+  assert.equal(document.getElementById("q-num").textContent, "第7問 / 12");
+  assert.equal(document.getElementById("btn-next").textContent, "確認一覧へ戻る");
+  document.getElementById("answer").value = "edited7";
+  document.getElementById("btn-next").dispatchEvent(new window.Event("click", { bubbles: true }));
+  assert.equal(document.getElementById("screen-confirm").classList.contains("active"), true);
+  assert.match(document.querySelector('#screen-confirm [data-question-index="6"]').textContent, /edited7/);
+
+  document.querySelector('#screen-confirm [data-question-index="11"]').dispatchEvent(new window.Event("click", { bubbles: true }));
+  assert.equal(document.getElementById("q-num").textContent, "第12問 / 12");
+  assert.equal(document.getElementById("btn-next").textContent, "確認一覧へ戻る");
+  document.getElementById("answer").value = "edited12";
+  document.getElementById("btn-next").dispatchEvent(new window.Event("click", { bubbles: true }));
+  assert.equal(document.getElementById("screen-confirm").classList.contains("active"), true);
+  assert.match(document.querySelector('#screen-confirm [data-question-index="11"]').textContent, /edited12/);
+});
+
 test("提出確認: 「回答に戻る」で提出せずテスト画面に戻れる", () => {
   const { window, document, fireSocketEvent, emitted } = loadQuizPage();
   const questions = [
@@ -398,6 +583,24 @@ test("提出確認: 「回答に戻る」で提出せずテスト画面に戻れ
   document.getElementById("btn-confirm-back").dispatchEvent(new window.Event("click", { bubbles: true }));
   assert.ok(document.getElementById("screen-quiz").classList.contains("active"));
   assert.equal(emitted.some((e) => e.event === "quiz:submit"), false);
+});
+
+test("回答中: 通常の戻る・次へは隣の問題へ移動する", () => {
+  const { window, document, fireSocketEvent } = loadQuizPage();
+  const questions = [1, 2, 3].map((n) => ({
+    sentence: `Question ${n}: ___`, answer: `answer${n}`, base: `answer${n}`, hint: "a____", ja: `意味${n}`, sentenceJa: "",
+  }));
+  fireSocketEvent("quiz:started", {
+    setLabel: "Day 1", total: questions.length, endsAt: Date.now() + 60000, questions,
+  });
+
+  document.getElementById("btn-next").dispatchEvent(new window.Event("click", { bubbles: true }));
+  assert.equal(document.getElementById("q-num").textContent, "第2問 / 3");
+  assert.equal(document.getElementById("btn-next").textContent, "次へ");
+
+  document.getElementById("btn-back").dispatchEvent(new window.Event("click", { bubbles: true }));
+  assert.equal(document.getElementById("q-num").textContent, "第1問 / 3");
+  assert.equal(document.getElementById("btn-next").textContent, "次へ");
 });
 
 test("提出確認: 「この内容で提出」を押すとquiz:submitが送信される", () => {
@@ -645,4 +848,305 @@ test("結果画面: ホストは進行役なので自分の点数・正答率・
   assert.equal(document.getElementById("review-card").style.display, "none");
   assert.notEqual(document.getElementById("perfect-list").style.display, "none");
   assert.match(document.getElementById("perfect-list").innerHTML, /Aica/);
+});
+
+test("単一ルーム結果: 空の誤答上位でも『全員正解でした』を表示しない", () => {
+  const { document, fireSocketEvent } = loadQuizPage();
+  const questions = [
+    { sentence: "I ___ tea.", answer: "drink", base: "drink", hint: "d____", ja: "飲む", sentenceJa: "私はお茶を飲む。" },
+  ];
+  fireSocketEvent("quiz:started", {
+    setLabel: "Day 1", total: 1, endsAt: Date.now() + 60000, questions,
+  });
+  fireSocketEvent("quiz:results", {
+    setLabel: "Day 1",
+    perfect: [],
+    others: [],
+    review: [{ sentence: "I ___ tea.", answer: "drink", ja: "飲む", sentenceJa: "私はお茶を飲む。" }],
+    mistakes: [],
+    isTrial: false,
+  });
+
+  assert.doesNotMatch(document.getElementById("screen-results").textContent, /全員正解でした/);
+});
+
+test("解き直し: 例文の下に日本語訳を表示する", () => {
+  const { window, document, fireSocketEvent } = loadQuizPage();
+  const questions = [
+    { sentence: "I ___ tea.", answer: "drink", base: "drink", hint: "d____", ja: "飲む", sentenceJa: "私はお茶を飲む。" },
+  ];
+  fireSocketEvent("quiz:started", {
+    setLabel: "Day 1", total: 1, endsAt: Date.now() + 60000, questions,
+  });
+  document.getElementById("answer").value = "wrong";
+  document.getElementById("btn-next").dispatchEvent(new window.Event("click", { bubbles: true }));
+  fireSocketEvent("quiz:results", {
+    setLabel: "Day 1",
+    perfect: [],
+    others: [],
+    review: [{ sentence: "I ___ tea.", answer: "drink", ja: "飲む", sentenceJa: "私はお茶を飲む。" }],
+    mistakes: [{ index: 0, answer: "drink", ja: "飲む", count: 1 }],
+    isTrial: false,
+  });
+
+  document.getElementById("btn-retest").dispatchEvent(new window.Event("click", { bubbles: true }));
+
+  const sentenceJa = document.getElementById("retest-sentence-ja");
+  assert.ok(sentenceJa, "解き直し用の例文和訳欄がある");
+  assert.equal(sentenceJa.textContent, "私はお茶を飲む。");
+});
+
+test("週間復習保存: 通常回の誤答だけを個人情報なしで今週へ保存する", () => {
+  const { window, document, fireSocketEvent } = loadQuizPage();
+  setWindowTime(window, "2026-09-07T20:00:00+09:00");
+  window.eval('selectedCategory = "clacel"');
+  const questions = [
+    { sentence: "I ___ tea.", answer: "drink", altAnswers: ["drank"], base: "drink", hint: "d____", ja: "飲む", sentenceJa: "私はお茶を飲む。" },
+  ];
+  fireSocketEvent("quiz:started", { setLabel: "Day 2", total: 1, endsAt: window.Date.now() + 60000, questions });
+  document.getElementById("answer").value = "personal raw answer";
+  document.getElementById("btn-next").dispatchEvent(new window.Event("click", { bubbles: true }));
+
+  const resultPayload = {
+    resultAt: "2026-09-07T10:30:00.000Z",
+    setLabel: "Day 2",
+    perfect: [{ id: "other-id", name: "Other Person" }],
+    others: [{ id: "participant-id", name: "Private Name", score: 0, total: 1 }],
+    review: [{ answer: "drink", altAnswers: ["drank"], ja: "飲む", sentence: "I ___ tea.", sentenceJa: "私はお茶を飲む。" }],
+    mistakes: [{ index: 0, answer: "drink", ja: "飲む", count: 1 }],
+    isTrial: false,
+  };
+  fireSocketEvent("quiz:results", resultPayload);
+  fireSocketEvent("quiz:results", resultPayload);
+
+  const raw = window.localStorage.getItem("oshQuizWeeklyMistakesV1");
+  const stored = JSON.parse(raw);
+  assert.equal(stored.weekId, "2026-09-06");
+  assert.equal(stored.records.length, 1, "同じ結果の再描画では記録を増やさない");
+  assert.equal(document.getElementById("btn-weekly-review").textContent, "今週の間違いを解く（1語）");
+  assert.deepEqual(Object.keys(stored.records[0]), ["at", "category", "setLabel", "words"]);
+  assert.equal(stored.records[0].category, "clacel");
+  assert.equal(stored.records[0].setLabel, "Day 2");
+  assert.equal(stored.records[0].at, resultPayload.resultAt);
+  assert.deepEqual(stored.records[0].words[0], {
+    answer: "drink",
+    altAnswers: ["drank"],
+    ja: "飲む",
+    sentence: "I ___ tea.",
+    sentenceJa: "私はお茶を飲む。",
+  });
+  assert.doesNotMatch(raw, /Private Name|Other Person|personal raw answer|participant-id/);
+  assert.equal(window.localStorage.getItem("quizMistakeHistory"), null);
+});
+
+test("週間復習保存: 同じ週の結果へ再読込・再参加してもサーバー結果時刻を変えない", () => {
+  const resultAt = "2026-09-07T10:30:00.000Z";
+  const resultPayload = {
+    resultAt,
+    setLabel: "Clacel Day 2",
+    perfect: [],
+    others: [{ id: "participant", name: "Private Name", score: 0, total: 1 }],
+    review: [{ answer: "drink", altAnswers: [], ja: "飲む", sentence: "I ___ tea.", sentenceJa: "私はお茶を飲む。" }],
+    mistakes: [{ index: 0, answer: "drink", ja: "飲む", count: 1 }],
+    isTrial: false,
+  };
+  const first = loadQuizPage({ nowIso: "2026-09-07T20:00:00+09:00" });
+  first.window.eval('selectedCategory = "clacel"');
+  first.fireSocketEvent("quiz:started", {
+    setLabel: resultPayload.setLabel,
+    total: 1,
+    endsAt: first.window.Date.now() + 60_000,
+    questions: [{ sentence: "I ___ tea.", answer: "drink", base: "drink", hint: "d____", ja: "飲む", sentenceJa: "私はお茶を飲む。" }],
+  });
+  first.document.getElementById("answer").value = "wrong";
+  first.document.getElementById("btn-next").dispatchEvent(new first.window.Event("click", { bubbles: true }));
+  first.fireSocketEvent("quiz:results", resultPayload);
+  const firstWeeklyState = first.window.localStorage.getItem("oshQuizWeeklyMistakesV1");
+
+  const session = { roomCode: "ABCD", category: "clacel", playerId: "participant", sessionToken: "token" };
+  const second = loadQuizPage({
+    nowIso: "2026-09-08T20:00:00+09:00",
+    storedValues: {
+      quizPlayerId: "participant",
+      quizSession: JSON.stringify(session),
+      quizAnswers: JSON.stringify({ roomCode: "ABCD", answers: ["wrong"], idx: 0 }),
+      oshQuizWeeklyMistakesV1: firstWeeklyState,
+    },
+  });
+  second.fakeSocket.fire("connect");
+  const rejoinCall = second.emitted.find((entry) => entry.event === "quiz:rejoin");
+  assert.ok(rejoinCall, "再読込後に保存済みセッションで再参加する");
+  rejoinCall.cb({
+    ok: true,
+    isHost: false,
+    category: "clacel",
+    phase: "finished",
+    seriesNames: ["Day 2"],
+    results: resultPayload,
+  });
+
+  assert.equal(second.window.localStorage.getItem("oshQuizWeeklyMistakesV1"), firstWeeklyState);
+  assert.equal(JSON.parse(firstWeeklyState).records[0].at, resultAt);
+});
+
+test("週間復習保存: 9月13日19時30分の直前・ちょうど・直後の結果を再参加時に正しい週へ限定する", () => {
+  const cases = [
+    { resultAt: "2026-09-13T10:29:59.999Z", shouldStore: false },
+    { resultAt: "2026-09-13T10:30:00.000Z", shouldStore: true },
+    { resultAt: "2026-09-13T10:30:00.001Z", shouldStore: true },
+  ];
+
+  for (const { resultAt, shouldStore } of cases) {
+    const page = loadQuizPage({
+      nowIso: "2026-09-13T19:31:00+09:00",
+      storedValues: {
+        quizPlayerId: "participant",
+        quizSession: JSON.stringify({ roomCode: "ABCD", category: "clacel", playerId: "participant", sessionToken: "token" }),
+        quizAnswers: JSON.stringify({ roomCode: "ABCD", answers: ["wrong"], idx: 0 }),
+      },
+    });
+    page.fakeSocket.fire("connect");
+    const rejoinCall = page.emitted.find((entry) => entry.event === "quiz:rejoin");
+    rejoinCall.cb({
+      ok: true,
+      isHost: false,
+      category: "clacel",
+      phase: "finished",
+      seriesNames: ["Day 1"],
+      results: {
+        resultAt,
+        setLabel: "Clacel Day 1",
+        perfect: [],
+        others: [],
+        review: [{ answer: "drink", altAnswers: [], ja: "飲む", sentence: "I ___ tea.", sentenceJa: "私はお茶を飲む。" }],
+        mistakes: [{ index: 0, answer: "drink", ja: "飲む", count: 1 }],
+        isTrial: false,
+      },
+    });
+
+    const raw = page.window.localStorage.getItem("oshQuizWeeklyMistakesV1");
+    assert.equal(Boolean(raw), shouldStore, resultAt);
+    if (raw) {
+      const state = JSON.parse(raw);
+      assert.equal(state.weekId, "2026-09-13", resultAt);
+      assert.equal(state.records[0].at, resultAt, resultAt);
+    }
+  }
+});
+
+test("週間復習保存: 体験会の誤答は保存しない", () => {
+  const { window, document, fireSocketEvent } = loadQuizPage();
+  setWindowTime(window, "2026-09-07T19:30:00+09:00");
+  const questions = [
+    { sentence: "I ___ tea.", answer: "drink", altAnswers: [], base: "drink", hint: "d____", ja: "飲む", sentenceJa: "私はお茶を飲む。" },
+  ];
+  fireSocketEvent("quiz:started", { setLabel: "体験会", total: 1, endsAt: window.Date.now() + 60000, questions });
+  document.getElementById("answer").value = "wrong";
+  document.getElementById("btn-next").dispatchEvent(new window.Event("click", { bubbles: true }));
+  fireSocketEvent("quiz:results", {
+    setLabel: "体験会", perfect: [], others: [],
+    review: [{ answer: "drink", altAnswers: [], ja: "飲む", sentence: "I ___ tea.", sentenceJa: "私はお茶を飲む。" }],
+    mistakes: [{ index: 0, answer: "drink", ja: "飲む", count: 1 }],
+    isTrial: true,
+  });
+
+  assert.equal(window.localStorage.getItem("oshQuizWeeklyMistakesV1"), null);
+  assert.equal(window.localStorage.getItem("quizMistakeHistory"), null);
+});
+
+test("週間復習: 今週の全記録を日付順・出題順に解き、正解後も保存語を残す", () => {
+  const { window, document } = loadQuizPage();
+  setWindowTime(window, "2026-09-09T19:30:00+09:00");
+  window.localStorage.setItem("oshQuizWeeklyMistakesV1", JSON.stringify({
+    weekId: "2026-09-06",
+    records: [
+      { at: "2026-09-08T10:30:00.000Z", category: "toeic", setLabel: "Day 3", words: [
+        { answer: "read", altAnswers: ["reads"], ja: "読む", sentence: "She ___ books.", sentenceJa: "彼女は本を読む。" },
+      ] },
+      { at: "2026-09-07T10:30:00.000Z", category: "clacel", setLabel: "Day 2", words: [
+        { answer: "drink", altAnswers: [], ja: "飲む", sentence: "I ___ tea.", sentenceJa: "私はお茶を飲む。" },
+      ] },
+    ],
+  }));
+  window.eval("renderWeeklyReviewEntry()");
+
+  document.getElementById("btn-weekly-review").dispatchEvent(new window.Event("click", { bubbles: true }));
+  const beforeCorrectAnswer = window.localStorage.getItem("oshQuizWeeklyMistakesV1");
+
+  assert.equal(document.getElementById("screen-retest").classList.contains("active"), true);
+  assert.equal(document.getElementById("retest-num").textContent, "1 / 2");
+  assert.equal(document.getElementById("retest-ja").textContent, "飲む");
+  assert.equal(document.getElementById("retest-sentence-ja").textContent, "私はお茶を飲む。");
+  document.getElementById("retest-answer").value = "drink";
+  document.getElementById("retest-next").dispatchEvent(new window.Event("click", { bubbles: true }));
+  assert.equal(document.getElementById("retest-feedback").textContent, "正解 🎉");
+  assert.equal(window.localStorage.getItem("oshQuizWeeklyMistakesV1"), beforeCorrectAnswer);
+  document.getElementById("retest-next").dispatchEvent(new window.Event("click", { bubbles: true }));
+  assert.equal(document.getElementById("retest-num").textContent, "2 / 2");
+  assert.equal(document.getElementById("retest-sentence-ja").textContent, "彼女は本を読む。");
+  assert.equal(document.getElementById("retest-quit").textContent, "クイズ入口に戻る");
+});
+
+test("ルーム終了: 結果画面はローカル閲覧として残し、セッションを削除して案内を表示する", () => {
+  const { window, document, emitted, fireSocketEvent } = loadQuizPage({ url: "http://localhost/quiz.html?room=ABCD&cat=clacel" });
+  let alerted = false;
+  window.alert = () => { alerted = true; };
+  setValue(window, document.getElementById("name"), "参加者");
+  document.getElementById("btn-join").dispatchEvent(new window.Event("click", { bubbles: true }));
+  emitted.find((entry) => entry.event === "quiz:joinRoom").cb({
+    roomCode: "ABCD", category: "clacel", playerId: "participant", sessionToken: "token", seriesNames: ["Day 1"],
+  });
+  const questions = [
+    { sentence: "I ___ tea.", answer: "drink", base: "drink", hint: "d____", ja: "飲む", sentenceJa: "私はお茶を飲む。" },
+  ];
+  fireSocketEvent("quiz:started", { setLabel: "Day 1", total: 1, endsAt: Date.now() + 60000, questions });
+  fireSocketEvent("quiz:results", {
+    setLabel: "Day 1", perfect: [], others: [], review: [{ sentence: "I ___ tea.", answer: "drink", ja: "飲む", sentenceJa: "私はお茶を飲む。" }], mistakes: [], isTrial: false,
+  });
+
+  fireSocketEvent("quiz:roomClosed");
+
+  assert.equal(window.localStorage.getItem("quizSession"), null);
+  assert.equal(alerted, false, "ローカル閲覧をアラートで中断しない");
+  assert.equal(document.getElementById("screen-results").classList.contains("active"), true);
+  const notice = document.getElementById("results-room-closed-notice");
+  assert.ok(notice, "結果画面にルーム終了案内がある");
+  assert.equal(notice.hidden, false);
+  assert.match(notice.textContent, /この端末だけ/);
+});
+
+test("ルーム終了: 解き直し画面はローカル利用として残し、案内後も結果へ戻れる", () => {
+  const { window, document, emitted, fireSocketEvent } = loadQuizPage({ url: "http://localhost/quiz.html?room=ABCD&cat=clacel" });
+  let alerted = false;
+  window.alert = () => { alerted = true; };
+  setValue(window, document.getElementById("name"), "参加者");
+  document.getElementById("btn-join").dispatchEvent(new window.Event("click", { bubbles: true }));
+  emitted.find((entry) => entry.event === "quiz:joinRoom").cb({
+    roomCode: "ABCD", category: "clacel", playerId: "participant", sessionToken: "token", seriesNames: ["Day 1"],
+  });
+  const questions = [
+    { sentence: "I ___ tea.", answer: "drink", base: "drink", hint: "d____", ja: "飲む", sentenceJa: "私はお茶を飲む。" },
+  ];
+  fireSocketEvent("quiz:started", { setLabel: "Day 1", total: 1, endsAt: Date.now() + 60000, questions });
+  document.getElementById("answer").value = "wrong";
+  document.getElementById("btn-next").dispatchEvent(new window.Event("click", { bubbles: true }));
+  fireSocketEvent("quiz:results", {
+    setLabel: "Day 1", perfect: [], others: [], review: [{ sentence: "I ___ tea.", answer: "drink", ja: "飲む", sentenceJa: "私はお茶を飲む。" }], mistakes: [{ index: 0, answer: "drink", ja: "飲む", count: 1 }], isTrial: false,
+  });
+  document.getElementById("btn-retest").dispatchEvent(new window.Event("click", { bubbles: true }));
+
+  fireSocketEvent("quiz:roomClosed");
+
+  assert.equal(window.localStorage.getItem("quizSession"), null);
+  assert.equal(alerted, false, "ローカル解き直しをアラートで中断しない");
+  assert.equal(document.getElementById("screen-retest").classList.contains("active"), true);
+  const retestNotice = document.getElementById("retest-room-closed-notice");
+  assert.ok(retestNotice, "解き直し画面にルーム終了案内がある");
+  assert.equal(retestNotice.hidden, false);
+  assert.match(retestNotice.textContent, /この端末だけ/);
+  document.getElementById("retest-quit").dispatchEvent(new window.Event("click", { bubbles: true }));
+  assert.equal(document.getElementById("screen-results").classList.contains("active"), true);
+  const resultsNotice = document.getElementById("results-room-closed-notice");
+  assert.ok(resultsNotice, "結果画面にもルーム終了案内がある");
+  assert.equal(resultsNotice.hidden, false);
 });
