@@ -549,6 +549,7 @@ function validateWordtestsData(data) {
   if (!Array.isArray(data.series) || data.series.length === 0) errors.push("series がありません");
   (data.series || []).forEach((s, si) => {
     if (!s.name) errors.push(`series[${si}]: name がありません`);
+    if (s.isTrial !== undefined && typeof s.isTrial !== "boolean") errors.push(`${s.name || "series" + si}: isTrial は真偽値で指定してください`);
     const seen = new Set();
     (s.items || []).forEach((it, i) => {
       const tag = `${s.name || "series" + si} #${i + 1}`;
@@ -588,6 +589,7 @@ function serializeWordtestsFile(data, filePath) {
   data.series.forEach((s) => {
     out += "    {\n";
     out += `      name: ${JSON.stringify(s.name)},\n`;
+    if (s.isTrial !== undefined) out += `      isTrial: ${s.isTrial},\n`;
     out += "      items: [\n";
     s.items.forEach((it) => {
       const answer = it.answer.toLowerCase();

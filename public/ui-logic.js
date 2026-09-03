@@ -3,12 +3,25 @@
   if (typeof module === "object" && module.exports) module.exports = api;
   if (root) root.QuizUi = api;
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
-  const DAY1_UTC = Date.UTC(2026, 8, 1);
+  const DAY_MS = 24 * 60 * 60 * 1000;
+  const PROJECT_START = Date.parse("2026-09-06T19:30:00+09:00");
 
   function getStudyDay(date) {
-    const currentUtc = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
-    const elapsed = Math.round((currentUtc - DAY1_UTC) / 86400000);
-    return elapsed < 0 ? null : elapsed + 1;
+    const elapsed = date.getTime() - PROJECT_START;
+    return elapsed < 0 ? null : Math.floor(elapsed / DAY_MS) + 1;
+  }
+
+  function getProjectWeek(date) {
+    const elapsed = date.getTime() - PROJECT_START;
+    if (elapsed < 0) return null;
+    const weekIndex = Math.floor(elapsed / (7 * DAY_MS));
+    const startsAt = PROJECT_START + weekIndex * 7 * DAY_MS;
+    const endsAt = startsAt + 7 * DAY_MS;
+    return {
+      id: new Date(startsAt).toLocaleDateString("en-CA", { timeZone: "Asia/Tokyo" }),
+      startsAt,
+      endsAt,
+    };
   }
 
   function canCreateRoom(name, category) {
@@ -41,5 +54,5 @@
     return { score, total, accuracy: total ? Math.round((score / total) * 100) : 0 };
   }
 
-  return { getStudyDay, canCreateRoom, getSubmissionSummary, calculateResult };
+  return { getStudyDay, getProjectWeek, canCreateRoom, getSubmissionSummary, calculateResult };
 });

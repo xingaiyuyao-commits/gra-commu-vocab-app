@@ -5,6 +5,32 @@ module.exports = {
   label: "IELTS",
   series: [
     {
+      name: "体験会",
+      isTrial: true,
+      items: [
+        { sentence: "Last year, researchers ___ the data from a large national survey.", answer: "obtained", base: "obtain", hint: "o_____", ja: "得る、入手する", sentenceJa: "昨年、研究者たちは大規模な全国調査からデータを入手した。" },
+        { sentence: "Children learn social skills by ___ with others.", answer: "interacting", base: "interact", hint: "i_______", ja: "相互に作用する、交流する", sentenceJa: "子供たちは他者と交流することで社会的スキルを学ぶ。" },
+        { sentence: "Last month, the research team carefully ___ the results of the study.", answer: "interpreted", base: "interpret", hint: "i________", ja: "解釈する", sentenceJa: "先月、研究チームは研究結果を慎重に解釈した。" },
+        { sentence: "Currently, this solar panel ___ enough electricity for one household.", answer: "generates", base: "generate", hint: "g_______", ja: "生み出す、発生させる", sentenceJa: "現在、この太陽光パネルは一世帯分の電気を発電している。" },
+        { sentence: "Many modern English words are ___ from Latin and Greek.", answer: "derived", base: "derive", hint: "d_____", ja: "（～から）得る、由来する", sentenceJa: "多くの現代英語の単語はラテン語やギリシャ語に由来している。" },
+        { sentence: "To this day, the author ___ that education reduces inequality.", answer: "asserts", base: "assert", hint: "a_____", ja: "主張する、断言する", sentenceJa: "今日に至るまで、その著者は教育が不平等を減らすと主張している。" },
+        { sentence: "The teacher tried to ___ the difficult concept.", answer: "clarify", base: "clarify", hint: "c______", ja: "明確にする", sentenceJa: "先生はその難しい概念を明確にしようとした。" },
+        { sentence: "Currently, a few large firms ___ the global market.", answer: "dominate", base: "dominate", hint: "d_______", ja: "支配する、優位を占める", sentenceJa: "現在、少数の大企業が世界市場を支配している。" },
+        { sentence: "The government will ___ more funds to public health.", answer: "allocate", base: "allocate", hint: "a_______", ja: "割り当てる、配分する", sentenceJa: "政府は公衆衛生にさらに多くの資金を割り当てる予定だ。" },
+        { sentence: "We should ___ water during the dry season.", answer: "conserve", base: "conserve", hint: "c_______", ja: "保存する、節約する", sentenceJa: "乾季には水を節約すべきだ。" },
+        { sentence: "Generally, plants ___ sunlight into energy.", answer: "convert", base: "convert", hint: "c______", ja: "変える、転換する", sentenceJa: "一般的に、植物は太陽光をエネルギーに変換する。" },
+        { sentence: "Reading widely can ___ your writing skills.", answer: "enhance", base: "enhance", hint: "e______", ja: "高める、向上させる", sentenceJa: "幅広く読書することは文章力を高めることができる。" },
+        { sentence: "Experts ___ that the population will double by 2050.", answer: "estimate", base: "estimate", hint: "e_______", ja: "推定する、見積もる", sentenceJa: "専門家は2050年までに人口が倍増すると推定している。" },
+        { sentence: "Teachers ___ students through exams and projects.", answer: "evaluate", base: "evaluate", hint: "e_______", ja: "評価する", sentenceJa: "教師は試験や課題を通して生徒を評価する。" },
+        { sentence: "This study ___ the effects of stress on health.", answer: "examines", base: "examine", hint: "e______", ja: "詳しく調べる", sentenceJa: "この研究はストレスが健康に与える影響を詳しく調べている。" },
+        { sentence: "New evidence has ___ about the cause of the illness.", answer: "emerged", base: "emerge", hint: "e_____", ja: "現れる、明らかになる", sentenceJa: "その病気の原因について新たな証拠が明らかになった。" },
+        { sentence: "Last month, engineers ___ the design to reduce the cost.", answer: "modified", base: "modify", hint: "m_____", ja: "修正する、変更する", sentenceJa: "先月、エンジニアはコストを削減するために設計を変更した。" },
+        { sentence: "Generally, children ___ language quickly in their early years.", answer: "acquire", base: "acquire", hint: "a______", ja: "習得する、獲得する", sentenceJa: "一般的に、子供は幼少期に言語を素早く習得する。" },
+        { sentence: "Doctors always ___ each patient before deciding on treatment.", answer: "assess", base: "assess", hint: "a_____", ja: "評価する、査定する", sentenceJa: "医師はいつも、治療方針を決める前に各患者を評価する。" },
+        { sentence: "This survey ___ that most people support the plan.", answer: "indicates", base: "indicate", hint: "i_______", ja: "示す、示唆する", sentenceJa: "この調査は大多数の人がその計画を支持していることを示している。" },
+      ],
+    },
+    {
       name: "Day 1",
       items: [
         { sentence: "Last year, researchers ___ the data from a large national survey.", answer: "obtained", base: "obtain", hint: "o_____", ja: "得る、入手する", sentenceJa: "昨年、研究者たちは大規模な全国調査からデータを入手した。" },

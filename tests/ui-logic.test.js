@@ -3,19 +3,34 @@ const assert = require("node:assert/strict");
 
 const {
   getStudyDay,
+  getProjectWeek,
   canCreateRoom,
   getSubmissionSummary,
   calculateResult,
 } = require("../public/ui-logic");
 
-test("9月1日より前はDayを表示しない", () => {
-  assert.equal(getStudyDay(new Date(2026, 7, 31, 23, 59)), null);
+test("正式Day 1の開始前はDayを表示しない", () => {
+  assert.equal(getStudyDay(new Date("2026-09-06T19:29:59+09:00")), null);
 });
 
-test("2026年9月1日をDay 1として毎日1ずつ進める", () => {
-  assert.equal(getStudyDay(new Date(2026, 8, 1, 12, 0)), 1);
-  assert.equal(getStudyDay(new Date(2026, 8, 2, 12, 0)), 2);
-  assert.equal(getStudyDay(new Date(2026, 8, 30, 12, 0)), 30);
+test("2026年9月6日19時30分をDay 1として毎日1ずつ進める", () => {
+  assert.equal(getStudyDay(new Date("2026-09-06T19:30:00+09:00")), 1);
+  assert.equal(getStudyDay(new Date("2026-09-07T19:29:59+09:00")), 1);
+  assert.equal(getStudyDay(new Date("2026-09-07T19:30:00+09:00")), 2);
+});
+
+test("プロジェクト週は正式Day 1の開始時刻から7日ごとに区切る", () => {
+  assert.equal(getProjectWeek(new Date("2026-09-06T19:29:59+09:00")), null);
+  assert.deepEqual(getProjectWeek(new Date("2026-09-06T19:30:00+09:00")), {
+    id: "2026-09-06",
+    startsAt: Date.parse("2026-09-06T19:30:00+09:00"),
+    endsAt: Date.parse("2026-09-13T19:30:00+09:00"),
+  });
+  assert.deepEqual(getProjectWeek(new Date("2026-09-13T19:30:00+09:00")), {
+    id: "2026-09-13",
+    startsAt: Date.parse("2026-09-13T19:30:00+09:00"),
+    endsAt: Date.parse("2026-09-20T19:30:00+09:00"),
+  });
 });
 
 test("名前と単語帳の両方が揃った場合だけルームを作成できる", () => {
