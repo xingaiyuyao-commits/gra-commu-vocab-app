@@ -163,16 +163,6 @@
   .waiting-who { border-top: 1px solid var(--border); padding-top: 16px; text-align: center; }
   .waiting-line { color: var(--muted-foreground); font-size: .88rem; margin: 0; }
   .waiting-remain { font-weight: 700; margin: 4px 0 0; }
-  .peek { margin-top: 16px; border: 1px solid var(--border); border-radius: calc(var(--radius) - 2px); }
-  .peek > summary { cursor: pointer; padding: 13px 14px; font-size: .92rem; font-weight: 700; list-style: none; }
-  .peek > summary::-webkit-details-marker { display: none; }
-  .peek > summary::after { content: " ▾"; color: var(--muted-foreground); }
-  .peek-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px;
-               list-style: none; padding: 0 14px 14px; }
-  .peek-list li { padding: 7px 9px; background: var(--secondary); border-radius: 8px; font-size: .82rem; overflow-wrap: anywhere; }
-  .peek-list strong { display: block; font-size: .88rem; }
-  .peek-list span { color: var(--muted-foreground); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .78rem; }
-  @media (max-width: 480px) { .peek-list { grid-template-columns: 1fr; } }
   .waiting-set { text-align: center; font-size: 1.3rem; font-weight: 700; color: var(--primary); margin: 0 0 4px; }
   .perfect-title { font-size: 1.25rem; font-weight: 700; text-align: center; margin-bottom: 12px; }
   .rank-list { list-style: none; }
@@ -309,8 +299,10 @@
             <p class="perfect-title">🏆 満点者</p>
             <ul class="rank-list" id="mh-clacel-perfect"></ul>
             <p class="mh-progress" id="mh-clacel-noperfect" hidden>今回、満点の人はいませんでした</p>
-            <p class="mh-progress" style="margin-top:14px;">みんながつまずいた単語 上位3つ</p>
-            <ul class="rank-list" id="mh-clacel-mistakes"></ul>
+            <div id="mh-clacel-mistake-section">
+              <p class="mh-progress" style="margin-top:14px;">みんながつまずいた単語 上位3つ</p>
+              <ul class="rank-list" id="mh-clacel-mistakes"></ul>
+            </div>
             <button id="mh-clacel-again" class="secondary">もう一度（ロビーに戻る）</button>
           </div>
           <button id="mh-clacel-close" class="secondary" hidden>Clacelのルームを終了</button>
@@ -341,8 +333,10 @@
             <p class="perfect-title">🏆 満点者</p>
             <ul class="rank-list" id="mh-toeic-perfect"></ul>
             <p class="mh-progress" id="mh-toeic-noperfect" hidden>今回、満点の人はいませんでした</p>
-            <p class="mh-progress" style="margin-top:14px;">みんながつまずいた単語 上位3つ</p>
-            <ul class="rank-list" id="mh-toeic-mistakes"></ul>
+            <div id="mh-toeic-mistake-section">
+              <p class="mh-progress" style="margin-top:14px;">みんながつまずいた単語 上位3つ</p>
+              <ul class="rank-list" id="mh-toeic-mistakes"></ul>
+            </div>
             <button id="mh-toeic-again" class="secondary">もう一度（ロビーに戻る）</button>
           </div>
           <button id="mh-toeic-close" class="secondary" hidden>TOEICのルームを終了</button>
@@ -373,8 +367,10 @@
             <p class="perfect-title">🏆 満点者</p>
             <ul class="rank-list" id="mh-ielts-perfect"></ul>
             <p class="mh-progress" id="mh-ielts-noperfect" hidden>今回、満点の人はいませんでした</p>
-            <p class="mh-progress" style="margin-top:14px;">みんながつまずいた単語 上位3つ</p>
-            <ul class="rank-list" id="mh-ielts-mistakes"></ul>
+            <div id="mh-ielts-mistake-section">
+              <p class="mh-progress" style="margin-top:14px;">みんながつまずいた単語 上位3つ</p>
+              <ul class="rank-list" id="mh-ielts-mistakes"></ul>
+            </div>
             <button id="mh-ielts-again" class="secondary">もう一度（ロビーに戻る）</button>
           </div>
           <button id="mh-ielts-close" class="secondary" hidden>IELTSのルームを終了</button>
@@ -413,10 +409,6 @@
       </div>
       <p class="lobby-players-label" id="lobby-players-label"></p>
       <ul class="player-list" id="lobby-players"></ul>
-      <details class="peek" id="last-mistakes" hidden>
-        <summary id="last-mistakes-summary">前回の間違い</summary>
-        <ul class="peek-list" id="last-mistakes-list"></ul>
-      </details>
     </div>
     <button class="leave" onclick="leaveRoom(false)">退出する</button>
   </div>
@@ -489,6 +481,7 @@
         <p class="q-ja" id="retest-ja"></p>
         <p class="q-hint" id="retest-hint"></p>
         <p class="q-sentence" id="retest-sentence"></p>
+        <p class="q-sentence-ja" id="retest-sentence-ja"></p>
         <input class="answer-input" id="retest-answer" autocomplete="off" autocapitalize="off" placeholder="単語を入力" />
         <p class="retest-feedback" id="retest-feedback"></p>
         <p class="retest-answer" id="retest-correct"></p>
@@ -496,12 +489,14 @@
       </div>
       <p class="retest-done" id="retest-done" hidden></p>
       <button type="button" class="secondary" id="retest-quit">結果に戻る</button>
+      <p class="error" id="retest-room-closed-notice" hidden></p>
     </div>
   </div>
 
   <!-- 結果 -->
   <div class="screen" id="screen-results">
     <p class="results-set" id="results-set"></p>
+    <p class="error" id="results-room-closed-notice" hidden></p>
     <div class="result-layout" id="result-layout">
       <div class="card summary-bar" id="summary-card">
         <div class="summary-score" id="summary-score">
@@ -583,6 +578,7 @@
   let questions = [];
   let answers = [];
   let idx = 0;
+  let editingFromConfirmation = false;
   let quizEndsAt = 0;
   let timerInterval = null;
   let waitingTimerInterval = null;
@@ -737,17 +733,6 @@
     } catch { /* 保存できない端末でも、テスト自体は続けられるようにする */ }
   }
 
-  function renderLastMistakes() {
-    const box = $("last-mistakes");
-    const latest = loadMistakeHistory()[0];
-    if (!latest || !Array.isArray(latest.words) || !latest.words.length) return (box.hidden = true);
-    box.hidden = false;
-    box.open = false;
-    $("last-mistakes-summary").textContent = `前回の間違い ${latest.words.length}語（${latest.setLabel || "前回のテスト"}）`;
-    $("last-mistakes-list").innerHTML = latest.words.map((w) =>
-      `<li><strong>${escapeHtml(w.answer)}</strong><span>${escapeHtml(w.ja)}</span></li>`).join("");
-  }
-
   // ルームコードを手入力させずに済むよう、参加URLとQRを出す
   // joinUrlFor accepts optional category to include in the shared link as ?cat=clacel (optional)
   function joinUrlFor(roomCode, category) {
@@ -794,7 +779,6 @@
     const container = document.querySelector(".container");
     container.classList.toggle("results-wide", id === "screen-results");
     container.classList.toggle("in-room", IN_ROOM_SCREENS.includes(id));
-    if (id === "screen-lobby") renderLastMistakes();
   }
 
   // ホストは回答・提出をしない進行役なので、待機画面の文言も「自分が提出した」体にしない
@@ -1004,17 +988,11 @@
       $(`mh-${category}-perfect`).hidden = true;
       $(`mh-${category}-noperfect`).hidden = false;
     }
-    $(`mh-${category}-mistakes`).innerHTML = mistakes.slice(0, 3).length
-      ? mistakes.slice(0, 3).map((item) => {
-        const types = item.mistakeTypes || {};
-        const labels = [
-          ["スペルミス", types.spelling],
-          ["活用系のミス", types.inflection],
-          ["別の単語・未回答", types.different],
-        ].filter(([, count]) => count).map(([label, count]) => `${label} ${count}`).join("　");
-        return `<li><span>${escapeHtml(item.answer)}<br><small>${escapeHtml(item.ja)}</small>${labels ? `<small>${labels}</small>` : ""}</span></li>`;
-      }).join("")
-      : "<li><span>全員正解でした</span></li>";
+    const topMistakes = mistakes.slice(0, 3);
+    $(`mh-${category}-mistake-section`).hidden = topMistakes.length === 0;
+    $(`mh-${category}-mistakes`).innerHTML = topMistakes.map((item) =>
+      `<li><span>${escapeHtml(item.answer)}<br><small>${escapeHtml(item.ja)}</small><small>${Number(item.count) || 0}人が間違えました</small></span></li>`
+    ).join("");
     mhShow(category, "results");
   }
 
@@ -1189,8 +1167,17 @@
   });
 
   socket.on("quiz:roomClosed", () => {
-    alert("運営者がルームを終了しました");
+    const activeScreen = document.querySelector(".screen.active")?.id;
     clearSession();
+    if (activeScreen === "screen-results" || activeScreen === "screen-retest") {
+      const message = "ルームは終了しました。この結果と解き直しは、この端末だけで引き続き利用できます。";
+      $("results-room-closed-notice").textContent = message;
+      $("results-room-closed-notice").hidden = false;
+      $("retest-room-closed-notice").textContent = message;
+      $("retest-room-closed-notice").hidden = false;
+      return;
+    }
+    alert("運営者がルームを終了しました");
     location.href = "/";
   });
 
@@ -1249,6 +1236,7 @@
     questions = qs;
     answers = Array(total).fill("");
     idx = 0;
+    editingFromConfirmation = false;
     persistAnswers();
     quizEndsAt = endsAt;
     currentSetLabel = setLabel;
@@ -1285,7 +1273,9 @@
     $("q-sentence-ja").textContent = q.sentenceJa || "";
     $("answer").value = answers[idx];
     $("btn-back").disabled = idx === 0;
-    $("btn-next").textContent = idx === total - 1 ? "回答を確認" : "次へ";
+    $("btn-next").textContent = editingFromConfirmation
+      ? "確認一覧へ戻る"
+      : (idx === total - 1 ? "回答を確認" : "次へ");
   }
 
   function saveCurrent() { answers[idx] = $("answer").value; persistAnswers(); }
@@ -1316,6 +1306,7 @@
     document.querySelectorAll("#screen-confirm [data-question-index]").forEach((button) => {
       button.addEventListener("click", () => {
         idx = Number(button.dataset.questionIndex);
+        editingFromConfirmation = true;
         persistAnswers();
         renderQuestion();
         show("screen-quiz");
@@ -1335,6 +1326,11 @@
 
   $("btn-next").addEventListener("click", () => {
     saveCurrent();
+    if (editingFromConfirmation) {
+      editingFromConfirmation = false;
+      showSubmitConfirmation();
+      return;
+    }
     if (idx < questions.length - 1) {
       idx++;
       persistAnswers();
@@ -1421,6 +1417,7 @@
       altAnswers: Array.isArray(r.altAnswers) ? r.altAnswers : [],
       ja: r.ja,
       sentence: r.sentence,
+      sentenceJa: r.sentenceJa || "",
     }));
     $("btn-retest").style.display = hasWrong ? "" : "none";
 
@@ -1458,6 +1455,7 @@
     const initial = String(item.answer || "").slice(0, 1);
     $("retest-hint").innerHTML = `${escapeHtml(initial)}<span class="hint-line" aria-label="スペルのヒントの線"></span>`;
     $("retest-sentence").innerHTML = item.sentence.replace("___", '<span class="blank">___</span>');
+    $("retest-sentence-ja").textContent = item.sentenceJa;
     $("retest-answer").value = "";
     $("retest-answer").disabled = false;
     $("retest-feedback").textContent = "";
