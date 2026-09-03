@@ -162,6 +162,49 @@ test("誤パスワードをIP単位で制限し、入力値を応答や永続状
   assert.equal(fs.readFileSync(stateFile, "utf8").includes(password), false);
 });
 
+test("非Railway環境ではX-Forwarded-Forを偽装しても失敗制限を回避できない", async (t) => {
+  const password = "local-proxy-secret";
+  const { baseUrl } = await startServer(t, { password });
+
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    const request = jsonRequest("POST", { password: "wrong" });
+    request.headers["X-Forwarded-For"] = `198.51.100.${attempt}`;
+    const response = await fetch(`${baseUrl}/api/results-history/login`, request);
+    assert.equal(response.status, 401, `attempt ${attempt}`);
+  }
+
+  const bypass = jsonRequest("POST", { password });
+  bypass.headers["X-Forwarded-For"] = "203.0.113.200";
+  const limited = await fetch(`${baseUrl}/api/results-history/login`, bypass);
+  assert.equal(limited.status, 429);
+});
+
+test("Railwayの1段プロキシでは転送されたクライアントIPごとに失敗制限を分離する", async (t) => {
+  const password = "railway-proxy-secret";
+  const { baseUrl } = await startServer(t, {
+    password,
+    envOverrides: { RAILWAY_ENVIRONMENT_ID: "railway-test" },
+  });
+
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    const request = jsonRequest("POST", { password: "wrong" });
+    request.headers["X-Forwarded-For"] = "198.51.100.10";
+    const response = await fetch(`${baseUrl}/api/results-history/login`, request);
+    assert.equal(response.status, 401, `client A attempt ${attempt}`);
+  }
+
+  const blockedRequest = jsonRequest("POST", { password });
+  blockedRequest.headers["X-Forwarded-For"] = "198.51.100.10";
+  const blocked = await fetch(`${baseUrl}/api/results-history/login`, blockedRequest);
+  assert.equal(blocked.status, 429, "client A remains limited");
+
+  const independentRequest = jsonRequest("POST", { password });
+  independentRequest.headers["X-Forwarded-For"] = "203.0.113.20";
+  const independent = await fetch(`${baseUrl}/api/results-history/login`, independentRequest);
+  assert.equal(independent.status, 200, "client B has an independent bucket");
+  assert.match(responseCookie(independent).setCookie, /;\s*Secure/i, "Railway cookie remains Secure");
+});
+
 test("ログインCookieで指定月の許可フィールドだけを取得できる", async (t) => {
   const password = "history-admin-secret";
   const septemberClacel = historyRecord("2026-09-05", "clacel", {

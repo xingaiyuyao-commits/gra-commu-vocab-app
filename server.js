@@ -638,6 +638,7 @@ const IS_RAILWAY_RUNTIME = Boolean(
   || process.env.RAILWAY_SERVICE_ID
   || process.env.RAILWAY_PROJECT_ID
 );
+if (IS_RAILWAY_RUNTIME) app.set("trust proxy", 1);
 const QUIZ_ROOM_PERSISTENCE_REQUIRED = Boolean(process.env.QUIZ_ROOM_STATE_FILE) || IS_RAILWAY_RUNTIME;
 const QUIZ_ROOM_STATE_FILE = process.env.QUIZ_ROOM_STATE_FILE
   || (fs.existsSync("/data") ? "/data/quiz-rooms.json" : null);
