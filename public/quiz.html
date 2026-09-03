@@ -128,6 +128,7 @@
   .retest-feedback.ng { color: var(--destructive); }
   .retest-answer { text-align: center; color: var(--muted-foreground); font-size: .88rem; min-height: 1.4em; margin-bottom: 10px; }
   .retest-done { text-align: center; font-size: 1.2rem; font-weight: 800; margin: 18px 0 10px; }
+  .weekly-review-note { color: var(--muted-foreground); font-size: .78rem; line-height: 1.55; margin-top: 10px; }
 
   .action-confirm { position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(0, 0, 0, .35); }
   .action-confirm[hidden] { display: none; }
@@ -383,6 +384,10 @@
         <button id="btn-join" class="secondary">URLから参加</button>
       </div>
       <p class="error" id="entry-error" role="alert"></p>
+    </div>
+    <div class="card" id="weekly-review-entry" hidden>
+      <button type="button" id="btn-weekly-review"></button>
+      <p class="weekly-review-note">同じ端末・同じブラウザでのみ利用できます。次週のDay 1 19:30を過ぎると期限切れになります。</p>
     </div>
     <button class="leave" onclick="leaveRoom(false)">← ゲーム選択に戻る</button>
   </div>
@@ -711,26 +716,41 @@
     });
   }
 
-  // 間違えた単語はルームと一緒に24時間で消えるので、この端末にも残しておく
-  const MISTAKE_KEY = "quizMistakeHistory";
-  const MISTAKE_MAX = 30;
+  const WEEKLY_MISTAKE_KEY = "oshQuizWeeklyMistakesV1";
 
-  function loadMistakeHistory() {
+  function loadWeeklyMistakes(now = new Date()) {
     try {
-      const parsed = JSON.parse(localStorage.getItem(MISTAKE_KEY) || "[]");
-      return Array.isArray(parsed) ? parsed : [];
-    } catch { return []; }
+      const raw = localStorage.getItem(WEEKLY_MISTAKE_KEY);
+      const state = QuizUi.readWeeklyMistakes(raw, now);
+      if (!state.weekId || state.records.length === 0) {
+        if (raw !== null) localStorage.removeItem(WEEKLY_MISTAKE_KEY);
+      } else {
+        const normalized = JSON.stringify(state);
+        if (normalized !== raw) localStorage.setItem(WEEKLY_MISTAKE_KEY, normalized);
+      }
+      return state;
+    } catch {
+      return QuizUi.readWeeklyMistakes(null, now);
+    }
   }
 
-  function saveMistakeRecord(record) {
+  function saveWeeklyMistakeRecord(record, now = new Date()) {
     try {
-      const list = loadMistakeHistory();
-      // 結果画面は再接続でも描き直されるので、同じ回を二重に積まない
-      const latest = list[0];
-      if (latest && latest.roomCode === record.roomCode && latest.setLabel === record.setLabel) list.shift();
-      list.unshift(record);
-      localStorage.setItem(MISTAKE_KEY, JSON.stringify(list.slice(0, MISTAKE_MAX)));
+      const state = QuizUi.writeWeeklyMistakeRecord(localStorage.getItem(WEEKLY_MISTAKE_KEY), record, now);
+      if (state.weekId && state.records.length) {
+        localStorage.setItem(WEEKLY_MISTAKE_KEY, JSON.stringify(state));
+      } else {
+        localStorage.removeItem(WEEKLY_MISTAKE_KEY);
+      }
+      renderWeeklyReviewEntry(now);
     } catch { /* 保存できない端末でも、テスト自体は続けられるようにする */ }
+  }
+
+  function renderWeeklyReviewEntry(now = new Date()) {
+    const state = loadWeeklyMistakes(now);
+    const count = state.records.reduce((total, record) => total + record.words.length, 0);
+    $("weekly-review-entry").hidden = count === 0;
+    $("btn-weekly-review").textContent = `今週の間違いを解く（${count}語）`;
   }
 
   // ルームコードを手入力させずに済むよう、参加URLとQRを出す
@@ -805,6 +825,7 @@
   let savedSession;
   try { savedSession = JSON.parse(localStorage.getItem("quizSession") || "null"); } catch { savedSession = null; }
   if (!savedSession || !savedSession.roomCode) show("screen-entry");
+  renderWeeklyReviewEntry();
 
   // --- 参加/作成 ---
   const entryMode = new URLSearchParams(location.search).get("mode");
@@ -1359,7 +1380,7 @@
   });
 
   // --- 結果 ---
-  function renderResults({ setLabel, perfect, review }) {
+  function renderResults({ setLabel, perfect, review, isTrial = false }) {
     clearQuizTimer();
     clearWaitingTimer();
     clearPendingSubmission();
@@ -1421,13 +1442,19 @@
     }));
     $("btn-retest").style.display = hasWrong ? "" : "none";
 
-    // ルームは24時間で消えるので、間違えた単語はこの端末にも残す
-    if (hasWrong) {
-      saveMistakeRecord({
+    // 正式回の誤答だけを、そのプロジェクト週の間この端末に残す
+    if (hasWrong && !isTrial) {
+      saveWeeklyMistakeRecord({
         at: new Date().toISOString(),
-        roomCode: currentRoomCode || "",
+        category: selectedCategory || "",
         setLabel: setLabel || currentSetLabel || "",
-        words: wrongReviews.map(({ r, mine }) => ({ answer: r.answer, ja: r.ja, mine: mine || "" })),
+        words: wrongReviews.map(({ r }) => ({
+          answer: r.answer,
+          altAnswers: Array.isArray(r.altAnswers) ? r.altAnswers : [],
+          ja: r.ja,
+          sentence: r.sentence,
+          sentenceJa: r.sentenceJa || "",
+        })),
       });
     }
 
@@ -1446,6 +1473,7 @@
   let retestIdx = 0;
   let retestCorrect = 0;
   let retestChecked = false;
+  let retestReturnScreen = "screen-results";
 
   function renderRetest() {
     const item = retestItems[retestIdx];
@@ -1487,16 +1515,29 @@
     $("retest-done").textContent = `${retestItems.length}語中 ${retestCorrect}語 正解`;
   }
 
-  $("btn-retest").addEventListener("click", () => {
-    if (!retestSource.length) return;
-    retestItems = retestSource.slice();
+  function startRetest(source, returnScreen) {
+    if (!source.length) return;
+    retestItems = source.slice();
     retestIdx = 0;
     retestCorrect = 0;
+    retestReturnScreen = returnScreen;
     $("retest-done").hidden = true;
     $("retest-question").hidden = false;
+    $("retest-quit").textContent = returnScreen === "screen-entry" ? "クイズ入口に戻る" : "結果に戻る";
     renderRetest();
     show("screen-retest");
     $("retest-answer").focus();
+  }
+
+  $("btn-retest").addEventListener("click", () => {
+    startRetest(retestSource, "screen-results");
+  });
+
+  $("btn-weekly-review").addEventListener("click", () => {
+    const state = loadWeeklyMistakes();
+    const words = state.records.flatMap((record) => record.words);
+    if (!words.length) return renderWeeklyReviewEntry();
+    startRetest(words, "screen-entry");
   });
 
   $("retest-next").addEventListener("click", () => {
@@ -1511,7 +1552,10 @@
     if (e.key === "Enter") $("retest-next").click();
   });
 
-  $("retest-quit").addEventListener("click", () => show("screen-results"));
+  $("retest-quit").addEventListener("click", () => {
+    if (retestReturnScreen === "screen-entry") renderWeeklyReviewEntry();
+    show(retestReturnScreen);
+  });
 
   socket.on("quiz:results", (data) => {
     renderResults(data);
