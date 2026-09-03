@@ -91,6 +91,21 @@ test("週間復習入口: ブラウザ保存領域を読めない場合もクイ
   assert.equal(document.getElementById("weekly-review-entry").hidden, true);
 });
 
+test("週間復習入口: 初期件数表示では完全読込ヘルパーを呼ばない", () => {
+  const { window, document } = loadQuizPage();
+  setWindowTime(window, "2026-09-08T19:30:00+09:00");
+  window.localStorage.setItem("oshQuizWeeklyMistakesV1", JSON.stringify({
+    weekId: "2026-09-06",
+    records: [{ at: "2026-09-07T10:30:00.000Z", category: "clacel", setLabel: "Day 2", words: [
+      { answer: "drink", altAnswers: [], ja: "飲む", sentence: "I ___ tea.", sentenceJa: "私はお茶を飲む。" },
+    ] }],
+  }));
+  window.QuizUi.readWeeklyMistakes = () => { throw new Error("full reader called"); };
+
+  assert.doesNotThrow(() => window.eval("renderWeeklyReviewEntry()"));
+  assert.equal(document.getElementById("btn-weekly-review").textContent, "今週の間違いを解く（1語）");
+});
+
 test("参加・作成画面: Clacel/TOEIC/IELTSそれぞれの作成ボタンが横並びで表示される", () => {
   const { document } = loadQuizPage({ url: "http://localhost/quiz.html?mode=create" });
   ["clacel", "toeic", "ielts"].forEach((category) => {
@@ -875,18 +890,22 @@ test("週間復習保存: 通常回の誤答だけを個人情報なしで今週
   document.getElementById("answer").value = "personal raw answer";
   document.getElementById("btn-next").dispatchEvent(new window.Event("click", { bubbles: true }));
 
-  fireSocketEvent("quiz:results", {
+  const resultPayload = {
     setLabel: "Day 2",
     perfect: [{ id: "other-id", name: "Other Person" }],
     others: [{ id: "participant-id", name: "Private Name", score: 0, total: 1 }],
     review: [{ answer: "drink", altAnswers: ["drank"], ja: "飲む", sentence: "I ___ tea.", sentenceJa: "私はお茶を飲む。" }],
     mistakes: [{ index: 0, answer: "drink", ja: "飲む", count: 1 }],
     isTrial: false,
-  });
+  };
+  fireSocketEvent("quiz:results", resultPayload);
+  fireSocketEvent("quiz:results", resultPayload);
 
   const raw = window.localStorage.getItem("oshQuizWeeklyMistakesV1");
   const stored = JSON.parse(raw);
   assert.equal(stored.weekId, "2026-09-06");
+  assert.equal(stored.records.length, 1, "同じ結果の再描画では記録を増やさない");
+  assert.equal(document.getElementById("btn-weekly-review").textContent, "今週の間違いを解く（1語）");
   assert.deepEqual(Object.keys(stored.records[0]), ["at", "category", "setLabel", "words"]);
   assert.equal(stored.records[0].category, "clacel");
   assert.equal(stored.records[0].setLabel, "Day 2");
@@ -936,9 +955,9 @@ test("週間復習: 今週の全記録を日付順・出題順に解き、正解
     ],
   }));
   window.eval("renderWeeklyReviewEntry()");
-  const beforeRetest = window.localStorage.getItem("oshQuizWeeklyMistakesV1");
 
   document.getElementById("btn-weekly-review").dispatchEvent(new window.Event("click", { bubbles: true }));
+  const beforeCorrectAnswer = window.localStorage.getItem("oshQuizWeeklyMistakesV1");
 
   assert.equal(document.getElementById("screen-retest").classList.contains("active"), true);
   assert.equal(document.getElementById("retest-num").textContent, "1 / 2");
@@ -947,7 +966,7 @@ test("週間復習: 今週の全記録を日付順・出題順に解き、正解
   document.getElementById("retest-answer").value = "drink";
   document.getElementById("retest-next").dispatchEvent(new window.Event("click", { bubbles: true }));
   assert.equal(document.getElementById("retest-feedback").textContent, "正解 🎉");
-  assert.equal(window.localStorage.getItem("oshQuizWeeklyMistakesV1"), beforeRetest);
+  assert.equal(window.localStorage.getItem("oshQuizWeeklyMistakesV1"), beforeCorrectAnswer);
   document.getElementById("retest-next").dispatchEvent(new window.Event("click", { bubbles: true }));
   assert.equal(document.getElementById("retest-num").textContent, "2 / 2");
   assert.equal(document.getElementById("retest-sentence-ja").textContent, "彼女は本を読む。");

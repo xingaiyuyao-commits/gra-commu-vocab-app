@@ -747,8 +747,12 @@
   }
 
   function renderWeeklyReviewEntry(now = new Date()) {
-    const state = loadWeeklyMistakes(now);
-    const count = state.records.reduce((total, record) => total + record.words.length, 0);
+    let count = 0;
+    try {
+      const raw = localStorage.getItem(WEEKLY_MISTAKE_KEY);
+      count = QuizUi.countWeeklyMistakes(raw, now);
+      if (count === 0 && raw !== null) localStorage.removeItem(WEEKLY_MISTAKE_KEY);
+    } catch { /* 保存領域を読めない場合は、復習入口だけを隠す */ }
     $("weekly-review-entry").hidden = count === 0;
     $("btn-weekly-review").textContent = `今週の間違いを解く（${count}語）`;
   }

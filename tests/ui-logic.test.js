@@ -4,6 +4,7 @@ const assert = require("node:assert/strict");
 const {
   getStudyDay,
   getProjectWeek,
+  countWeeklyMistakes,
   readWeeklyMistakes,
   writeWeeklyMistakeRecord,
   canCreateRoom,
@@ -68,6 +69,80 @@ test("週間復習は壊れた保存データを空として扱う", () => {
     weekId: "2026-09-06",
     records: [],
   });
+});
+
+test("週間復習の件数専用ヘルパーは現在週の語数だけを数える", () => {
+  const now = new Date("2026-09-08T19:30:00+09:00");
+  const raw = JSON.stringify({
+    weekId: "2026-09-06",
+    records: [
+      { at: "2026-09-07T10:30:00.000Z", category: "clacel", setLabel: "Day 2", words: [
+        { answer: "drink", altAnswers: [], ja: "飲む", sentence: "I ___ tea.", sentenceJa: "私はお茶を飲む。" },
+      ] },
+      { at: "2026-09-08T10:30:00.000Z", category: "toeic", setLabel: "Day 3", words: [
+        { answer: "read", altAnswers: [], ja: "読む", sentence: "I ___ books.", sentenceJa: "私は本を読む。" },
+        { answer: "write", altAnswers: [], ja: "書く", sentence: "I ___ notes.", sentenceJa: "私はメモを書く。" },
+      ] },
+    ],
+  });
+
+  assert.equal(countWeeklyMistakes(raw, now), 3);
+  assert.equal(countWeeklyMistakes(raw, new Date("2026-09-13T19:30:00+09:00")), 0);
+});
+
+test("週間復習は不正な記録または単語を文書ごと拒否し、件数も0にする", () => {
+  const now = new Date("2026-09-08T19:30:00+09:00");
+  const validWord = {
+    answer: "drink", altAnswers: [], ja: "飲む", sentence: "I ___ tea.", sentenceJa: "私はお茶を飲む。",
+  };
+  const validRecord = {
+    at: "2026-09-07T10:30:00.000Z", category: "clacel", setLabel: "Day 2", words: [validWord],
+  };
+  const malformedRecords = [
+    { ...validRecord, at: "not-an-iso-date" },
+    { ...validRecord, at: "2026-02-31T10:30:00.000Z" },
+    { ...validRecord, category: "" },
+    { ...validRecord, category: "unknown" },
+    { ...validRecord, setLabel: "  " },
+    { ...validRecord, words: "not-an-array" },
+  ];
+  const malformedWords = [
+    { ...validWord, answer: "" },
+    { ...validWord, ja: 123 },
+    { ...validWord, sentence: " " },
+    { answer: "drink", altAnswers: [], ja: "飲む", sentence: "I ___ tea." },
+    { ...validWord, altAnswers: ["drank", 123] },
+  ];
+  const documents = [
+    ...malformedRecords.map((record) => ({ weekId: "2026-09-06", records: [record] })),
+    ...malformedWords.map((word) => ({ weekId: "2026-09-06", records: [{ ...validRecord, words: [word] }] })),
+  ];
+
+  for (const document of documents) {
+    const raw = JSON.stringify(document);
+    assert.deepEqual(readWeeklyMistakes(raw, now), { weekId: "2026-09-06", records: [] });
+    assert.equal(countWeeklyMistakes(raw, now), 0);
+  }
+});
+
+test("週間復習は同じ週の同一コース・問題セットを最新内容へ置換する", () => {
+  const now = new Date("2026-09-08T19:30:00+09:00");
+  const first = writeWeeklyMistakeRecord(null, {
+    at: "2026-09-07T10:30:00.000Z",
+    category: "clacel",
+    setLabel: "Day 2",
+    words: [{ answer: "old", altAnswers: [], ja: "旧", sentence: "I ___ it.", sentenceJa: "私はそれをする。" }],
+  }, now);
+  const replaced = writeWeeklyMistakeRecord(JSON.stringify(first), {
+    at: "2026-09-08T10:30:00.000Z",
+    category: "clacel",
+    setLabel: "Day 2",
+    words: [{ answer: "new", altAnswers: [], ja: "新", sentence: "I ___ this.", sentenceJa: "私はこれをする。" }],
+  }, now);
+
+  assert.equal(replaced.records.length, 1);
+  assert.equal(replaced.records[0].at, "2026-09-08T10:30:00.000Z");
+  assert.equal(replaced.records[0].words[0].answer, "new");
 });
 
 test("週間復習は端末あたり最新420語までを日付順・出題順で保持する", () => {
