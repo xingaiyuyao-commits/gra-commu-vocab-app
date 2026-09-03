@@ -651,8 +651,8 @@ if (QUIZ_ROOM_PERSISTENCE_REQUIRED && !QUIZ_ROOM_STATE_FILE) {
   console.error("quiz room persistence unavailable: persistent volume is not mounted");
 }
 
-function loadQuizRooms() {
-  if (!QUIZ_ROOM_STATE_FILE) return {};
+function loadQuizState() {
+  if (!QUIZ_ROOM_STATE_FILE) return { rooms: {}, resultHistory: {} };
   try {
     const saved = JSON.parse(fs.readFileSync(QUIZ_ROOM_STATE_FILE, "utf8"));
     const restored = {};
@@ -668,17 +668,24 @@ function loadQuizRooms() {
           sessionToken: String(player.sessionToken || ""),
           submittedAt: player.submittedAt ?? null,
           score: Number(player.score) || 0,
+          wrongQuestionIndexes: Array.isArray(player.wrongQuestionIndexes)
+            ? player.wrongQuestionIndexes.filter((index) => Number.isInteger(index) && index >= 0)
+            : [],
           leaveTimer: null,
         }])),
         questions: Array.isArray(room.questions) ? room.questions : [],
         startedAt: Number(room.startedAt) || 0,
         endsAt: Number(room.endsAt) || 0,
         setLabel: String(room.setLabel || ""),
+        isTrial: room.isTrial === true,
         results: room.results || null,
         timeoutHandle: null,
       };
     }
-    return restored;
+    const resultHistory = saved.resultHistory && typeof saved.resultHistory === "object" && !Array.isArray(saved.resultHistory)
+      ? saved.resultHistory
+      : {};
+    return { rooms: restored, resultHistory };
   } catch (error) {
     if (error.code !== "ENOENT") {
       quizPersistenceHealth.ready = false;
@@ -686,13 +693,15 @@ function loadQuizRooms() {
       quizPersistenceHealth.restoreFailed = true;
       console.error("quiz room restore failed:", error.message);
     }
-    return {};
+    return { rooms: {}, resultHistory: {} };
   }
 }
 
-const quizRooms = loadQuizRooms(); // roomCode -> room state
+const quizState = loadQuizState();
+const quizRooms = quizState.rooms; // roomCode -> room state
+const resultHistory = quizState.resultHistory; // yyyy-mm-dd:category -> daily result
 
-function persistQuizRooms() {
+function persistQuizState() {
   if (!QUIZ_ROOM_STATE_FILE) {
     if (QUIZ_ROOM_PERSISTENCE_REQUIRED) {
       quizPersistenceHealth.ready = false;
@@ -713,11 +722,13 @@ function persistQuizRooms() {
         sessionToken: player.sessionToken,
         submittedAt: player.submittedAt,
         score: player.score,
+        wrongQuestionIndexes: player.wrongQuestionIndexes,
       }])),
       questions: room.questions,
       startedAt: room.startedAt,
       endsAt: room.endsAt,
       setLabel: room.setLabel,
+      isTrial: room.isTrial,
       results: room.results,
     };
   }
@@ -725,7 +736,7 @@ function persistQuizRooms() {
   const temporaryFile = `${QUIZ_ROOM_STATE_FILE}.${process.pid}.tmp`;
   try {
     fs.mkdirSync(directory, { recursive: true });
-    fs.writeFileSync(temporaryFile, JSON.stringify({ version: 1, rooms }), { mode: 0o600 });
+    fs.writeFileSync(temporaryFile, JSON.stringify({ version: 2, rooms, resultHistory }), { mode: 0o600 });
     fs.renameSync(temporaryFile, QUIZ_ROOM_STATE_FILE);
     quizPersistenceHealth.ready = true;
     quizPersistenceHealth.lastError = null;
@@ -749,18 +760,28 @@ function cloneQuizRoom(room) {
   };
 }
 
+function cloneQuizState() {
+  return {
+    rooms: Object.fromEntries(Object.entries(quizRooms).map(([code, room]) => [code, cloneQuizRoom(room)])),
+    resultHistory: JSON.parse(JSON.stringify(resultHistory)),
+  };
+}
+
 function persistQuizMutation(roomCode, mutate) {
-  const before = cloneQuizRoom(quizRooms[roomCode]);
+  const before = cloneQuizState();
   mutate();
-  if (persistQuizRooms()) return true;
+  if (persistQuizState()) return true;
   const current = quizRooms[roomCode];
-  if (current?.timeoutHandle && current.timeoutHandle !== before?.timeoutHandle) clearTimeout(current.timeoutHandle);
-  if (before) quizRooms[roomCode] = before;
-  else delete quizRooms[roomCode];
+  const priorRoom = before.rooms[roomCode];
+  if (current?.timeoutHandle && current.timeoutHandle !== priorRoom?.timeoutHandle) clearTimeout(current.timeoutHandle);
+  for (const code of Object.keys(quizRooms)) delete quizRooms[code];
+  Object.assign(quizRooms, before.rooms);
+  for (const key of Object.keys(resultHistory)) delete resultHistory[key];
+  Object.assign(resultHistory, before.resultHistory);
   return false;
 }
 
-if (QUIZ_ROOM_STATE_FILE && !quizPersistenceHealth.restoreFailed) persistQuizRooms();
+if (QUIZ_ROOM_STATE_FILE && !quizPersistenceHealth.restoreFailed) persistQuizState();
 
 function makeQuizRoomCode() {
   const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
@@ -839,6 +860,7 @@ function quizForceFinish(roomCode) {
     for (const p of quizParticipants(room)) {
       if (p.submittedAt === null) {
         room.players[p.id].score = 0;
+        room.players[p.id].wrongQuestionIndexes = room.questions.map((_question, index) => index);
         room.players[p.id].submittedAt = Date.now();
       }
     }
@@ -865,6 +887,17 @@ function quizCheckAllSubmitted(roomCode) {
   io.to(roomCode).emit("quiz:readyToReveal");
 }
 
+function tokyoDateKey(date) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Tokyo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const value = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${value.year}-${value.month}-${value.day}`;
+}
+
 // ホストの操作で結果発表を確定させる。参加者全員が提出済みであることを再確認してから発表する。
 function quizRevealResults(roomCode) {
   const room = quizRooms[roomCode];
@@ -882,8 +915,29 @@ function quizRevealResults(roomCode) {
   const perfect = entries
     .filter((e) => e.score === e.total)
     .sort((a, b) => a.timeMs - b.timeMs)
-    .map((e) => ({ id: e.id, name: e.name, timeMs: e.timeMs }));
-  const others = entries.filter((e) => e.score !== e.total);
+    .map((e) => ({ id: e.id, name: e.name }));
+  const others = entries
+    .filter((e) => e.score !== e.total)
+    .map((e) => ({ id: e.id, name: e.name, score: e.score, total: e.total }));
+  const mistakeCounts = new Map();
+  for (const participant of participants) {
+    for (const index of participant.wrongQuestionIndexes || []) {
+      if (index >= 0 && index < room.questions.length) {
+        mistakeCounts.set(index, (mistakeCounts.get(index) || 0) + 1);
+      }
+    }
+  }
+  const mistakes = [...mistakeCounts.entries()]
+    .sort(([indexA, countA], [indexB, countB]) => countB - countA || indexA - indexB)
+    .slice(0, 3)
+    .map(([index, count]) => ({
+      index,
+      answer: room.questions[index].answer,
+      ja: room.questions[index].ja,
+      count,
+    }));
+  const now = new Date();
+  const date = tokyoDateKey(now);
   const saved = persistQuizMutation(roomCode, () => {
     room.phase = "finished";
     room.results = {
@@ -891,6 +945,16 @@ function quizRevealResults(roomCode) {
       perfect,
       others,
       review: room.questions.map((q) => ({ sentence: q.sentence, answer: q.answer, altAnswers: q.altAnswers, ja: q.ja, sentenceJa: q.sentenceJa })),
+      mistakes,
+      isTrial: room.isTrial === true,
+    };
+    resultHistory[`${date}:${room.category}`] = {
+      date,
+      category: room.category,
+      setLabel: room.setLabel,
+      participantCount: participants.length,
+      perfectNames: perfect.map((entry) => entry.name),
+      updatedAt: now.toISOString(),
     };
   });
   if (!saved) return false;
@@ -1007,11 +1071,13 @@ io.on("connection", (socket) => {
       room.startedAt = Date.now();
       room.endsAt = room.startedAt + QUIZ_TIME_LIMIT_SEC * 1000;
       room.setLabel = `${cat.label} ${series.name}`;
+      room.isTrial = series.isTrial === true;
       room.results = null;
       room.timeoutHandle = null;
       for (const p of Object.values(room.players)) {
         p.submittedAt = null;
         p.score = 0;
+        p.wrongQuestionIndexes = [];
       }
     });
     if (!saved) {
@@ -1039,10 +1105,10 @@ io.on("connection", (socket) => {
     if (player.submittedAt !== null) return cb({ ok: true });
     const arr = Array.isArray(answers) ? answers : [];
     const saved = persistQuizMutation(roomCode, () => {
-      player.score = room.questions.reduce(
-        (n, q, i) => n + (quizAnswerMatches(q, arr[i]) ? 1 : 0),
-        0
-      );
+      player.wrongQuestionIndexes = room.questions
+        .map((q, index) => (quizAnswerMatches(q, arr[index]) ? null : index))
+        .filter((index) => index !== null);
+      player.score = room.questions.length - player.wrongQuestionIndexes.length;
       player.submittedAt = Date.now();
     });
     if (!saved) return cb({ ok: false, error: QUIZ_PERSISTENCE_ERROR });
@@ -1079,6 +1145,7 @@ io.on("connection", (socket) => {
       for (const p of Object.values(room.players)) {
         p.submittedAt = null;
         p.score = 0;
+        p.wrongQuestionIndexes = [];
       }
     });
     if (!saved) {
@@ -1116,6 +1183,7 @@ io.on("connection", (socket) => {
         sessionToken: makeQuizSessionToken(),
         submittedAt: null,
         score: 0,
+        wrongQuestionIndexes: [],
         leaveTimer: null,
       };
       if (!room.host) room.host = id;
