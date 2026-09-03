@@ -806,7 +806,9 @@ test("進行中のテストは再起動後も期限を復元し、期限到来�
     sessionToken: entered.sessionToken,
   });
   assert.equal(forcedState.submitted, true, "復元したタイマーが未提出者を0点で確定する");
+  assert.equal(forcedState.autoSubmitted, true, "時間切れ自動提出の表示状態も復元する");
   const forcedSnapshot = JSON.parse(fs.readFileSync(stateFile, "utf8"));
+  assert.equal(forcedSnapshot.rooms[room.roomCode].players[entered.playerId].submissionKind, "timeout");
   assert.deepEqual(
     forcedSnapshot.rooms[room.roomCode].players[entered.playerId].wrongQuestionIndexes,
     Array.from({ length: persistedRoom.questions.length }, (_value, index) => index),

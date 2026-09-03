@@ -632,6 +632,63 @@ test("提出確認: 制限時間終了時は確認を挟まず自動提出され
   assert.ok(emitted.some((e) => e.event === "quiz:submit"));
   assert.equal(document.getElementById("screen-confirm").classList.contains("active"), false);
   assert.ok(document.getElementById("screen-waiting").classList.contains("active"));
+  assert.equal(document.getElementById("waiting-status").textContent, "制限時間になったため、自動で提出しました");
+  assert.equal(document.getElementById("waiting-remain").textContent, "ホストの結果発表を待っています");
+
+  emitted.find((e) => e.event === "quiz:submit").cb({ ok: true, submittedCount: 2, totalCount: 2 });
+  assert.equal(document.getElementById("waiting-count").textContent, "2 / 2人");
+});
+
+test("回答中: 入力途中の一文字ごとに現在の回答と問題番号を保存する", () => {
+  const { window, document, fireSocketEvent } = loadQuizPage({
+    storedValues: {
+      quizSession: JSON.stringify({ roomCode: "ABCD", category: "clacel", playerId: "participant", sessionToken: "token" }),
+    },
+  });
+  const questions = [
+    { sentence: "I ___ tea.", answer: "drink", base: "drink", hint: "d____", ja: "飲む", sentenceJa: "私はお茶を飲む。" },
+  ];
+  window.eval('currentRoomCode = "ABCD"');
+  fireSocketEvent("quiz:started", { setLabel: "Day 1", total: 1, endsAt: Date.now() + 60000, questions });
+
+  setValue(window, document.getElementById("answer"), "dri");
+
+  assert.deepEqual(JSON.parse(window.localStorage.getItem("quizAnswers")), {
+    roomCode: "ABCD",
+    answers: ["dri"],
+    idx: 0,
+  });
+});
+
+test("待機画面: 手動提出中は他の参加者待ち、全員提出後はホストの結果発表待ちと表示する", () => {
+  const { window, document, fireSocketEvent } = loadQuizPage();
+  const questions = [
+    { sentence: "I ___ tea.", answer: "drink", base: "drink", hint: "d____", ja: "飲む", sentenceJa: "" },
+  ];
+  fireSocketEvent("quiz:started", { setLabel: "Day 1", total: 1, endsAt: Date.now() + 60000, questions });
+  document.getElementById("btn-next").dispatchEvent(new window.Event("click", { bubbles: true }));
+  document.getElementById("btn-confirm-submit").dispatchEvent(new window.Event("click", { bubbles: true }));
+
+  fireSocketEvent("quiz:submitProgress", { submitted: 1, total: 2 });
+  assert.equal(document.getElementById("waiting-remain").textContent, "ほかの参加者の提出を待っています");
+
+  fireSocketEvent("quiz:submitProgress", { submitted: 2, total: 2 });
+  assert.equal(document.getElementById("waiting-remain").textContent, "全員の提出が完了しました。ホストの結果発表を待っています");
+});
+
+test("問題画面: 更新防止と文法上の活用案内を分かれた文で表示する", () => {
+  const { document } = loadQuizPage();
+  const note = document.getElementById("q-note");
+  assert.match(note.textContent, /テスト中は画面を閉じたり、更新したりしないでください。/);
+  assert.match(note.textContent, /文法に合わせて活用させて答えてください/);
+});
+
+test("結果後の動線: 解き直しを主操作、退出を副操作として二択で表示する", () => {
+  const { document } = loadQuizPage();
+  const retest = document.getElementById("btn-retest");
+  assert.equal(retest.textContent.trim(), "間違えた単語を解き直す");
+  assert.equal(retest.classList.contains("secondary"), false);
+  assert.equal(document.querySelector("#screen-results > .leave").textContent.trim(), "ルームを退出する");
 });
 
 test("テスト画面: 設問の英文の下に例文の日本語訳が表示される", () => {
