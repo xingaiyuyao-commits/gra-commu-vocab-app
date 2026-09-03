@@ -703,6 +703,9 @@ function loadQuizState() {
             name: String(player.name || "名無し").slice(0, 12),
             sessionToken: String(player.sessionToken || ""),
             submittedAt: resetLegacySubmission ? null : (player.submittedAt ?? null),
+            submissionKind: resetLegacySubmission
+              ? null
+              : (["manual", "timeout"].includes(player.submissionKind) ? player.submissionKind : null),
             score: resetLegacySubmission ? 0 : (Number(player.score) || 0),
             wrongQuestionIndexes: resetLegacySubmission
               ? []
@@ -767,6 +770,7 @@ function persistQuizState() {
         name: player.name,
         sessionToken: player.sessionToken,
         submittedAt: player.submittedAt,
+        submissionKind: player.submissionKind,
         score: player.score,
         wrongQuestionIndexes: player.wrongQuestionIndexes,
       }])),
@@ -1111,6 +1115,7 @@ function quizForceFinish(roomCode) {
         room.players[p.id].score = 0;
         room.players[p.id].wrongQuestionIndexes = room.questions.map((_question, index) => index);
         room.players[p.id].submittedAt = Date.now();
+        room.players[p.id].submissionKind = "timeout";
       }
     }
   });
@@ -1119,6 +1124,11 @@ function quizForceFinish(roomCode) {
     if (restored?.phase === "playing") restored.timeoutHandle = setTimeout(() => quizForceFinish(roomCode), 1_000);
     return;
   }
+  const participants = quizParticipants(room);
+  io.to(roomCode).emit("quiz:submitProgress", {
+    submitted: participants.filter((p) => p.submittedAt !== null).length,
+    total: participants.length,
+  });
   quizCheckAllSubmitted(roomCode);
 }
 
@@ -1274,7 +1284,8 @@ io.on("connection", (socket) => {
     const code = String(roomCode || "").toUpperCase().trim();
     const room = quizRooms[code];
     if (!room) return cb({ error: "ルームが見つかりません" });
-    if (room.phase !== "lobby") return cb({ error: "テストはすでに開始しています" });
+    const canJoinPlaying = room.phase === "playing" && Date.now() < room.endsAt;
+    if (room.phase !== "lobby" && !canJoinPlaying) return cb({ error: "テストはすでに開始しています" });
     quizJoin(socket, code, name, cb);
   });
 
@@ -1299,6 +1310,7 @@ io.on("connection", (socket) => {
       category: room.category,
       phase: room.phase,
       submitted: player.submittedAt !== null,
+      autoSubmitted: player.submissionKind === "timeout",
       seriesNames: WORDTESTS[room.category].series.map((s) => s.name),
     };
     if (room.phase === "playing") {
@@ -1336,6 +1348,7 @@ io.on("connection", (socket) => {
       room.timeoutHandle = null;
       for (const p of Object.values(room.players)) {
         p.submittedAt = null;
+        p.submissionKind = null;
         p.score = 0;
         p.wrongQuestionIndexes = [];
       }
@@ -1355,14 +1368,18 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("quiz:submit", ({ answers } = {}, cb = () => {}) => {
+  socket.on("quiz:submit", ({ answers, automatic = false } = {}, cb = () => {}) => {
     const roomCode = socket.data.quizRoomCode;
     const room = quizRooms[roomCode];
     if (!room || room.phase !== "playing") return cb({ ok: false, error: "提出できませんでした" });
     if (socket.data.quizPlayerId === room.host) return cb({ ok: false, error: "運営者は提出できません" }); // ホストは開催者であり回答しない
     const player = room.players[socket.data.quizPlayerId];
     if (!player) return cb({ ok: false, error: "参加者が見つかりません" });
-    if (player.submittedAt !== null) return cb({ ok: true });
+    if (player.submittedAt !== null) {
+      const participants = quizParticipants(room);
+      const submittedCount = participants.filter((p) => p.submittedAt !== null).length;
+      return cb({ ok: true, submittedCount, totalCount: participants.length });
+    }
     const arr = Array.isArray(answers) ? answers : [];
     const saved = persistQuizMutation(roomCode, () => {
       player.wrongQuestionIndexes = room.questions
@@ -1370,12 +1387,14 @@ io.on("connection", (socket) => {
         .filter((index) => index !== null);
       player.score = room.questions.length - player.wrongQuestionIndexes.length;
       player.submittedAt = Date.now();
+      player.submissionKind = automatic ? "timeout" : "manual";
     });
     if (!saved) return cb({ ok: false, error: QUIZ_PERSISTENCE_ERROR });
-    cb({ ok: true });
     const participants = quizParticipants(room);
+    const submittedCount = participants.filter((p) => p.submittedAt !== null).length;
+    cb({ ok: true });
     io.to(roomCode).emit("quiz:submitProgress", {
-      submitted: participants.filter((p) => p.submittedAt !== null).length,
+      submitted: submittedCount,
       total: participants.length,
     });
     quizCheckAllSubmitted(roomCode);
@@ -1404,6 +1423,7 @@ io.on("connection", (socket) => {
       room.results = null;
       for (const p of Object.values(room.players)) {
         p.submittedAt = null;
+        p.submissionKind = null;
         p.score = 0;
         p.wrongQuestionIndexes = [];
       }
@@ -1442,6 +1462,7 @@ io.on("connection", (socket) => {
         name: String(name || "名無し").slice(0, 12),
         sessionToken: makeQuizSessionToken(),
         submittedAt: null,
+        submissionKind: null,
         score: 0,
         wrongQuestionIndexes: [],
         leaveTimer: null,
@@ -1453,15 +1474,34 @@ io.on("connection", (socket) => {
     sock.data.quizRoomCode = roomCode;
     sock.data.quizPlayerId = id;
     const seriesNames = WORDTESTS[room.category].series.map((s) => s.name);
-    cb({
+    const response = {
       roomCode,
       isHost: room.host === id,
       category: room.category,
       playerId: id,
       sessionToken: room.players[id].sessionToken,
       seriesNames,
-    });
+    };
+    if (room.phase === "playing") {
+      response.phase = room.phase;
+      response.setLabel = room.setLabel;
+      response.total = room.questions.length;
+      response.endsAt = room.endsAt;
+      response.questions = quizSanitizedQuestions(room);
+    }
+    cb(response);
     quizPlayersUpdate(roomCode);
+    if (room.phase === "playing") {
+      const participants = quizParticipants(room);
+      io.to(roomCode).emit("quiz:submitProgress", {
+        submitted: participants.filter((p) => p.submittedAt !== null).length,
+        total: participants.length,
+      });
+      const remainingMs = room.endsAt - Date.now();
+      if (!room.timeoutHandle && remainingMs > 0) {
+        room.timeoutHandle = setTimeout(() => quizForceFinish(roomCode), remainingMs);
+      }
+    }
   }
 });
 

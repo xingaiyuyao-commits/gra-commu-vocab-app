@@ -417,7 +417,7 @@
       <p class="lobby-players-label" id="lobby-players-label"></p>
       <ul class="player-list" id="lobby-players"></ul>
     </div>
-    <button class="leave" onclick="leaveRoom(false)">退出する</button>
+    <button class="leave" onclick="leaveRoom(false)">ルームを退出する</button>
   </div>
 
   <!-- テスト -->
@@ -438,7 +438,7 @@
         <button class="back" id="btn-back">← 戻る</button>
         <button id="btn-next">次へ</button>
       </div>
-      <p class="q-note" id="q-note">※テスト中はこの画面を閉じないでください。文法に合わせて活用させて答えてください（例: 過去形・複数形など）</p>
+      <p class="q-note" id="q-note">※テスト中は画面を閉じたり、更新したりしないでください。<br>文法に合わせて活用させて答えてください（例：過去形・複数形など）</p>
     </div>
     <button class="leave" onclick="leaveRoom(true)">ルームを退出する</button>
   </div>
@@ -522,7 +522,7 @@
         <div class="card" id="review-card">
           <p class="review-heading">あなたが間違えた単語<span class="review-legend">単語／意味・あなたの回答・例文</span></p>
           <div id="review"></div>
-          <button type="button" class="secondary" id="btn-retest">この単語だけ、もう一度解く</button>
+          <button type="button" id="btn-retest">間違えた単語を解き直す</button>
         </div>
         <details class="card" id="correct-card">
           <summary id="correct-summary">正解だった単語</summary>
@@ -533,7 +533,7 @@
     <div class="card" id="again-card" style="display:none;">
       <button id="btn-again">もう一度（ロビーに戻る）</button>
     </div>
-    <button class="leave" onclick="leaveRoom(false)">退出する</button>
+    <button class="leave" onclick="leaveRoom(false)">ルームを退出する</button>
   </div>
 </div>
 
@@ -589,6 +589,9 @@
   let quizEndsAt = 0;
   let timerInterval = null;
   let waitingTimerInterval = null;
+  let submissionWasAutomatic = false;
+  let waitingSubmitted = 0;
+  let waitingTotal = 0;
   let currentRoomCode = null;
   let currentSetLabel = "";
   let actionConfirmHandler = null;
@@ -644,8 +647,8 @@
     } catch {}
     return null;
   }
-  function savePendingSubmission() {
-    if (currentRoomCode) localStorage.setItem("quizPendingSubmission", JSON.stringify({ roomCode: currentRoomCode, answers }));
+  function savePendingSubmission(automatic) {
+    if (currentRoomCode) localStorage.setItem("quizPendingSubmission", JSON.stringify({ roomCode: currentRoomCode, answers, automatic }));
   }
   function clearPendingSubmission() {
     localStorage.removeItem("quizPendingSubmission");
@@ -680,7 +683,10 @@
     const m = Math.floor(remainSec / 60);
     const s = remainSec % 60;
     $("waiting-timer").textContent = `残り時間 ${m}:${String(s).padStart(2, "0")}`;
-    if (remainMs <= 0) clearWaitingTimer();
+    if (remainMs <= 0) {
+      clearWaitingTimer();
+      renderWaitingRemain(waitingSubmitted, waitingTotal);
+    }
   }
 
   function updateTimerDisplay() {
@@ -689,13 +695,14 @@
     const m = Math.floor(remainSec / 60);
     const s = remainSec % 60;
     $("quiz-timer").textContent = `残り時間 ${m}:${String(s).padStart(2, "0")}`;
-    if (remainMs <= 0) submitQuiz();
+    if (remainMs <= 0) submitQuiz(true);
   }
 
-  function submitQuiz() {
+  function submitQuiz(automatic = false) {
     clearQuizTimer();
     saveCurrent();
-    savePendingSubmission();
+    submissionWasAutomatic = automatic;
+    savePendingSubmission(automatic);
     $("waiting-count").textContent = "…";
     renderWaitingStatus();
     show("screen-waiting");
@@ -705,13 +712,18 @@
   function sendPendingSubmission(fallbackAnswers = answers) {
     const pending = loadPendingSubmission();
     const answersToSend = pending ? pending.answers : fallbackAnswers;
-    socket.emit("quiz:submit", { answers: answersToSend }, (res) => {
+    const automatic = pending ? pending.automatic === true : submissionWasAutomatic;
+    socket.emit("quiz:submit", { answers: answersToSend, automatic }, (res) => {
       if (!res?.ok) {
         const message = res?.error || "回答を保存できませんでした";
         $("entry-error").textContent = message;
         renderWaitingStatus();
         $("waiting-status").textContent = message;
         return;
+      }
+      if (Number.isFinite(res.submittedCount) && Number.isFinite(res.totalCount)) {
+        $("waiting-count").textContent = `${res.submittedCount} / ${res.totalCount}人`;
+        renderWaitingRemain(res.submittedCount, res.totalCount);
       }
       clearPendingSubmission();
       renderWaitingStatus();
@@ -812,7 +824,10 @@
   function renderWaitingStatus() {
     $("waiting-set").textContent = currentSetLabel || "";
     const isPending = Boolean(loadPendingSubmission());
-    $("waiting-status").textContent = isHost ? "テストを実施中です 📋" : (isPending ? "提出を送信中です…" : "提出しました 🎉");
+    const automatic = submissionWasAutomatic || loadPendingSubmission()?.automatic === true;
+    $("waiting-status").textContent = isHost
+      ? "テストを実施中です 📋"
+      : (isPending ? "提出を送信中です…" : (automatic ? "制限時間になったため、自動で提出しました" : "提出しました 🎉"));
     $("waiting-sub-label").textContent = isHost ? "提出状況" : (isPending ? "通信復帰後に自動提出" : "提出済み");
     clearWaitingTimer();
     updateWaitingTimerDisplay();
@@ -821,10 +836,22 @@
 
   // 待っているのが「あと何人の提出か」だけを出す。誰が未提出かは名指ししない
   function renderWaitingRemain(submitted, total) {
+    waitingSubmitted = Number(submitted) || 0;
+    waitingTotal = Number(total) || 0;
     const remain = Math.max(0, Number(total) - Number(submitted));
+    if (isHost) {
+      $("waiting-remain").textContent = remain > 0
+        ? `あと${remain}人の提出を待っています`
+        : "全員の提出が完了しました。結果を発表できます";
+      return;
+    }
+    if (Date.now() >= quizEndsAt) {
+      $("waiting-remain").textContent = "ホストの結果発表を待っています";
+      return;
+    }
     $("waiting-remain").textContent = remain > 0
-      ? `あと${remain}人の提出を待っています`
-      : "全員が提出しました。結果発表を待っています";
+      ? "ほかの参加者の提出を待っています"
+      : "全員の提出が完了しました。ホストの結果発表を待っています";
   }
 
   // 復帰セッションがある場合はattemptRejoin()の応答が来るまで何も表示しない
@@ -1238,6 +1265,9 @@
 
   socket.on("quiz:readyToReveal", () => {
     $("btn-reveal-results").disabled = false;
+    if (document.getElementById("screen-waiting").classList.contains("active")) {
+      renderWaitingRemain(waitingTotal, waitingTotal);
+    }
   });
 
   socket.on("quiz:startError", ({ error }) => {
@@ -1265,6 +1295,7 @@
     answers = Array(total).fill("");
     idx = 0;
     editingFromConfirmation = false;
+    submissionWasAutomatic = false;
     persistAnswers();
     quizEndsAt = endsAt;
     currentSetLabel = setLabel;
@@ -1375,6 +1406,8 @@
   });
 
   $("btn-confirm-submit").addEventListener("click", () => submitQuiz());
+
+  $("answer").addEventListener("input", saveCurrent);
 
   $("answer").addEventListener("keydown", (e) => {
     if (e.key === "Enter") $("btn-next").click();
@@ -1607,6 +1640,7 @@
         $("quiz-set").textContent = res.setLabel;
         $("waiting-count").textContent = `${res.submittedCount} / ${res.totalCount}人`;
         renderWaitingStatus();
+        renderWaitingRemain(res.submittedCount, res.totalCount);
         show("screen-waiting");
         sendPendingSubmission();
       } else if (res.phase === "playing" && !res.isHost && !res.submitted) {
@@ -1624,10 +1658,12 @@
         timerInterval = setInterval(updateTimerDisplay, 1000);
       } else if (res.phase === "playing" && (res.isHost || res.submitted)) {
         if (res.submitted) clearPendingSubmission();
+        submissionWasAutomatic = res.autoSubmitted === true;
         currentSetLabel = res.setLabel;
         $("waiting-count").textContent = `${res.submittedCount} / ${res.totalCount}人`;
         $("btn-reveal-results").disabled = !res.allSubmitted;
         renderWaitingStatus();
+        renderWaitingRemain(res.submittedCount, res.totalCount);
         show("screen-waiting");
       } else if (res.phase === "finished" && res.results) {
         const restored = loadSavedAnswers(currentRoomCode, res.results.review.length);
