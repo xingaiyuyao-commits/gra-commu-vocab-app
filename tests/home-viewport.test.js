@@ -165,6 +165,12 @@ test("PCホームは1440×800で主要内容が縦スクロールなしに収ま
   assert.equal(metrics.manualJoinLink, null, "ルームコード手入力リンクがない");
   assert.ok(metrics.operatorBottom <= metrics.innerHeight, "運営用リンクが一画面内にある");
   assert.ok(metrics.imageBottom <= metrics.innerHeight, "メイン画像が一画面内にある");
+  const contentBottom = Math.max(metrics.operatorBottom, metrics.imageBottom);
+  const bottomSpace = metrics.innerHeight - contentBottom;
+  assert.ok(
+    Math.abs(metrics.titleTop - bottomSpace) <= 24,
+    `コンテンツ全体の上下余白差が24px以内: ${JSON.stringify({ titleTop: metrics.titleTop, bottomSpace })}`,
+  );
 
   const visibleDayResult = await devtools.send("Runtime.evaluate", {
     expression: `(() => {
@@ -174,6 +180,7 @@ test("PCホームは1440×800で主要内容が縦スクロールなしに収ま
       return {
         innerHeight,
         scrollHeight: document.documentElement.scrollHeight,
+        titleTop: document.querySelector('h1')?.getBoundingClientRect().top,
         operatorBottom: document.querySelector('.operator-link')?.getBoundingClientRect().bottom,
         imageBottom: document.querySelector('.home-illustration img')?.getBoundingClientRect().bottom
       };
@@ -187,4 +194,10 @@ test("PCホームは1440×800で主要内容が縦スクロールなしに収ま
   );
   assert.ok(visibleDayMetrics.operatorBottom <= visibleDayMetrics.innerHeight, "学習日カード表示時も運営用リンクが一画面内にある");
   assert.ok(visibleDayMetrics.imageBottom <= visibleDayMetrics.innerHeight, "学習日カード表示時もメイン画像が一画面内にある");
+  const visibleDayBottom = Math.max(visibleDayMetrics.operatorBottom, visibleDayMetrics.imageBottom);
+  const visibleDayBottomSpace = visibleDayMetrics.innerHeight - visibleDayBottom;
+  assert.ok(
+    Math.abs(visibleDayMetrics.titleTop - visibleDayBottomSpace) <= 24,
+    `学習日カード表示時も上下余白差が24px以内: ${JSON.stringify({ titleTop: visibleDayMetrics.titleTop, bottomSpace: visibleDayBottomSpace })}`,
+  );
 });

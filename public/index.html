@@ -10,7 +10,7 @@
   html { background: var(--paper); }
   body { margin:0; background:var(--paper); color:var(--ink); font-family:Arial,"Helvetica Neue","Hiragino Sans","Yu Gothic UI","Yu Gothic",sans-serif; -webkit-font-smoothing:antialiased; }
   a { color:inherit; }
-  .page { width:min(100%,1920px); margin:0 auto; padding:28px 36px 20px; }
+  .page { display:flex; flex-direction:column; justify-content:center; width:min(100%,1920px); min-height:100vh; min-height:100svh; margin:0 auto; padding:28px 36px 20px; }
   h1 { margin:0 0 22px; font-size:clamp(3.5rem,5.5vw,5rem); font-weight:800; letter-spacing:-.075em; line-height:.92; text-align:center; white-space:nowrap; }
   .course-row:focus-visible,.operator-link:focus-visible { outline:3px solid var(--gold); outline-offset:4px; }
   .today-card { display:flex; align-items:center; justify-content:space-between; width:min(920px,100%); min-height:64px; margin:0 auto 22px; padding:10px 20px; border:2px solid var(--line); }
@@ -34,7 +34,7 @@
     .course-row:hover strong,.operator-link:hover { text-decoration:underline; text-underline-offset:7px; }
   }
   @media (max-width:900px) {
-    .page { padding:28px 16px 56px; }
+    .page { display:block; min-height:0; padding:28px 16px 56px; }
     h1 { margin-bottom:32px; font-size:clamp(3rem,16vw,5.2rem); line-height:.92; white-space:normal; }
     .today-card { min-height:96px; margin:0 0 36px; padding:17px 18px; }
     .today-label { margin-bottom:8px; font-size:.95rem; }
