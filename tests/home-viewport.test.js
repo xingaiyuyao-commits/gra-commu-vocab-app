@@ -146,8 +146,10 @@ test("PCホームは1440×800で主要内容が縦スクロールなしに収ま
         scrollHeight: document.documentElement.scrollHeight,
         scrollWidth: document.documentElement.scrollWidth,
         innerWidth,
+        titleTop: document.querySelector('h1')?.getBoundingClientRect().top,
         operatorBottom: document.querySelector('.operator-link')?.getBoundingClientRect().bottom,
-        imageBottom: document.querySelector('.home-illustration img')?.getBoundingClientRect().bottom
+        imageBottom: document.querySelector('.home-illustration img')?.getBoundingClientRect().bottom,
+        manualJoinLink: document.querySelector('a[href="/quiz.html?mode=join"]')
       }))()`,
       returnByValue: true,
     });
@@ -159,6 +161,30 @@ test("PCホームは1440×800で主要内容が縦スクロールなしに収ま
   assert.ok(metrics, "Chrome did not return page metrics before the deadline");
   assert.equal(metrics.scrollWidth, metrics.innerWidth, "横スクロールがない");
   assert.ok(metrics.scrollHeight <= metrics.innerHeight, `縦スクロールあり: ${JSON.stringify(metrics)}`);
+  assert.ok(metrics.titleTop >= 24, `タイトル上に24px以上の余白がある: ${JSON.stringify(metrics)}`);
+  assert.equal(metrics.manualJoinLink, null, "ルームコード手入力リンクがない");
   assert.ok(metrics.operatorBottom <= metrics.innerHeight, "運営用リンクが一画面内にある");
   assert.ok(metrics.imageBottom <= metrics.innerHeight, "メイン画像が一画面内にある");
+
+  const visibleDayResult = await devtools.send("Runtime.evaluate", {
+    expression: `(() => {
+      document.querySelector('.today-card').removeAttribute('hidden');
+      document.querySelector('#today-date').textContent = '9月6日';
+      document.querySelector('#today-day').textContent = 'Day 1';
+      return {
+        innerHeight,
+        scrollHeight: document.documentElement.scrollHeight,
+        operatorBottom: document.querySelector('.operator-link')?.getBoundingClientRect().bottom,
+        imageBottom: document.querySelector('.home-illustration img')?.getBoundingClientRect().bottom
+      };
+    })()`,
+    returnByValue: true,
+  });
+  const visibleDayMetrics = visibleDayResult?.result?.value;
+  assert.ok(
+    visibleDayMetrics.scrollHeight <= visibleDayMetrics.innerHeight,
+    `学習日カード表示時も縦スクロールがない: ${JSON.stringify(visibleDayMetrics)}`,
+  );
+  assert.ok(visibleDayMetrics.operatorBottom <= visibleDayMetrics.innerHeight, "学習日カード表示時も運営用リンクが一画面内にある");
+  assert.ok(visibleDayMetrics.imageBottom <= visibleDayMetrics.innerHeight, "学習日カード表示時もメイン画像が一画面内にある");
 });
