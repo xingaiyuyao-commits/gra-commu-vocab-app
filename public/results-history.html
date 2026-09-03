@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>結果履歴 | ÖSH Vocabulary Challenge</title>
+<style>
+  :root {
+    --paper: #f5f2e9;
+    --surface: #fffef9;
+    --ink: #171715;
+    --muted: #6f6b61;
+    --line: #d8d2c3;
+    --line-dark: #9d9584;
+    --gold: #c89624;
+    --gold-deep: #8c6410;
+    --bronze: #9b684b;
+    --danger: #9d2b24;
+    --shadow: 0 20px 60px rgba(40, 34, 22, 0.08);
+  }
+
+  * { box-sizing: border-box; }
+  html { background: var(--paper); }
+  body {
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    color: var(--ink);
+    background:
+      linear-gradient(rgba(200, 150, 36, 0.045) 1px, transparent 1px),
+      var(--paper);
+    background-size: 100% 44px;
+    font-family: "Avenir Next", Avenir, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button, input { font: inherit; }
+  button { color: inherit; }
+  [hidden] { display: none !important; }
+
+  .shell {
+    width: min(1480px, 100%);
+    margin: 0 auto;
+    padding: 28px clamp(18px, 3.5vw, 56px) 56px;
+  }
+
+  .brand-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .brand-bar > *, .history-head > *, .workspace > * { min-width: 0; }
+
+  .brand-mark {
+    font-family: Baskerville, "Yu Mincho", serif;
+    font-size: 1.02rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .edition {
+    color: var(--muted);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+  }
+
+  .eyebrow {
+    margin: 0 0 8px;
+    color: var(--gold-deep);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  h1, h2, h3, p { margin-top: 0; }
+  h1 {
+    max-width: 820px;
+    margin-bottom: 8px;
+    font-family: Baskerville, "Yu Mincho", serif;
+    font-size: clamp(2.4rem, 5vw, 5.2rem);
+    font-weight: 600;
+    letter-spacing: -0.045em;
+    line-height: 0.95;
+  }
+
+  .lede {
+    max-width: 46rem;
+    margin-bottom: 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.8;
+  }
+
+  .intro {
+    padding: clamp(36px, 6vw, 76px) 0 clamp(28px, 4vw, 48px);
+  }
+
+  .login-panel, .setup-panel {
+    width: min(460px, 100%);
+    margin: 7vh auto 0;
+    padding: clamp(28px, 5vw, 48px);
+    border: 1px solid var(--ink);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .panel-index {
+    display: block;
+    margin-bottom: 38px;
+    color: var(--gold-deep);
+    font-family: Baskerville, serif;
+    font-size: 0.85rem;
+    font-style: italic;
+  }
+
+  .login-panel h1, .setup-panel h1 {
+    font-size: clamp(2.2rem, 9vw, 3.8rem);
+    line-height: 1;
+  }
+
+  .field-label {
+    display: block;
+    margin: 30px 0 9px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  .password-input {
+    width: 100%;
+    min-height: 52px;
+    padding: 11px 14px;
+    border: 1px solid var(--line-dark);
+    border-radius: 0;
+    background: #fff;
+    color: var(--ink);
+    outline: none;
+  }
+
+  .password-input:focus {
+    border-color: var(--ink);
+    box-shadow: 0 0 0 3px rgba(200, 150, 36, 0.28);
+  }
+
+  .primary-button, .quiet-button, .month-button, .delete-record {
+    border: 0;
+    border-radius: 0;
+    cursor: pointer;
+  }
+
+  .primary-button {
+    width: 100%;
+    min-height: 52px;
+    margin-top: 12px;
+    padding: 12px 18px;
+    background: var(--ink);
+    color: white;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    transition: background 160ms ease, color 160ms ease;
+  }
+
+  .primary-button:hover { background: var(--gold-deep); }
+  .primary-button:disabled { cursor: wait; opacity: 0.58; }
+
+  .quiet-button {
+    padding: 9px 2px;
+    border-bottom: 1px solid currentColor;
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+
+  .alert {
+    margin: 18px 0 0;
+    padding: 12px 14px;
+    border-left: 3px solid var(--danger);
+    background: #f8e8e4;
+    color: #6e1e19;
+    font-size: 0.86rem;
+    line-height: 1.6;
+  }
+
+  .history-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .history-head .intro { flex: 1; }
+  .history-head .quiet-button { margin-bottom: 48px; }
+
+  .workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1.42fr) minmax(320px, 0.78fr);
+    gap: clamp(22px, 3vw, 42px);
+    align-items: start;
+  }
+
+  .calendar-panel, .details-panel {
+    border: 1px solid var(--ink);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+  }
+
+  .calendar-toolbar {
+    display: grid;
+    grid-template-columns: 46px 1fr 46px;
+    align-items: center;
+    min-height: 88px;
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .month-button {
+    display: grid;
+    width: 46px;
+    height: 46px;
+    place-items: center;
+    background: transparent;
+    font-family: Baskerville, serif;
+    font-size: 1.65rem;
+    transition: color 160ms ease, background 160ms ease;
+  }
+
+  .month-button:hover { background: var(--ink); color: white; }
+  .month-button:disabled { cursor: wait; opacity: 0.35; }
+
+  #month-title {
+    margin: 0;
+    font-family: Baskerville, "Yu Mincho", serif;
+    font-size: clamp(1.65rem, 3.2vw, 2.6rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    text-align: center;
+  }
+
+  .weekdays, .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+
+  .weekday {
+    padding: 13px 5px 10px;
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 0.64rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-align: center;
+  }
+
+  .calendar-empty, .calendar-day {
+    min-width: 0;
+    min-height: clamp(68px, 8vw, 102px);
+    border: 0;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+  }
+
+  .calendar-grid > :nth-child(7n) { border-right: 0; }
+  .calendar-grid > :nth-last-child(-n + 7) { border-bottom: 0; }
+
+  .calendar-day {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 150ms ease, color 150ms ease;
+  }
+
+  .calendar-day:hover { background: #eee8d9; }
+  .calendar-day.is-selected { background: var(--ink); color: white; }
+
+  .day-number {
+    font-family: Baskerville, serif;
+    font-size: clamp(1rem, 1.5vw, 1.25rem);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .today-mark {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+
+  .day-dots { display: flex; gap: 5px; min-height: 8px; }
+  .course-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3);
+  }
+  .course-dot--toeic { background: var(--ink); }
+  .course-dot--ielts { background: var(--bronze); }
+  .calendar-day.is-selected .course-dot--toeic { background: white; }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 15px 18px;
+    border-top: 1px solid var(--ink);
+    color: var(--muted);
+    font-size: 0.69rem;
+    font-weight: 700;
+  }
+
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+  .details-header {
+    min-height: 88px;
+    padding: 19px 22px;
+    border-bottom: 1px solid var(--ink);
+  }
+
+  .details-kicker {
+    margin-bottom: 4px;
+    color: var(--gold-deep);
+    font-size: 0.64rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  #selected-date-title {
+    margin: 0;
+    font-family: Baskerville, "Yu Mincho", serif;
+    font-size: clamp(1.45rem, 2.6vw, 2rem);
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  .course-card { padding: 22px; border-bottom: 1px solid var(--line); }
+  .course-card:last-child { border-bottom: 0; }
+
+  .course-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .course-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    margin: 0;
+    font-size: 0.96rem;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+  }
+
+  .course-seal {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+  .course-seal--toeic { background: var(--ink); }
+  .course-seal--ielts { background: var(--bronze); }
+
+  .set-label { margin: 13px 0 17px; color: var(--muted); font-size: 0.78rem; }
+
+  .record-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-bottom: 18px;
+    border: solid var(--line);
+    border-width: 1px 0;
+  }
+
+  .stat { padding: 12px 0; }
+  .stat + .stat { padding-left: 15px; border-left: 1px solid var(--line); }
+  .stat-label { display: block; color: var(--muted); font-size: 0.62rem; font-weight: 800; letter-spacing: 0.1em; }
+  .stat strong {
+    display: inline-block;
+    margin-top: 3px;
+    font-family: Baskerville, serif;
+    font-size: 1.9rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .stat-unit { margin-left: 3px; color: var(--muted); font-size: 0.66rem; }
+
+  .perfect-label { margin-bottom: 8px; color: var(--muted); font-size: 0.67rem; font-weight: 800; letter-spacing: 0.1em; }
+  .perfect-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+  .perfect-name {
+    max-width: 100%;
+    padding: 5px 8px;
+    border: 1px solid #d7c69a;
+    background: #f7edd4;
+    font-size: 0.75rem;
+    overflow-wrap: anywhere;
+  }
+
+  .empty-copy { margin: 13px 0 0; color: var(--muted); font-size: 0.78rem; line-height: 1.65; }
+
+  .delete-record {
+    margin-top: 20px;
+    padding: 5px 0;
+    border-bottom: 1px solid currentColor;
+    background: transparent;
+    color: var(--danger);
+    font-size: 0.69rem;
+    font-weight: 800;
+  }
+
+  .delete-record:disabled { cursor: wait; opacity: 0.4; }
+
+  button:focus-visible, input:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 3px;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (max-width: 900px) {
+    .workspace { grid-template-columns: 1fr; }
+    .details-panel { box-shadow: none; }
+  }
+
+  @media (max-width: 580px) {
+    .shell { padding: 18px 12px 36px; }
+    .brand-bar { gap: 12px; }
+    .brand-mark { font-size: 0.85rem; }
+    .edition { font-size: 0.58rem; text-align: right; }
+    .history-head { display: block; }
+    .history-head .quiet-button { margin: 0 0 24px; white-space: nowrap; }
+    .intro { padding: 34px 0 24px; }
+    h1 { font-size: 2.5rem; }
+    .lede { font-size: 0.8rem; }
+    .calendar-toolbar { min-height: 70px; }
+    .calendar-empty, .calendar-day { min-height: 57px; }
+    .calendar-day { padding: 7px 6px; }
+    .weekday { padding-inline: 1px; font-size: 0.56rem; }
+    .legend { gap: 10px; padding: 12px; }
+    .details-header { min-height: 76px; padding: 16px; }
+    .course-card { padding: 18px 16px; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .workspace { animation: reveal 380ms ease both; }
+    @keyframes reveal {
+      from { opacity: 0; transform: translateY(7px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  }
+</style>
+</head>
+<body>
+  <main class="shell">
+    <div class="brand-bar">
+      <span class="brand-mark">ÖSH Vocabulary Challenge</span>
+      <span class="edition">Operations Archive / Results</span>
+    </div>
+
+    <section id="login-screen" class="login-panel" hidden aria-labelledby="login-title">
+      <span class="panel-index">Admin access — 01</span>
+      <p class="eyebrow">Results archive</p>
+      <h1 id="login-title">結果履歴</h1>
+      <p class="lede">運営用パスワードで、過去のテスト結果を確認します。</p>
+      <form id="login-form">
+        <label class="field-label" for="history-password">パスワード</label>
+        <input id="history-password" class="password-input" type="password" autocomplete="current-password" aria-describedby="login-error" required />
+        <button id="login-button" class="primary-button" type="submit">履歴を開く</button>
+      </form>
+      <p id="login-error" class="alert" role="alert" hidden></p>
+    </section>
+
+    <section id="setup-screen" class="setup-panel" hidden aria-labelledby="setup-title">
+      <span class="panel-index">Configuration — 503</span>
+      <p class="eyebrow">Setup required</p>
+      <h1 id="setup-title">設定が必要です</h1>
+      <p id="setup-error" class="alert" role="alert"></p>
+    </section>
+
+    <section id="history-screen" hidden aria-labelledby="history-title">
+      <header class="history-head">
+        <div class="intro">
+          <p class="eyebrow">Monthly results archive</p>
+          <h1 id="history-title">結果履歴</h1>
+          <p class="lede">記録のある日を選ぶと、コースごとの参加人数と満点者を確認できます。</p>
+        </div>
+        <button id="logout-button" class="quiet-button" type="button">ログアウト</button>
+      </header>
+
+      <p id="history-alert" class="alert" role="alert" hidden></p>
+
+      <div class="workspace">
+        <section class="calendar-panel" aria-labelledby="month-title">
+          <div class="calendar-toolbar">
+            <button id="previous-month" class="month-button" type="button" aria-label="前の月">←</button>
+            <h2 id="month-title"></h2>
+            <button id="next-month" class="month-button" type="button" aria-label="次の月">→</button>
+          </div>
+          <div class="weekdays" aria-hidden="true">
+            <div class="weekday">SUN</div><div class="weekday">MON</div><div class="weekday">TUE</div>
+            <div class="weekday">WED</div><div class="weekday">THU</div><div class="weekday">FRI</div><div class="weekday">SAT</div>
+          </div>
+          <div id="calendar-grid" class="calendar-grid" aria-label="月間カレンダー"></div>
+          <div class="legend" aria-label="コース凡例">
+            <span><i class="course-dot course-dot--clacel"></i>Clacel</span>
+            <span><i class="course-dot course-dot--toeic"></i>TOEIC</span>
+            <span><i class="course-dot course-dot--ielts"></i>IELTS</span>
+          </div>
+        </section>
+
+        <aside class="details-panel" aria-labelledby="selected-date-title">
+          <header class="details-header">
+            <p class="details-kicker">Selected date</p>
+            <h2 id="selected-date-title"></h2>
+          </header>
+          <div id="course-details"></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+<script>
+(() => {
+  "use strict";
+
+  const COURSES = [
+    { id: "clacel", name: "Clacel" },
+    { id: "toeic", name: "TOEIC" },
+    { id: "ielts", name: "IELTS" },
+  ];
+  const screens = ["login-screen", "setup-screen", "history-screen"];
+  const today = new Date();
+  let currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  let selectedDate = "";
+  let records = [];
+  let loadingMonth = false;
+
+  const byId = (id) => document.getElementById(id);
+
+  function showScreen(id) {
+    for (const screenId of screens) byId(screenId).hidden = screenId !== id;
+  }
+
+  function showAlert(element, message) {
+    element.textContent = message || "";
+    element.hidden = !message;
+  }
+
+  function monthKey(date) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+  }
+
+  function dateKey(year, monthIndex, day) {
+    return `${year}-${String(monthIndex + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  }
+
+  async function api(path, options = {}) {
+    const requestOptions = { ...options, credentials: "same-origin" };
+    const response = await fetch(path, requestOptions);
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      const error = new Error(payload.error || "通信に失敗しました。時間をおいて再度お試しください");
+      error.status = response.status;
+      throw error;
+    }
+    return payload;
+  }
+
+  function handleAccessError(error) {
+    if (error.status === 401) {
+      byId("history-password").value = "";
+      showAlert(byId("login-error"), "");
+      showScreen("login-screen");
+      return true;
+    }
+    if (error.status === 503) {
+      showAlert(byId("setup-error"), error.message);
+      showScreen("setup-screen");
+      return true;
+    }
+    return false;
+  }
+
+  function defaultSelectedDate(month, monthRecords) {
+    if (monthRecords.length) return monthRecords[0].date;
+    const isThisMonth = month.getFullYear() === today.getFullYear() && month.getMonth() === today.getMonth();
+    return dateKey(month.getFullYear(), month.getMonth(), isThisMonth ? today.getDate() : 1);
+  }
+
+  function calendarAriaLabel(date, dayRecords) {
+    const dateLabel = new Intl.DateTimeFormat("ja-JP", { month: "long", day: "numeric", weekday: "short" }).format(date);
+    if (!dayRecords.length) return `${dateLabel}、記録なし`;
+    const courseNames = COURSES
+      .filter((course) => dayRecords.some((record) => record.category === course.id))
+      .map((course) => course.name)
+      .join("、");
+    return `${dateLabel}、${courseNames}の記録あり`;
+  }
+
+  function renderCalendar() {
+    const year = currentMonth.getFullYear();
+    const monthIndex = currentMonth.getMonth();
+    const firstWeekday = new Date(year, monthIndex, 1).getDay();
+    const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+    const cellCount = Math.ceil((firstWeekday + daysInMonth) / 7) * 7;
+    const grid = byId("calendar-grid");
+    const fragment = document.createDocumentFragment();
+
+    byId("month-title").textContent = `${year}年 ${monthIndex + 1}月`;
+
+    for (let cell = 0; cell < cellCount; cell += 1) {
+      const day = cell - firstWeekday + 1;
+      if (day < 1 || day > daysInMonth) {
+        const empty = document.createElement("div");
+        empty.className = "calendar-empty";
+        empty.setAttribute("aria-hidden", "true");
+        fragment.append(empty);
+        continue;
+      }
+
+      const key = dateKey(year, monthIndex, day);
+      const dayRecords = records.filter((record) => record.date === key);
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "calendar-day";
+      button.dataset.date = key;
+      button.setAttribute("aria-label", calendarAriaLabel(new Date(year, monthIndex, day), dayRecords));
+      button.setAttribute("aria-pressed", String(key === selectedDate));
+      if (key === selectedDate) button.classList.add("is-selected");
+
+      const number = document.createElement("span");
+      number.className = "day-number";
+      number.textContent = String(day);
+      button.append(number);
+
+      if (key === dateKey(today.getFullYear(), today.getMonth(), today.getDate())) {
+        const todayMark = document.createElement("span");
+        todayMark.className = "today-mark";
+        todayMark.setAttribute("aria-hidden", "true");
+        button.append(todayMark);
+      }
+
+      const dots = document.createElement("span");
+      dots.className = "day-dots";
+      dots.setAttribute("aria-hidden", "true");
+      for (const course of COURSES) {
+        if (!dayRecords.some((record) => record.category === course.id)) continue;
+        const dot = document.createElement("i");
+        dot.className = `course-dot course-dot--${course.id}`;
+        dots.append(dot);
+      }
+      button.append(dots);
+      button.addEventListener("click", () => selectDate(key));
+      fragment.append(button);
+    }
+    grid.replaceChildren(fragment);
+  }
+
+  function recordStat(label, value) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "stat";
+    const labelElement = document.createElement("span");
+    labelElement.className = "stat-label";
+    labelElement.textContent = label;
+    const valueElement = document.createElement("strong");
+    valueElement.dataset.field = label === "参加人数" ? "participants" : "perfect-count";
+    valueElement.textContent = String(value);
+    const unit = document.createElement("span");
+    unit.className = "stat-unit";
+    unit.textContent = "名";
+    wrapper.append(labelElement, valueElement, unit);
+    return wrapper;
+  }
+
+  function renderCourseCard(course, record) {
+    const card = document.createElement("section");
+    card.className = "course-card";
+    card.dataset.courseCard = course.id;
+
+    const heading = document.createElement("div");
+    heading.className = "course-heading";
+    const title = document.createElement("h3");
+    title.className = "course-name";
+    const seal = document.createElement("i");
+    seal.className = `course-seal course-seal--${course.id}`;
+    seal.setAttribute("aria-hidden", "true");
+    const titleText = document.createElement("span");
+    titleText.textContent = course.name;
+    title.append(seal, titleText);
+    heading.append(title);
+    card.append(heading);
+
+    if (!record) {
+      const empty = document.createElement("p");
+      empty.className = "empty-copy";
+      empty.textContent = "この日の記録はありません";
+      card.append(empty);
+      return card;
+    }
+
+    const setLabel = document.createElement("p");
+    setLabel.className = "set-label";
+    setLabel.textContent = record.setLabel || "セット名なし";
+
+    const stats = document.createElement("div");
+    stats.className = "record-stats";
+    stats.append(recordStat("参加人数", record.participantCount), recordStat("満点者", record.perfectNames.length));
+
+    const perfectLabel = document.createElement("p");
+    perfectLabel.className = "perfect-label";
+    perfectLabel.textContent = "満点者一覧";
+    card.append(setLabel, stats, perfectLabel);
+
+    if (record.perfectNames.length) {
+      const names = document.createElement("ul");
+      names.className = "perfect-list";
+      for (const name of record.perfectNames) {
+        const item = document.createElement("li");
+        item.className = "perfect-name";
+        item.textContent = String(name);
+        names.append(item);
+      }
+      card.append(names);
+    } else {
+      const empty = document.createElement("p");
+      empty.className = "empty-copy";
+      empty.textContent = "満点者はいません";
+      card.append(empty);
+    }
+
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.className = "delete-record";
+    deleteButton.textContent = "この記録を削除";
+    deleteButton.setAttribute("aria-label", `${course.name}の${record.date}の記録を削除`);
+    deleteButton.addEventListener("click", () => deleteRecord(record, course, deleteButton));
+    card.append(deleteButton);
+    return card;
+  }
+
+  function renderDetails() {
+    const parsed = new Date(`${selectedDate}T12:00:00`);
+    byId("selected-date-title").textContent = new Intl.DateTimeFormat("ja-JP", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      weekday: "short",
+    }).format(parsed);
+
+    const fragment = document.createDocumentFragment();
+    for (const course of COURSES) {
+      const record = records.find((entry) => entry.date === selectedDate && entry.category === course.id);
+      fragment.append(renderCourseCard(course, record));
+    }
+    byId("course-details").replaceChildren(fragment);
+  }
+
+  function selectDate(key) {
+    selectedDate = key;
+    renderCalendar();
+    renderDetails();
+  }
+
+  function setMonthLoading(isLoading) {
+    loadingMonth = isLoading;
+    byId("previous-month").disabled = isLoading;
+    byId("next-month").disabled = isLoading;
+  }
+
+  async function loadMonth(targetMonth) {
+    if (loadingMonth) return;
+    setMonthLoading(true);
+    showAlert(byId("history-alert"), "");
+    try {
+      const targetRecords = await api(`/api/results-history?month=${monthKey(targetMonth)}`);
+      currentMonth = targetMonth;
+      records = Array.isArray(targetRecords) ? targetRecords : [];
+      selectedDate = defaultSelectedDate(currentMonth, records);
+      renderCalendar();
+      renderDetails();
+      showScreen("history-screen");
+    } catch (error) {
+      if (!handleAccessError(error)) {
+        if (byId("history-screen").hidden) {
+          showScreen("login-screen");
+          showAlert(byId("login-error"), error.message);
+        } else {
+          showAlert(byId("history-alert"), error.message);
+        }
+      }
+    } finally {
+      setMonthLoading(false);
+    }
+  }
+
+  async function moveMonth(offset) {
+    const target = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + offset, 1);
+    await loadMonth(target);
+  }
+
+  async function deleteRecord(record, course, button) {
+    const confirmed = window.confirm(`${record.date} ${course.name}の記録を削除しますか？`);
+    if (!confirmed) return;
+    button.disabled = true;
+    showAlert(byId("history-alert"), "");
+    try {
+      await api(`/api/results-history/${encodeURIComponent(record.date)}/${encodeURIComponent(course.id)}`, {
+        method: "DELETE",
+      });
+      records = records.filter((entry) => !(entry.date === record.date && entry.category === course.id));
+      renderCalendar();
+      renderDetails();
+    } catch (error) {
+      if (!handleAccessError(error)) {
+        showAlert(byId("history-alert"), `削除できませんでした：${error.message}`);
+        button.disabled = false;
+      }
+    }
+  }
+
+  byId("login-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const input = byId("history-password");
+    const button = byId("login-button");
+    const password = input.value;
+    input.value = "";
+    button.disabled = true;
+    showAlert(byId("login-error"), "");
+    try {
+      await api("/api/results-history/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      await loadMonth(currentMonth);
+    } catch (error) {
+      if (error.status === 503) handleAccessError(error);
+      else showAlert(byId("login-error"), error.status === 401 ? "パスワードが違います" : error.message);
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  byId("logout-button").addEventListener("click", async () => {
+    showAlert(byId("history-alert"), "");
+    try {
+      await api("/api/results-history/logout", { method: "POST" });
+      byId("history-password").value = "";
+      showScreen("login-screen");
+    } catch (error) {
+      if (!handleAccessError(error)) showAlert(byId("history-alert"), error.message);
+    }
+  });
+
+  byId("previous-month").addEventListener("click", () => moveMonth(-1));
+  byId("next-month").addEventListener("click", () => moveMonth(1));
+
+  loadMonth(currentMonth);
+})();
+</script>
+</body>
+</html>
