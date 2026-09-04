@@ -37,7 +37,7 @@
   .screen.active { display: block; }
   .site-header { position: relative; min-height: 86px; padding: 12px 76px 0; margin: 0 0 20px; text-align: center; }
   .voice-logo { position: absolute; top: 0; left: 0; display: block; width: 64px; height: 52px; object-fit: contain; mix-blend-mode: multiply; }
-  .site-title { margin: 0 0 7px; font-family: "Avenir Next", Avenir, "Helvetica Neue", sans-serif; font-size: clamp(1.75rem, 4.8vw, 2.65rem); font-weight: 800; letter-spacing: -.055em; line-height: 1; }
+  .site-title { margin: 0 0 7px; font-family: Arial, "Helvetica Neue", "Hiragino Sans", "Yu Gothic UI", "Yu Gothic", sans-serif; font-size: clamp(1.75rem, 4.8vw, 2.65rem); font-weight: 800; letter-spacing: -.075em; line-height: .92; }
   .site-tagline { color: var(--muted-foreground); font-size: .9rem; font-weight: 600; }
   .card {
     background: var(--card);
@@ -211,7 +211,7 @@
   /* 入室後もブランドを残し、回答領域を圧迫しないサイズに縮める */
   .container.in-room .site-header { position: sticky; top: 0; z-index: 10; min-height: 48px; padding: 7px 54px 0; margin-bottom: 10px; background: rgba(247, 247, 245, .94); backdrop-filter: blur(8px); }
   .container.in-room .voice-logo { width: 44px; height: 36px; }
-  .container.in-room .site-title { font-size: 1.15rem; letter-spacing: -.035em; }
+  .container.in-room .site-title { font-size: 1.15rem; }
   .container.in-room .site-tagline { display: none; }
 
   /* ロビー: 一番知りたい「いつ始まるか」を先頭に置く */
