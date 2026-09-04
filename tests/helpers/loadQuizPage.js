@@ -10,7 +10,12 @@ const { JSDOM, VirtualConsole } = require("jsdom");
 // ごとに独立したフェイクソケットを返し、fakeSockets配列で順番にアクセスできるようにしている。
 // 既存のテスト（fakeSocket/emitted/socketHandlers/fireSocketEventを直接参照するもの）は
 // 最初のio()呼び出し（fakeSockets[0]）を指すため、そのまま動作する。
-function loadQuizPage({ url = "http://localhost/quiz.html", nowIso = null, storedValues = {} } = {}) {
+function loadQuizPage({
+  url = "http://localhost/quiz.html",
+  nowIso = null,
+  storedValues = {},
+  operatorSessionStatus = 200,
+} = {}) {
   const publicDir = path.join(__dirname, "..", "..", "public");
   let html = fs.readFileSync(path.join(publicDir, "quiz.html"), "utf8");
 
@@ -75,6 +80,11 @@ function loadQuizPage({ url = "http://localhost/quiz.html", nowIso = null, store
         window.localStorage.setItem(key, String(value));
       }
       window.io = () => createFakeSocket();
+      window.fetch = async (requestUrl) => ({
+        status: operatorSessionStatus,
+        ok: operatorSessionStatus === 200,
+        json: async () => ({ authenticated: operatorSessionStatus === 200, requestUrl }),
+      });
       // quiz.htmlはタイマー表示のため実際のsetIntervalを使うが、
       // テストではプロセスが終了しなくなるため無効化する（タイマー発火自体はテスト対象外）
       window.setInterval = () => 0;

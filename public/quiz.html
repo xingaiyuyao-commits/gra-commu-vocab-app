@@ -87,6 +87,8 @@
     margin-top: 10px;
   }
   button:disabled { opacity: .5; cursor: default; pointer-events: none; }
+  .button-link { display:block; width:100%; padding:13px 16px; border-radius:calc(var(--radius) - 2px); background:var(--primary); color:var(--primary-foreground); font-size:.95rem; font-weight:600; text-align:center; text-decoration:none; }
+  .operator-auth-pending #create-section { visibility:hidden; }
   .error { color: var(--destructive); text-align: center; margin-top: 8px; min-height: 1.2em; font-size: .875rem; }
   .player-list { list-style: none; margin: 4px 0 16px; }
   .player-list li {
@@ -277,6 +279,11 @@
     .review-legend { display: none; }
   }
 </style>
+<script>
+  if (new URLSearchParams(location.search).get("mode") === "create") {
+    document.documentElement.classList.add("operator-auth-pending");
+  }
+</script>
 </head>
 <body>
 <div class="container">
@@ -285,6 +292,13 @@
     <h1 class="site-title">ÖSH Vocabulary Challenge</h1>
     <p class="site-tagline">みんなで満点を目指そう！</p>
   </header>
+
+  <div class="screen" id="operator-auth-required" hidden>
+    <div class="card">
+      <p class="confirm-head">運営者ログインが必要です</p>
+      <a class="button-link" href="/operator-login.html">運営者ログインへ</a>
+    </div>
+  </div>
 
   <!-- 参加/作成 -->
   <div class="screen" id="screen-entry">
@@ -891,6 +905,23 @@
   const roomLabel = document.querySelector('label[for="room"]');
   const joinBtn = $("btn-join");
   if (entryMode === "create") {
+    fetch("/api/operator/session", { cache: "no-store" })
+      .then((response) => {
+        document.documentElement.classList.remove("operator-auth-pending");
+        if (response.ok) {
+          createSection.hidden = false;
+          return;
+        }
+        createSection.hidden = true;
+        $("operator-auth-required").hidden = false;
+        show("operator-auth-required");
+      })
+      .catch(() => {
+        document.documentElement.classList.remove("operator-auth-pending");
+        createSection.hidden = true;
+        $("operator-auth-required").hidden = false;
+        show("operator-auth-required");
+      });
     if (joinSection) joinSection.style.display = "none";
     document.querySelector(".container")?.classList.add("wide");
   } else if (entryMode === "join" || presetRoom) {

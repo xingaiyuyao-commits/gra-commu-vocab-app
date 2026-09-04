@@ -193,6 +193,16 @@ test("参加・作成画面: Clacel/TOEIC/IELTSそれぞれの作成ボタンが
   assert.equal(document.querySelector(".container").classList.contains("wide"), true, "作成画面ではcontainerが横に広がる");
 });
 
+test("未認証で作成URLを直接開いても開催UIを表示しない", async () => {
+  const { window, document } = loadQuizPage({
+    url: "http://localhost/quiz.html?mode=create",
+    operatorSessionStatus: 401,
+  });
+  await new Promise((resolve) => window.setTimeout(resolve, 0));
+  assert.equal(document.getElementById("operator-auth-required").hidden, false);
+  assert.equal(document.getElementById("create-section").hidden, true);
+});
+
 test("参加・作成画面: エラーにrole=alert、入力欄がエラーと関連付けられている", () => {
   const { document } = loadQuizPage();
   const error = document.getElementById("entry-error");
