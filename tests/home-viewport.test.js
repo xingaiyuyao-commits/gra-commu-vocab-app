@@ -168,8 +168,8 @@ test("PCホームは1440×800で主要内容が縦スクロールなしに収ま
   const contentBottom = Math.max(metrics.operatorBottom, metrics.imageBottom);
   const bottomSpace = metrics.innerHeight - contentBottom;
   assert.ok(
-    Math.abs(metrics.titleTop - bottomSpace) <= 24,
-    `コンテンツ全体の上下余白差が24px以内: ${JSON.stringify({ titleTop: metrics.titleTop, bottomSpace })}`,
+    bottomSpace - metrics.titleTop >= 40 && bottomSpace - metrics.titleTop <= 90,
+    `タイトルを上寄せし、下側を40〜90px広く保つ: ${JSON.stringify({ titleTop: metrics.titleTop, bottomSpace })}`,
   );
 
   const visibleDayResult = await devtools.send("Runtime.evaluate", {
@@ -198,6 +198,6 @@ test("PCホームは1440×800で主要内容が縦スクロールなしに収ま
   const visibleDayBottomSpace = visibleDayMetrics.innerHeight - visibleDayBottom;
   assert.ok(
     Math.abs(visibleDayMetrics.titleTop - visibleDayBottomSpace) <= 24,
-    `学習日カード表示時も上下余白差が24px以内: ${JSON.stringify({ titleTop: visibleDayMetrics.titleTop, bottomSpace: visibleDayBottomSpace })}`,
+    `学習日カード表示時は一画面内で上下の余白を均等に保つ: ${JSON.stringify({ titleTop: visibleDayMetrics.titleTop, bottomSpace: visibleDayBottomSpace })}`,
   );
 });
