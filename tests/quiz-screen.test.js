@@ -740,11 +740,24 @@ test("待機画面: 手動提出中は他の参加者待ち、全員提出後は
   assert.equal(document.getElementById("waiting-remain").textContent, "全員提出済み　ホストの結果発表を待っています");
 });
 
-test("問題画面: 更新防止と文法上の活用案内を分かれた文で表示する", () => {
-  const { document } = loadQuizPage();
+test("問題画面: 更新防止と文法上の活用案内をすべての問題で表示する", () => {
+  const { window, document, fireSocketEvent } = loadQuizPage();
   const note = document.getElementById("q-note");
+  const questions = [
+    { sentence: "I ___ tea.", hint: "d____", ja: "飲む", sentenceJa: "私はお茶を飲む。" },
+    { sentence: "She ___ books.", hint: "r____", ja: "読む", sentenceJa: "彼女は本を読む。" },
+  ];
+  fireSocketEvent("quiz:started", {
+    setLabel: "Day 1", total: questions.length, endsAt: Date.now() + 60000, questions,
+  });
+
   assert.match(note.textContent, /回答中は画面を閉じたり、更新したりしないでください/);
   assert.match(note.textContent, /文法に合わせて活用させて答えてください/);
+  assert.notEqual(note.style.display, "none", "第1問で表示する");
+
+  document.getElementById("btn-next").dispatchEvent(new window.Event("click", { bubbles: true }));
+  assert.equal(document.getElementById("q-num").textContent, "第2問 / 2");
+  assert.notEqual(note.style.display, "none", "第2問以降も表示する");
 });
 
 test("結果後の動線: 解き直しを主操作、退出を副操作として二択で表示する", () => {
