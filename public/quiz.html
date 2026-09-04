@@ -424,7 +424,7 @@
       <button type="button" id="btn-weekly-review"></button>
       <p class="weekly-review-note">同じ端末・同じブラウザでのみ利用できます<br>次週のDay 1 19:30を過ぎると期限切れになります<br>ブラウザデータを削除した場合や、シークレット／プライベートモードでは復元できません</p>
     </div>
-    <button class="leave" onclick="leaveRoom(false)">← ホームに戻る</button>
+    <button id="entry-home-link" class="leave" onclick="leaveRoom(false)">← ホームに戻る</button>
   </div>
 
   <!-- ロビー -->
@@ -956,6 +956,9 @@
   const roomInput = $("room");
   const roomLabel = document.querySelector('label[for="room"]');
   const joinBtn = $("btn-join");
+  const nameLabel = document.querySelector('label[for="name"]');
+  const nameInput = $("name");
+  const entryHomeLink = $("entry-home-link");
   if (entryMode === "create") {
     fetch("/api/operator/session", { cache: "no-store" })
       .then((response) => {
@@ -978,7 +981,13 @@
     document.querySelector(".container")?.classList.add("wide");
   } else if (entryMode === "join" || presetRoom) {
     if (createSection) createSection.style.display = "none";
-    if (joinSection) {
+    if (entryHomeLink) entryHomeLink.hidden = true;
+    if (!presetRoom) {
+      if (nameLabel) nameLabel.hidden = true;
+      if (nameInput) nameInput.hidden = true;
+      if (joinSection) joinSection.hidden = true;
+      $("entry-error").textContent = "招待リンクを確認してください";
+    } else if (joinSection) {
       joinSection.hidden = false;
       joinSection.style.display = "";
     }
@@ -996,14 +1005,7 @@
         roomInput.style.display = "none";
       }
       if (roomLabel) roomLabel.hidden = true;
-      $("name")?.focus();
-    } else {
-      if (roomInput) {
-        roomInput.disabled = false;
-        roomInput.removeAttribute("aria-hidden");
-        roomInput.style.display = "";
-      }
-      if (roomLabel) roomLabel.hidden = false;
+      nameInput?.focus();
     }
   }
 
