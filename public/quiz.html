@@ -1164,6 +1164,7 @@
         mh[category].endsAt = res.endsAt || 0;
         renderJoinShare(`mh-${category}-share`, `mh-${category}-join-url`, `mh-${category}-qr`, `mh-${category}-copy`, mh[category].roomCode, category);
         mhFillSeries(category);
+        $(`mh-${category}-series`).value = String(res.selectedSeriesIndex || 0);
         if (res.phase === "playing") {
           $(`mh-${category}-progress`).textContent = `提出状況 ${res.submittedCount} / ${res.totalCount}人`;
           $(`mh-${category}-reveal`).disabled = !res.allSubmitted;
@@ -1692,6 +1693,7 @@
       $("lobby-category").textContent = `${CATEGORY_LABEL[selectedCategory]}のルーム`;
       if (isHost) renderJoinShare("lobby-share", "lobby-join-url", "lobby-qr", "lobby-copy", session.roomCode, selectedCategory);
       fillSeries();
+      if (isHost) $("sel-series").value = String(res.selectedSeriesIndex || 0);
 
       const pending = loadPendingSubmission();
       if (res.phase === "playing" && !res.isHost && pending && !res.submitted) {

@@ -7,6 +7,9 @@ const path = require("node:path");
 const net = require("node:net");
 const { io: createSocketClient } = require("socket.io-client");
 
+const TEST_OPERATOR_PASSWORD = "test-operator-password";
+const operatorCookies = new Map();
+
 function reservePort() {
   return new Promise((resolve, reject) => {
     const server = net.createServer();
@@ -28,7 +31,13 @@ async function startServer(stateFile, envOverrides = {}) {
   let stderr = "";
   const child = spawn(process.execPath, ["server.js"], {
     cwd: path.join(__dirname, ".."),
-    env: { ...process.env, PORT: String(port), QUIZ_ROOM_STATE_FILE: stateFile, ...envOverrides },
+    env: {
+      ...process.env,
+      PORT: String(port),
+      QUIZ_ROOM_STATE_FILE: stateFile,
+      OPERATOR_PASSWORD: TEST_OPERATOR_PASSWORD,
+      ...envOverrides,
+    },
     stdio: ["ignore", "ignore", "pipe"],
   });
   child.stderr.on("data", (chunk) => { stderr += chunk.toString(); });
@@ -40,7 +49,15 @@ async function startServer(stateFile, envOverrides = {}) {
     }
     try {
       const response = await fetch(`${baseUrl}/healthz`);
-      if (response.status === 200 || response.status === 503) return { child, baseUrl };
+      if (response.status === 200 || response.status === 503) {
+        const login = await fetch(`${baseUrl}/api/operator/login`, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ password: TEST_OPERATOR_PASSWORD }),
+        });
+        operatorCookies.set(baseUrl, login.headers.get("set-cookie")?.split(";", 1)[0] || "");
+        return { child, baseUrl };
+      }
     } catch {}
     await delay(50);
   }
@@ -65,6 +82,7 @@ async function connect(baseUrl) {
     reconnection: false,
     timeout: 5_000,
     transports: ["websocket"],
+    extraHeaders: operatorCookies.get(baseUrl) ? { Cookie: operatorCookies.get(baseUrl) } : undefined,
   });
   await new Promise((resolve, reject) => {
     socket.once("connect", resolve);

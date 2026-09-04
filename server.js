@@ -668,6 +668,11 @@ function loadQuizState() {
         sourceDays: Array.isArray(room.sourceDays)
           ? room.sourceDays.filter((day) => Number.isInteger(Number(day))).map(Number)
           : [],
+        selectedSeriesIndex: Number.isInteger(Number(room.selectedSeriesIndex))
+          && Number(room.selectedSeriesIndex) >= 0
+          && WORDTESTS[room.category].series[Number(room.selectedSeriesIndex)]
+          ? Number(room.selectedSeriesIndex)
+          : 0,
         isTrial,
         results: sanitizeRestoredQuizResults(room.results, isTrial),
         timeoutHandle: null,
@@ -1107,11 +1112,22 @@ function quizSeriesMeta(category) {
 function quizPlayersUpdate(roomCode) {
   const room = quizRooms[roomCode];
   if (!room || !room.players[room.host]) return;
+  const selectedSeriesIndex = Number.isInteger(room.selectedSeriesIndex) ? room.selectedSeriesIndex : 0;
   io.to(roomCode).emit("quiz:playersUpdate", {
     hostId: room.host,
     hostName: room.players[room.host].name,
     players: quizPublicPlayers(room),
+    nextSeries: quizSeriesMeta(room.category)[selectedSeriesIndex] || null,
   });
+}
+
+function socketOperatorIsAuthenticated(socket) {
+  const token = operatorAuth.cookieToken(socket.handshake?.headers?.cookie);
+  return operatorAuth.sessionTokenIsValid(token);
+}
+
+function rejectOperatorAction(cb, error = "運営者認証が必要です") {
+  if (typeof cb === "function") cb({ ok: false, error });
 }
 
 // 例文に時制を示す語がなく現在形・過去形どちらも文法的に成立してしまう設問は、
@@ -1352,6 +1368,7 @@ function quizFinalizePlayerLeave(roomCode, playerId) {
 
 io.on("connection", (socket) => {
   socket.on("quiz:createRoom", ({ category, name } = {}, cb = () => {}) => {
+    if (!socketOperatorIsAuthenticated(socket)) return rejectOperatorAction(cb);
     if (!QUIZ_CATEGORIES.includes(category)) return cb({ error: "カテゴリが不正です" });
     const roomCode = makeQuizRoomCode();
     const newRoom = {
@@ -1366,6 +1383,7 @@ io.on("connection", (socket) => {
       isReview: false,
       sourceDays: [],
       results: null,
+      selectedSeriesIndex: 0,
     };
     quizJoin(socket, roomCode, name, cb, newRoom);
   });
@@ -1392,6 +1410,9 @@ io.on("connection", (socket) => {
     const room = quizRooms[code];
     const player = room && playerId && room.players[playerId];
     if (!room || !player || !quizSessionTokenMatches(player.sessionToken, sessionToken)) return cb({ ok: false });
+    if (room.host === playerId && !socketOperatorIsAuthenticated(socket)) {
+      return rejectOperatorAction(cb);
+    }
 
     if (player.leaveTimer) {
       clearTimeout(player.leaveTimer);
@@ -1410,6 +1431,7 @@ io.on("connection", (socket) => {
       autoSubmitted: player.submissionKind === "timeout",
       seriesNames: WORDTESTS[room.category].series.map((s) => s.name),
       seriesMeta: quizSeriesMeta(room.category),
+      selectedSeriesIndex: Number.isInteger(room.selectedSeriesIndex) ? room.selectedSeriesIndex : 0,
     };
     if (room.phase === "playing") {
       res.setLabel = room.setLabel;
@@ -1427,10 +1449,33 @@ io.on("connection", (socket) => {
     quizPlayersUpdate(code);
   });
 
+  socket.on("quiz:selectSeries", ({ seriesIndex } = {}, cb = () => {}) => {
+    const roomCode = socket.data.quizRoomCode;
+    const room = quizRooms[roomCode];
+    if (!socketOperatorIsAuthenticated(socket)
+      || !room
+      || room.host !== socket.data.quizPlayerId
+      || room.phase !== "lobby") {
+      return rejectOperatorAction(cb, "問題セットを変更できませんでした");
+    }
+    const index = Number(seriesIndex);
+    if (!Number.isInteger(index) || !WORDTESTS[room.category]?.series[index]) {
+      return cb({ ok: false, error: "問題セットが見つかりません" });
+    }
+    if (!persistQuizMutation(roomCode, () => { room.selectedSeriesIndex = index; })) {
+      return cb({ ok: false, error: QUIZ_PERSISTENCE_ERROR });
+    }
+    cb({ ok: true });
+    quizPlayersUpdate(roomCode);
+  });
+
   socket.on("quiz:startGame", ({ seriesIndex } = {}, cb = () => {}) => {
     const roomCode = socket.data.quizRoomCode;
     const room = quizRooms[roomCode];
-    if (!room || room.host !== socket.data.quizPlayerId || room.phase !== "lobby") return cb({ ok: false, error: "開始できませんでした" });
+    if (!socketOperatorIsAuthenticated(socket)
+      || !room
+      || room.host !== socket.data.quizPlayerId
+      || room.phase !== "lobby") return cb({ ok: false, error: "開始できませんでした" });
     const cat = WORDTESTS[room.category];
     const series = cat && cat.series[Number(seriesIndex)];
     if (!series) return cb({ ok: false, error: "問題セットが見つかりません" });
@@ -1467,6 +1512,7 @@ io.on("connection", (socket) => {
       room.sourceDays = prepared.sourceDays;
       room.isTrial = series.isTrial === true;
       room.results = null;
+      room.selectedSeriesIndex = Number(seriesIndex);
       room.timeoutHandle = null;
       for (const p of Object.values(room.players)) {
         p.submittedAt = null;
@@ -1532,7 +1578,10 @@ io.on("connection", (socket) => {
   socket.on("quiz:revealResults", (cb = () => {}) => {
     const roomCode = socket.data.quizRoomCode;
     const room = quizRooms[roomCode];
-    if (!room || room.host !== socket.data.quizPlayerId || room.phase !== "playing") return cb({ ok: false, error: "結果を発表できませんでした" });
+    if (!socketOperatorIsAuthenticated(socket)
+      || !room
+      || room.host !== socket.data.quizPlayerId
+      || room.phase !== "playing") return cb({ ok: false, error: "結果を発表できませんでした" });
     if (!quizRevealResults(roomCode)) {
       socket.emit("quiz:actionError", { error: QUIZ_PERSISTENCE_ERROR });
       return cb({ ok: false, error: QUIZ_PERSISTENCE_ERROR });
@@ -1543,7 +1592,10 @@ io.on("connection", (socket) => {
   socket.on("quiz:playAgain", (cb = () => {}) => {
     const roomCode = socket.data.quizRoomCode;
     const room = quizRooms[roomCode];
-    if (!room || room.host !== socket.data.quizPlayerId || room.phase !== "finished") return cb({ ok: false, error: "ロビーに戻れませんでした" });
+    if (!socketOperatorIsAuthenticated(socket)
+      || !room
+      || room.host !== socket.data.quizPlayerId
+      || room.phase !== "finished") return cb({ ok: false, error: "ロビーに戻れませんでした" });
     const saved = persistQuizMutation(roomCode, () => {
       room.phase = "lobby";
       room.questions = [];
@@ -1565,6 +1617,38 @@ io.on("connection", (socket) => {
     quizPlayersUpdate(roomCode);
   });
 
+  socket.on("quiz:cancelGame", (cb = () => {}) => {
+    const roomCode = socket.data.quizRoomCode;
+    const room = quizRooms[roomCode];
+    if (!socketOperatorIsAuthenticated(socket)
+      || !room
+      || room.host !== socket.data.quizPlayerId
+      || room.phase !== "playing") {
+      return rejectOperatorAction(cb, "開催を中止できませんでした");
+    }
+    const timeoutHandle = room.timeoutHandle;
+    const saved = persistQuizMutation(roomCode, () => {
+      room.phase = "lobby";
+      room.questions = [];
+      room.results = null;
+      room.startedAt = 0;
+      room.endsAt = 0;
+      room.timeoutHandle = null;
+      for (const p of Object.values(room.players)) {
+        p.submittedAt = null;
+        p.submissionKind = null;
+        p.score = 0;
+        p.wrongQuestionIndexes = [];
+        p.wrongAnswerReasons = {};
+      }
+    });
+    if (!saved) return cb({ ok: false, error: QUIZ_PERSISTENCE_ERROR });
+    if (timeoutHandle) clearTimeout(timeoutHandle);
+    cb({ ok: true });
+    io.to(roomCode).emit("quiz:backToLobby", { cancelled: true });
+    quizPlayersUpdate(roomCode);
+  });
+
   socket.on("quiz:leave", (payload, acknowledgement) => {
     const cb = typeof payload === "function"
       ? payload
@@ -1572,6 +1656,9 @@ io.on("connection", (socket) => {
     const roomCode = socket.data.quizRoomCode;
     const playerId = socket.data.quizPlayerId;
     if (!roomCode || !playerId) return cb({ ok: true });
+    if (quizRooms[roomCode]?.host === playerId && !socketOperatorIsAuthenticated(socket)) {
+      return rejectOperatorAction(cb);
+    }
     const result = quizFinalizePlayerLeave(roomCode, playerId);
     if (!result.ok) return cb(result);
     socket.data.quizRoomCode = null;

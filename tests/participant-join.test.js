@@ -5,6 +5,8 @@ const net = require("node:net");
 const path = require("node:path");
 const { io: createSocketClient } = require("socket.io-client");
 
+const TEST_OPERATOR_PASSWORD = "test-operator-password";
+
 function reservePort() {
   return new Promise((resolve, reject) => {
     const server = net.createServer();
@@ -35,12 +37,13 @@ async function waitForHealthy(baseUrl, child, getStderr) {
   throw new Error(`test server did not become healthy: ${getStderr() || "no stderr"}`);
 }
 
-function connectSocket(baseUrl) {
+function connectSocket(baseUrl, cookie = "") {
   const socket = createSocketClient(baseUrl, {
     forceNew: true,
     reconnection: false,
     timeout: 5_000,
     transports: ["websocket"],
+    extraHeaders: cookie ? { Cookie: cookie } : undefined,
   });
   const connected = new Promise((resolve, reject) => {
     socket.once("connect", resolve);
@@ -92,7 +95,7 @@ test("実サーバー: プレイヤー固有トークンだけが再参加とID�
   const baseUrl = `http://127.0.0.1:${port}`;
   const child = spawn(process.execPath, ["server.js"], {
     cwd: path.join(__dirname, ".."),
-    env: { ...process.env, PORT: String(port) },
+    env: { ...process.env, PORT: String(port), OPERATOR_PASSWORD: TEST_OPERATOR_PASSWORD },
     stdio: ["ignore", "pipe", "pipe"],
   });
   const sockets = [];
@@ -111,8 +114,15 @@ test("実サーバー: プレイヤー固有トークンだけが再参加とID�
 
   await waitForHealthy(baseUrl, child, () => stderr);
 
+  const login = await fetch(`${baseUrl}/api/operator/login`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ password: TEST_OPERATOR_PASSWORD }),
+  });
+  const operatorCookie = login.headers.get("set-cookie").split(";", 1)[0];
+
   async function openSocket() {
-    const connection = connectSocket(baseUrl);
+    const connection = connectSocket(baseUrl, operatorCookie);
     sockets.push(connection.socket);
     await connection.connected;
     return connection.socket;
@@ -201,7 +211,7 @@ test("実サーバー: 制限時間内の途中参加者へ進行中の同じ問
   const baseUrl = `http://127.0.0.1:${port}`;
   const child = spawn(process.execPath, ["server.js"], {
     cwd: path.join(__dirname, ".."),
-    env: { ...process.env, PORT: String(port) },
+    env: { ...process.env, PORT: String(port), OPERATOR_PASSWORD: TEST_OPERATOR_PASSWORD },
     stdio: ["ignore", "pipe", "pipe"],
   });
   const sockets = [];
@@ -218,8 +228,15 @@ test("実サーバー: 制限時間内の途中参加者へ進行中の同じ問
 
   await waitForHealthy(baseUrl, child, () => stderr);
 
+  const login = await fetch(`${baseUrl}/api/operator/login`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ password: TEST_OPERATOR_PASSWORD }),
+  });
+  const operatorCookie = login.headers.get("set-cookie").split(";", 1)[0];
+
   async function openSocket() {
-    const connection = connectSocket(baseUrl);
+    const connection = connectSocket(baseUrl, operatorCookie);
     sockets.push(connection.socket);
     await connection.connected;
     return connection.socket;
