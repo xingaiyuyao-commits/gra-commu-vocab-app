@@ -304,7 +304,7 @@
               <p class="join-share-url" id="mh-clacel-join-url" hidden></p>
               <button type="button" class="secondary" id="mh-clacel-copy">参加リンクをコピー</button>
             </div>
-            <p class="mh-player-count" id="mh-clacel-player-count">参加者 0人</p>
+            <p class="mh-player-count" id="mh-clacel-player-count">ルーム内 1人（ホスト含む）</p>
             <input id="mh-clacel-player-filter" type="search" placeholder="名前を検索" aria-label="Clacel参加者を検索" hidden />
             <ul class="player-list" id="mh-clacel-players"></ul>
             <label for="mh-clacel-series">問題セット</label>
@@ -338,7 +338,7 @@
               <p class="join-share-url" id="mh-toeic-join-url" hidden></p>
               <button type="button" class="secondary" id="mh-toeic-copy">参加リンクをコピー</button>
             </div>
-            <p class="mh-player-count" id="mh-toeic-player-count">参加者 0人</p>
+            <p class="mh-player-count" id="mh-toeic-player-count">ルーム内 1人（ホスト含む）</p>
             <input id="mh-toeic-player-filter" type="search" placeholder="名前を検索" aria-label="TOEIC参加者を検索" hidden />
             <ul class="player-list" id="mh-toeic-players"></ul>
             <label for="mh-toeic-series">問題セット</label>
@@ -372,7 +372,7 @@
               <p class="join-share-url" id="mh-ielts-join-url" hidden></p>
               <button type="button" class="secondary" id="mh-ielts-copy">参加リンクをコピー</button>
             </div>
-            <p class="mh-player-count" id="mh-ielts-player-count">参加者 0人</p>
+            <p class="mh-player-count" id="mh-ielts-player-count">ルーム内 1人（ホスト含む）</p>
             <input id="mh-ielts-player-filter" type="search" placeholder="名前を検索" aria-label="IELTS参加者を検索" hidden />
             <ul class="player-list" id="mh-ielts-players"></ul>
             <label for="mh-ielts-series">問題セット</label>
@@ -535,9 +535,9 @@
         </div>
       </div>
       <section id="study-panel">
-        <p class="shot-hint" id="shot-hint">↓ このカードをスクショして、忘れないうちに復習しましょう！</p>
+        <p class="shot-hint" id="shot-hint">間違えてからの復習が大事！結果を写真に撮る・メモする・もう一度解き直すなど、忘れずに復習しましょう！</p>
         <div class="card" id="review-card">
-          <p class="review-heading">あなたが間違えた単語<span class="review-legend">単語／意味・あなたの回答・例文</span></p>
+          <p class="review-heading">あなたが間違えた単語<span class="review-legend">意味・あなたの回答・例文</span></p>
           <div id="review"></div>
           <button type="button" id="btn-retest">今回の間違いを今すぐ解き直す</button>
         </div>
@@ -1031,7 +1031,7 @@
     const participantCount = Math.max(players.length - 1, 0);
     mh[category].participantCount = participantCount;
     mh[category].players = players.slice(1);
-    $(`mh-${category}-player-count`).textContent = `参加者 ${participantCount}人`;
+    $(`mh-${category}-player-count`).textContent = `ルーム内 ${players.length}人（ホスト含む）`;
     $(`mh-${category}-start`).disabled = participantCount === 0;
     const filter = $(`mh-${category}-player-filter`);
     filter.hidden = participantCount <= 10;
@@ -1290,7 +1290,7 @@
       ? `次の問題セット: ${seriesOptionLabel(nextSeries, nextSeries.name)}`
       : "";
     // ロビーはテスト前なので、提出状況は出さない（前回の状態が残って見えてしまう）
-    $("lobby-players-label").textContent = `参加中 ${players.length}人`;
+    $("lobby-players-label").textContent = `ルーム内 ${players.length}人（ホスト含む）`;
     $("lobby-players").innerHTML = players.map((p) =>
       `<li><span>${escapeHtml(p.name)}</span></li>`).join("");
     $("btn-reveal-results").style.display = isHost ? "" : "none";
@@ -1574,7 +1574,7 @@
     const accepted = [item.answer, ...item.altAnswers].map((a) => String(a).trim().toLowerCase());
     const ok = accepted.includes(mine);
     if (ok) retestCorrect += 1;
-    $("retest-feedback").textContent = ok ? "正解 🎉" : "おしい　もう一度おぼえよう";
+    $("retest-feedback").textContent = ok ? "正解 🎉" : "惜しい！もう一度覚えよう！";
     $("retest-feedback").className = `retest-feedback ${ok ? "ok" : "ng"}`;
     $("retest-correct").textContent = `正解：${[item.answer, ...item.altAnswers].join(" / ")}`;
     $("retest-answer").disabled = true;

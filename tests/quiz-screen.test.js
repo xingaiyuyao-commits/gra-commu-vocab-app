@@ -96,6 +96,21 @@ test("ロビー: 接続用コードを見せず、コース名のルーム表示
   assert.doesNotMatch(document.getElementById("screen-lobby").textContent, /TV7G/);
 });
 
+test("参加者ロビー: 人数はホストを含むルーム内人数だと明記する", () => {
+  const { document, fireSocketEvent } = loadQuizPage();
+
+  fireSocketEvent("quiz:playersUpdate", {
+    hostId: "host-id",
+    hostName: "ホスト",
+    players: [
+      { id: "host-id", name: "ホスト", submitted: false },
+      { id: "participant-id", name: "参加者", submitted: false },
+    ],
+  });
+
+  assert.equal(document.getElementById("lobby-players-label").textContent, "ルーム内 2人（ホスト含む）");
+});
+
 test("週間復習入口: 今週の保存語があるクイズ入口だけに正確な件数を表示する", () => {
   const { window, document } = loadQuizPage();
   setWindowTime(window, "2026-09-08T19:30:00+09:00");
@@ -425,6 +440,7 @@ test("参加・作成画面: ホストの複数コース作成パネルは開始
 
   // 参加者が入る
   s.fire("quiz:playersUpdate", { hostId: "h", players: [{ name: "ホスト", submitted: false }, { name: "Aさん", submitted: false }] });
+  assert.equal(document.getElementById("mh-toeic-player-count").textContent, "ルーム内 2人（ホスト含む）");
   assert.match(document.getElementById("mh-toeic-players").innerHTML, /Aさん/);
 
   // テスト開始
@@ -908,6 +924,18 @@ test("結果画面: 最上部に本人の点数が表示される", () => {
   assert.match(document.getElementById("personal-score").textContent, /1\s*\/\s*2/);
 });
 
+test("結果画面: 誤答見出しを重複させず、行動を限定しない復習案内を表示する", () => {
+  const { document } = loadQuizPage();
+  const heading = document.querySelector(".review-heading");
+
+  assert.equal(heading.firstChild.textContent.trim(), "あなたが間違えた単語");
+  assert.equal(heading.querySelector(".review-legend").textContent.trim(), "意味・あなたの回答・例文");
+  assert.equal(
+    document.getElementById("shot-hint").textContent.trim(),
+    "間違えてからの復習が大事！結果を写真に撮る・メモする・もう一度解き直すなど、忘れずに復習しましょう！",
+  );
+});
+
 test("結果画面: どのコース・Dayだったかが表示される", () => {
   const { window, document, fireSocketEvent } = loadQuizPage();
   const questions = [
@@ -1002,6 +1030,31 @@ test("解き直し: 例文の下に日本語訳を表示する", () => {
   const sentenceJa = document.getElementById("retest-sentence-ja");
   assert.ok(sentenceJa, "解き直し用の例文和訳欄がある");
   assert.equal(sentenceJa.textContent, "私はお茶を飲む。");
+});
+
+test("解き直し: 不正解時に自然な漢字と句読点で再学習を促す", () => {
+  const { window, document, fireSocketEvent } = loadQuizPage();
+  const questions = [
+    { sentence: "I ___ tea.", answer: "drink", base: "drink", hint: "d____", ja: "飲む", sentenceJa: "私はお茶を飲む。" },
+  ];
+  fireSocketEvent("quiz:started", {
+    setLabel: "Day 1", total: 1, endsAt: Date.now() + 60000, questions,
+  });
+  document.getElementById("answer").value = "wrong";
+  document.getElementById("btn-next").dispatchEvent(new window.Event("click", { bubbles: true }));
+  fireSocketEvent("quiz:results", {
+    setLabel: "Day 1",
+    perfect: [],
+    others: [],
+    review: [{ sentence: "I ___ tea.", answer: "drink", altAnswers: [], ja: "飲む", sentenceJa: "私はお茶を飲む。" }],
+    mistakes: [{ index: 0, answer: "drink", ja: "飲む", count: 1 }],
+    isTrial: false,
+  });
+  document.getElementById("btn-retest").dispatchEvent(new window.Event("click", { bubbles: true }));
+  document.getElementById("retest-answer").value = "wrong";
+  document.getElementById("retest-next").dispatchEvent(new window.Event("click", { bubbles: true }));
+
+  assert.equal(document.getElementById("retest-feedback").textContent, "惜しい！もう一度覚えよう！");
 });
 
 test("週間復習保存: 通常回の誤答だけを個人情報なしで今週へ保存する", () => {
