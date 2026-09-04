@@ -23,6 +23,22 @@ Production URL: https://gra-commu-vocab-test-production-77e7.up.railway.app/
 
 To rotate the password, repeat these steps with a newly generated value. Rotation invalidates existing results-history sessions, so log in again and confirm the old value no longer works. If the variable is absent, all `/api/results-history` endpoints intentionally return 503.
 
+## Shared operator password
+
+`OPERATOR_PASSWORD` is required for creating and controlling rooms. Keep it separate from `RESULTS_ADMIN_PASSWORD`, and never put its value in Git, screenshots, command output, or public messages.
+
+1. Store the shared password in the approved password manager for the five operators.
+2. Set `OPERATOR_PASSWORD` as a Railway service variable before deploying this version.
+3. Each operator opens `/operator-login.html` before the Zoom session and logs in once. The HttpOnly operator session lasts 12 hours in that browser.
+4. The public homepage remains safe to share in Zoom. Only an authenticated operator browser displays `開催画面を開く`.
+5. Confirm an unauthenticated browser cannot create a room by opening `/quiz.html?mode=create` directly.
+
+Changing `OPERATOR_PASSWORD` immediately invalidates existing operator sessions. If the variable is missing, operator login returns 503 and every host Socket.IO action is rejected; the service must never fall back to public room creation.
+
+## Participant result retention
+
+Participant results and retry content are stored only in that participant's browser for seven days, keyed by room code, with a maximum of 21 records. After a host ends a room, reopening that day's invitation link restores the saved result in the same browser. A new day's invitation link always opens the new join flow. Clearing browser data, using another device/browser, private browsing, storage denial, or closing before receiving the announced result prevents restoration. No participant answer text is added to the Railway volume.
+
 ## Persistent data and backups
 
 Railway's existing `/data` volume contains `/data/quiz-rooms.json`. Version 2 of this file holds both active quiz rooms and `resultHistory`; do not replace the volume or copy this file into the repository. Each completed date/course record now includes all-question aggregate statistics (`questionStats`) used to prioritize review-day questions. It does not store participants' raw answer text.

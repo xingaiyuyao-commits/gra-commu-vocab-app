@@ -771,12 +771,13 @@ test("問題画面: 更新防止と文法上の活用案内をすべての問題
 });
 
 test("結果後の動線: 参加者は結果画面内で復習し、退出・ホーム移動を表示しない", () => {
-  const { document, fireSocketEvent } = loadQuizPage();
+  const { window, document, fireSocketEvent } = loadQuizPage();
   const retest = document.getElementById("btn-retest");
   fireSocketEvent("quiz:results", { perfect: [], review: [] });
   assert.equal(retest.textContent.trim(), "今回の間違いを今すぐ解き直す");
   assert.equal(retest.classList.contains("secondary"), false);
   assert.equal(document.getElementById("results-leave").hidden, true);
+  assert.equal(window.getComputedStyle(document.getElementById("results-leave")).display, "none");
   assert.doesNotMatch(document.getElementById("screen-results").textContent, /ホームに戻る/);
   assert.match(document.getElementById("results-next-note").textContent, /次回は新しい招待リンクから参加してください/);
   assert.equal(document.getElementById("btn-again"), null, "ホストにも同じルームでの再開催操作を表示しない");

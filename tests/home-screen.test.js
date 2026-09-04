@@ -69,7 +69,9 @@ test("ホームの開催導線は認証済み応答のときだけ表示する",
   }
 
   const unauthorized = await render(401);
-  assert.equal(unauthorized.window.document.getElementById("operator-entry").hidden, true);
+  const unauthorizedEntry = unauthorized.window.document.getElementById("operator-entry");
+  assert.equal(unauthorizedEntry.hidden, true);
+  assert.equal(unauthorized.window.getComputedStyle(unauthorizedEntry).display, "none");
   unauthorized.window.close();
 
   const authenticated = await render(200);
