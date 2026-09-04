@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>📚 単語テスト — Day別20問</title>
+<title>ÖSH Vocabulary Challenge</title>
 <style>
   :root {
     --background: #f7f7f5;
@@ -35,8 +35,10 @@
   .container { width: 100%; max-width: 42rem; }
   .screen { display: none; }
   .screen.active { display: block; }
-  h1 { text-align: center; font-size: 1.875rem; font-weight: 700; letter-spacing: -.025em; margin: 24px 0 8px; }
-  .subtitle { text-align: center; color: var(--muted-foreground); font-size: .875rem; margin-bottom: 24px; }
+  .site-header { position: relative; min-height: 86px; padding: 12px 76px 0; margin: 0 0 20px; text-align: center; }
+  .voice-logo { position: absolute; top: 0; left: 0; display: block; width: 64px; height: 52px; object-fit: contain; }
+  .site-title { margin: 0 0 7px; font-family: "Avenir Next", Avenir, "Helvetica Neue", sans-serif; font-size: clamp(1.75rem, 4.8vw, 2.65rem); font-weight: 800; letter-spacing: -.055em; line-height: 1; }
+  .site-tagline { color: var(--muted-foreground); font-size: .9rem; font-weight: 600; }
   .card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -86,7 +88,6 @@
   }
   button:disabled { opacity: .5; cursor: default; pointer-events: none; }
   .error { color: var(--destructive); text-align: center; margin-top: 8px; min-height: 1.2em; font-size: .875rem; }
-  .room-code { text-align: center; font-size: 2.25rem; letter-spacing: .3em; font-weight: 700; color: var(--primary); margin: 4px 0 12px; }
   .player-list { list-style: none; margin: 4px 0 16px; }
   .player-list li {
     padding: 10px 14px;
@@ -147,7 +148,8 @@
   .q-meta-sep { color: var(--border); }
   .q-meta-strong { font-weight: 700; color: var(--foreground); font-variant-numeric: tabular-nums; }
   .q-ja { font-size: 1.05rem; font-weight: 600; text-align: center; margin-bottom: 6px; }
-  .q-hint { min-height: 1.25rem; margin: 0 auto 14px; display: flex; align-items: baseline; justify-content: center; gap: 8px; color: var(--muted-foreground); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .q-hint, .q-sentence { font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"; }
+  .q-hint { min-height: 1.25rem; margin: 0 auto 14px; display: flex; align-items: baseline; justify-content: center; gap: 8px; color: var(--muted-foreground); }
   .hint-line { display: inline-block; width: 10rem; border-bottom: 2px solid currentColor; }
   .q-sentence { font-size: 1.15rem; line-height: 1.7; text-align: center; margin-bottom: 4px; overflow-wrap: break-word; }
   .q-sentence .blank { font-weight: 700; color: var(--gold); }
@@ -174,8 +176,15 @@
     margin-bottom: 6px; font-size: .95rem;
   }
   .rank-list .me { outline: 2px solid var(--primary); }
-  .mh-mistake-meaning, .mh-mistake-count { display: block; }
-  .mh-mistake-count { margin-top: 3px; color: var(--muted-foreground); }
+  .mh-mistake-row { display: grid !important; grid-template-columns: 2rem minmax(0, 1fr); gap: 10px; align-items: center !important; }
+  .mh-mistake-rank { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--primary); color: var(--primary-foreground); font-weight: 800; }
+  .mh-mistake-row:nth-child(1) .mh-mistake-rank { background: var(--gold); color: #202020; }
+  .mh-mistake-row:nth-child(2) .mh-mistake-rank { background: #777; }
+  .mh-mistake-row:nth-child(3) .mh-mistake-rank { background: #9a6748; }
+  .mh-mistake-word { display: block; font-size: 1rem; font-weight: 800; }
+  .mh-mistake-meaning, .mh-mistake-reason { display: block; }
+  .mh-mistake-meaning { margin-top: 2px; color: var(--muted-foreground); font-size: .82rem; }
+  .mh-mistake-reason { margin-top: 6px; color: var(--foreground); font-size: .82rem; font-weight: 700; }
   .review-item { padding: 14px 0; border-bottom: 1px solid var(--border); font-size: .95rem; line-height: 1.6; }
   .review-item:last-child { border-bottom: none; }
   /* 提出確認: 未回答と提出ボタンを先に置き、回答済みは畳む */
@@ -199,9 +208,11 @@
   .confirm-list small { display: block; color: var(--muted-foreground); font-weight: 400; margin-top: 2px; }
   /* 結果画面: 間違えた単語を1枚のスクショに収めるための配置 */
   .container.results-wide { max-width: 78rem; }
-  /* ルームに入ったあとの画面では、ホスト向けの見出しと説明文は出さない */
-  .container.in-room h1,
-  .container.in-room .subtitle { display: none; }
+  /* 入室後もブランドを残し、回答領域を圧迫しないサイズに縮める */
+  .container.in-room .site-header { position: sticky; top: 0; z-index: 10; min-height: 48px; padding: 7px 54px 0; margin-bottom: 10px; background: rgba(247, 247, 245, .94); backdrop-filter: blur(8px); }
+  .container.in-room .voice-logo { width: 44px; height: 36px; }
+  .container.in-room .site-title { font-size: 1.15rem; letter-spacing: -.035em; }
+  .container.in-room .site-tagline { display: none; }
 
   /* ロビー: 一番知りたい「いつ始まるか」を先頭に置く */
   .lobby-cat { text-align: center; font-size: .85rem; color: var(--muted-foreground); }
@@ -249,6 +260,10 @@
   .correct-list li { padding: 8px 10px; background: var(--secondary); border-radius: 8px; font-size: .86rem; overflow-wrap: anywhere; }
   .correct-list strong { display: block; font-size: .96rem; }
   @media (max-width: 760px) {
+    .site-header { min-height: 72px; padding: 7px 46px 0; margin-bottom: 12px; }
+    .voice-logo { width: 42px; height: 34px; }
+    .site-title { font-size: clamp(1.38rem, 7.2vw, 1.8rem); }
+    .site-tagline { font-size: .78rem; }
     #review { grid-template-columns: 1fr; }
     .review-item:nth-last-child(-n+2) { border-bottom: 1px solid var(--border); }
     .review-item:last-child { border-bottom: none; }
@@ -264,8 +279,11 @@
 </head>
 <body>
 <div class="container">
-  <h1>📚 単語テスト</h1>
-  <p class="subtitle">問題セットを選んでテストを開催。全員提出で満点者を発表</p>
+  <header class="site-header">
+    <img class="voice-logo" src="/assets/voice-logo.png" alt="VOICE" width="218" height="176" />
+    <h1 class="site-title">ÖSH Vocabulary Challenge</h1>
+    <p class="site-tagline">みんなで満点を目指そう！</p>
+  </header>
 
   <!-- 参加/作成 -->
   <div class="screen" id="screen-entry">
@@ -290,13 +308,13 @@
             <ul class="player-list" id="mh-clacel-players"></ul>
             <label for="mh-clacel-series">問題セット</label>
             <select id="mh-clacel-series"></select>
-            <button id="mh-clacel-start">テスト開始</button>
+            <button id="mh-clacel-start">回答を開始</button>
           </div>
           <div id="mh-clacel-waiting" hidden>
             <p class="waiting-set" id="mh-clacel-timer"></p>
             <p class="mh-progress" id="mh-clacel-progress"></p>
             <button id="mh-clacel-reveal" disabled>結果発表を見る</button>
-            <button id="mh-clacel-cancel" class="secondary">テストを中止</button>
+            <button id="mh-clacel-cancel" class="secondary">開催を中止</button>
           </div>
           <div id="mh-clacel-results" hidden>
             <p class="perfect-title">🏆 満点者</p>
@@ -324,13 +342,13 @@
             <ul class="player-list" id="mh-toeic-players"></ul>
             <label for="mh-toeic-series">問題セット</label>
             <select id="mh-toeic-series"></select>
-            <button id="mh-toeic-start">テスト開始</button>
+            <button id="mh-toeic-start">回答を開始</button>
           </div>
           <div id="mh-toeic-waiting" hidden>
             <p class="waiting-set" id="mh-toeic-timer"></p>
             <p class="mh-progress" id="mh-toeic-progress"></p>
             <button id="mh-toeic-reveal" disabled>結果発表を見る</button>
-            <button id="mh-toeic-cancel" class="secondary">テストを中止</button>
+            <button id="mh-toeic-cancel" class="secondary">開催を中止</button>
           </div>
           <div id="mh-toeic-results" hidden>
             <p class="perfect-title">🏆 満点者</p>
@@ -358,13 +376,13 @@
             <ul class="player-list" id="mh-ielts-players"></ul>
             <label for="mh-ielts-series">問題セット</label>
             <select id="mh-ielts-series"></select>
-            <button id="mh-ielts-start">テスト開始</button>
+            <button id="mh-ielts-start">回答を開始</button>
           </div>
           <div id="mh-ielts-waiting" hidden>
             <p class="waiting-set" id="mh-ielts-timer"></p>
             <p class="mh-progress" id="mh-ielts-progress"></p>
             <button id="mh-ielts-reveal" disabled>結果発表を見る</button>
-            <button id="mh-ielts-cancel" class="secondary">テストを中止</button>
+            <button id="mh-ielts-cancel" class="secondary">開催を中止</button>
           </div>
           <div id="mh-ielts-results" hidden>
             <p class="perfect-title">🏆 満点者</p>
@@ -381,9 +399,8 @@
         </div>
       </div>
       <div id="join-section" hidden>
-        <label for="room">ルームコード</label>
-        <input id="room" maxlength="6" placeholder="例: AB3K9P" style="text-transform: uppercase; display:none;" aria-describedby="entry-error" disabled />
-        <button id="btn-join" class="secondary">URLから参加</button>
+        <input id="room" type="hidden" aria-describedby="entry-error" disabled />
+        <button id="btn-join">参加する</button>
       </div>
       <p class="error" id="entry-error" role="alert"></p>
     </div>
@@ -398,7 +415,6 @@
   <div class="screen" id="screen-lobby">
     <div class="card">
       <p class="lobby-cat" id="lobby-category"></p>
-      <p class="room-code" id="lobby-code"></p>
       <p class="lobby-meta" id="lobby-meta"></p>
       <p id="wait-host" class="lobby-wait" style="display:none;">
         ホスト（<span id="host-name"></span>）の開始を待っています…
@@ -412,7 +428,7 @@
         </div>
         <label for="sel-series">問題セット</label>
         <select id="sel-series"></select>
-        <button id="btn-start">テスト開始</button>
+        <button id="btn-start">回答を開始</button>
       </div>
       <p class="lobby-players-label" id="lobby-players-label"></p>
       <ul class="player-list" id="lobby-players"></ul>
@@ -438,7 +454,7 @@
         <button class="back" id="btn-back">← 戻る</button>
         <button id="btn-next">次へ</button>
       </div>
-      <p class="q-note" id="q-note">※テスト中は画面を閉じたり、更新したりしないでください。<br>文法に合わせて活用させて答えてください（例：過去形・複数形など）</p>
+      <p class="q-note" id="q-note">※回答中は画面を閉じたり、更新したりしないでください。<br>文法に合わせて活用させて答えてください（例：過去形・複数形など）</p>
     </div>
     <button class="leave" onclick="leaveRoom(true)">ルームを退出する</button>
   </div>
@@ -654,7 +670,7 @@
     localStorage.removeItem("quizPendingSubmission");
   }
   function leaveRoom(needConfirm) {
-    if (needConfirm && !confirm("テストの途中ですが退出しますか？")) return;
+    if (needConfirm && !confirm("回答の途中ですが退出しますか？")) return;
     socket.emit("quiz:leave", {}, (res) => {
       if (!res?.ok) {
         const message = res?.error || "ルームを退出できませんでした";
@@ -826,7 +842,7 @@
     const isPending = Boolean(loadPendingSubmission());
     const automatic = submissionWasAutomatic || loadPendingSubmission()?.automatic === true;
     $("waiting-status").textContent = isHost
-      ? "テストを実施中です 📋"
+      ? "回答を受け付けています 📋"
       : (isPending ? "提出を送信中です…" : (automatic ? "制限時間になったため、自動で提出しました" : "提出しました 🎉"));
     $("waiting-sub-label").textContent = isHost ? "提出状況" : (isPending ? "通信復帰後に自動提出" : "提出済み");
     clearWaitingTimer();
@@ -932,7 +948,6 @@
     seriesNames = res.seriesNames || [];
     seriesMeta = res.seriesMeta || [];
     $("lobby-category").textContent = `${CATEGORY_LABEL[selectedCategory]}のルーム`;
-    $("lobby-code").textContent = res.roomCode;
     if (res.isHost) renderJoinShare("lobby-share", "lobby-join-url", "lobby-qr", "lobby-copy", res.roomCode, res.category);
     fillSeries();
     if (res.phase === "playing") return enterStartedQuiz(res);
@@ -1033,6 +1048,24 @@
       `<option value="${i}">${escapeHtml(name)}</option>`).join("");
   }
 
+  const MISTAKE_REASON_LABELS = {
+    inflection: "活用のし忘れ",
+    spelling: "スペルミスの可能性",
+    blank: "未回答",
+    other: "別の単語・その他",
+  };
+
+  function primaryMistakeReason(reasonCounts = {}) {
+    const ordered = ["inflection", "spelling", "blank", "other"];
+    const reason = ordered.reduce((best, candidate) =>
+      (Number(reasonCounts[candidate]) || 0) > (Number(reasonCounts[best]) || 0) ? candidate : best,
+    "other");
+    const count = Number(reasonCounts[reason]) || 0;
+    return count > 0
+      ? `${MISTAKE_REASON_LABELS[reason]}（${count}件）`
+      : "原因を判定できません";
+  }
+
   function mhRenderResults(category, perfect, mistakes = []) {
     mhStopTimer(category);
     if (perfect.length > 0) {
@@ -1045,8 +1078,8 @@
     }
     const topMistakes = mistakes.slice(0, 3);
     $(`mh-${category}-mistake-section`).hidden = topMistakes.length === 0;
-    $(`mh-${category}-mistakes`).innerHTML = topMistakes.map((item) =>
-      `<li><span>${escapeHtml(item.answer)}<small class="mh-mistake-meaning">${escapeHtml(item.ja)}</small><small class="mh-mistake-count">${Number(item.count) || 0}人が間違えました</small></span></li>`
+    $(`mh-${category}-mistakes`).innerHTML = topMistakes.map((item, rank) =>
+      `<li class="mh-mistake-row"><span class="mh-mistake-rank" aria-label="${rank + 1}位">${rank + 1}</span><span><strong class="mh-mistake-word">${escapeHtml(item.answer)}</strong><small class="mh-mistake-meaning">${escapeHtml(item.ja)}</small><small class="mh-mistake-reason">主なミス傾向（自動判定）: ${escapeHtml(primaryMistakeReason(item.reasonCounts))}</small></span></li>`
     ).join("");
     mhShow(category, "results");
   }
@@ -1067,7 +1100,7 @@
     s.on("quiz:readyToReveal", () => { $(`mh-${category}-reveal`).disabled = false; });
     s.on("quiz:results", ({ perfect, mistakes }) => mhRenderResults(category, perfect, mistakes));
     s.on("quiz:backToLobby", ({ cancelled } = {}) => {
-      if (cancelled) $(`mh-${category}-error`).textContent = "テストを中止しました。問題セットを選び直して開始できます。";
+      if (cancelled) $(`mh-${category}-error`).textContent = "開催を中止しました。問題セットを選び直して開始できます。";
       mhShow(category, "lobby");
     });
     s.on("quiz:roomClosed", () => {
@@ -1088,7 +1121,7 @@
         if (!res?.ok) {
           mhForgetRoom(category);
           mh[category].roomCode = null;
-          return ($(`mh-${category}-error`).textContent = "接続を復帰できませんでした。ルームコードを作り直してください。");
+          return ($(`mh-${category}-error`).textContent = "接続を復帰できませんでした。ルームを作り直してください。");
         }
         mh[category].seriesNames = res.seriesNames || [];
         mh[category].seriesMeta = res.seriesMeta || [];
@@ -1185,7 +1218,7 @@
     });
 
     $(`mh-${category}-cancel`).addEventListener("click", () => {
-      if (!confirm("このテストを中止しますか？回答は採点されません。")) return;
+      if (!confirm("この開催を中止しますか？回答は採点されません。")) return;
       mh[category].socket.emit("quiz:cancelGame");
     });
 
@@ -1253,7 +1286,7 @@
     $("wait-host").style.display = isHost ? "none" : "";
     $("host-name").textContent = hostName;
     $("lobby-meta").textContent = nextSeries
-      ? `次のテスト: ${seriesOptionLabel(nextSeries, nextSeries.name)}`
+      ? `次の問題セット: ${seriesOptionLabel(nextSeries, nextSeries.name)}`
       : "";
     // ロビーはテスト前なので、提出状況は出さない（前回の状態が残って見えてしまう）
     $("lobby-players-label").textContent = `参加中 ${players.length}人`;
@@ -1608,7 +1641,7 @@
     clearWaitingTimer();
     localStorage.removeItem("quizAnswers");
     clearPendingSubmission();
-    if (cancelled) $("entry-error").textContent = "テストは中止されました。ホストの案内をお待ちください。";
+    if (cancelled) $("entry-error").textContent = "開催は中止されました。ホストの案内をお待ちください。";
     show("screen-lobby");
   });
 
@@ -1627,7 +1660,6 @@
       seriesNames = res.seriesNames || [];
       seriesMeta = res.seriesMeta || [];
       $("lobby-category").textContent = `${CATEGORY_LABEL[selectedCategory]}のルーム`;
-      $("lobby-code").textContent = session.roomCode;
       if (isHost) renderJoinShare("lobby-share", "lobby-join-url", "lobby-qr", "lobby-copy", session.roomCode, selectedCategory);
       fillSeries();
 

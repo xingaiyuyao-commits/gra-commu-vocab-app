@@ -652,6 +652,21 @@ if (QUIZ_ROOM_PERSISTENCE_REQUIRED && !QUIZ_ROOM_STATE_FILE) {
   console.error("quiz room persistence unavailable: persistent volume is not mounted");
 }
 
+const QUIZ_MISTAKE_REASONS = ["inflection", "spelling", "blank", "other"];
+
+function sanitizeQuizWrongAnswerReasons(reasons) {
+  if (!reasons || typeof reasons !== "object" || Array.isArray(reasons)) return {};
+  return Object.fromEntries(Object.entries(reasons)
+    .filter(([index, reason]) => /^\d+$/.test(index) && QUIZ_MISTAKE_REASONS.includes(reason)));
+}
+
+function sanitizeQuizReasonCounts(counts) {
+  return Object.fromEntries(QUIZ_MISTAKE_REASONS.map((reason) => [
+    reason,
+    Math.max(0, Math.trunc(Number(counts?.[reason]) || 0)),
+  ]).filter(([, count]) => count > 0));
+}
+
 function sanitizeRestoredQuizResults(results, roomIsTrial) {
   if (!results || typeof results !== "object") return null;
   const resultAt = typeof results.resultAt === "string" && !Number.isNaN(Date.parse(results.resultAt))
@@ -677,7 +692,12 @@ function sanitizeRestoredQuizResults(results, roomIsTrial) {
     perfect,
     others,
     review: Array.isArray(results.review) ? results.review : [],
-    mistakes: Array.isArray(results.mistakes) ? results.mistakes : [],
+    mistakes: Array.isArray(results.mistakes) ? results.mistakes.map((mistake) => ({
+      ...mistake,
+      ...(mistake?.reasonCounts && typeof mistake.reasonCounts === "object"
+        ? { reasonCounts: sanitizeQuizReasonCounts(mistake.reasonCounts) }
+        : {}),
+    })) : [],
     isTrial: results.isTrial === true || roomIsTrial === true,
   };
 }
@@ -712,6 +732,9 @@ function loadQuizState() {
               : (Array.isArray(player.wrongQuestionIndexes)
                 ? player.wrongQuestionIndexes.filter((index) => Number.isInteger(index) && index >= 0)
                 : []),
+            wrongAnswerReasons: resetLegacySubmission
+              ? {}
+              : sanitizeQuizWrongAnswerReasons(player.wrongAnswerReasons),
             leaveTimer: null,
           }];
         })),
@@ -773,6 +796,7 @@ function persistQuizState() {
         submissionKind: player.submissionKind,
         score: player.score,
         wrongQuestionIndexes: player.wrongQuestionIndexes,
+        wrongAnswerReasons: player.wrongAnswerReasons,
       }])),
       questions: room.questions,
       startedAt: room.startedAt,
@@ -1088,6 +1112,38 @@ function quizAnswerMatches(q, submitted) {
   return Array.isArray(q.altAnswers) && q.altAnswers.includes(mine);
 }
 
+function quizEditDistance(left, right) {
+  const a = String(left || "");
+  const b = String(right || "");
+  const previous = Array.from({ length: b.length + 1 }, (_, index) => index);
+  for (let row = 1; row <= a.length; row += 1) {
+    const current = [row];
+    for (let column = 1; column <= b.length; column += 1) {
+      current[column] = Math.min(
+        current[column - 1] + 1,
+        previous[column] + 1,
+        previous[column - 1] + (a[row - 1] === b[column - 1] ? 0 : 1),
+      );
+    }
+    previous.splice(0, previous.length, ...current);
+  }
+  return previous[b.length];
+}
+
+function quizMistakeReason(q, submitted) {
+  const mine = String(submitted || "").trim().toLowerCase();
+  if (!mine) return "blank";
+  const answer = String(q.answer || "").trim().toLowerCase();
+  const base = String(q.base || "").trim().toLowerCase();
+  if (base && answer !== base && mine === base) return "inflection";
+  const accepted = [answer, ...(Array.isArray(q.altAnswers) ? q.altAnswers : [])]
+    .map((value) => String(value || "").trim().toLowerCase())
+    .filter(Boolean);
+  const spellingThreshold = answer.length >= 6 ? 2 : 1;
+  if (accepted.some((value) => quizEditDistance(mine, value) <= spellingThreshold)) return "spelling";
+  return "other";
+}
+
 function quizHint(base) {
   return base[0] + "_".repeat(base.length - 1);
 }
@@ -1114,6 +1170,9 @@ function quizForceFinish(roomCode) {
       if (p.submittedAt === null) {
         room.players[p.id].score = 0;
         room.players[p.id].wrongQuestionIndexes = room.questions.map((_question, index) => index);
+        room.players[p.id].wrongAnswerReasons = Object.fromEntries(
+          room.questions.map((_question, index) => [index, "blank"]),
+        );
         room.players[p.id].submittedAt = Date.now();
         room.players[p.id].submissionKind = "timeout";
       }
@@ -1188,10 +1247,17 @@ function quizRevealResults(roomCode) {
     .filter((e) => e.score !== e.total)
     .map((e) => ({ id: e.id, name: e.name, score: e.score, total: e.total }));
   const mistakeCounts = new Map();
+  const mistakeReasonCounts = new Map();
   for (const participant of participants) {
     for (const index of participant.wrongQuestionIndexes || []) {
       if (index >= 0 && index < room.questions.length) {
         mistakeCounts.set(index, (mistakeCounts.get(index) || 0) + 1);
+        const reason = QUIZ_MISTAKE_REASONS.includes(participant.wrongAnswerReasons?.[index])
+          ? participant.wrongAnswerReasons[index]
+          : "other";
+        const reasons = mistakeReasonCounts.get(index) || {};
+        reasons[reason] = (reasons[reason] || 0) + 1;
+        mistakeReasonCounts.set(index, reasons);
       }
     }
   }
@@ -1203,6 +1269,7 @@ function quizRevealResults(roomCode) {
       answer: room.questions[index].answer,
       ja: room.questions[index].ja,
       count,
+      reasonCounts: sanitizeQuizReasonCounts(mistakeReasonCounts.get(index)),
     }));
   const now = quizResultNow();
   const resultAt = now.toISOString();
@@ -1285,7 +1352,7 @@ io.on("connection", (socket) => {
     const room = quizRooms[code];
     if (!room) return cb({ error: "ルームが見つかりません" });
     const canJoinPlaying = room.phase === "playing" && Date.now() < room.endsAt;
-    if (room.phase !== "lobby" && !canJoinPlaying) return cb({ error: "テストはすでに開始しています" });
+    if (room.phase !== "lobby" && !canJoinPlaying) return cb({ error: "この回はすでに終了しています" });
     quizJoin(socket, code, name, cb);
   });
 
@@ -1351,6 +1418,7 @@ io.on("connection", (socket) => {
         p.submissionKind = null;
         p.score = 0;
         p.wrongQuestionIndexes = [];
+        p.wrongAnswerReasons = {};
       }
     });
     if (!saved) {
@@ -1385,6 +1453,10 @@ io.on("connection", (socket) => {
       player.wrongQuestionIndexes = room.questions
         .map((q, index) => (quizAnswerMatches(q, arr[index]) ? null : index))
         .filter((index) => index !== null);
+      player.wrongAnswerReasons = Object.fromEntries(player.wrongQuestionIndexes.map((index) => [
+        index,
+        quizMistakeReason(room.questions[index], arr[index]),
+      ]));
       player.score = room.questions.length - player.wrongQuestionIndexes.length;
       player.submittedAt = Date.now();
       player.submissionKind = automatic ? "timeout" : "manual";
@@ -1426,6 +1498,7 @@ io.on("connection", (socket) => {
         p.submissionKind = null;
         p.score = 0;
         p.wrongQuestionIndexes = [];
+        p.wrongAnswerReasons = {};
       }
     });
     if (!saved) {
@@ -1465,6 +1538,7 @@ io.on("connection", (socket) => {
         submissionKind: null,
         score: 0,
         wrongQuestionIndexes: [],
+        wrongAnswerReasons: {},
         leaveTimer: null,
       };
       if (!room.host) room.host = id;

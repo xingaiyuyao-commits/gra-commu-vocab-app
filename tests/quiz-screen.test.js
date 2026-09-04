@@ -41,11 +41,59 @@ test("参加・作成画面: 名前入力のラベル文言が仕様通り", () 
   assert.equal(document.querySelector('label[for="name"]').textContent, "名前");
 });
 
+test("共通ヘッダー: VOICEロゴ・英語タイトル・応援文を表示し、入室後もロゴとタイトルを残す", () => {
+  const { window, document } = loadQuizPage();
+  const container = document.querySelector(".container");
+  const header = document.querySelector(".site-header");
+  const logo = document.querySelector(".voice-logo");
+  const title = document.querySelector(".site-title");
+  const tagline = document.querySelector(".site-tagline");
+
+  assertVisible(header, "共通ヘッダー");
+  assert.equal(logo.getAttribute("src"), "/assets/voice-logo.png");
+  assert.equal(logo.getAttribute("alt"), "VOICE");
+  assert.equal(title.textContent.trim(), "ÖSH Vocabulary Challenge");
+  assert.equal(tagline.textContent.trim(), "みんなで満点を目指そう！");
+
+  container.classList.add("in-room");
+  assert.notEqual(window.getComputedStyle(header).display, "none");
+  assert.equal(window.getComputedStyle(header).position, "sticky");
+  assert.notEqual(window.getComputedStyle(title).display, "none");
+  assert.notEqual(window.getComputedStyle(logo).display, "none");
+});
+
+test("問題画面: 頭文字ヒントは英文と同じ書体で表示する", () => {
+  const { window, document } = loadQuizPage();
+  assert.equal(
+    window.getComputedStyle(document.getElementById("q-hint")).fontFamily,
+    window.getComputedStyle(document.getElementById("q-sentence")).fontFamily,
+  );
+});
+
 test("ロビー: 旧『前回の間違い』カードを表示しない", () => {
   const { document } = loadQuizPage();
 
   assert.equal(document.getElementById("last-mistakes"), null);
   assert.doesNotMatch(document.getElementById("screen-lobby").textContent, /前回の間違い/);
+});
+
+test("ロビー: 接続用コードを見せず、コース名のルーム表示だけを出す", () => {
+  const { window, document, emitted } = loadQuizPage({
+    url: "http://localhost/quiz.html?mode=join&room=TV7G&cat=clacel",
+  });
+  setValue(window, document.getElementById("name"), "参加者");
+  document.getElementById("btn-join").dispatchEvent(new window.Event("click", { bubbles: true }));
+  emitted.find((entry) => entry.event === "quiz:joinRoom").cb({
+    roomCode: "TV7G",
+    category: "clacel",
+    playerId: "participant",
+    sessionToken: "token",
+    seriesNames: ["Day 1"],
+  });
+
+  assert.equal(document.getElementById("lobby-category").textContent.trim(), "Clacelのルーム");
+  assert.equal(document.getElementById("lobby-code"), null);
+  assert.doesNotMatch(document.getElementById("screen-lobby").textContent, /TV7G/);
 });
 
 test("週間復習入口: 今週の保存語があるクイズ入口だけに正確な件数を表示する", () => {
@@ -138,7 +186,7 @@ test("参加・作成画面: エラーにrole=alert、入力欄がエラーと�
   assert.equal(document.getElementById("room").getAttribute("aria-describedby"), "entry-error");
 });
 
-test("参加画面: 手入力ルートではルームコード欄と参加ボタンが表示・有効化され、入力を大文字で送信する", () => {
+test("参加画面: ルームコードは画面に表示せず、招待URL内だけで扱う", () => {
   const { window, document, emitted } = loadQuizPage({ url: "http://localhost/quiz.html?mode=join" });
   const joinSection = document.getElementById("join-section");
   const roomLabel = document.querySelector('label[for="room"]');
@@ -146,9 +194,8 @@ test("参加画面: 手入力ルートではルームコード欄と参加ボタ
   const joinButton = document.getElementById("btn-join");
 
   assertVisible(joinSection, "参加欄");
-  assertVisible(roomLabel, "ルームコードのラベル");
-  assert.equal(roomLabel.textContent.trim(), "ルームコード");
-  assertVisible(roomInput, "ルームコード入力欄");
+  assert.equal(roomLabel, null, "ルームコードのラベルを表示しない");
+  assert.equal(roomInput.type, "hidden");
   assert.equal(roomInput.disabled, false);
   assertVisible(joinButton, "参加ボタン");
   assert.equal(joinButton.disabled, false);
@@ -189,7 +236,7 @@ test("参加画面: 空のルームコードはサーバーへ送り、応答エ
   assert.equal(document.getElementById("entry-error").textContent, "ルームが見つかりません");
 });
 
-test("参加画面: コース付き参加リンクではコード欄だけを隠し、名前の後の参加ボタンから参加できる", () => {
+test("参加画面: コース付き参加リンクではコードを見せず、名前の後の参加ボタンから参加できる", () => {
   const { window, document, emitted } = loadQuizPage({
     url: "http://localhost/quiz.html?room=ab3k9p&cat=clacel",
   });
@@ -203,7 +250,7 @@ test("参加画面: コース付き参加リンクではコード欄だけを隠
   assertVisible(joinSection, "参加欄");
   assert.equal(roomInput.disabled, true);
   assert.equal(roomInput.style.display, "none");
-  assert.equal(roomLabel.hidden, true);
+  assert.equal(roomLabel, null);
   assertVisible(joinButton, "参加ボタン");
   assert.equal(joinButton.disabled, false);
   assert.equal(joinButton.textContent.trim(), "参加する");
@@ -416,7 +463,7 @@ test("参加・作成画面: ホストの複数コース作成パネルは開始
   assert.equal(document.getElementById("mh-toeic-results").hidden, true);
 });
 
-test("複数ルーム結果: つまずいた単語の上位3件と間違えた人数を表示する", () => {
+test("複数ルーム結果: 上位3件を順位と主なミス傾向で表示する", () => {
   const { window, document, fakeSockets } = loadQuizPage({ url: "http://localhost/quiz.html?mode=create" });
   setValue(window, document.getElementById("name"), "ホスト");
   document.getElementById("mh-toeic-create").dispatchEvent(new window.Event("click", { bubbles: true }));
@@ -431,9 +478,9 @@ test("複数ルーム結果: つまずいた単語の上位3件と間違えた�
     others: [],
     review: [],
     mistakes: [
-      { index: 6, answer: "seventh", ja: "7番目", count: 4 },
-      { index: 11, answer: "twelfth", ja: "12番目", count: 3 },
-      { index: 2, answer: "third", ja: "3番目", count: 2 },
+      { index: 6, answer: "seventh", ja: "7番目", count: 4, reasonCounts: { spelling: 3, other: 1 } },
+      { index: 11, answer: "twelfth", ja: "12番目", count: 3, reasonCounts: { inflection: 2, blank: 1 } },
+      { index: 2, answer: "third", ja: "3番目", count: 2, reasonCounts: { blank: 2 } },
       { index: 0, answer: "first", ja: "1番目", count: 1 },
     ],
     isTrial: false,
@@ -445,14 +492,16 @@ test("複数ルーム結果: つまずいた単語の上位3件と間違えた�
   assert.equal(section.hidden, false);
   assert.equal(rows.length, 3);
   assert.match(rows[0].textContent, /seventh/);
-  assert.match(rows[0].textContent, /4人/);
+  assert.equal(rows[0].querySelector(".mh-mistake-rank").textContent, "1");
+  assert.match(rows[0].querySelector(".mh-mistake-reason").textContent, /スペルミスの可能性/);
   assert.equal(rows[0].querySelector(".mh-mistake-meaning").textContent, "7番目");
-  assert.equal(rows[0].querySelector(".mh-mistake-count").textContent, "4人が間違えました");
-  assert.equal(window.getComputedStyle(rows[0].querySelector(".mh-mistake-count")).display, "block");
+  assert.doesNotMatch(rows[0].textContent, /4人が間違えました/);
+  assert.equal(rows[1].querySelector(".mh-mistake-rank").textContent, "2");
+  assert.match(rows[1].querySelector(".mh-mistake-reason").textContent, /活用のし忘れ/);
+  assert.equal(rows[2].querySelector(".mh-mistake-rank").textContent, "3");
+  assert.match(rows[2].querySelector(".mh-mistake-reason").textContent, /未回答/);
   assert.match(rows[1].textContent, /twelfth/);
-  assert.match(rows[1].textContent, /3人/);
   assert.match(rows[2].textContent, /third/);
-  assert.match(rows[2].textContent, /2人/);
   assert.doesNotMatch(document.getElementById("mh-toeic-results").textContent, /first/);
 });
 
@@ -679,7 +728,7 @@ test("待機画面: 手動提出中は他の参加者待ち、全員提出後は
 test("問題画面: 更新防止と文法上の活用案内を分かれた文で表示する", () => {
   const { document } = loadQuizPage();
   const note = document.getElementById("q-note");
-  assert.match(note.textContent, /テスト中は画面を閉じたり、更新したりしないでください。/);
+  assert.match(note.textContent, /回答中は画面を閉じたり、更新したりしないでください。/);
   assert.match(note.textContent, /文法に合わせて活用させて答えてください/);
 });
 

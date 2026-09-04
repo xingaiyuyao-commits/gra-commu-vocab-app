@@ -33,6 +33,10 @@
     -webkit-font-smoothing: antialiased;
   }
   .container { width: 100%; max-width: 56rem; }
+  .site-header { position: relative; min-height: 76px; padding: 8px 66px 0; margin-bottom: 12px; text-align: center; }
+  .site-header .voice-logo { position: absolute; top: 0; left: 0; width: 56px; height: 45px; object-fit: contain; }
+  .site-title { margin: 0; font-size: 1.55rem; font-weight: 800; letter-spacing: -.045em; }
+  .site-tagline { margin-top: 3px; color: var(--muted-foreground); font-size: .78rem; font-weight: 600; }
   .screen { display: none; }
   .screen.active { display: block; }
   h1 { text-align: center; font-size: 1.6rem; font-weight: 700; letter-spacing: -.025em; margin: 20px 0 8px; }
@@ -105,8 +109,13 @@
 </head>
 <body>
   <div class="container">
+    <header class="site-header">
+      <img class="voice-logo" src="/assets/voice-logo.png" alt="VOICE" width="218" height="176" />
+      <p class="site-title">ÖSH Vocabulary Challenge</p>
+      <p class="site-tagline">みんなで満点を目指そう！</p>
+    </header>
     <h1>✏️ 単語リスト編集</h1>
-    <p class="subtitle">Clacel / IELTS / TOEIC の単語テストデータを直接編集します</p>
+    <p class="subtitle">Clacel / IELTS / TOEIC の語彙データを直接編集します</p>
 
     <div id="screen-login" class="screen active">
       <div class="card login-card">

@@ -44,25 +44,24 @@
     padding: 28px clamp(18px, 3.5vw, 56px) 56px;
   }
 
-  .brand-bar {
-    display: flex;
+  .site-header {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr) 76px;
     align-items: center;
-    justify-content: space-between;
     gap: 24px;
     padding-bottom: 14px;
     border-bottom: 1px solid var(--ink);
   }
 
-  .brand-bar > *, .history-head > *, .workspace > * { min-width: 0; }
+  .site-header > *, .history-head > *, .workspace > * { min-width: 0; }
 
-  .brand-mark {
-    font-family: Baskerville, "Yu Mincho", serif;
-    font-size: 1.02rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-  }
+  .voice-logo { display: block; width: 58px; height: 47px; object-fit: contain; }
+  .site-heading { text-align: center; }
+  .site-title { margin: 0; font-size: clamp(1.35rem, 2.5vw, 2rem); font-weight: 800; letter-spacing: -0.045em; }
+  .site-tagline { margin: 3px 0 0; color: var(--muted); font-size: .72rem; font-weight: 700; }
 
   .edition {
+    text-align: right;
     color: var(--muted);
     font-size: 0.7rem;
     font-weight: 700;
@@ -384,7 +383,7 @@
   .record-stats {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    margin-bottom: 18px;
+    margin-top: 18px;
     border: solid var(--line);
     border-width: 1px 0;
   }
@@ -396,21 +395,22 @@
     display: inline-block;
     margin-top: 3px;
     font-family: Baskerville, serif;
-    font-size: 1.9rem;
+    font-size: 1.15rem;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
     line-height: 1;
   }
   .stat-unit { margin-left: 3px; color: var(--muted); font-size: 0.66rem; }
 
-  .perfect-label { margin-bottom: 8px; color: var(--muted); font-size: 0.67rem; font-weight: 800; letter-spacing: 0.1em; }
-  .perfect-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+  .perfect-label { margin-bottom: 10px; color: var(--gold-deep); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; }
+  .perfect-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
   .perfect-name {
     max-width: 100%;
-    padding: 5px 8px;
+    padding: 9px 12px;
     border: 1px solid #d7c69a;
     background: #f7edd4;
-    font-size: 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 800;
     overflow-wrap: anywhere;
   }
 
@@ -452,8 +452,9 @@
 
   @media (max-width: 580px) {
     .shell { padding: 18px 12px 36px; }
-    .brand-bar { gap: 12px; }
-    .brand-mark { font-size: 0.85rem; }
+    .site-header { grid-template-columns: 48px minmax(0, 1fr) 48px; gap: 8px; }
+    .site-header .voice-logo { width: 42px; height: 34px; }
+    .site-header .site-title { font-size: 1.05rem; }
     .edition { font-size: 0.58rem; text-align: right; }
     .history-head { display: block; }
     .history-head .quiet-button { margin: 0 0 24px; white-space: nowrap; }
@@ -480,16 +481,20 @@
 </head>
 <body>
   <main class="shell">
-    <div class="brand-bar">
-      <span class="brand-mark">ÖSH Vocabulary Challenge</span>
+    <header class="site-header">
+      <img class="voice-logo" src="/assets/voice-logo.png" alt="VOICE" width="218" height="176" />
+      <div class="site-heading">
+        <p class="site-title">ÖSH Vocabulary Challenge</p>
+        <p class="site-tagline">みんなで満点を目指そう！</p>
+      </div>
       <span class="edition">Operations Archive / Results</span>
-    </div>
+    </header>
 
     <section id="login-screen" class="login-panel" hidden aria-labelledby="login-title">
       <span class="panel-index">Admin access — 01</span>
       <p class="eyebrow">Results archive</p>
       <h1 id="login-title">結果履歴</h1>
-      <p class="lede">運営用パスワードで、過去のテスト結果を確認します。</p>
+      <p class="lede">運営用パスワードで、過去の開催結果を確認します。</p>
       <form id="login-form">
         <label class="field-label" for="history-password">パスワード</label>
         <input id="history-password" class="password-input" type="password" autocomplete="current-password" aria-describedby="login-error" required />
@@ -737,7 +742,7 @@
     const perfectLabel = document.createElement("p");
     perfectLabel.className = "perfect-label";
     perfectLabel.textContent = "満点者一覧";
-    card.append(setLabel, stats, perfectLabel);
+    card.append(setLabel, perfectLabel);
 
     if (record.perfectNames.length) {
       const names = document.createElement("ul");
@@ -755,6 +760,8 @@
       empty.textContent = "満点者はいません";
       card.append(empty);
     }
+
+    card.append(stats);
 
     const deleteButton = document.createElement("button");
     deleteButton.type = "button";
