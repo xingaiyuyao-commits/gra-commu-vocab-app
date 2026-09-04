@@ -518,8 +518,10 @@ io.on("connection", (socket) => {
 /* ========== 単語テスト（シリーズ別20問・満点者掲示板） ========== */
 
 const WORDTESTS = require("./wordtests");
+const { selectReviewQuestions, ReviewSelectionError } = require("./quiz-review-selection");
 const QUIZ_QUESTION_COUNT = 20;
 const QUIZ_TIME_LIMIT_SEC = 300; // 5分
+const QUIZ_REVIEW_TIME_LIMIT_SEC = 750; // 12分30秒
 
 const QUIZ_CATEGORIES = ["clacel", "ielts", "toeic"];
 const IS_RAILWAY_RUNTIME = Boolean(
@@ -662,6 +664,9 @@ function loadQuizState() {
         day: Number.isInteger(Number(room.day)) && Number(room.day) > 0 ? Number(room.day) : null,
         datasetRevision: String(room.datasetRevision || ""),
         isReview: room.isReview === true,
+        sourceDays: Array.isArray(room.sourceDays)
+          ? room.sourceDays.filter((day) => Number.isInteger(Number(day))).map(Number)
+          : [],
         isTrial,
         results: sanitizeRestoredQuizResults(room.results, isTrial),
         timeoutHandle: null,
@@ -728,6 +733,7 @@ function persistQuizState() {
       day: room.day,
       datasetRevision: room.datasetRevision,
       isReview: room.isReview,
+      sourceDays: room.sourceDays,
       isTrial: room.isTrial,
       results: room.results,
     };
@@ -1019,6 +1025,15 @@ function quizPublicPlayers(room) {
   }));
 }
 
+function quizSeriesMeta(category) {
+  return WORDTESTS[category].series.map((series) => ({
+    name: series.name,
+    count: series.isReview ? 50 : Math.min(QUIZ_QUESTION_COUNT, series.items.length),
+    timeLimitSec: series.isReview ? QUIZ_REVIEW_TIME_LIMIT_SEC : QUIZ_TIME_LIMIT_SEC,
+    isReview: series.isReview === true,
+  }));
+}
+
 function quizPlayersUpdate(roomCode) {
   const room = quizRooms[roomCode];
   if (!room || !room.players[room.host]) return;
@@ -1279,6 +1294,7 @@ io.on("connection", (socket) => {
       day: null,
       datasetRevision: "",
       isReview: false,
+      sourceDays: [],
       results: null,
     };
     quizJoin(socket, roomCode, name, cb, newRoom);
@@ -1323,6 +1339,7 @@ io.on("connection", (socket) => {
       submitted: player.submittedAt !== null,
       autoSubmitted: player.submissionKind === "timeout",
       seriesNames: WORDTESTS[room.category].series.map((s) => s.name),
+      seriesMeta: quizSeriesMeta(room.category),
     };
     if (room.phase === "playing") {
       res.setLabel = room.setLabel;
@@ -1347,16 +1364,37 @@ io.on("connection", (socket) => {
     const cat = WORDTESTS[room.category];
     const series = cat && cat.series[Number(seriesIndex)];
     if (!series) return cb({ ok: false, error: "問題セットが見つかりません" });
+    let prepared;
+    try {
+      prepared = series.isReview
+        ? selectReviewQuestions({
+          category: room.category,
+          reviewDay: series.day,
+          datasetRevision: cat.datasetRevision,
+          sourceDays: series.sourceDays,
+          series: cat.series,
+          resultHistory,
+        })
+        : {
+          questions: shuffle(series.items).slice(0, QUIZ_QUESTION_COUNT),
+          sourceDays: [],
+          durationSec: QUIZ_TIME_LIMIT_SEC,
+        };
+    } catch (error) {
+      if (error instanceof ReviewSelectionError) return cb({ ok: false, error: error.message });
+      throw error;
+    }
     const previousTimeout = room.timeoutHandle;
     const saved = persistQuizMutation(roomCode, () => {
-      room.questions = shuffle(series.items).slice(0, QUIZ_QUESTION_COUNT);
+      room.questions = prepared.questions;
       room.phase = "playing";
       room.startedAt = Date.now();
-      room.endsAt = room.startedAt + QUIZ_TIME_LIMIT_SEC * 1000;
+      room.endsAt = room.startedAt + prepared.durationSec * 1000;
       room.setLabel = `${cat.label} ${series.name}`;
       room.day = Number.isInteger(series.day) ? series.day : null;
       room.datasetRevision = String(cat.datasetRevision || "");
       room.isReview = series.isReview === true;
+      room.sourceDays = prepared.sourceDays;
       room.isTrial = series.isTrial === true;
       room.results = null;
       room.timeoutHandle = null;
@@ -1373,7 +1411,7 @@ io.on("connection", (socket) => {
       return cb({ ok: false, error: QUIZ_PERSISTENCE_ERROR });
     }
     if (previousTimeout) clearTimeout(previousTimeout);
-    room.timeoutHandle = setTimeout(() => quizForceFinish(roomCode), QUIZ_TIME_LIMIT_SEC * 1000);
+    room.timeoutHandle = setTimeout(() => quizForceFinish(roomCode), prepared.durationSec * 1000);
     cb({ ok: true });
     io.to(roomCode).emit("quiz:started", {
       setLabel: room.setLabel,
@@ -1502,6 +1540,7 @@ io.on("connection", (socket) => {
       playerId: id,
       sessionToken: room.players[id].sessionToken,
       seriesNames,
+      seriesMeta: quizSeriesMeta(room.category),
     };
     if (room.phase === "playing") {
       response.phase = room.phase;

@@ -144,6 +144,48 @@ async function rejoin(socket, roomCode, playerId, sessionToken) {
   return emitWithAck(socket, "quiz:rejoin", { roomCode, playerId, sessionToken });
 }
 
+test("復習日は50問・12分30秒で開始し、再起動しても同じ問題と期限を保持する", async (t) => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-review-room-"));
+  const stateFile = path.join(tempDir, "quiz-rooms.json");
+  fs.writeFileSync(stateFile, JSON.stringify({ version: 2, rooms: {}, resultHistory: {} }));
+  const sockets = [];
+  const children = [];
+  t.after(async () => {
+    for (const socket of sockets) socket.disconnect();
+    for (const child of children) await stopServer(child);
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  const first = await startServer(stateFile);
+  children.push(first.child);
+  const host = await connect(first.baseUrl);
+  const participant = await connect(first.baseUrl);
+  sockets.push(host, participant);
+  const created = await emitWithAck(host, "quiz:createRoom", { category: "clacel", name: "ホスト" });
+  await emitWithAck(participant, "quiz:joinRoom", { roomCode: created.roomCode, name: "参加者" });
+  const startedEvent = waitForEvent(participant, "quiz:started");
+  assert.deepEqual(await emitWithAck(host, "quiz:startGame", { seriesIndex: 7 }), { ok: true });
+  const [started] = await startedEvent;
+  assert.equal(started.total, 50);
+  const beforeRestart = JSON.parse(fs.readFileSync(stateFile, "utf8")).rooms[created.roomCode];
+  assert.equal(beforeRestart.endsAt - beforeRestart.startedAt, 750_000);
+  assert.equal(beforeRestart.questions.length, 50);
+  assert.equal(new Set(beforeRestart.questions.map(({ questionId }) => questionId)).size, 50);
+
+  host.disconnect();
+  participant.disconnect();
+  await stopServer(first.child);
+  const second = await startServer(stateFile);
+  children.push(second.child);
+  const restoredHost = await connect(second.baseUrl);
+  sockets.push(restoredHost);
+  const restored = await rejoin(restoredHost, created.roomCode, created.playerId, created.sessionToken);
+  assert.equal(restored.total, 50);
+  const afterRestart = JSON.parse(fs.readFileSync(stateFile, "utf8")).rooms[created.roomCode];
+  assert.deepEqual(afterRestart.questions, beforeRestart.questions);
+  assert.equal(afterRestart.endsAt, beforeRestart.endsAt);
+});
+
 test("version 1のルームを履歴なしのversion 2へ移行して復帰できる", async (t) => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-v1-migration-"));
   const stateFile = path.join(tempDir, "quiz-rooms.json");

@@ -580,10 +580,15 @@
   let seriesNames = [];
   let seriesMeta = [];
 
-  // 「Day 3（20語・5分）」のように、選ぶ前に中身が分かるラベルにする
+  // 選ぶ前に問題数と制限時間が分かるラベルにする
   function seriesOptionLabel(meta, fallbackName) {
     if (!meta) return fallbackName;
-    return `${meta.name}（${meta.count}語・${Math.round(meta.timeLimitSec / 60)}分）`;
+    const minutes = Math.floor(meta.timeLimitSec / 60);
+    const seconds = meta.timeLimitSec % 60;
+    const duration = seconds ? `${minutes}分${seconds}秒` : `${minutes}分`;
+    return meta.isReview
+      ? `${meta.name}・${duration}`
+      : `${meta.name}（${meta.count}問・${duration}）`;
   }
 
   function getPlayerId() {
@@ -1045,7 +1050,7 @@
 
   function mhFillSeries(category) {
     $(`mh-${category}-series`).innerHTML = mh[category].seriesNames.map((name, i) =>
-      `<option value="${i}">${escapeHtml(name)}</option>`).join("");
+      `<option value="${i}">${escapeHtml(seriesOptionLabel(mh[category].seriesMeta[i], name))}</option>`).join("");
   }
 
   const MISTAKE_REASON_LABELS = {
