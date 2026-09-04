@@ -105,10 +105,10 @@ function emitWithoutPayloadWithAck(socket, event) {
 
 function fixedQuestions() {
   return [
-    { sentence: "Say ___.", answer: "alpha", base: "alpha", hint: "a____", ja: "アルファ", sentenceJa: "アルファと言う。" },
-    { sentence: "Say ___.", answer: "bravo", base: "bravo", hint: "b____", ja: "ブラボー", sentenceJa: "ブラボーと言う。" },
-    { sentence: "Say ___.", answer: "charlie", base: "charlie", hint: "c______", ja: "チャーリー", sentenceJa: "チャーリーと言う。" },
-    { sentence: "Say ___.", answer: "delta", base: "delta", hint: "d____", ja: "デルタ", sentenceJa: "デルタと言う。" },
+    { questionId: "test/clacel/day01/q01", sentence: "Say ___.", answer: "alpha", base: "alpha", hint: "a____", ja: "アルファ", sentenceJa: "アルファと言う。" },
+    { questionId: "test/clacel/day01/q02", sentence: "Say ___.", answer: "bravo", base: "bravo", hint: "b____", ja: "ブラボー", sentenceJa: "ブラボーと言う。" },
+    { questionId: "test/clacel/day01/q03", sentence: "Say ___.", answer: "charlie", base: "charlie", hint: "c______", ja: "チャーリー", sentenceJa: "チャーリーと言う。" },
+    { questionId: "test/clacel/day01/q04", sentence: "Say ___.", answer: "delta", base: "delta", hint: "d____", ja: "デルタ", sentenceJa: "デルタと言う。" },
   ];
 }
 
@@ -133,6 +133,8 @@ function playingRoom({ category = "clacel", setLabel = "Clacel Day 1", players, 
     startedAt: Date.now() - 1_000,
     endsAt: Date.now() + 60_000,
     setLabel,
+    day: 1,
+    datasetRevision: "test-revision",
     isTrial,
     results: null,
   };
@@ -354,6 +356,7 @@ test("結果確定は同日同コースを置換し、別コースとホスト�
     setLabel: "TOEIC Day 1",
     participantCount: 8,
     perfectNames: ["Taro"],
+    questionStats: [],
     updatedAt: "2026-09-01T00:00:00.000Z",
   };
   fs.writeFileSync(stateFile, JSON.stringify({
@@ -442,6 +445,14 @@ test("結果確定は同日同コースを置換し、別コースとホスト�
   assert.equal(current.participantCount, 3);
   assert.deepEqual(current.perfectNames, ["Perfect"]);
   assert.equal(current.updatedAt, fixedNow);
+  assert.equal(current.day, 1);
+  assert.equal(current.datasetRevision, "test-revision");
+  assert.deepEqual(current.questionStats, [
+    { questionId: "test/clacel/day01/q01", attempts: 3, wrongCount: 2, reasonCounts: { other: 2 } },
+    { questionId: "test/clacel/day01/q02", attempts: 3, wrongCount: 1, reasonCounts: { other: 1 } },
+    { questionId: "test/clacel/day01/q03", attempts: 3, wrongCount: 2, reasonCounts: { other: 2 } },
+    { questionId: "test/clacel/day01/q04", attempts: 3, wrongCount: 1, reasonCounts: { other: 1 } },
+  ]);
   assert.equal(Object.hasOwn(current, "timeMs"), false);
   assert.equal(Object.hasOwn(current, "others"), false);
 
@@ -581,6 +592,7 @@ test("結果保存失敗時はfinished状態と履歴更新を同時にロール
     setLabel: "Clacel 古い結果",
     participantCount: 4,
     perfectNames: ["以前の満点者"],
+    questionStats: [],
     updatedAt: "2026-09-01T00:00:00.000Z",
   };
   fs.mkdirSync(stateDir);

@@ -555,6 +555,35 @@ function sanitizeQuizReasonCounts(counts) {
   ]).filter(([, count]) => count > 0));
 }
 
+function sanitizeHistoryQuestionStats(stats) {
+  if (!Array.isArray(stats)) return [];
+  return stats.flatMap((stat) => {
+    if (!stat || typeof stat !== "object" || Array.isArray(stat)) return [];
+    const questionId = String(stat.questionId || "");
+    const attempts = Number(stat.attempts);
+    const wrongCount = Number(stat.wrongCount);
+    const reasons = stat.reasonCounts;
+    if (!/^[a-z0-9/_-]+$/i.test(questionId)
+      || !Number.isInteger(attempts) || attempts < 0
+      || !Number.isInteger(wrongCount) || wrongCount < 0 || wrongCount > attempts
+      || !reasons || typeof reasons !== "object" || Array.isArray(reasons)
+      || Object.keys(reasons).some((reason) => !QUIZ_MISTAKE_REASONS.includes(reason))
+      || Object.values(reasons).some((count) => !Number.isInteger(count) || count < 0)) return [];
+    return [{ questionId, attempts, wrongCount, reasonCounts: sanitizeQuizReasonCounts(reasons) }];
+  });
+}
+
+function sanitizeStoredHistoryRecord(record) {
+  if (!record || typeof record !== "object" || Array.isArray(record)) return null;
+  const day = Number(record.day);
+  return {
+    ...record,
+    ...(Number.isInteger(day) && day > 0 ? { day } : {}),
+    ...(typeof record.datasetRevision === "string" && record.datasetRevision ? { datasetRevision: record.datasetRevision } : {}),
+    questionStats: sanitizeHistoryQuestionStats(record.questionStats),
+  };
+}
+
 function sanitizeRestoredQuizResults(results, roomIsTrial) {
   if (!results || typeof results !== "object") return null;
   const resultAt = typeof results.resultAt === "string" && !Number.isNaN(Date.parse(results.resultAt))
@@ -630,14 +659,20 @@ function loadQuizState() {
         startedAt: Number(room.startedAt) || 0,
         endsAt: Number(room.endsAt) || 0,
         setLabel: String(room.setLabel || ""),
+        day: Number.isInteger(Number(room.day)) && Number(room.day) > 0 ? Number(room.day) : null,
+        datasetRevision: String(room.datasetRevision || ""),
+        isReview: room.isReview === true,
         isTrial,
         results: sanitizeRestoredQuizResults(room.results, isTrial),
         timeoutHandle: null,
       };
     }
-    const resultHistory = saved.resultHistory && typeof saved.resultHistory === "object" && !Array.isArray(saved.resultHistory)
+    const storedHistory = saved.resultHistory && typeof saved.resultHistory === "object" && !Array.isArray(saved.resultHistory)
       ? saved.resultHistory
       : {};
+    const resultHistory = Object.fromEntries(Object.entries(storedHistory)
+      .map(([key, record]) => [key, sanitizeStoredHistoryRecord(record)])
+      .filter(([, record]) => record));
     return { rooms: restored, resultHistory };
   } catch (error) {
     if (error.code !== "ENOENT") {
@@ -690,6 +725,9 @@ function persistQuizState() {
       startedAt: room.startedAt,
       endsAt: room.endsAt,
       setLabel: room.setLabel,
+      day: room.day,
+      datasetRevision: room.datasetRevision,
+      isReview: room.isReview,
       isTrial: room.isTrial,
       results: room.results,
     };
@@ -1113,6 +1151,41 @@ function quizResultNow() {
   return new Date();
 }
 
+function buildQuestionStats(room, participants) {
+  return room.questions.map((question, index) => {
+    const wrongParticipants = participants.filter((participant) =>
+      (participant.wrongQuestionIndexes || []).includes(index));
+    const reasonCounts = {};
+    for (const participant of wrongParticipants) {
+      const reason = QUIZ_MISTAKE_REASONS.includes(participant.wrongAnswerReasons?.[index])
+        ? participant.wrongAnswerReasons[index]
+        : "other";
+      reasonCounts[reason] = (reasonCounts[reason] || 0) + 1;
+    }
+    return {
+      questionId: String(question.questionId || ""),
+      attempts: participants.length,
+      wrongCount: wrongParticipants.length,
+      reasonCounts: sanitizeQuizReasonCounts(reasonCounts),
+    };
+  });
+}
+
+function topThreeMistakes(questionStats, questions) {
+  return questionStats
+    .map((stat, index) => ({ stat, index }))
+    .filter(({ stat }) => stat.wrongCount > 0)
+    .sort((left, right) => right.stat.wrongCount - left.stat.wrongCount || left.index - right.index)
+    .slice(0, 3)
+    .map(({ stat, index }) => ({
+      index,
+      answer: questions[index].answer,
+      ja: questions[index].ja,
+      count: stat.wrongCount,
+      reasonCounts: stat.reasonCounts,
+    }));
+}
+
 // ホストの操作で結果発表を確定させる。参加者全員が提出済みであることを再確認してから発表する。
 function quizRevealResults(roomCode) {
   const room = quizRooms[roomCode];
@@ -1134,31 +1207,8 @@ function quizRevealResults(roomCode) {
   const others = entries
     .filter((e) => e.score !== e.total)
     .map((e) => ({ id: e.id, name: e.name, score: e.score, total: e.total }));
-  const mistakeCounts = new Map();
-  const mistakeReasonCounts = new Map();
-  for (const participant of participants) {
-    for (const index of participant.wrongQuestionIndexes || []) {
-      if (index >= 0 && index < room.questions.length) {
-        mistakeCounts.set(index, (mistakeCounts.get(index) || 0) + 1);
-        const reason = QUIZ_MISTAKE_REASONS.includes(participant.wrongAnswerReasons?.[index])
-          ? participant.wrongAnswerReasons[index]
-          : "other";
-        const reasons = mistakeReasonCounts.get(index) || {};
-        reasons[reason] = (reasons[reason] || 0) + 1;
-        mistakeReasonCounts.set(index, reasons);
-      }
-    }
-  }
-  const mistakes = [...mistakeCounts.entries()]
-    .sort(([indexA, countA], [indexB, countB]) => countB - countA || indexA - indexB)
-    .slice(0, 3)
-    .map(([index, count]) => ({
-      index,
-      answer: room.questions[index].answer,
-      ja: room.questions[index].ja,
-      count,
-      reasonCounts: sanitizeQuizReasonCounts(mistakeReasonCounts.get(index)),
-    }));
+  const questionStats = buildQuestionStats(room, participants);
+  const mistakes = topThreeMistakes(questionStats, room.questions);
   const now = quizResultNow();
   const resultAt = now.toISOString();
   const date = tokyoDateKey(now);
@@ -1177,8 +1227,11 @@ function quizRevealResults(roomCode) {
       date,
       category: room.category,
       setLabel: room.setLabel,
+      day: room.day,
+      datasetRevision: room.datasetRevision,
       participantCount: participants.length,
       perfectNames: perfect.map((entry) => entry.name),
+      questionStats,
       updatedAt: resultAt,
     };
   });
@@ -1223,6 +1276,9 @@ io.on("connection", (socket) => {
       players: {},
       questions: [],
       startedAt: 0,
+      day: null,
+      datasetRevision: "",
+      isReview: false,
       results: null,
     };
     quizJoin(socket, roomCode, name, cb, newRoom);
@@ -1298,6 +1354,9 @@ io.on("connection", (socket) => {
       room.startedAt = Date.now();
       room.endsAt = room.startedAt + QUIZ_TIME_LIMIT_SEC * 1000;
       room.setLabel = `${cat.label} ${series.name}`;
+      room.day = Number.isInteger(series.day) ? series.day : null;
+      room.datasetRevision = String(cat.datasetRevision || "");
+      room.isReview = series.isReview === true;
       room.isTrial = series.isTrial === true;
       room.results = null;
       room.timeoutHandle = null;

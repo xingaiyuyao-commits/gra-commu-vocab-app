@@ -125,6 +125,7 @@ function historyRecord(date, category, overrides = {}) {
     setLabel: `${category} Day 1`,
     participantCount: 3,
     perfectNames: ["Miki"],
+    questionStats: [],
     updatedAt: `${date}T11:00:00.000Z`,
     ...overrides,
   };
@@ -137,6 +138,28 @@ function signedResultsCookie(password, expiresAt) {
   const signature = createHmac("sha256", key).update(payload).digest("base64url");
   return `results_history_session=${payload}.${signature}`;
 }
+
+test("復元時に不正な問題集計を除外し、旧履歴は空配列として扱う", async (t) => {
+  const record = historyRecord("2026-09-05", "clacel", {
+    questionStats: [
+      { questionId: "2026-09/clacel/day01/q01", attempts: 100, wrongCount: 12, reasonCounts: { spelling: 12 } },
+      { questionId: "invalid id!", attempts: 100, wrongCount: 1, reasonCounts: { spelling: 1 } },
+      { questionId: "2026-09/clacel/day01/q02", attempts: 2, wrongCount: 3, reasonCounts: { blank: 3 } },
+      { questionId: "2026-09/clacel/day01/q03", attempts: 2, wrongCount: 1, reasonCounts: { unknown: 1 } },
+    ],
+  });
+  const legacy = historyRecord("2026-09-06", "toeic");
+  delete legacy.questionStats;
+  const { stateFile } = await startServer(t, {
+    resultHistory: {
+      "2026-09-05:clacel": record,
+      "2026-09-06:toeic": legacy,
+    },
+  });
+  const stored = JSON.parse(fs.readFileSync(stateFile, "utf8")).resultHistory;
+  assert.deepEqual(stored["2026-09-05:clacel"].questionStats, [record.questionStats[0]]);
+  assert.deepEqual(stored["2026-09-06:toeic"].questionStats, []);
+});
 
 test("専用パスワード未設定時は全履歴APIを503にして公開しない", async (t) => {
   const { baseUrl } = await startServer(t);
@@ -490,6 +513,7 @@ test("削除の永続化失敗時は履歴をメモリ上でもロールバッ�
     headers: { Cookie: cookie },
   });
   assert.equal(afterFailure.status, 200);
-  assert.deepEqual(await afterFailure.json(), [original]);
+  const { questionStats: _privateStats, ...publicOriginal } = original;
+  assert.deepEqual(await afterFailure.json(), [publicOriginal]);
   assert.deepEqual(JSON.parse(fs.readFileSync(stateFile, "utf8")).resultHistory, { [key]: original });
 });
