@@ -220,6 +220,7 @@
   .lobby-wait { text-align: center; font-weight: 700; margin-bottom: 16px; }
   .lobby-players-label { font-size: .82rem; color: var(--muted-foreground); margin-bottom: 6px; }
   .results-set { text-align: center; font-size: 1.28rem; font-weight: 700; margin: 16px 0; }
+  .results-guidance { margin: 14px 0 0; color: var(--muted-foreground); font-size: .85rem; line-height: 1.6; text-align: center; }
   .result-layout { display: block; }
   .result-layout .card { margin-bottom: 16px; }
 
@@ -324,9 +325,9 @@
               <p class="mh-progress" style="margin-top:14px;">みんながつまずいた単語 上位3つ</p>
               <ul class="rank-list" id="mh-clacel-mistakes"></ul>
             </div>
-            <button id="mh-clacel-again" class="secondary">もう一度（ロビーに戻る）</button>
+            <p class="results-guidance">参加者の確認後、<br>本日のルームを終了してください</p>
           </div>
-          <button id="mh-clacel-close" class="secondary" hidden>Clacelのルームを終了</button>
+          <button id="mh-clacel-close" class="secondary" hidden>本日のルームを終了</button>
         </div>
         <div class="mh-panel" id="mh-toeic">
           <div class="mh-panel-head">TOEIC</div>
@@ -358,9 +359,9 @@
               <p class="mh-progress" style="margin-top:14px;">みんながつまずいた単語 上位3つ</p>
               <ul class="rank-list" id="mh-toeic-mistakes"></ul>
             </div>
-            <button id="mh-toeic-again" class="secondary">もう一度（ロビーに戻る）</button>
+            <p class="results-guidance">参加者の確認後、<br>本日のルームを終了してください</p>
           </div>
-          <button id="mh-toeic-close" class="secondary" hidden>TOEICのルームを終了</button>
+          <button id="mh-toeic-close" class="secondary" hidden>本日のルームを終了</button>
         </div>
         <div class="mh-panel" id="mh-ielts">
           <div class="mh-panel-head">IELTS</div>
@@ -392,9 +393,9 @@
               <p class="mh-progress" style="margin-top:14px;">みんながつまずいた単語 上位3つ</p>
               <ul class="rank-list" id="mh-ielts-mistakes"></ul>
             </div>
-            <button id="mh-ielts-again" class="secondary">もう一度（ロビーに戻る）</button>
+            <p class="results-guidance">参加者の確認後、<br>本日のルームを終了してください</p>
           </div>
-          <button id="mh-ielts-close" class="secondary" hidden>IELTSのルームを終了</button>
+          <button id="mh-ielts-close" class="secondary" hidden>本日のルームを終了</button>
         </div>
         </div>
       </div>
@@ -538,7 +539,7 @@
         <div class="card" id="review-card">
           <p class="review-heading">あなたが間違えた単語<span class="review-legend">単語／意味・あなたの回答・例文</span></p>
           <div id="review"></div>
-          <button type="button" id="btn-retest">間違えた単語を解き直す</button>
+          <button type="button" id="btn-retest">今回の間違いを今すぐ解き直す</button>
         </div>
         <details class="card" id="correct-card">
           <summary id="correct-summary">正解だった単語</summary>
@@ -546,10 +547,9 @@
         </details>
       </section>
     </div>
-    <div class="card" id="again-card" style="display:none;">
-      <button id="btn-again">もう一度（ロビーに戻る）</button>
-    </div>
-    <button class="leave" onclick="leaveRoom(false)">ルームを退出する</button>
+    <p class="results-guidance" id="host-results-note" hidden>参加者の確認後、本日のルームを終了してください</p>
+    <p class="results-guidance" id="results-next-note">次回は新しい招待リンクから参加してください</p>
+    <button class="leave" id="results-leave" onclick="leaveRoom(false)">ルームを退出する</button>
   </div>
 </div>
 
@@ -785,7 +785,7 @@
       if (count === 0 && raw !== null) localStorage.removeItem(WEEKLY_MISTAKE_KEY);
     } catch { /* 保存領域を読めない場合は、復習入口だけを隠す */ }
     $("weekly-review-entry").hidden = count === 0;
-    $("btn-weekly-review").textContent = `今週の間違いを解く（${count}語）`;
+    $("btn-weekly-review").textContent = `今週の間違いを復習する（${count}語）`;
   }
 
   // ルームコードを手入力させずに済むよう、参加URLとQRを出す
@@ -1213,10 +1213,6 @@
       });
     });
 
-    $(`mh-${category}-again`).addEventListener("click", () => {
-      mh[category].socket.emit("quiz:playAgain");
-    });
-
     $(`mh-${category}-cancel`).addEventListener("click", () => {
       if (!confirm("この開催を中止しますか？\n回答は採点されません")) return;
       mh[category].socket.emit("quiz:cancelGame");
@@ -1292,7 +1288,6 @@
     $("lobby-players-label").textContent = `参加中 ${players.length}人`;
     $("lobby-players").innerHTML = players.map((p) =>
       `<li><span>${escapeHtml(p.name)}</span></li>`).join("");
-    $("again-card").style.display = isHost ? "" : "none";
     $("btn-reveal-results").style.display = isHost ? "" : "none";
   });
 
@@ -1537,7 +1532,9 @@
     $("correct-list").innerHTML = correctReviews.length
       ? correctReviews.map(({ r, i }) => `<li><strong>${i + 1}. ${escapeHtml(r.answer)}</strong><span>${escapeHtml(r.ja)}</span></li>`).join("")
       : "<li>今回は正解した単語はありませんでした</li>";
-    $("again-card").style.display = isHost ? "" : "none";
+    $("host-results-note").hidden = !isHost;
+    $("results-next-note").hidden = isHost;
+    $("results-leave").textContent = isHost ? "本日のルームを終了する" : "ルームを退出する";
   }
 
   // --- 間違えた単語の解き直し（サーバーもルームも使わない、自分だけの復習） ---
@@ -1635,7 +1632,6 @@
     show("screen-results");
   });
 
-  $("btn-again").addEventListener("click", () => socket.emit("quiz:playAgain"));
   socket.on("quiz:backToLobby", ({ cancelled } = {}) => {
     clearQuizTimer();
     clearWaitingTimer();
