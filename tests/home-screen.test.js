@@ -2,6 +2,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+const { JSDOM } = require("jsdom");
 
 const publicDir = path.join(__dirname, "..", "public");
 const html = fs.readFileSync(path.join(publicDir, "index.html"), "utf8");
@@ -24,10 +25,15 @@ test("ホームにルームコード手入力の参加導線を表示しない",
   assert.doesNotMatch(html, /class="join-cta"/);
 });
 
-test("3コースのルーム作成導線を保つ", () => {
-  assert.match(html, /class="course-row" href="\/quiz\.html\?mode=create"[\s\S]*01[\s\S]*Clacel/);
-  assert.match(html, /class="course-row" href="\/quiz\.html\?mode=create"[\s\S]*02[\s\S]*TOEIC/);
-  assert.match(html, /class="course-row" href="\/quiz\.html\?mode=create"[\s\S]*03[\s\S]*IELTS/);
+test("ホームでは3コースを説明表示にし、運営用だけをルーム作成導線にする", () => {
+  const document = new JSDOM(html).window.document;
+  const courseRows = [...document.querySelectorAll(".course-row")];
+
+  assert.equal(courseRows.length, 3);
+  assert.deepEqual(courseRows.map((row) => row.tagName), ["DIV", "DIV", "DIV"]);
+  assert.deepEqual(courseRows.map((row) => row.querySelector("strong").textContent), ["Clacel", "TOEIC", "IELTS"]);
+  assert.equal(document.querySelectorAll('a[href="/quiz.html?mode=create"]').length, 1);
+  assert.equal(document.querySelector('.operator-link[href="/quiz.html?mode=create"]').textContent.trim(), "運営用");
 });
 
 test("承認済みのコース説明と二段組レイアウトを表示する", () => {
