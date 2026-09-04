@@ -30,7 +30,7 @@ function runLoadScript() {
   });
 }
 
-test("負荷スクリプトは実Socket.IOで1ホストと99参加者を完走し、v2履歴と誤答上位3件を保存する", { timeout: 80_000 }, async () => {
+test("負荷スクリプトは実Socket.IOで通常日・復習日・再起動を1ホストと99参加者で完走する", { timeout: 80_000 }, async () => {
   const result = await runLoadScript();
   assert.equal(
     result.code,
@@ -41,9 +41,19 @@ test("負荷スクリプトは実Socket.IOで1ホストと99参加者を完走�
 
   const summary = JSON.parse(result.stdout.trim());
   assert.deepEqual(summary.connections, { hosts: 1, participants: 99 });
-  assert.deepEqual(summary.actions, { joined: 99, submitted: 99, resultRevealed: true, roomEnded: true });
+  assert.deepEqual(summary.actions, {
+    joined: 99,
+    submitted: 198,
+    normalRevealed: true,
+    reviewRevealed: true,
+    restarted: true,
+    roomEnded: true,
+  });
+  assert.deepEqual(summary.normal, { total: 20, durationSec: 300 });
+  assert.equal(summary.review.total, 50);
+  assert.equal(summary.review.durationSec, 750);
   assert.deepEqual(
-    summary.topMistakes.map(({ index, count }) => ({ index, count })),
+    summary.review.topMistakes.map(({ index, count }) => ({ index, count })),
     [
       { index: 0, count: 98 },
       { index: 1, count: 75 },
@@ -55,6 +65,7 @@ test("負荷スクリプトは実Socket.IOで1ホストと99参加者を完走�
     key: "2042-01-02:clacel",
     participantCount: 99,
     perfectNames: ["Load-001"],
+    questionStats: 50,
     roomRemoved: true,
     retainedAfterRoomEnd: true,
   });

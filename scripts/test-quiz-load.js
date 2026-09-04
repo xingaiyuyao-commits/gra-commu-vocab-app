@@ -103,8 +103,10 @@ async function cleanup(resources) {
 }
 
 async function startTemporaryServer(resources) {
-  resources.tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-load-"));
-  resources.stateFile = path.join(resources.tempDir, "quiz-rooms.json");
+  if (!resources.tempDir) {
+    resources.tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-load-"));
+    resources.stateFile = path.join(resources.tempDir, "quiz-rooms.json");
+  }
   const port = await reservePort();
   const baseUrl = `http://127.0.0.1:${port}`;
   const env = {
@@ -188,70 +190,93 @@ async function runLoadTest(resources) {
     participants[index] = socket;
   });
 
-  const startedEvent = waitForEvent(host, "quiz:started");
-  assert.deepEqual(await emitWithAck(host, "quiz:startGame", { seriesIndex: 0 }), { ok: true });
-  const started = await startedEvent;
-  assert.equal(started.total, 20);
-
-  const startedState = readState(resources.stateFile);
-  const room = startedState.rooms[created.roomCode];
-  assert.equal(Object.keys(room.players).length, PARTICIPANT_COUNT + 1);
-  assert.equal(room.questions.length, 20);
-
-  const readyToReveal = waitForEvent(host, "quiz:readyToReveal");
   let submitted = 0;
-  await mapWithConcurrency(participants, MAX_CONCURRENCY, async (socket, index) => {
-    const response = await emitWithAck(socket, "quiz:submit", {
-      answers: answersForParticipant(room.questions, index),
+  async function runRound(seriesIndex, expectedTotal, expectedDurationSec) {
+    const startedEvent = waitForEvent(host, "quiz:started");
+    assert.deepEqual(await emitWithAck(host, "quiz:startGame", { seriesIndex }), { ok: true });
+    const started = await startedEvent;
+    assert.equal(started.total, expectedTotal);
+    const startedState = readState(resources.stateFile);
+    const room = startedState.rooms[created.roomCode];
+    assert.equal(Object.keys(room.players).length, PARTICIPANT_COUNT + 1);
+    assert.equal(room.questions.length, expectedTotal);
+    assert.equal(room.endsAt - room.startedAt, expectedDurationSec * 1000);
+    assert.equal(new Set(room.questions.map(({ questionId }) => questionId)).size, expectedTotal);
+
+    const readyToReveal = waitForEvent(host, "quiz:readyToReveal");
+    await mapWithConcurrency(participants, MAX_CONCURRENCY, async (socket, index) => {
+      const response = await emitWithAck(socket, "quiz:submit", {
+        answers: answersForParticipant(room.questions, index),
+      });
+      assert.deepEqual(response, { ok: true });
+      submitted += 1;
     });
-    assert.deepEqual(response, { ok: true });
-    submitted += 1;
+    await readyToReveal;
+
+    const resultsEvent = waitForEvent(host, "quiz:results");
+    assert.deepEqual(await emitWithoutPayloadWithAck(host, "quiz:revealResults"), { ok: true });
+    const results = await resultsEvent;
+    assert.equal(results.resultAt, FIXED_NOW);
+    assert.equal(results.perfect.length, 1);
+    assert.equal(results.perfect[0].name, "Load-001");
+    assert.equal(results.others.length, 98);
+    assert.deepEqual(results.mistakes, [
+      { index: 0, answer: room.questions[0].answer, ja: room.questions[0].ja, count: 98, reasonCounts: { other: 98 } },
+      { index: 1, answer: room.questions[1].answer, ja: room.questions[1].ja, count: 75, reasonCounts: { other: 75 } },
+      { index: 2, answer: room.questions[2].answer, ja: room.questions[2].ja, count: 50, reasonCounts: { other: 50 } },
+    ]);
+    const saved = readState(resources.stateFile);
+    assert.equal(saved.resultHistory[HISTORY_KEY].questionStats.length, expectedTotal);
+    return { started, room, results, saved };
+  }
+
+  const normal = await runRound(1, 20, 300);
+  assert.match(normal.started.setLabel, /Day 1/);
+  assert.deepEqual(await emitWithoutPayloadWithAck(host, "quiz:playAgain"), { ok: true });
+  const review = await runRound(7, 50, 750);
+  assert.match(review.started.setLabel, /Day 7（復習50問）/);
+  assert.equal(review.saved.version, 2);
+  assert.equal(review.saved.rooms[created.roomCode].results.resultAt, FIXED_NOW);
+  assert.deepEqual(review.saved.rooms[created.roomCode].results.mistakes, review.results.mistakes);
+  assert.equal(review.saved.resultHistory[HISTORY_KEY].participantCount, PARTICIPANT_COUNT);
+  assert.deepEqual(review.saved.resultHistory[HISTORY_KEY].perfectNames, ["Load-001"]);
+  assert.equal(review.saved.resultHistory[HISTORY_KEY].day, 7);
+  assert.equal(review.saved.resultHistory[HISTORY_KEY].questionStats.length, 50);
+
+  for (const socket of resources.sockets) socket.disconnect();
+  resources.sockets = [];
+  await stopServer(resources.server);
+  resources.server = null;
+  const restartedBaseUrl = await startTemporaryServer(resources);
+  const restoredHost = await connectSocket(restartedBaseUrl, resources);
+  const restored = await emitWithAck(restoredHost, "quiz:rejoin", {
+    roomCode: created.roomCode,
+    playerId: created.playerId,
+    sessionToken: created.sessionToken,
   });
-  await readyToReveal;
+  assert.equal(restored.ok, true);
+  assert.equal(restored.phase, "finished");
+  assert.equal(restored.results.review.length, 50);
 
-  const resultsEvent = waitForEvent(host, "quiz:results");
-  assert.deepEqual(await emitWithoutPayloadWithAck(host, "quiz:revealResults"), { ok: true });
-  const results = await resultsEvent;
-  assert.equal(results.resultAt, FIXED_NOW);
-  assert.equal(results.perfect.length, 1);
-  assert.equal(results.perfect[0].name, "Load-001");
-  assert.equal(results.others.length, 98);
-  assert.deepEqual(results.mistakes, [
-    { index: 0, answer: room.questions[0].answer, ja: room.questions[0].ja, count: 98, reasonCounts: { other: 98 } },
-    { index: 1, answer: room.questions[1].answer, ja: room.questions[1].ja, count: 75, reasonCounts: { other: 75 } },
-    { index: 2, answer: room.questions[2].answer, ja: room.questions[2].ja, count: 50, reasonCounts: { other: 50 } },
-  ]);
-
-  const saved = readState(resources.stateFile);
-  assert.equal(saved.version, 2);
-  assert.equal(saved.rooms[created.roomCode].results.resultAt, FIXED_NOW);
-  assert.deepEqual(saved.rooms[created.roomCode].results.mistakes, results.mistakes);
-  assert.deepEqual(saved.resultHistory[HISTORY_KEY], {
-    date: "2042-01-02",
-    category: "clacel",
-    setLabel: started.setLabel,
-    participantCount: PARTICIPANT_COUNT,
-    perfectNames: ["Load-001"],
-    updatedAt: FIXED_NOW,
-  });
-
-  assert.deepEqual(await emitWithAck(host, "quiz:leave", {}), { ok: true });
+  assert.deepEqual(await emitWithAck(restoredHost, "quiz:leave", {}), { ok: true });
   const afterRoomEnd = readState(resources.stateFile);
   assert.equal(Object.hasOwn(afterRoomEnd.rooms, created.roomCode), false);
-  assert.deepEqual(afterRoomEnd.resultHistory[HISTORY_KEY], saved.resultHistory[HISTORY_KEY]);
+  assert.deepEqual(afterRoomEnd.resultHistory[HISTORY_KEY], review.saved.resultHistory[HISTORY_KEY]);
 
   return {
     connections: { hosts: 1, participants: participants.length },
-    actions: { joined: participants.filter(Boolean).length, submitted, resultRevealed: true, roomEnded: true },
-    topMistakes: results.mistakes,
+    actions: { joined: participants.filter(Boolean).length, submitted, normalRevealed: true, reviewRevealed: true, restarted: true, roomEnded: true },
+    normal: { total: normal.room.questions.length, durationSec: 300 },
+    review: { total: review.room.questions.length, durationSec: 750, topMistakes: review.results.mistakes },
     history: {
-      stateVersion: saved.version,
+      stateVersion: review.saved.version,
       key: HISTORY_KEY,
-      participantCount: saved.resultHistory[HISTORY_KEY].participantCount,
-      perfectNames: saved.resultHistory[HISTORY_KEY].perfectNames,
+      participantCount: review.saved.resultHistory[HISTORY_KEY].participantCount,
+      perfectNames: review.saved.resultHistory[HISTORY_KEY].perfectNames,
+      questionStats: review.saved.resultHistory[HISTORY_KEY].questionStats.length,
       roomRemoved: !Object.hasOwn(afterRoomEnd.rooms, created.roomCode),
       retainedAfterRoomEnd: JSON.stringify(afterRoomEnd.resultHistory[HISTORY_KEY])
-        === JSON.stringify(saved.resultHistory[HISTORY_KEY]),
+        === JSON.stringify(review.saved.resultHistory[HISTORY_KEY]),
     },
   };
 }
