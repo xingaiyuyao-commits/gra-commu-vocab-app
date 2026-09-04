@@ -423,7 +423,7 @@
       <button type="button" id="btn-weekly-review"></button>
       <p class="weekly-review-note">同じ端末・同じブラウザでのみ利用できます<br>次週のDay 1 19:30を過ぎると期限切れになります<br>ブラウザデータを削除した場合や、シークレット／プライベートモードでは復元できません</p>
     </div>
-    <button class="leave" onclick="leaveRoom(false)">← ゲーム選択に戻る</button>
+    <button class="leave" onclick="leaveRoom(false)">← ホームに戻る</button>
   </div>
 
   <!-- ロビー -->
@@ -563,7 +563,8 @@
     </div>
     <p class="results-guidance" id="host-results-note" hidden>参加者の確認後、本日のルームを終了してください</p>
     <p class="results-guidance" id="results-next-note">次回は新しい招待リンクから参加してください</p>
-    <button class="leave" id="results-leave" onclick="leaveRoom(false)">ルームを退出する</button>
+    <p class="results-guidance" id="results-save-status" hidden></p>
+    <button class="leave" id="results-leave" onclick="leaveRoom(false)">本日のルームを終了する</button>
   </div>
 </div>
 
@@ -580,6 +581,7 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/ui-logic.js"></script>
+<script src="/saved-results.js"></script>
 <script>
   const socket = io();
   const $ = (id) => document.getElementById(id);
@@ -687,6 +689,52 @@
   }
   function clearPendingSubmission() {
     localStorage.removeItem("quizPendingSubmission");
+  }
+
+  function savedResultForRoom(roomCode) {
+    try {
+      return QuizSavedResults.find(localStorage.getItem(QuizSavedResults.STORAGE_KEY), roomCode);
+    } catch {
+      return null;
+    }
+  }
+
+  function saveParticipantResult(data) {
+    if (isHost || !currentRoomCode || !data?.resultAt) return null;
+    try {
+      const stored = QuizSavedResults.upsert(
+        localStorage.getItem(QuizSavedResults.STORAGE_KEY),
+        {
+          roomCode: currentRoomCode,
+          category: selectedCategory,
+          setLabel: data.setLabel || currentSetLabel,
+          resultAt: data.resultAt,
+          perfect: data.perfect,
+          review: data.review,
+          answers,
+          playerId,
+          isTrial: data.isTrial === true,
+        },
+      );
+      if (!stored.ok) return false;
+      localStorage.setItem(QuizSavedResults.STORAGE_KEY, stored.raw);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  function restoreParticipantResult(saved) {
+    if (!saved) return false;
+    isHost = false;
+    currentRoomCode = saved.roomCode;
+    selectedCategory = saved.category;
+    currentSetLabel = saved.setLabel;
+    playerId = saved.playerId || playerId;
+    answers = saved.answers.slice();
+    renderResults(saved);
+    show("screen-results");
+    return true;
   }
   function leaveRoom(needConfirm) {
     if (needConfirm && !confirm("回答の途中ですが退出しますか？")) return;
@@ -891,14 +939,17 @@
 
   // 復帰セッションがある場合はattemptRejoin()の応答が来るまで何も表示しない
   // （先にentry画面を出してしまうと、リロード直後に一瞬前の画面が見えてしまうため）
+  const entryParams = new URLSearchParams(location.search);
+  const entryMode = entryParams.get("mode");
+  const presetRoom = entryParams.get("room")?.trim().toUpperCase() || null;
   let savedSession;
   try { savedSession = JSON.parse(localStorage.getItem("quizSession") || "null"); } catch { savedSession = null; }
-  if (!savedSession || !savedSession.roomCode) show("screen-entry");
+  const hasMatchingSession = savedSession?.roomCode
+    && (!presetRoom || savedSession.roomCode === presetRoom);
+  if (!hasMatchingSession) show("screen-entry");
   renderWeeklyReviewEntry();
 
   // --- 参加/作成 ---
-  const entryMode = new URLSearchParams(location.search).get("mode");
-  const presetRoom = new URLSearchParams(location.search).get("room");
   const joinSection = $("join-section");
   const createSection = $("create-section");
   const roomInput = $("room");
@@ -970,6 +1021,7 @@
     if (!presetRoom) return;
     socket.emit("quiz:roomInfo", { roomCode: presetRoom }, (res) => {
       if (res?.category) showCourseLabel(res.category);
+      else if (!savedResultForRoom(presetRoom)) $("entry-error").textContent = "この回は終了しました";
     });
   }
 
@@ -1483,7 +1535,7 @@
   });
 
   // --- 結果 ---
-  function renderResults({ resultAt, setLabel, perfect, review, isTrial = false }) {
+  function renderResults({ resultAt, setLabel, perfect = [], review = [], isTrial = false }) {
     clearQuizTimer();
     clearWaitingTimer();
     clearPendingSubmission();
@@ -1569,7 +1621,16 @@
       : "<li>今回は正解した単語はありませんでした</li>";
     $("host-results-note").hidden = !isHost;
     $("results-next-note").hidden = isHost;
-    $("results-leave").textContent = isHost ? "本日のルームを終了する" : "ルームを退出する";
+    $("results-leave").hidden = !isHost;
+    $("results-leave").textContent = "本日のルームを終了する";
+    const saveStatus = $("results-save-status");
+    saveStatus.hidden = isHost;
+    if (!isHost) {
+      const saved = saveParticipantResult({ resultAt, setLabel, perfect, review, isTrial });
+      saveStatus.textContent = saved === false
+        ? "この画面を閉じると結果を復元できません"
+        : "この結果と復習内容は、このブラウザに7日間保存されます";
+    }
   }
 
   // --- 間違えた単語の解き直し（サーバーもルームも使わない、自分だけの復習） ---
@@ -1683,8 +1744,17 @@
     let session;
     try { session = JSON.parse(localStorage.getItem("quizSession") || "null"); } catch { session = null; }
     if (!session || !session.roomCode) return;
+    if (presetRoom && session.roomCode !== presetRoom) return;
     socket.emit("quiz:rejoin", { roomCode: session.roomCode, playerId: session.playerId, sessionToken: session.sessionToken }, (res) => {
-      if (!res || !res.ok) { clearSession(); show("screen-entry"); return; }
+      if (!res || !res.ok) {
+        const roomCode = session.roomCode;
+        clearSession();
+        if (!restoreParticipantResult(savedResultForRoom(roomCode))) {
+          $("entry-error").textContent = "この回は終了しました";
+          show("screen-entry");
+        }
+        return;
+      }
       isHost = res.isHost;
       selectedCategory = res.category;
       currentRoomCode = session.roomCode;
@@ -1740,6 +1810,10 @@
     });
   }
   socket.on("connect", attemptRejoin);
+
+  if (presetRoom && (!savedSession || savedSession.roomCode !== presetRoom)) {
+    restoreParticipantResult(savedResultForRoom(presetRoom));
+  }
 </script>
 </body>
 </html>

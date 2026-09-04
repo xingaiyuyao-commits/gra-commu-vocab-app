@@ -13,6 +13,7 @@ const OPERATION_TIMEOUT_MS = 15_000;
 const LOAD_TEST_TIMEOUT_MS = positiveInteger(process.env.QUIZ_LOAD_TIMEOUT_MS, 60_000);
 const FIXED_NOW = "2042-01-02T03:04:05.000Z";
 const HISTORY_KEY = "2042-01-02:clacel";
+const TEST_OPERATOR_PASSWORD = "load-test-operator-password";
 
 function positiveInteger(value, fallback) {
   const number = Number(value);
@@ -114,6 +115,7 @@ async function startTemporaryServer(resources) {
     PORT: String(port),
     QUIZ_ROOM_STATE_FILE: resources.stateFile,
     QUIZ_TEST_NOW_ISO: FIXED_NOW,
+    OPERATOR_PASSWORD: TEST_OPERATOR_PASSWORD,
   };
   for (const variable of [
     "RESULTS_ADMIN_PASSWORD",
@@ -137,19 +139,28 @@ async function startTemporaryServer(resources) {
     }
     try {
       const response = await fetch(`${baseUrl}/healthz`);
-      if (response.status === 200) return baseUrl;
+      if (response.status === 200) {
+        const login = await fetch(`${baseUrl}/api/operator/login`, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ password: TEST_OPERATOR_PASSWORD }),
+        });
+        resources.operatorCookie = login.headers.get("set-cookie")?.split(";", 1)[0] || "";
+        return baseUrl;
+      }
     } catch {}
     await delay(50);
   }
   throw new Error(`temporary server did not become healthy: ${stderr || "no stderr"}`);
 }
 
-async function connectSocket(baseUrl, resources) {
+async function connectSocket(baseUrl, resources, { operator = false } = {}) {
   const socket = io(baseUrl, {
     forceNew: true,
     reconnection: false,
     timeout: OPERATION_TIMEOUT_MS,
     transports: ["websocket"],
+    extraHeaders: operator && resources.operatorCookie ? { Cookie: resources.operatorCookie } : undefined,
   });
   resources.sockets.push(socket);
   await withTimeout(new Promise((resolve, reject) => {
@@ -175,7 +186,7 @@ function readState(stateFile) {
 
 async function runLoadTest(resources) {
   const baseUrl = await startTemporaryServer(resources);
-  const host = await connectSocket(baseUrl, resources);
+  const host = await connectSocket(baseUrl, resources, { operator: true });
   const created = await emitWithAck(host, "quiz:createRoom", { category: "clacel", name: "Load Host" });
   assert.equal(created.isHost, true);
   assert.match(created.roomCode, /^[A-Z2-9]{4}$/);
@@ -248,7 +259,7 @@ async function runLoadTest(resources) {
   await stopServer(resources.server);
   resources.server = null;
   const restartedBaseUrl = await startTemporaryServer(resources);
-  const restoredHost = await connectSocket(restartedBaseUrl, resources);
+  const restoredHost = await connectSocket(restartedBaseUrl, resources, { operator: true });
   const restored = await emitWithAck(restoredHost, "quiz:rejoin", {
     roomCode: created.roomCode,
     playerId: created.playerId,

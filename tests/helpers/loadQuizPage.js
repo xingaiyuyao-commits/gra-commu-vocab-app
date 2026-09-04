@@ -28,6 +28,11 @@ function loadQuizPage({
     '<script src="/ui-logic.js"></script>',
     `<script>${uiLogicSrc}</script>`
   );
+  const savedResultsSrc = fs.readFileSync(path.join(publicDir, "saved-results.js"), "utf8");
+  html = html.replace(
+    '<script src="/saved-results.js"></script>',
+    `<script>${savedResultsSrc}</script>`
+  );
 
   const fakeSockets = [];
   function createFakeSocket() {

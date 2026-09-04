@@ -770,15 +770,90 @@ test("問題画面: 更新防止と文法上の活用案内をすべての問題
   assert.notEqual(note.style.display, "none", "第2問以降も表示する");
 });
 
-test("結果後の動線: 解き直しを主操作、退出を副操作として二択で表示する", () => {
-  const { document } = loadQuizPage();
+test("結果後の動線: 参加者は結果画面内で復習し、退出・ホーム移動を表示しない", () => {
+  const { document, fireSocketEvent } = loadQuizPage();
   const retest = document.getElementById("btn-retest");
+  fireSocketEvent("quiz:results", { perfect: [], review: [] });
   assert.equal(retest.textContent.trim(), "今回の間違いを今すぐ解き直す");
   assert.equal(retest.classList.contains("secondary"), false);
-  assert.equal(document.querySelector("#screen-results > .leave").textContent.trim(), "ルームを退出する");
+  assert.equal(document.getElementById("results-leave").hidden, true);
+  assert.doesNotMatch(document.getElementById("screen-results").textContent, /ホームに戻る/);
   assert.match(document.getElementById("results-next-note").textContent, /次回は新しい招待リンクから参加してください/);
   assert.equal(document.getElementById("btn-again"), null, "ホストにも同じルームでの再開催操作を表示しない");
   assert.match(document.getElementById("host-results-note").textContent, /参加者の確認後、本日のルームを終了してください/);
+});
+
+test("参加者結果: 回答と復習内容をルーム別に7日間保存する", () => {
+  const nowIso = "2026-09-04T10:30:01.000Z";
+  const { window, document, emitted, fireSocketEvent } = loadQuizPage({
+    url: "http://localhost/quiz.html?mode=join&room=ABCD&cat=clacel",
+    nowIso,
+  });
+  setValue(window, document.getElementById("name"), "参加者");
+  document.getElementById("btn-join").dispatchEvent(new window.Event("click", { bubbles: true }));
+  emitted.find((entry) => entry.event === "quiz:joinRoom").cb({
+    roomCode: "ABCD", category: "clacel", playerId: "participant", sessionToken: "token", seriesNames: ["Day 1"],
+  });
+  fireSocketEvent("quiz:started", {
+    setLabel: "Clacel Day 1",
+    total: 1,
+    endsAt: Date.now() + 60_000,
+    questions: [{ sentence: "I ___ tea.", answer: "drink", base: "drink", hint: "d____", ja: "飲む", sentenceJa: "私はお茶を飲む。" }],
+  });
+  setValue(window, document.getElementById("answer"), "dlink");
+  fireSocketEvent("quiz:results", {
+    resultAt: "2026-09-04T10:30:00.000Z",
+    setLabel: "Clacel Day 1",
+    perfect: [],
+    review: [{ sentence: "I ___ tea.", answer: "drink", altAnswers: [], ja: "飲む", sentenceJa: "私はお茶を飲む。" }],
+  });
+
+  const saved = JSON.parse(window.localStorage.getItem("oshQuizSavedResultsV1"));
+  assert.equal(saved.records.length, 1);
+  assert.equal(saved.records[0].roomCode, "ABCD");
+  assert.deepEqual(saved.records[0].answers, ["dlink"]);
+  assert.equal(saved.records[0].expiresAt, Date.parse("2026-09-11T10:30:00.000Z"));
+  assert.match(document.getElementById("results-save-status").textContent, /7日間保存/);
+  assert.equal(document.getElementById("results-leave").hidden, true);
+});
+
+test("過去の招待リンク: 7日以内なら終了済みルームの結果と解き直しを復元する", () => {
+  const stored = JSON.stringify({
+    version: 1,
+    records: [{
+      roomCode: "ABCD", category: "clacel", setLabel: "Clacel Day 1",
+      resultAt: "2026-09-04T10:30:00.000Z", expiresAt: Date.parse("2026-09-11T10:30:00.000Z"),
+      perfect: [{ id: "participant", name: "Kaho" }],
+      review: [{ sentence: "I ___ tea.", answer: "drink", altAnswers: [], ja: "飲む", sentenceJa: "私はお茶を飲む。" }],
+      answers: ["dlink"], playerId: "participant", isTrial: false,
+    }],
+  });
+  const { document } = loadQuizPage({
+    url: "http://localhost/quiz.html?mode=join&room=ABCD&cat=clacel",
+    nowIso: "2026-09-05T10:30:00.000Z",
+    storedValues: {
+      oshQuizSavedResultsV1: stored,
+      quizSession: JSON.stringify({ roomCode: "WXYZ", category: "toeic", playerId: "old", sessionToken: "old-token" }),
+    },
+  });
+  assert.equal(document.getElementById("screen-results").classList.contains("active"), true);
+  assert.equal(document.getElementById("results-set").textContent, "Clacel Day 1");
+  assert.match(document.getElementById("personal-score").textContent, /0 \/ 1点/);
+  assert.equal(document.getElementById("btn-retest").style.display, "");
+});
+
+test("新しい日の招待リンク: 古いルームの結果やセッションを表示せず新規参加画面を開く", () => {
+  const { document } = loadQuizPage({
+    url: "http://localhost/quiz.html?mode=join&room=EFGH&cat=toeic",
+    nowIso: "2026-09-05T10:30:00.000Z",
+    storedValues: {
+      oshQuizSavedResultsV1: JSON.stringify({ version: 1, records: [] }),
+      quizSession: JSON.stringify({ roomCode: "ABCD", category: "clacel", playerId: "old", sessionToken: "old-token" }),
+    },
+  });
+  assert.equal(document.getElementById("screen-entry").classList.contains("active"), true);
+  assert.equal(document.getElementById("screen-results").classList.contains("active"), false);
+  assert.equal(document.getElementById("join-course-name").textContent, "TOEICコース");
 });
 
 test("テスト画面: 設問の英文の下に例文の日本語訳が表示される", () => {
