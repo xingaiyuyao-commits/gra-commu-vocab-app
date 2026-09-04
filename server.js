@@ -5,6 +5,7 @@ const path = require("path");
 const { isIP, SocketAddress } = require("net");
 const { createHash, createHmac, randomBytes, timingSafeEqual } = require("crypto");
 const { Server } = require("socket.io");
+const { createOperatorAuth } = require("./operator-auth");
 const QUESTIONS = require("./questions");
 const SENTENCES = require("./sentences");
 
@@ -694,6 +695,15 @@ const quizState = loadQuizState();
 const quizRooms = quizState.rooms; // roomCode -> room state
 const resultHistory = quizState.resultHistory; // yyyy-mm-dd:category -> daily result
 const RESULTS_ADMIN_PASSWORD = process.env.RESULTS_ADMIN_PASSWORD || "";
+const OPERATOR_PASSWORD = process.env.OPERATOR_PASSWORD || "";
+const operatorAuth = createOperatorAuth({
+  password: OPERATOR_PASSWORD,
+  secureCookie: IS_RAILWAY_RUNTIME || process.env.NODE_ENV === "production",
+});
+const OPERATOR_LOGIN_FAILURE_LIMIT = 5;
+const OPERATOR_LOGIN_FAILURE_WINDOW_MS = 15 * 60 * 1000;
+const OPERATOR_LOGIN_FAILURE_MAX_IPS = 2_048;
+const operatorLoginFailures = new Map();
 const RESULTS_HISTORY_COOKIE = "results_history_session";
 const RESULTS_HISTORY_SESSION_MS = 12 * 60 * 60 * 1000;
 const RESULTS_LOGIN_FAILURE_LIMIT = 5;
@@ -900,6 +910,66 @@ function resultsHistoryClientIp(req) {
   if (!IS_RAILWAY_RUNTIME) return socketIp || "unknown";
   return normalizeResultsHistoryIp(req.headers["x-real-ip"]) || socketIp || "unknown";
 }
+
+function cleanupOperatorLoginFailures(now) {
+  for (const [ip, entry] of operatorLoginFailures) {
+    if (entry.resetAt <= now) operatorLoginFailures.delete(ip);
+  }
+  while (operatorLoginFailures.size > OPERATOR_LOGIN_FAILURE_MAX_IPS) {
+    operatorLoginFailures.delete(operatorLoginFailures.keys().next().value);
+  }
+}
+
+function recordOperatorLoginFailure(ip, now) {
+  cleanupOperatorLoginFailures(now);
+  const current = operatorLoginFailures.get(ip);
+  const next = current && current.resetAt > now
+    ? { count: current.count + 1, resetAt: current.resetAt }
+    : { count: 1, resetAt: now + OPERATOR_LOGIN_FAILURE_WINDOW_MS };
+  operatorLoginFailures.delete(ip);
+  if (operatorLoginFailures.size >= OPERATOR_LOGIN_FAILURE_MAX_IPS) {
+    operatorLoginFailures.delete(operatorLoginFailures.keys().next().value);
+  }
+  operatorLoginFailures.set(ip, next);
+}
+
+app.use("/api/operator", (_req, res, next) => {
+  res.set("Cache-Control", "no-store");
+  if (!operatorAuth.configured) {
+    return res.status(503).json({ error: "運営者認証が設定されていません" });
+  }
+  next();
+});
+
+app.post("/api/operator/login", express.json({ limit: "1kb" }), (req, res) => {
+  const now = Date.now();
+  const ip = resultsHistoryClientIp(req);
+  cleanupOperatorLoginFailures(now);
+  const failure = operatorLoginFailures.get(ip);
+  if (failure && failure.count >= OPERATOR_LOGIN_FAILURE_LIMIT) {
+    return res.status(429).json({ error: "ログイン試行が多すぎます。しばらくしてから再度お試しください" });
+  }
+  if (!operatorAuth.passwordMatches(req.body?.password)) {
+    recordOperatorLoginFailure(ip, now);
+    return res.status(401).json({ error: "認証に失敗しました" });
+  }
+  operatorLoginFailures.delete(ip);
+  res.setHeader("Set-Cookie", operatorAuth.sessionCookie(operatorAuth.makeSessionToken()));
+  res.json({ ok: true });
+});
+
+app.post("/api/operator/logout", (_req, res) => {
+  res.setHeader("Set-Cookie", operatorAuth.clearCookie());
+  res.json({ ok: true });
+});
+
+app.get("/api/operator/session", (req, res) => {
+  const token = operatorAuth.cookieToken(req.headers.cookie);
+  if (!operatorAuth.sessionTokenIsValid(token)) {
+    return res.status(401).json({ authenticated: false });
+  }
+  res.json({ authenticated: true });
+});
 
 function requireResultsHistoryAuth(req, res, next) {
   const token = requestCookie(req, RESULTS_HISTORY_COOKIE);
