@@ -8,10 +8,13 @@ const html = fs.readFileSync(path.join(publicDir, "index.html"), "utf8");
 
 test("承認済みホームの見出し・学習日・画像を表示する", () => {
   assert.match(html, /<h1>ÖSH Vocabulary Challenge<\/h1>/);
+  assert.match(html, /class="site-tagline">みんなで満点を目指そう！<\/p>/);
+  assert.match(html, /<img[^>]+class="voice-logo"[^>]+src="\/assets\/voice-logo\.png"/);
   assert.match(html, /id="today-date"/);
   assert.match(html, /id="today-day"/);
   assert.match(html, /<img[^>]+src="\/assets\/osh-vocab-home-illustration\.png"/);
   assert.ok(fs.existsSync(path.join(publicDir, "assets", "osh-vocab-home-illustration.png")));
+  assert.ok(fs.existsSync(path.join(publicDir, "assets", "voice-logo.png")));
 });
 
 test("ホームにルームコード手入力の参加導線を表示しない", () => {

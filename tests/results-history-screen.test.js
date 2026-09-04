@@ -169,6 +169,11 @@ test("月間カレンダーの日付にコース別ドットを出し、選択�
     "満点者を途中で省略せず全員表示する",
   );
   assert.equal(clacel.querySelector("img"), null, "API由来の名前をHTMLとして解釈しない");
+  assert.ok(
+    [...clacel.children].indexOf(clacel.querySelector(".perfect-list"))
+      < [...clacel.children].indexOf(clacel.querySelector(".record-stats")),
+    "満点者一覧を参加人数・満点者数より先に表示する",
+  );
 
   const toeic = page.document.querySelector('[data-course-card="toeic"]');
   assert.equal(toeic.querySelector('[data-field="participants"]').textContent.trim(), "3");
@@ -177,6 +182,17 @@ test("月間カレンダーの日付にコース別ドットを出し、選択�
 
   const ielts = page.document.querySelector('[data-course-card="ielts"]');
   assert.match(ielts.textContent, /この日の記録はありません/);
+});
+
+test("結果履歴にもVOICEロゴと共通タイトルを表示する", async (t) => {
+  const page = loadPage(() => response(200, septemberRecords));
+  t.after(() => page.close());
+  await settle();
+
+  const header = page.document.querySelector(".site-header");
+  assert.ok(header);
+  assert.equal(header.querySelector(".voice-logo").getAttribute("src"), "/assets/voice-logo.png");
+  assert.equal(header.querySelector(".site-title").textContent.trim(), "ÖSH Vocabulary Challenge");
 });
 
 test("別の日を選ぶと詳細を切り替え、前月・翌月ボタンは境界を越えた月を取得する", async (t) => {

@@ -217,9 +217,9 @@ async function runLoadTest(resources) {
   assert.equal(results.perfect[0].name, "Load-001");
   assert.equal(results.others.length, 98);
   assert.deepEqual(results.mistakes, [
-    { index: 0, answer: room.questions[0].answer, ja: room.questions[0].ja, count: 98 },
-    { index: 1, answer: room.questions[1].answer, ja: room.questions[1].ja, count: 75 },
-    { index: 2, answer: room.questions[2].answer, ja: room.questions[2].ja, count: 50 },
+    { index: 0, answer: room.questions[0].answer, ja: room.questions[0].ja, count: 98, reasonCounts: { other: 98 } },
+    { index: 1, answer: room.questions[1].answer, ja: room.questions[1].ja, count: 75, reasonCounts: { other: 75 } },
+    { index: 2, answer: room.questions[2].answer, ja: room.questions[2].ja, count: 50, reasonCounts: { other: 50 } },
   ]);
 
   const saved = readState(resources.stateFile);

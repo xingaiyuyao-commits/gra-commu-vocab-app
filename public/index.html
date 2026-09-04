@@ -10,8 +10,10 @@
   html { background: var(--paper); }
   body { margin:0; background:var(--paper); color:var(--ink); font-family:Arial,"Helvetica Neue","Hiragino Sans","Yu Gothic UI","Yu Gothic",sans-serif; -webkit-font-smoothing:antialiased; }
   a { color:inherit; }
-  .page { display:flex; flex-direction:column; justify-content:center; width:min(100%,1920px); min-height:100vh; min-height:100svh; margin:0 auto; padding:28px 36px 20px; }
-  h1 { margin:0 0 22px; font-size:clamp(3.5rem,5.5vw,5rem); font-weight:800; letter-spacing:-.075em; line-height:.92; text-align:center; white-space:nowrap; }
+  .page { position:relative; display:flex; flex-direction:column; justify-content:center; width:min(100%,1920px); min-height:100vh; min-height:100svh; margin:0 auto; padding:28px 36px 20px; }
+  .voice-logo { position:absolute; top:24px; left:36px; display:block; width:64px; height:52px; object-fit:contain; }
+  h1 { margin:0 0 6px; font-size:clamp(3.5rem,5.5vw,5rem); font-weight:800; letter-spacing:-.075em; line-height:.92; text-align:center; white-space:nowrap; }
+  .site-tagline { margin:0 0 18px; color:var(--muted); font-size:.95rem; font-weight:600; text-align:center; }
   .course-row:focus-visible,.operator-link:focus-visible { outline:3px solid var(--gold); outline-offset:4px; }
   .today-card { display:flex; align-items:center; justify-content:space-between; width:min(920px,100%); min-height:64px; margin:0 auto 22px; padding:10px 20px; border:2px solid var(--line); }
   .today-card[hidden] { display:none; }
@@ -20,7 +22,7 @@
   .today-day { margin:0; font-size:1.8rem; font-weight:800; white-space:nowrap; }
   .home-content { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(480px,.9fr); align-items:center; gap:clamp(36px,4vw,64px); }
   .home-illustration { display:flex; align-items:center; justify-content:center; margin:0; }
-  .home-illustration img { display:block; width:100%; height:auto; max-height:min(420px,calc(100vh - 230px)); object-fit:contain; }
+  .home-illustration img { display:block; width:100%; height:auto; max-height:min(420px,calc(100vh - 270px)); object-fit:contain; }
   .course-panel h2 { margin:0 0 10px; color:var(--muted); font-size:1rem; font-weight:600; letter-spacing:.18em; }
   .course-row { display:grid; grid-template-columns:60px 1fr; align-items:start; min-height:44px; padding:10px 0 12px; border-top:2px solid var(--ink); text-decoration:none; }
   .course-row + .course-row { border-top:1px solid var(--line); }
@@ -35,7 +37,9 @@
   }
   @media (max-width:900px) {
     .page { display:block; min-height:0; padding:28px 16px 56px; }
-    h1 { margin-bottom:32px; font-size:clamp(3rem,16vw,5.2rem); line-height:.92; white-space:normal; }
+    .voice-logo { position:static; width:52px; height:42px; margin:0 0 24px; }
+    h1 { margin-bottom:8px; font-size:clamp(3rem,16vw,5.2rem); line-height:.92; white-space:normal; }
+    .site-tagline { margin-bottom:32px; }
     .today-card { min-height:96px; margin:0 0 36px; padding:17px 18px; }
     .today-label { margin-bottom:8px; font-size:.95rem; }
     .today-date { font-size:1.1rem; }
@@ -54,7 +58,9 @@
 </head>
 <body>
 <main class="page">
+  <img class="voice-logo" src="/assets/voice-logo.png" alt="VOICE" width="218" height="176" />
   <h1>ÖSH Vocabulary Challenge</h1>
+  <p class="site-tagline">みんなで満点を目指そう！</p>
   <section class="today-card" id="today-card" aria-labelledby="today-heading" hidden>
     <div><h2 class="today-label" id="today-heading">今日の学習</h2><p class="today-date" id="today-date"></p></div>
     <p class="today-day" id="today-day"></p>

@@ -425,9 +425,9 @@ test("結果確定は同日同コースを置換し、別コースとホスト�
   assert.equal(Object.hasOwn(results.perfect[0], "timeMs"), false);
   assert.equal(results.others.every((entry) => !Object.hasOwn(entry, "timeMs")), true);
   assert.deepEqual(results.mistakes, [
-    { index: 0, answer: "alpha", ja: "アルファ", count: 2 },
-    { index: 2, answer: "charlie", ja: "チャーリー", count: 2 },
-    { index: 1, answer: "bravo", ja: "ブラボー", count: 1 },
+    { index: 0, answer: "alpha", ja: "アルファ", count: 2, reasonCounts: { other: 2 } },
+    { index: 2, answer: "charlie", ja: "チャーリー", count: 2, reasonCounts: { other: 2 } },
+    { index: 1, answer: "bravo", ja: "ブラボー", count: 1, reasonCounts: { other: 1 } },
   ]);
   assert.equal(results.isTrial, false);
 
@@ -475,6 +475,62 @@ test("結果確定は同日同コースを置換し、別コースとホスト�
   assert.deepEqual(restarted.rooms, {});
   assert.deepEqual(restarted.resultHistory[historyKey], replaced);
   assert.deepEqual(restarted.resultHistory[toeicKey], toeic);
+});
+
+test("誤答本文を残さず、問題ごとのミス傾向だけを集計して結果へ含める", async (t) => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-reasons-"));
+  const stateFile = path.join(tempDir, "quiz-rooms.json");
+  const room = playingRoom({
+    players: {
+      host: player("ホスト", "host-token"),
+      inflection: player("活用", "inflection-token"),
+      spelling: player("スペル", "spelling-token"),
+      blank: player("未回答", "blank-token"),
+      other: player("その他", "other-token"),
+    },
+  });
+  room.questions = [{
+    sentence: "Last spring, they ___ trees.",
+    answer: "planted",
+    base: "plant",
+    ja: "植える",
+    sentenceJa: "去年の春、木を植えた。",
+  }];
+  fs.writeFileSync(stateFile, JSON.stringify({ version: 2, rooms: { ABCD: room }, resultHistory: {} }));
+
+  const { child, baseUrl } = await startServer(stateFile);
+  const sockets = await Promise.all(Array.from({ length: 5 }, () => connect(baseUrl)));
+  t.after(async () => {
+    sockets.forEach((socket) => socket.disconnect());
+    await stopServer(child);
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  });
+  const [host, inflection, spelling, blank, other] = sockets;
+  await rejoin(host, "ABCD", "host", "host-token");
+  await rejoin(inflection, "ABCD", "inflection", "inflection-token");
+  await rejoin(spelling, "ABCD", "spelling", "spelling-token");
+  await rejoin(blank, "ABCD", "blank", "blank-token");
+  await rejoin(other, "ABCD", "other", "other-token");
+
+  await emitWithAck(inflection, "quiz:submit", { answers: ["plant"] });
+  await emitWithAck(spelling, "quiz:submit", { answers: ["plante"] });
+  await emitWithAck(blank, "quiz:submit", { answers: [""] });
+  await emitWithAck(other, "quiz:submit", { answers: ["grew"] });
+
+  const event = waitForEvent(host, "quiz:results");
+  assert.deepEqual(await emitWithoutPayloadWithAck(host, "quiz:revealResults"), { ok: true });
+  const [results] = await event;
+  assert.deepEqual(results.mistakes, [{
+    index: 0,
+    answer: "planted",
+    ja: "植える",
+    count: 4,
+    reasonCounts: { inflection: 1, spelling: 1, blank: 1, other: 1 },
+  }]);
+
+  const saved = fs.readFileSync(stateFile, "utf8");
+  assert.equal(saved.includes('"plante"'), false, "スペル誤答本文を永続ファイルへ保存しない");
+  assert.equal(saved.includes('"grew"'), false, "別単語の誤答本文を永続ファイルへ保存しない");
 });
 
 test("全員正解なら誤答上位を空配列で保存する", async (t) => {
