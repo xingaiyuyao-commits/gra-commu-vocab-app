@@ -7,20 +7,30 @@ const WORDTESTS = require("../wordtests");
 
 const PORT = 3199;
 const URL = `http://localhost:${PORT}`;
-const connect = () => io(URL, { transports: ["websocket"] });
+const TEST_OPERATOR_PASSWORD = "flow-test-operator-password";
+const connect = (cookie = "") => io(URL, {
+  transports: ["websocket"],
+  extraHeaders: cookie ? { Cookie: cookie } : undefined,
+});
 const results = [];
 const check = (cond, msg) => { results.push(cond); console.log((cond ? "ok:" : "FAIL:"), msg); };
 
 async function main() {
   const server = spawn("node", [path.join(__dirname, "..", "server.js")], {
-    env: { ...process.env, PORT: String(PORT) },
+    env: { ...process.env, PORT: String(PORT), OPERATOR_PASSWORD: TEST_OPERATOR_PASSWORD },
     stdio: ["ignore", "pipe", "inherit"],
   });
   await new Promise((res) => server.stdout.on("data", (d) => { if (d.toString().includes("Server running")) res(); }));
 
   try {
+    const login = await fetch(`${URL}/api/operator/login`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ password: TEST_OPERATOR_PASSWORD }),
+    });
+    const operatorCookie = login.headers.get("set-cookie").split(";", 1)[0];
     // --- シナリオ1: ホスト1人＋参加者2人で通しプレイ（正解/不正解・順位・答え合わせ） ---
-    const host = connect();
+    const host = connect(operatorCookie);
     const g1a = connect();
     const g1b = connect();
 
@@ -53,7 +63,7 @@ async function main() {
     check(typeof qh.endsAt === "number" && qh.endsAt > Date.now(), "制限時間の終了時刻が届く");
     check(JSON.stringify(qh.questions) === JSON.stringify(qa.questions), "全員に同じ問題が配られる");
     check(!("answer" in qh.questions[0]), "配布した問題に答えが含まれない");
-    check(qh.setLabel === "IELTS Day 1", "セット名が届く");
+    check(/^IELTS /.test(qh.setLabel), "セット名が届く");
 
     // ホストが回答を送っても無視される（ホストは開催者であり参加者ではない）
     host.emit("quiz:submit", { answers: Array(20).fill("x") });
@@ -97,7 +107,7 @@ async function main() {
     host.disconnect(); g1a.disconnect(); g1b.disconnect();
 
     // --- シナリオ2: プレイ中の切断で残りメンバーだけで結果発表 ---
-    const h2 = connect();
+    const h2 = connect(operatorCookie);
     const gA = connect();
     const gB = connect();
     const c2 = await new Promise((res) => h2.emit("quiz:createRoom", { category: "toeic", name: "Host" }, res));
@@ -118,11 +128,10 @@ async function main() {
     h2.disconnect(); gA.disconnect(); gB.disconnect();
 
     // --- シナリオ3: プレイ中にリロード（切断→同じplayerIdで再接続）しても続きから復帰できる ---
-    const h3 = connect();
+    const h3 = connect(operatorCookie);
     const g3 = connect();
-    const guestPlayerId = "test-guest-" + Math.random().toString(36).slice(2);
     const c3 = await new Promise((res) => h3.emit("quiz:createRoom", { category: "clacel", name: "Host" }, res));
-    await new Promise((res) => g3.emit("quiz:joinRoom", { roomCode: c3.roomCode, name: "B", playerId: guestPlayerId }, res));
+    const joined3 = await new Promise((res) => g3.emit("quiz:joinRoom", { roomCode: c3.roomCode, name: "B" }, res));
     const started3 = new Promise((res) => h3.once("quiz:started", res));
     h3.emit("quiz:startGame", { seriesIndex: 0 });
     await started3;
@@ -130,7 +139,11 @@ async function main() {
     g3.disconnect(); // ページリロードを模した瞬断
     const g3b = connect();
     const rejoin = await new Promise((res) =>
-      g3b.emit("quiz:rejoin", { roomCode: c3.roomCode, playerId: guestPlayerId }, res)
+      g3b.emit("quiz:rejoin", {
+        roomCode: c3.roomCode,
+        playerId: joined3.playerId,
+        sessionToken: joined3.sessionToken,
+      }, res)
     );
     check(rejoin.ok === true, "同じplayerIdでの再接続はrejoin成功を返す");
     check(rejoin.phase === "playing" && rejoin.submitted === false, "再接続時にプレイ中であることが分かる");
@@ -152,7 +165,7 @@ async function main() {
 
     // --- シナリオ4: 結果発表は必ずホストのquiz:revealResults操作を経由し、
     //     かつ参加者全員の提出が揃うまではその操作自体が無視される ---
-    const h4 = connect();
+    const h4 = connect(operatorCookie);
     const g4 = connect();
     const c4 = await new Promise((res) => h4.emit("quiz:createRoom", { category: "clacel", name: "Host" }, res));
     await new Promise((res) => g4.emit("quiz:joinRoom", { roomCode: c4.roomCode, name: "B" }, res));

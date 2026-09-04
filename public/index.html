@@ -32,6 +32,7 @@
   .course-row small { margin-top:2px; color:#646464; font-size:.85rem; line-height:1.4; }
   .course-row strong,.course-row b,.course-row small { display:block; }
   .operator-link { display:block; min-height:32px; padding:10px 0 0; border-top:1px solid var(--line); color:#8a8a8a; font-size:.9rem; text-decoration:none; }
+  .operator-link[hidden] { display:none; }
   @media (hover:hover) {
     .operator-link:hover { text-decoration:underline; text-underline-offset:7px; }
   }
@@ -78,7 +79,7 @@
       <div class="course-row"><span class="course-number">01</span><span><strong>Clacel</strong><b>日常から仕事まで、使える英語を</b><small>基礎を積み上げながら、英語を自分の言葉にしていくコースです</small></span></div>
       <div class="course-row"><span class="course-number">02</span><span><strong>TOEIC</strong><b>スコアと実務につながる英語を</b><small>頻出語を確実に身につけ、試験にも仕事にも活かします</small></span></div>
       <div class="course-row"><span class="course-number">03</span><span><strong>IELTS</strong><b>海外で学び、暮らすための英語を</b><small>アカデミックな語彙を鍛え、世界へ踏み出す力を育てます</small></span></div>
-      <a class="operator-link" href="/quiz.html?mode=create">運営用</a>
+      <a class="operator-link" id="operator-entry" href="/quiz.html?mode=create" hidden>開催画面を開く</a>
     </section>
   </div>
 </main>
@@ -91,6 +92,11 @@
     document.getElementById("today-day").textContent = `Day ${studyDay}`;
     document.getElementById("today-card").hidden = false;
   }
+  fetch("/api/operator/session", { cache: "no-store" })
+    .then((response) => {
+      if (response.ok) document.getElementById("operator-entry").hidden = false;
+    })
+    .catch(() => {});
 </script>
 </body>
 </html>
