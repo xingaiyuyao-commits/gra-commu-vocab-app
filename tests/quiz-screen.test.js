@@ -116,7 +116,7 @@ test("週間復習入口: 今週の保存語があるクイズ入口だけに正
   const entry = document.getElementById("weekly-review-entry");
   const button = document.getElementById("btn-weekly-review");
   assertVisible(entry, "週間復習入口");
-  assert.equal(button.textContent, "今週の間違いを解く（2語）");
+  assert.equal(button.textContent, "今週の間違いを復習する（2語）");
   assert.equal(entry.closest(".screen").id, "screen-entry");
   assert.match(entry.textContent, /同じ端末・同じブラウザ/);
   assert.match(entry.textContent, /期限切れ/);
@@ -165,7 +165,7 @@ test("週間復習入口: 初期件数表示では完全読込ヘルパーを呼
   window.QuizUi.readWeeklyMistakes = () => { throw new Error("full reader called"); };
 
   assert.doesNotThrow(() => window.eval("renderWeeklyReviewEntry()"));
-  assert.equal(document.getElementById("btn-weekly-review").textContent, "今週の間違いを解く（1語）");
+  assert.equal(document.getElementById("btn-weekly-review").textContent, "今週の間違いを復習する（1語）");
 });
 
 test("参加・作成画面: Clacel/TOEIC/IELTSそれぞれの作成ボタンが横並びで表示される", () => {
@@ -411,7 +411,7 @@ test("参加・作成画面: 名前を入力してから作成ボタンを押す
   assert.equal(document.getElementById("mh-clacel-lobby").hidden, false);
 });
 
-test("参加・作成画面: ホストの複数コース作成パネルは開始〜結果発表〜もう一度まで1画面で完結する", () => {
+test("参加・作成画面: ホストの複数コース作成パネルは開始〜結果発表〜終了まで1画面で完結する", () => {
   const { window, document, fakeSockets } = loadQuizPage();
   setValue(window, document.getElementById("name"), "ホスト");
 
@@ -454,13 +454,9 @@ test("参加・作成画面: ホストの複数コース作成パネルは開始
   s.fire("quiz:results", { setLabel: "TOEIC Day 1", perfect: [{ name: "Aさん" }], others: [] });
   assert.equal(document.getElementById("mh-toeic-results").hidden, false);
   assert.match(document.getElementById("mh-toeic-perfect").innerHTML, /Aさん/);
-
-  // もう一度
-  document.getElementById("mh-toeic-again").dispatchEvent(new window.Event("click", { bubbles: true }));
-  assert.ok(s.emitted.some((e) => e.event === "quiz:playAgain"));
-  s.fire("quiz:backToLobby");
-  assert.equal(document.getElementById("mh-toeic-lobby").hidden, false);
-  assert.equal(document.getElementById("mh-toeic-results").hidden, true);
+  assert.equal(document.getElementById("mh-toeic-again"), null, "同じルームでの再開催操作を表示しない");
+  assert.match(document.getElementById("mh-toeic-results").textContent, /参加者の確認後、本日のルームを終了してください/);
+  assert.equal(document.getElementById("mh-toeic-close").textContent.trim(), "本日のルームを終了");
 });
 
 test("複数ルーム結果: 上位3件を順位と主なミス傾向で表示する", () => {
@@ -738,9 +734,12 @@ test("問題画面: 更新防止と文法上の活用案内を分かれた文で
 test("結果後の動線: 解き直しを主操作、退出を副操作として二択で表示する", () => {
   const { document } = loadQuizPage();
   const retest = document.getElementById("btn-retest");
-  assert.equal(retest.textContent.trim(), "間違えた単語を解き直す");
+  assert.equal(retest.textContent.trim(), "今回の間違いを今すぐ解き直す");
   assert.equal(retest.classList.contains("secondary"), false);
   assert.equal(document.querySelector("#screen-results > .leave").textContent.trim(), "ルームを退出する");
+  assert.match(document.getElementById("results-next-note").textContent, /次回は新しい招待リンクから参加してください/);
+  assert.equal(document.getElementById("btn-again"), null, "ホストにも同じルームでの再開催操作を表示しない");
+  assert.match(document.getElementById("host-results-note").textContent, /参加者の確認後、本日のルームを終了してください/);
 });
 
 test("テスト画面: 設問の英文の下に例文の日本語訳が表示される", () => {
@@ -1032,7 +1031,7 @@ test("週間復習保存: 通常回の誤答だけを個人情報なしで今週
   const stored = JSON.parse(raw);
   assert.equal(stored.weekId, "2026-09-06");
   assert.equal(stored.records.length, 1, "同じ結果の再描画では記録を増やさない");
-  assert.equal(document.getElementById("btn-weekly-review").textContent, "今週の間違いを解く（1語）");
+  assert.equal(document.getElementById("btn-weekly-review").textContent, "今週の間違いを復習する（1語）");
   assert.deepEqual(Object.keys(stored.records[0]), ["at", "category", "setLabel", "words"]);
   assert.equal(stored.records[0].category, "clacel");
   assert.equal(stored.records[0].setLabel, "Day 2");

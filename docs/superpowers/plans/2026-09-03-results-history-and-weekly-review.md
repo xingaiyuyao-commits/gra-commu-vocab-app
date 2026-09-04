@@ -125,7 +125,7 @@
 - Uses `QuizUi.getProjectWeek(date)` from Task 1; trial results are never written.
 
 - [ ] **Step 1: Add failing pure tests for the exact 19:30 JST boundary.** Test 19:29:59 vs 19:30:00 on Sep 6 and Sep 13, pruning old weeks, max 420 words, and malformed local data returning empty state.
-- [ ] **Step 2: Add failing screen tests.** Assert non-trial mistakes are saved without personal fields; trial mistakes are not saved; “今週の間違いを解く（N語）” appears only with current-week data; clicking it starts all current-week records; and Japanese example text is rendered.
+- [ ] **Step 2: Add failing screen tests.** Assert non-trial mistakes are saved without personal fields; trial mistakes are not saved; “今週の間違いを復習する（N語）” appears only with current-week data; clicking it starts all current-week records; and Japanese example text is rendered.
 - [ ] **Step 3: Run both test files and verify the missing helper/storage/entry failures.**
 - [ ] **Step 4: Implement read/prune/write helpers and replace the old latest-mistake record.** Read only the count for initial entry rendering; load full words only when review begins.
 - [ ] **Step 5: Add the weekly-review entry and limitation note. Preserve same-week items even after they are answered correctly in a retest.**
