@@ -1,0 +1,4098 @@
+{
+  "label": "IELTS",
+  "datasetRevision": "2026-09-04-3cfff2a5f4f5",
+  "series": [
+    {
+      "name": "Day 1",
+      "day": 1,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day01/q01",
+          "sentence": "Certain chemicals can ___ changes in cell growth.",
+          "answer": "induce",
+          "base": "induce",
+          "hint": "i_____",
+          "ja": "引き起こす、誘発する",
+          "sentenceJa": "特定の化学物質は細胞の成長に変化を引き起こすことがある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day01/q02",
+          "sentence": "Researchers ___ the temperature to test the reaction.",
+          "answer": "manipulated",
+          "base": "manipulate",
+          "hint": "m_________",
+          "ja": "操作する",
+          "sentenceJa": "研究者たちは反応を調べるために温度を操作した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day01/q03",
+          "sentence": "A few large firms ___ the global market.",
+          "answer": "dominate",
+          "base": "dominate",
+          "hint": "d_______",
+          "ja": "支配する、優位を占める",
+          "sentenceJa": "少数の大企業が世界市場を支配している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day01/q04",
+          "sentence": "Sediment ___ slowly at the bottom of the lake.",
+          "answer": "accumulates",
+          "base": "accumulate",
+          "hint": "a_________",
+          "ja": "蓄積する",
+          "sentenceJa": "堆積物は湖の底にゆっくりと蓄積している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day01/q05",
+          "sentence": "Limited funding ___ the scope of the research.",
+          "answer": "constrained",
+          "base": "constrain",
+          "hint": "c________",
+          "ja": "制約する",
+          "sentenceJa": "限られた資金が研究の範囲を制約した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day01/q06",
+          "sentence": "Researchers ___ the data from a large national survey.",
+          "answer": "obtained",
+          "base": "obtain",
+          "hint": "o_____",
+          "ja": "得る、入手する",
+          "sentenceJa": "研究者たちは大規模な全国調査からデータを入手した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day01/q07",
+          "sentence": "The teacher tried to ___ the difficult concept.",
+          "answer": "clarify",
+          "base": "clarify",
+          "hint": "c______",
+          "ja": "明確にする",
+          "sentenceJa": "先生はその難しい概念を明確にしようとした。"
+        },
+        {
+          "questionId": "2026-09/ielts/day01/q08",
+          "sentence": "Modern technology ___ communication between countries.",
+          "answer": "facilitates",
+          "base": "facilitate",
+          "hint": "f_________",
+          "ja": "促進する、容易にする",
+          "sentenceJa": "現代の技術は国家間のコミュニケーションを促進している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day01/q09",
+          "sentence": "The government may ___ when prices rise too sharply.",
+          "answer": "intervene",
+          "base": "intervene",
+          "hint": "i________",
+          "ja": "介入する",
+          "sentenceJa": "価格が急激に上昇した場合、政府が介入することがある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day01/q10",
+          "sentence": "This solar panel ___ enough electricity for one household.",
+          "answer": "generates",
+          "base": "generate",
+          "hint": "g_______",
+          "ja": "生み出す、発生させる",
+          "sentenceJa": "この太陽光パネルは一世帯分の電気を発電している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day01/q11",
+          "sentence": "Many modern English words are ___ from Latin and Greek.",
+          "answer": "derived",
+          "base": "derive",
+          "hint": "d_____",
+          "ja": "（～から）得る、由来する",
+          "sentenceJa": "多くの現代英語の単語はラテン語やギリシャ語に由来している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day01/q12",
+          "sentence": "To this day, the author ___ that education reduces inequality.",
+          "answer": "asserts",
+          "base": "assert",
+          "hint": "a_____",
+          "ja": "主張する、断言する",
+          "sentenceJa": "今日に至るまで、その著者は教育が不平等を減らすと主張している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day01/q13",
+          "sentence": "The school aims to ___ technology into every subject.",
+          "answer": "integrate",
+          "base": "integrate",
+          "hint": "i________",
+          "ja": "統合する",
+          "sentenceJa": "その学校はあらゆる科目に技術を統合することを目指している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day01/q14",
+          "sentence": "This painting ___ a busy market in the old city.",
+          "answer": "depicts",
+          "base": "depict",
+          "hint": "d_____",
+          "ja": "描く、表現する",
+          "sentenceJa": "この絵は旧市街の賑やかな市場を描いている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day01/q15",
+          "sentence": "It is hard to ___ of a society without any rules.",
+          "answer": "conceive",
+          "base": "conceive",
+          "hint": "c_______",
+          "ja": "思いつく、想像する",
+          "sentenceJa": "ルールが全くない社会を思い描くのは難しい。"
+        },
+        {
+          "questionId": "2026-09/ielts/day01/q16",
+          "sentence": "It is difficult to ___ the two closely related species.",
+          "answer": "differentiate",
+          "base": "differentiate",
+          "hint": "d____________",
+          "ja": "区別する",
+          "sentenceJa": "近縁の2種を区別するのは難しい。"
+        },
+        {
+          "questionId": "2026-09/ielts/day01/q17",
+          "sentence": "The company ___ natural resources in the region.",
+          "answer": "exploits",
+          "base": "exploit",
+          "hint": "e______",
+          "ja": "活用する、搾取する",
+          "sentenceJa": "その会社はその地域の天然資源を活用している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day01/q18",
+          "sentence": "Children learn social skills by ___ with others.",
+          "answer": "interacting",
+          "base": "interact",
+          "hint": "i_______",
+          "ja": "相互に作用する、交流する",
+          "sentenceJa": "子供たちは他者と交流することで社会的スキルを学ぶ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day01/q19",
+          "sentence": "The city has ___ major changes in recent decades.",
+          "answer": "undergone",
+          "base": "undergo",
+          "hint": "u______",
+          "ja": "経験する、受ける",
+          "sentenceJa": "その都市はここ数十年で大きな変化を経験した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day01/q20",
+          "sentence": "The research team carefully ___ the results of the study.",
+          "answer": "interpreted",
+          "base": "interpret",
+          "hint": "i________",
+          "ja": "解釈する",
+          "sentenceJa": "研究チームは研究結果を慎重に解釈した。"
+        }
+      ]
+    },
+    {
+      "name": "Day 2",
+      "day": 2,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day02/q01",
+          "sentence": "Experts ___ that the population will double by 2050.",
+          "answer": "estimate",
+          "base": "estimate",
+          "hint": "e_______",
+          "ja": "推定する、見積もる",
+          "sentenceJa": "専門家は2050年までに人口が倍増すると推定している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day02/q02",
+          "sentence": "Reading widely can ___ your writing skills.",
+          "answer": "enhance",
+          "base": "enhance",
+          "hint": "e______",
+          "ja": "高める、向上させる",
+          "sentenceJa": "幅広く読書することは文章力を高めることができる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day02/q03",
+          "sentence": "This survey ___ that most people support the plan.",
+          "answer": "indicates",
+          "base": "indicate",
+          "hint": "i_______",
+          "ja": "示す、示唆する",
+          "sentenceJa": "この調査は大多数の人がその計画を支持していることを示している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day02/q04",
+          "sentence": "Teachers ___ students through exams and projects.",
+          "answer": "evaluate",
+          "base": "evaluate",
+          "hint": "e_______",
+          "ja": "評価する",
+          "sentenceJa": "教師は試験や課題を通して生徒を評価する。"
+        },
+        {
+          "questionId": "2026-09/ielts/day02/q05",
+          "sentence": "It is hard to ___ economic growth for many years.",
+          "answer": "sustain",
+          "base": "sustain",
+          "hint": "s______",
+          "ja": "維持する、持続させる",
+          "sentenceJa": "長年にわたって経済成長を維持することは難しい。"
+        },
+        {
+          "questionId": "2026-09/ielts/day02/q06",
+          "sentence": "Doctors always ___ each patient before deciding on treatment.",
+          "answer": "assess",
+          "base": "assess",
+          "hint": "a_____",
+          "ja": "評価する、査定する",
+          "sentenceJa": "医師はいつも、治療方針を決める前に各患者を評価する。"
+        },
+        {
+          "questionId": "2026-09/ielts/day02/q07",
+          "sentence": "Burning fossil fuels ___ to climate change.",
+          "answer": "contributes",
+          "base": "contribute",
+          "hint": "c_________",
+          "ja": "貢献する、一因となる",
+          "sentenceJa": "化石燃料の燃焼は気候変動の一因となっている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day02/q08",
+          "sentence": "The government will ___ more funds to public health.",
+          "answer": "allocate",
+          "base": "allocate",
+          "hint": "a_______",
+          "ja": "割り当てる、配分する",
+          "sentenceJa": "政府は公衆衛生にさらに多くの資金を割り当てる予定だ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day02/q09",
+          "sentence": "We should ___ water during the dry season.",
+          "answer": "conserve",
+          "base": "conserve",
+          "hint": "c_______",
+          "ja": "保存する、節約する",
+          "sentenceJa": "乾季には水を節約すべきだ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day02/q10",
+          "sentence": "This study ___ the effects of stress on health.",
+          "answer": "examines",
+          "base": "examine",
+          "hint": "e______",
+          "ja": "詳しく調べる",
+          "sentenceJa": "この研究はストレスが健康に与える影響を詳しく調べている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day02/q11",
+          "sentence": "Children ___ language quickly in their early years.",
+          "answer": "acquire",
+          "base": "acquire",
+          "hint": "a______",
+          "ja": "習得する、獲得する",
+          "sentenceJa": "子供は幼少期に言語を素早く習得する。"
+        },
+        {
+          "questionId": "2026-09/ielts/day02/q12",
+          "sentence": "Plants ___ sunlight into energy.",
+          "answer": "convert",
+          "base": "convert",
+          "hint": "c______",
+          "ja": "変える、転換する",
+          "sentenceJa": "植物は太陽光をエネルギーに変換する。"
+        },
+        {
+          "questionId": "2026-09/ielts/day02/q13",
+          "sentence": "These results ___ a clear link between diet and health.",
+          "answer": "demonstrate",
+          "base": "demonstrate",
+          "hint": "d__________",
+          "ja": "実証する、示す",
+          "sentenceJa": "これらの結果は食事と健康の明確な関連性を示している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day02/q14",
+          "sentence": "Engineers ___ the design to reduce the cost.",
+          "answer": "modified",
+          "base": "modify",
+          "hint": "m_____",
+          "ja": "修正する、変更する",
+          "sentenceJa": "エンジニアはコストを削減するために設計を変更した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day02/q15",
+          "sentence": "Wealth is not evenly ___ across the country.",
+          "answer": "distributed",
+          "base": "distribute",
+          "hint": "d_________",
+          "ja": "分配する、分布させる",
+          "sentenceJa": "富はその国全体に均等に分配されていない。"
+        },
+        {
+          "questionId": "2026-09/ielts/day02/q16",
+          "sentence": "The new system aims to ___ waste.",
+          "answer": "eliminate",
+          "base": "eliminate",
+          "hint": "e________",
+          "ja": "排除する",
+          "sentenceJa": "新しいシステムは無駄を排除することを目指している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day02/q17",
+          "sentence": "New evidence has ___ about the cause of the illness.",
+          "answer": "emerged",
+          "base": "emerge",
+          "hint": "e_____",
+          "ja": "現れる、明らかになる",
+          "sentenceJa": "その病気の原因について新たな証拠が明らかになった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day02/q18",
+          "sentence": "These findings ___ the need for stricter rules.",
+          "answer": "reinforce",
+          "base": "reinforce",
+          "hint": "r________",
+          "ja": "強化する、補強する",
+          "sentenceJa": "これらの調査結果はより厳格な規則の必要性を強化している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day02/q19",
+          "sentence": "Scientists ___ living things into several kingdoms.",
+          "answer": "classify",
+          "base": "classify",
+          "hint": "c_______",
+          "ja": "分類する",
+          "sentenceJa": "科学者は生物をいくつかの界に分類する。"
+        },
+        {
+          "questionId": "2026-09/ielts/day02/q20",
+          "sentence": "Extra training can ___ for a lack of experience.",
+          "answer": "compensate",
+          "base": "compensate",
+          "hint": "c_________",
+          "ja": "埋め合わせる、補償する",
+          "sentenceJa": "追加の訓練は経験不足を埋め合わせることができる。"
+        }
+      ]
+    },
+    {
+      "name": "Day 3",
+      "day": 3,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day03/q01",
+          "sentence": "The ___ of the disease has fallen in recent years.",
+          "answer": "incidence",
+          "base": "incidence",
+          "hint": "i________",
+          "ja": "発生率",
+          "sentenceJa": "その病気の発生率は近年低下している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day03/q02",
+          "sentence": "The company has a strict ___ of management.",
+          "answer": "hierarchy",
+          "base": "hierarchy",
+          "hint": "h________",
+          "ja": "階層、序列",
+          "sentenceJa": "その会社には厳格な管理階層がある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day03/q03",
+          "sentence": "She faced a ___ between work and family.",
+          "answer": "dilemma",
+          "base": "dilemma",
+          "hint": "d______",
+          "ja": "ジレンマ、板挟み",
+          "sentenceJa": "彼女は仕事と家庭の間でジレンマに直面した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day03/q04",
+          "sentence": "Scientists have reached a ___ on climate change.",
+          "answer": "consensus",
+          "base": "consensus",
+          "hint": "c________",
+          "ja": "合意、総意",
+          "sentenceJa": "科学者たちは気候変動について合意に達した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day03/q05",
+          "sentence": "There is a wide ___ in income between regions.",
+          "answer": "disparity",
+          "base": "disparity",
+          "hint": "d________",
+          "ja": "格差、相違",
+          "sentenceJa": "地域間の所得格差は大きい。"
+        },
+        {
+          "questionId": "2026-09/ielts/day03/q06",
+          "sentence": "The ___ that the earth was flat lasted for centuries.",
+          "answer": "notion",
+          "base": "notion",
+          "hint": "n_____",
+          "ja": "観念、概念",
+          "sentenceJa": "地球が平らだという考えは何世紀にもわたって続いた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day03/q07",
+          "sentence": "Applications are judged against three main ___.",
+          "answer": "criteria",
+          "base": "criteria",
+          "hint": "c_______",
+          "ja": "基準",
+          "sentenceJa": "応募は3つの主要な基準に基づいて審査される。"
+        },
+        {
+          "questionId": "2026-09/ielts/day03/q08",
+          "sentence": "The ___ of the election surprised many people.",
+          "answer": "outcome",
+          "base": "outcome",
+          "hint": "o______",
+          "ja": "結果",
+          "sentenceJa": "選挙の結果は多くの人を驚かせた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day03/q09",
+          "sentence": "The experiment was designed to test the ___.",
+          "answer": "hypothesis",
+          "base": "hypothesis",
+          "hint": "h_________",
+          "ja": "仮説",
+          "sentenceJa": "その実験は仮説を検証するために設計された。"
+        },
+        {
+          "questionId": "2026-09/ielts/day03/q10",
+          "sentence": "The essay examines several ___ of urban life.",
+          "answer": "aspects",
+          "base": "aspect",
+          "hint": "a_____",
+          "ja": "側面、観点",
+          "sentenceJa": "そのエッセイは都市生活のいくつかの側面を考察している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day03/q11",
+          "sentence": "It is a ___ that the wealthiest nations waste the most food.",
+          "answer": "paradox",
+          "base": "paradox",
+          "hint": "p______",
+          "ja": "逆説、矛盾",
+          "sentenceJa": "最も裕福な国々が最も多くの食料を無駄にしているのは逆説的だ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day03/q12",
+          "sentence": "The researchers explained their ___ in detail.",
+          "answer": "methodology",
+          "base": "methodology",
+          "hint": "m__________",
+          "ja": "方法論",
+          "sentenceJa": "研究者たちは自分たちの方法論を詳しく説明した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day03/q13",
+          "sentence": "The ___ of the internet changed daily life.",
+          "answer": "emergence",
+          "base": "emergence",
+          "hint": "e________",
+          "ja": "出現",
+          "sentenceJa": "インターネットの出現は日常生活を変えた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day03/q14",
+          "sentence": "The country invested heavily in its ___.",
+          "answer": "infrastructure",
+          "base": "infrastructure",
+          "hint": "i_____________",
+          "ja": "インフラ、社会基盤",
+          "sentenceJa": "その国はインフラに多額の投資をした。"
+        },
+        {
+          "questionId": "2026-09/ielts/day03/q15",
+          "sentence": "The book offers a fresh ___ on history.",
+          "answer": "perspective",
+          "base": "perspective",
+          "hint": "p__________",
+          "ja": "観点、見方",
+          "sentenceJa": "その本は歴史について新しい視点を提供している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day03/q16",
+          "sentence": "Working from home has become the ___ for many people.",
+          "answer": "norm",
+          "base": "norm",
+          "hint": "n___",
+          "ja": "規範、標準",
+          "sentenceJa": "在宅勤務は多くの人にとって当たり前のことになった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day03/q17",
+          "sentence": "Global warming is a worldwide ___.",
+          "answer": "phenomenon",
+          "base": "phenomenon",
+          "hint": "p_________",
+          "ja": "現象",
+          "sentenceJa": "地球温暖化は世界的な現象である。"
+        },
+        {
+          "questionId": "2026-09/ielts/day03/q18",
+          "sentence": "The ecosystem maintains a delicate ___.",
+          "answer": "equilibrium",
+          "base": "equilibrium",
+          "hint": "e__________",
+          "ja": "均衡",
+          "sentenceJa": "その生態系は微妙な均衡を保っている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day03/q19",
+          "sentence": "Each branch operates as a separate legal ___.",
+          "answer": "entity",
+          "base": "entity",
+          "hint": "e_____",
+          "ja": "存在、実体",
+          "sentenceJa": "各支店は独立した法人として運営されている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day03/q20",
+          "sentence": "The study provides a useful ___ for future research.",
+          "answer": "framework",
+          "base": "framework",
+          "hint": "f________",
+          "ja": "枠組み",
+          "sentenceJa": "その研究は今後の研究に役立つ枠組みを提供している。"
+        }
+      ]
+    },
+    {
+      "name": "Day 4",
+      "day": 4,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day04/q01",
+          "sentence": "The two groups have been in ___ for years.",
+          "answer": "conflict",
+          "base": "conflict",
+          "hint": "c_______",
+          "ja": "対立、紛争",
+          "sentenceJa": "その2つのグループは長年対立してきた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day04/q02",
+          "sentence": "The government is responsible for the ___ of its citizens.",
+          "answer": "welfare",
+          "base": "welfare",
+          "hint": "w______",
+          "ja": "福祉、幸福",
+          "sentenceJa": "政府は国民の福祉に責任がある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day04/q03",
+          "sentence": "There is strong ___ that exercise improves mood.",
+          "answer": "evidence",
+          "base": "evidence",
+          "hint": "e_______",
+          "ja": "証拠",
+          "sentenceJa": "運動が気分を改善するという強い証拠がある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day04/q04",
+          "sentence": "Books in the library are arranged by ___.",
+          "answer": "category",
+          "base": "category",
+          "hint": "c_______",
+          "ja": "カテゴリー、分類",
+          "sentenceJa": "図書館の本はカテゴリー別に並べられている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day04/q05",
+          "sentence": "A large ___ of students own a smartphone.",
+          "answer": "proportion",
+          "base": "proportion",
+          "hint": "p_________",
+          "ja": "割合",
+          "sentenceJa": "学生の大部分がスマートフォンを持っている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day04/q06",
+          "sentence": "The country is going through a ___ to clean energy.",
+          "answer": "transition",
+          "base": "transition",
+          "hint": "t_________",
+          "ja": "移行、変遷",
+          "sentenceJa": "その国はクリーンエネルギーへの移行を経験している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day04/q07",
+          "sentence": "Water is a precious natural ___.",
+          "answer": "resource",
+          "base": "resource",
+          "hint": "r_______",
+          "ja": "資源",
+          "sentenceJa": "水は貴重な天然資源である。"
+        },
+        {
+          "questionId": "2026-09/ielts/day04/q08",
+          "sentence": "The ___ of voters supported the new law.",
+          "answer": "majority",
+          "base": "majority",
+          "hint": "m_______",
+          "ja": "大多数",
+          "sentenceJa": "有権者の大多数が新しい法律を支持した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day04/q09",
+          "sentence": "There is a growing ___ toward remote working.",
+          "answer": "trend",
+          "base": "trend",
+          "hint": "t____",
+          "ja": "傾向、動向",
+          "sentenceJa": "リモートワークへの傾向が高まっている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day04/q10",
+          "sentence": "The experiment controlled every ___ except temperature.",
+          "answer": "variable",
+          "base": "variable",
+          "hint": "v_______",
+          "ja": "変数、変化要因",
+          "sentenceJa": "その実験は温度以外のすべての変数を制御した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day04/q11",
+          "sentence": "The map shows the ___ of rainfall across the country.",
+          "answer": "distribution",
+          "base": "distribution",
+          "hint": "d___________",
+          "ja": "分布、分配",
+          "sentenceJa": "その地図は国内の降雨の分布を示している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day04/q12",
+          "sentence": "A careful ___ of the data revealed a clear pattern.",
+          "answer": "analysis",
+          "base": "analysis",
+          "hint": "a_______",
+          "ja": "分析",
+          "sentenceJa": "データの慎重な分析により、明確なパターンが明らかになった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day04/q13",
+          "sentence": "The main ___ of the heart is to pump blood.",
+          "answer": "function",
+          "base": "function",
+          "hint": "f_______",
+          "ja": "機能",
+          "sentenceJa": "心臓の主な機能は血液を送り出すことである。"
+        },
+        {
+          "questionId": "2026-09/ielts/day04/q14",
+          "sentence": "Diet is an important ___ in good health.",
+          "answer": "factor",
+          "base": "factor",
+          "hint": "f_____",
+          "ja": "要因",
+          "sentenceJa": "食事は健康にとって重要な要因である。"
+        },
+        {
+          "questionId": "2026-09/ielts/day04/q15",
+          "sentence": "Soil erosion is a serious ___ of deforestation.",
+          "answer": "consequence",
+          "base": "consequence",
+          "hint": "c__________",
+          "ja": "結果、影響",
+          "sentenceJa": "土壌浸食は森林伐採の深刻な結果である。"
+        },
+        {
+          "questionId": "2026-09/ielts/day04/q16",
+          "sentence": "Safety is the company's top ___.",
+          "answer": "priority",
+          "base": "priority",
+          "hint": "p_______",
+          "ja": "優先事項",
+          "sentenceJa": "安全はその会社の最優先事項である。"
+        },
+        {
+          "questionId": "2026-09/ielts/day04/q17",
+          "sentence": "The city has changed greatly over the past ___.",
+          "answer": "decade",
+          "base": "decade",
+          "hint": "d_____",
+          "ja": "10年間",
+          "sentenceJa": "その都市はこの10年間で大きく変化した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day04/q18",
+          "sentence": "The study has several important ___ for public policy.",
+          "answer": "implications",
+          "base": "implication",
+          "hint": "i__________",
+          "ja": "影響、含意",
+          "sentenceJa": "その研究は公共政策にとっていくつかの重要な影響を持つ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day04/q19",
+          "sentence": "Trust is a key ___ of any good relationship.",
+          "answer": "element",
+          "base": "element",
+          "hint": "e______",
+          "ja": "要素",
+          "sentenceJa": "信頼はどんな良い関係にとっても重要な要素である。"
+        },
+        {
+          "questionId": "2026-09/ielts/day04/q20",
+          "sentence": "There is a strong ___ between income and education.",
+          "answer": "correlation",
+          "base": "correlation",
+          "hint": "c__________",
+          "ja": "相関関係",
+          "sentenceJa": "収入と教育の間には強い相関関係がある。"
+        }
+      ]
+    },
+    {
+      "name": "Day 5",
+      "day": 5,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day05/q01",
+          "sentence": "The city is home to a ___ range of cultures.",
+          "answer": "diverse",
+          "base": "diverse",
+          "hint": "d______",
+          "ja": "多様な",
+          "sentenceJa": "その都市には多様な文化がある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day05/q02",
+          "sentence": "The claim is supported by strong ___ evidence.",
+          "answer": "empirical",
+          "base": "empirical",
+          "hint": "e________",
+          "ja": "経験的な、実証的な",
+          "sentenceJa": "その主張は強力な実証的証拠に裏付けられている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day05/q03",
+          "sentence": "The project required a ___ amount of money.",
+          "answer": "substantial",
+          "base": "substantial",
+          "hint": "s__________",
+          "ja": "かなりの、相当な",
+          "sentenceJa": "そのプロジェクトにはかなりの額のお金が必要だった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day05/q04",
+          "sentence": "Some conflict is ___ in any large group.",
+          "answer": "inevitable",
+          "base": "inevitable",
+          "hint": "i_________",
+          "ja": "避けられない",
+          "sentenceJa": "どんな大きな集団にも、ある程度の対立は避けられない。"
+        },
+        {
+          "questionId": "2026-09/ielts/day05/q05",
+          "sentence": "The survey question was ___ and confused readers.",
+          "answer": "ambiguous",
+          "base": "ambiguous",
+          "hint": "a________",
+          "ja": "曖昧な",
+          "sentenceJa": "その調査質問は曖昧で、回答者を混乱させた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day05/q06",
+          "sentence": "The product went through ___ safety testing.",
+          "answer": "rigorous",
+          "base": "rigorous",
+          "hint": "r_______",
+          "ja": "厳密な、厳格な",
+          "sentenceJa": "その製品は厳密な安全性試験を受けた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day05/q07",
+          "sentence": "The first test failed, but ___ attempts succeeded.",
+          "answer": "subsequent",
+          "base": "subsequent",
+          "hint": "s_________",
+          "ja": "その後の",
+          "sentenceJa": "最初のテストは失敗したが、その後の試みは成功した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day05/q08",
+          "sentence": "English is the ___ language in international business.",
+          "answer": "dominant",
+          "base": "dominant",
+          "hint": "d_______",
+          "ja": "支配的な、優勢な",
+          "sentenceJa": "英語は国際ビジネスにおいて支配的な言語である。"
+        },
+        {
+          "questionId": "2026-09/ielts/day05/q09",
+          "sentence": "The instructions were ___ about what to do.",
+          "answer": "explicit",
+          "base": "explicit",
+          "hint": "e_______",
+          "ja": "明示的な、明確な",
+          "sentenceJa": "指示は何をすべきかについて明確だった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day05/q10",
+          "sentence": "Building the bridge in one year is not ___.",
+          "answer": "feasible",
+          "base": "feasible",
+          "hint": "f_______",
+          "ja": "実行可能な",
+          "sentenceJa": "1 年でその橋を建設するのは実行可能ではない。"
+        },
+        {
+          "questionId": "2026-09/ielts/day05/q11",
+          "sentence": "Sleep plays a ___ role in learning and memory.",
+          "answer": "crucial",
+          "base": "crucial",
+          "hint": "c______",
+          "ja": "極めて重要な",
+          "sentenceJa": "睡眠は学習と記憶において極めて重要な役割を果たす。"
+        },
+        {
+          "questionId": "2026-09/ielts/day05/q12",
+          "sentence": "The book gives a ___ overview of the subject.",
+          "answer": "comprehensive",
+          "base": "comprehensive",
+          "hint": "c____________",
+          "ja": "包括的な、総合的な",
+          "sentenceJa": "その本はそのテーマについて包括的な概要を示している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day05/q13",
+          "sentence": "The funding was barely ___ for the research.",
+          "answer": "adequate",
+          "base": "adequate",
+          "hint": "a_______",
+          "ja": "十分な、適切な",
+          "sentenceJa": "その研究資金はかろうじて十分な程度だった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day05/q14",
+          "sentence": "A good essay presents a ___ argument.",
+          "answer": "coherent",
+          "base": "coherent",
+          "hint": "c_______",
+          "ja": "首尾一貫した",
+          "sentenceJa": "良いエッセイは首尾一貫した論旨を示す。"
+        },
+        {
+          "questionId": "2026-09/ielts/day05/q15",
+          "sentence": "The two species have ___ markings.",
+          "answer": "distinct",
+          "base": "distinct",
+          "hint": "d_______",
+          "ja": "明確に異なる",
+          "sentenceJa": "その2種は明確に異なる模様を持っている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day05/q16",
+          "sentence": "There was a ___ increase in average temperatures.",
+          "answer": "significant",
+          "base": "significant",
+          "hint": "s__________",
+          "ja": "重要な、著しい",
+          "sentenceJa": "平均気温に著しい上昇があった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day05/q17",
+          "sentence": "Smartphones are now ___ among young people.",
+          "answer": "prevalent",
+          "base": "prevalent",
+          "hint": "p________",
+          "ja": "広く行き渡った",
+          "sentenceJa": "スマートフォンは今、若者の間で広く行き渡っている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day05/q18",
+          "sentence": "Please include only ___ information in your essay.",
+          "answer": "relevant",
+          "base": "relevant",
+          "hint": "r_______",
+          "ja": "関連のある",
+          "sentenceJa": "エッセイには関連のある情報だけを含めてください。"
+        },
+        {
+          "questionId": "2026-09/ielts/day05/q19",
+          "sentence": "It was ___ that the new method had failed.",
+          "answer": "evident",
+          "base": "evident",
+          "hint": "e______",
+          "ja": "明白な",
+          "sentenceJa": "新しい方法が失敗したことは明白だった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day05/q20",
+          "sentence": "Clean water is ___ for human health.",
+          "answer": "vital",
+          "base": "vital",
+          "hint": "v____",
+          "ja": "極めて重要な、不可欠な",
+          "sentenceJa": "清潔な水は人間の健康にとって極めて重要だ。"
+        }
+      ]
+    },
+    {
+      "name": "Day 6",
+      "day": 6,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day06/q01",
+          "sentence": "This is ___ true in developing countries.",
+          "answer": "particularly",
+          "base": "particularly",
+          "hint": "p___________",
+          "ja": "特に",
+          "sentenceJa": "これは発展途上国において特に当てはまる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day06/q02",
+          "sentence": "Students are encouraged to read the text ___.",
+          "answer": "critically",
+          "base": "critically",
+          "hint": "c_________",
+          "ja": "批判的に、重大に",
+          "sentenceJa": "学生はそのテキストを批判的に読むよう奨励されている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day06/q03",
+          "sentence": "The argument is ___ consistent.",
+          "answer": "logically",
+          "base": "logically",
+          "hint": "l________",
+          "ja": "論理的に",
+          "sentenceJa": "その議論は論理的に一貫している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day06/q04",
+          "sentence": "More ___, the study lacked a control group.",
+          "answer": "importantly",
+          "base": "importantly",
+          "hint": "i__________",
+          "ja": "重要なことに",
+          "sentenceJa": "さらに重要なことに、その研究には対照群が欠けていた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day06/q05",
+          "sentence": "Each group worked ___ on the project.",
+          "answer": "independently",
+          "base": "independently",
+          "hint": "i____________",
+          "ja": "独立して",
+          "sentenceJa": "各グループはそのプロジェクトに独立して取り組んだ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day06/q06",
+          "sentence": "Rapid urbanization ___ leads to environmental pressure.",
+          "answer": "inevitably",
+          "base": "inevitably",
+          "hint": "i_________",
+          "ja": "必然的に",
+          "sentenceJa": "急速な都市化は必然的に環境への負荷につながる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day06/q07",
+          "sentence": "The researcher ___ excluded outliers from the data.",
+          "answer": "deliberately",
+          "base": "deliberately",
+          "hint": "d___________",
+          "ja": "意図的に",
+          "sentenceJa": "その研究者は意図的に外れ値をデータから除外した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day06/q08",
+          "sentence": "The policy was ___ beneficial in the short term.",
+          "answer": "economically",
+          "base": "economically",
+          "hint": "e___________",
+          "ja": "経済的に",
+          "sentenceJa": "その政策は短期的には経済的に有益だった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day06/q09",
+          "sentence": "The results can be ___ divided into three categories.",
+          "answer": "broadly",
+          "base": "broadly",
+          "hint": "b______",
+          "ja": "大まかに、広く",
+          "sentenceJa": "結果は大きく3つのカテゴリーに分けられる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day06/q10",
+          "sentence": "The theory was ___ rejected by most scientists.",
+          "answer": "initially",
+          "base": "initially",
+          "hint": "i________",
+          "ja": "最初は",
+          "sentenceJa": "その理論は当初、ほとんどの科学者に否定された。"
+        },
+        {
+          "questionId": "2026-09/ielts/day06/q11",
+          "sentence": "Several factors, ___ climate, affect crop yields.",
+          "answer": "notably",
+          "base": "notably",
+          "hint": "n______",
+          "ja": "特に、顕著に",
+          "sentenceJa": "気候をはじめとするいくつかの要因が農作物の収穫量に影響する。"
+        },
+        {
+          "questionId": "2026-09/ielts/day06/q12",
+          "sentence": "The region remains ___ unstable.",
+          "answer": "politically",
+          "base": "politically",
+          "hint": "p__________",
+          "ja": "政治的に",
+          "sentenceJa": "その地域は政治的に不安定なままだ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day06/q13",
+          "sentence": "Regular exercise ___ affects mental health.",
+          "answer": "positively",
+          "base": "positively",
+          "hint": "p_________",
+          "ja": "肯定的に",
+          "sentenceJa": "定期的な運動は精神的健康に良い影響を与える。"
+        },
+        {
+          "questionId": "2026-09/ielts/day06/q14",
+          "sentence": "This is ___ one possible explanation.",
+          "answer": "merely",
+          "base": "merely",
+          "hint": "m_____",
+          "ja": "単に",
+          "sentenceJa": "これは単に考えられる説明の一つに過ぎない。"
+        },
+        {
+          "questionId": "2026-09/ielts/day06/q15",
+          "sentence": "The two theories are ___ the same.",
+          "answer": "essentially",
+          "base": "essentially",
+          "hint": "e__________",
+          "ja": "本質的に",
+          "sentenceJa": "その2つの理論は本質的に同じだ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day06/q16",
+          "sentence": "The author ___ states her main argument in the introduction.",
+          "answer": "explicitly",
+          "base": "explicitly",
+          "hint": "e_________",
+          "ja": "明確に",
+          "sentenceJa": "著者は序論で自身の主な主張を明確に述べている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day06/q17",
+          "sentence": "The findings were ___ published.",
+          "answer": "officially",
+          "base": "officially",
+          "hint": "o_________",
+          "ja": "正式に",
+          "sentenceJa": "その調査結果は正式に発表された。"
+        },
+        {
+          "questionId": "2026-09/ielts/day06/q18",
+          "sentence": "___, the region relied on agriculture.",
+          "answer": "historically",
+          "base": "historically",
+          "hint": "h___________",
+          "ja": "歴史的に",
+          "sentenceJa": "歴史的に、その地域は農業に依存していた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day06/q19",
+          "sentence": "The two approaches are ___ different.",
+          "answer": "fundamentally",
+          "base": "fundamentally",
+          "hint": "f____________",
+          "ja": "根本的に",
+          "sentenceJa": "その2つのアプローチは根本的に異なる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day06/q20",
+          "sentence": "Students were assessed ___.",
+          "answer": "individually",
+          "base": "individually",
+          "hint": "i___________",
+          "ja": "個別に",
+          "sentenceJa": "学生は個別に評価された。"
+        }
+      ]
+    },
+    {
+      "name": "Day 8",
+      "day": 8,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day08/q01",
+          "sentence": "The organization ___ volunteers to help with relief efforts.",
+          "answer": "mobilized",
+          "base": "mobilize",
+          "hint": "m_______",
+          "ja": "動員する",
+          "sentenceJa": "その団体は救援活動を手伝うためボランティアを動員した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day08/q02",
+          "sentence": "This new curriculum ___ elements of both approaches.",
+          "answer": "incorporates",
+          "base": "incorporate",
+          "hint": "i__________",
+          "ja": "組み込む",
+          "sentenceJa": "この新しいカリキュラムは両方のアプローチの要素を組み込んでいる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day08/q03",
+          "sentence": "This study ___ the causes of urban migration.",
+          "answer": "investigates",
+          "base": "investigate",
+          "hint": "i__________",
+          "ja": "調査する",
+          "sentenceJa": "この研究は都市への移住の原因を調査している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day08/q04",
+          "sentence": "Competition among firms has ___ in recent years.",
+          "answer": "intensified",
+          "base": "intensify",
+          "hint": "i________",
+          "ja": "強める",
+          "sentenceJa": "近年、企業間の競争は激化している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day08/q05",
+          "sentence": "These findings ___ the importance of early intervention.",
+          "answer": "elevate",
+          "base": "elevate",
+          "hint": "e______",
+          "ja": "高める",
+          "sentenceJa": "これらの発見は早期介入の重要性を高めている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day08/q06",
+          "sentence": "Scientists ___ that the virus spread through water.",
+          "answer": "hypothesized",
+          "base": "hypothesize",
+          "hint": "h__________",
+          "ja": "仮説を立てる",
+          "sentenceJa": "科学者たちはそのウイルスが水を介して広がったと仮説を立てた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day08/q07",
+          "sentence": "The test is designed to ___ between the two groups.",
+          "answer": "discriminate",
+          "base": "discriminate",
+          "hint": "d___________",
+          "ja": "差別する、区別する",
+          "sentenceJa": "そのテストは2つのグループを区別するよう設計されている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day08/q08",
+          "sentence": "Certain chemicals can ___ plant growth.",
+          "answer": "inhibit",
+          "base": "inhibit",
+          "hint": "i______",
+          "ja": "抑制する",
+          "sentenceJa": "特定の化学物質は植物の成長を抑制することがある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day08/q09",
+          "sentence": "Participants ___ signs of improved memory.",
+          "answer": "exhibited",
+          "base": "exhibit",
+          "hint": "e______",
+          "ja": "示す",
+          "sentenceJa": "参加者は記憶力の改善の兆候を示した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day08/q10",
+          "sentence": "Could you ___ on that point?",
+          "answer": "elaborate",
+          "base": "elaborate",
+          "hint": "e________",
+          "ja": "詳しく説明する",
+          "sentenceJa": "その点について詳しく説明していただけますか。"
+        },
+        {
+          "questionId": "2026-09/ielts/day08/q11",
+          "sentence": "Schools should ___ critical thinking skills in students.",
+          "answer": "cultivate",
+          "base": "cultivate",
+          "hint": "c________",
+          "ja": "育成する、養う",
+          "sentenceJa": "学校は生徒の批判的思考力を育成すべきだ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day08/q12",
+          "sentence": "Higher income tends to ___ with better health outcomes.",
+          "answer": "correlate",
+          "base": "correlate",
+          "hint": "c________",
+          "ja": "相関する",
+          "sentenceJa": "高い収入はより良い健康状態と相関する傾向がある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day08/q13",
+          "sentence": "This report ___ a clear vision for future research.",
+          "answer": "articulates",
+          "base": "articulate",
+          "hint": "a_________",
+          "ja": "はっきり述べる",
+          "sentenceJa": "この報告書は今後の研究に向けた明確なビジョンをはっきりと述べている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day08/q14",
+          "sentence": "Economic growth ___ in the second half of the year.",
+          "answer": "accelerated",
+          "base": "accelerate",
+          "hint": "a_________",
+          "ja": "加速する",
+          "sentenceJa": "経済成長は下半期に加速した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day08/q15",
+          "sentence": "It is difficult to ___ a single cause for the decline.",
+          "answer": "isolate",
+          "base": "isolate",
+          "hint": "i______",
+          "ja": "分離する、孤立させる",
+          "sentenceJa": "衰退の単一の原因を特定するのは難しい。"
+        },
+        {
+          "questionId": "2026-09/ielts/day08/q16",
+          "sentence": "Salt ___ quickly in warm water.",
+          "answer": "dissolves",
+          "base": "dissolve",
+          "hint": "d_______",
+          "ja": "溶解する",
+          "sentenceJa": "塩は温かい水にすぐに溶ける。"
+        },
+        {
+          "questionId": "2026-09/ielts/day08/q17",
+          "sentence": "Plastic waste can ___ the quality of marine ecosystems.",
+          "answer": "degrade",
+          "base": "degrade",
+          "hint": "d______",
+          "ja": "劣化させる",
+          "sentenceJa": "プラスチック廃棄物は海洋生態系の質を劣化させる可能性がある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day08/q18",
+          "sentence": "The committee ___ a new set of guidelines.",
+          "answer": "formulated",
+          "base": "formulate",
+          "hint": "f________",
+          "ja": "策定する",
+          "sentenceJa": "委員会は新しいガイドラインを策定した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day08/q19",
+          "sentence": "Researchers ___ key themes from the interview data.",
+          "answer": "extracted",
+          "base": "extract",
+          "hint": "e______",
+          "ja": "抽出する",
+          "sentenceJa": "研究者たちはインタビューデータから主要なテーマを抽出した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day08/q20",
+          "sentence": "Their opinions began to ___ as the debate continued.",
+          "answer": "diverge",
+          "base": "diverge",
+          "hint": "d______",
+          "ja": "分岐する、異なる",
+          "sentenceJa": "議論が続くにつれて彼らの意見は分かれ始めた。"
+        }
+      ]
+    },
+    {
+      "name": "Day 9",
+      "day": 9,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day09/q01",
+          "sentence": "Language continues to ___ over time.",
+          "answer": "evolve",
+          "base": "evolve",
+          "hint": "e_____",
+          "ja": "進化する",
+          "sentenceJa": "言語は時間とともに進化し続ける。"
+        },
+        {
+          "questionId": "2026-09/ielts/day09/q02",
+          "sentence": "This new law ___ stricter safety inspections.",
+          "answer": "mandates",
+          "base": "mandate",
+          "hint": "m______",
+          "ja": "義務付ける",
+          "sentenceJa": "この新しい法律はより厳格な安全点検を義務付けている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day09/q03",
+          "sentence": "The government ___ new restrictions on imports.",
+          "answer": "imposed",
+          "base": "impose",
+          "hint": "i_____",
+          "ja": "課す",
+          "sentenceJa": "政府は輸入に新たな制限を課した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day09/q04",
+          "sentence": "The plan was carefully ___ over several months.",
+          "answer": "executed",
+          "base": "execute",
+          "hint": "e______",
+          "ja": "実行する",
+          "sentenceJa": "その計画は数ヶ月かけて慎重に実行された。"
+        },
+        {
+          "questionId": "2026-09/ielts/day09/q05",
+          "sentence": "The university ___ a new grading policy.",
+          "answer": "instituted",
+          "base": "institute",
+          "hint": "i________",
+          "ja": "導入する、制定する",
+          "sentenceJa": "その大学は新しい成績評価方針を導入した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day09/q06",
+          "sentence": "The program aims to ___ cooperation between countries.",
+          "answer": "foster",
+          "base": "foster",
+          "hint": "f_____",
+          "ja": "育む",
+          "sentenceJa": "そのプログラムは国家間の協力を育むことを目指している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day09/q07",
+          "sentence": "The author fails to ___ her main claim with evidence.",
+          "answer": "justify",
+          "base": "justify",
+          "hint": "j______",
+          "ja": "正当化する",
+          "sentenceJa": "著者は自身の主な主張を証拠によって正当化できていない。"
+        },
+        {
+          "questionId": "2026-09/ielts/day09/q08",
+          "sentence": "Social media can ___ the effects of misinformation.",
+          "answer": "magnify",
+          "base": "magnify",
+          "hint": "m______",
+          "ja": "拡大する",
+          "sentenceJa": "ソーシャルメディアは誤情報の影響を拡大させることがある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day09/q09",
+          "sentence": "Researchers took steps to ___ the accuracy of their data.",
+          "answer": "ensure",
+          "base": "ensure",
+          "hint": "e_____",
+          "ja": "確実にする",
+          "sentenceJa": "研究者たちはデータの正確性を確実にするための対策を取った。"
+        },
+        {
+          "questionId": "2026-09/ielts/day09/q10",
+          "sentence": "The policy failed to ___ its original goals.",
+          "answer": "fulfill",
+          "base": "fulfill",
+          "hint": "f______",
+          "ja": "満たす、果たす",
+          "sentenceJa": "その政策は当初の目標を果たせなかった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day09/q11",
+          "sentence": "It is difficult to ___ against every possible risk.",
+          "answer": "legislate",
+          "base": "legislate",
+          "hint": "l________",
+          "ja": "法律を制定する",
+          "sentenceJa": "あらゆる可能性のあるリスクに対して法律を制定するのは難しい。"
+        },
+        {
+          "questionId": "2026-09/ielts/day09/q12",
+          "sentence": "The invasive species quickly ___ the local habitat.",
+          "answer": "invaded",
+          "base": "invade",
+          "hint": "i_____",
+          "ja": "侵入する",
+          "sentenceJa": "その侵略的な種はすぐに地域の生息地に侵入した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day09/q13",
+          "sentence": "The government began to ___ the new emissions law.",
+          "answer": "enforce",
+          "base": "enforce",
+          "hint": "e______",
+          "ja": "施行する、強制する",
+          "sentenceJa": "政府は新しい排出規制法の施行を開始した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day09/q14",
+          "sentence": "Participants were asked to ___ about their family history.",
+          "answer": "inquire",
+          "base": "inquire",
+          "hint": "i______",
+          "ja": "尋ねる",
+          "sentenceJa": "参加者は家族の病歴について尋ねるよう求められた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day09/q15",
+          "sentence": "Noise can ___ with concentration during exams.",
+          "answer": "interfere",
+          "base": "interfere",
+          "hint": "i________",
+          "ja": "干渉する、妨げる",
+          "sentenceJa": "騒音は試験中の集中力を妨げることがある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day09/q16",
+          "sentence": "Prices ___ depending on supply and demand.",
+          "answer": "fluctuate",
+          "base": "fluctuate",
+          "hint": "f________",
+          "ja": "変動する",
+          "sentenceJa": "価格は需要と供給に応じて変動する。"
+        },
+        {
+          "questionId": "2026-09/ielts/day09/q17",
+          "sentence": "The study ___ participants to varying levels of noise.",
+          "answer": "exposed",
+          "base": "expose",
+          "hint": "e_____",
+          "ja": "さらす",
+          "sentenceJa": "その研究は参加者をさまざまなレベルの騒音にさらした。"
+        },
+        {
+          "questionId": "2026-09/ielts/day09/q18",
+          "sentence": "This graph ___ the trend over the past decade.",
+          "answer": "illustrates",
+          "base": "illustrate",
+          "hint": "i_________",
+          "ja": "説明する、示す",
+          "sentenceJa": "このグラフは過去10年間の傾向を示している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day09/q19",
+          "sentence": "Her research was ___ by earlier studies on memory.",
+          "answer": "inspired",
+          "base": "inspire",
+          "hint": "i______",
+          "ja": "触発する",
+          "sentenceJa": "彼女の研究は記憶に関する以前の研究から着想を得た。"
+        },
+        {
+          "questionId": "2026-09/ielts/day09/q20",
+          "sentence": "The researchers ___ a new method for measuring stress.",
+          "answer": "introduced",
+          "base": "introduce",
+          "hint": "i________",
+          "ja": "導入する",
+          "sentenceJa": "研究者たちはストレスを測定する新しい方法を導入した。"
+        }
+      ]
+    },
+    {
+      "name": "Day 10",
+      "day": 10,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day10/q01",
+          "sentence": "Researchers discovered several ___ at the excavation site.",
+          "answer": "artifacts",
+          "base": "artifact",
+          "hint": "a_______",
+          "ja": "人工遺物",
+          "sentenceJa": "研究者たちは発掘現場でいくつかの人工遺物を発見した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day10/q02",
+          "sentence": "The immune system produces ___ in response to infection.",
+          "answer": "antibodies",
+          "base": "antibody",
+          "hint": "a_______",
+          "ja": "抗体",
+          "sentenceJa": "免疫システムは感染に反応して抗体を作り出す。"
+        },
+        {
+          "questionId": "2026-09/ielts/day10/q03",
+          "sentence": "The two universities formed a research ___.",
+          "answer": "alliance",
+          "base": "alliance",
+          "hint": "a_______",
+          "ja": "同盟",
+          "sentenceJa": "その2つの大学は研究同盟を結成した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day10/q04",
+          "sentence": "The ___ of funding depends on the size of the project.",
+          "answer": "allocation",
+          "base": "allocation",
+          "hint": "a_________",
+          "ja": "割り当て",
+          "sentenceJa": "資金の割り当てはプロジェクトの規模による。"
+        },
+        {
+          "questionId": "2026-09/ielts/day10/q05",
+          "sentence": "___ can survive in extreme environments.",
+          "answer": "bacteria",
+          "base": "bacteria",
+          "hint": "b_______",
+          "ja": "細菌",
+          "sentenceJa": "細菌は極限環境でも生存できる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day10/q06",
+          "sentence": "The professor used an ___ to explain the concept.",
+          "answer": "analogy",
+          "base": "analogy",
+          "hint": "a______",
+          "ja": "類推、類似",
+          "sentenceJa": "教授はその概念を説明するために類推を用いた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day10/q07",
+          "sentence": "Humans share a common ___ with other primates.",
+          "answer": "ancestor",
+          "base": "ancestor",
+          "hint": "a_______",
+          "ja": "祖先",
+          "sentenceJa": "人間は他の霊長類と共通の祖先を持つ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day10/q08",
+          "sentence": "___ relies heavily on careful excavation techniques.",
+          "answer": "archaeology",
+          "base": "archaeology",
+          "hint": "a__________",
+          "ja": "考古学",
+          "sentenceJa": "考古学は慎重な発掘技術に大きく依存している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day10/q09",
+          "sentence": "Each molecule consists of two or more ___.",
+          "answer": "atoms",
+          "base": "atom",
+          "hint": "a___",
+          "ja": "原子",
+          "sentenceJa": "各分子は2つ以上の原子から構成されている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day10/q10",
+          "sentence": "The report points to an ___ of evidence supporting the theory.",
+          "answer": "accumulation",
+          "base": "accumulation",
+          "hint": "a___________",
+          "ja": "蓄積",
+          "sentenceJa": "その報告書はその理論を支持する証拠の蓄積を指摘している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day10/q11",
+          "sentence": "Overuse of ___ has led to resistant bacteria.",
+          "answer": "antibiotics",
+          "base": "antibiotic",
+          "hint": "a_________",
+          "ja": "抗生物質",
+          "sentenceJa": "抗生物質の乱用は耐性菌を生み出してきた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day10/q12",
+          "sentence": "University ___ rates have declined in recent years.",
+          "answer": "admission",
+          "base": "admission",
+          "hint": "a________",
+          "ja": "入学、認めること",
+          "sentenceJa": "近年、大学の入学率は低下している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day10/q13",
+          "sentence": "The local ___ approved the new construction plan.",
+          "answer": "authority",
+          "base": "authority",
+          "hint": "a________",
+          "ja": "権威、当局",
+          "sentenceJa": "地方自治体は新しい建設計画を承認した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day10/q14",
+          "sentence": "Plant growth slows significantly at high ___.",
+          "answer": "altitude",
+          "base": "altitude",
+          "hint": "a_______",
+          "ja": "高度",
+          "sentenceJa": "高地では植物の成長が大幅に遅くなる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day10/q15",
+          "sentence": "___ to climate change is a major research focus.",
+          "answer": "adaptation",
+          "base": "adaptation",
+          "hint": "a_________",
+          "ja": "適応",
+          "sentenceJa": "気候変動への適応は主要な研究課題だ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day10/q16",
+          "sentence": "The ___ of nutrients occurs mainly in the small intestine.",
+          "answer": "absorption",
+          "base": "absorption",
+          "hint": "a_________",
+          "ja": "吸収",
+          "sentenceJa": "栄養素の吸収は主に小腸で起こる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day10/q17",
+          "sentence": "The ___ of the device requires several precise steps.",
+          "answer": "assembly",
+          "base": "assembly",
+          "hint": "a_______",
+          "ja": "組み立て、集会",
+          "sentenceJa": "その装置の組み立てにはいくつかの精密な手順が必要だ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day10/q18",
+          "sentence": "The ___ designed the building with sustainability in mind.",
+          "answer": "architect",
+          "base": "architect",
+          "hint": "a________",
+          "ja": "建築家",
+          "sentenceJa": "その建築家は持続可能性を考慮してその建物を設計した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day10/q19",
+          "sentence": "The study measured the ___ of particles in the experiment.",
+          "answer": "acceleration",
+          "base": "acceleration",
+          "hint": "a___________",
+          "ja": "加速",
+          "sentenceJa": "その研究は実験における粒子の加速度を測定した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day10/q20",
+          "sentence": "The study examines how much ___ workers have over their schedules.",
+          "answer": "autonomy",
+          "base": "autonomy",
+          "hint": "a_______",
+          "ja": "自治、自律性",
+          "sentenceJa": "その研究は労働者が自分のスケジュールにどれほどの自律性を持つかを調べている。"
+        }
+      ]
+    },
+    {
+      "name": "Day 11",
+      "day": 11,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day11/q01",
+          "sentence": "Only a small number of ___ met the criteria.",
+          "answer": "candidates",
+          "base": "candidate",
+          "hint": "c________",
+          "ja": "候補者",
+          "sentenceJa": "その基準を満たした候補者はごくわずかだった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day11/q02",
+          "sentence": "The city has invested in more ___ lanes.",
+          "answer": "bicycle",
+          "base": "bicycle",
+          "hint": "b______",
+          "ja": "自転車",
+          "sentenceJa": "その市はより多くの自転車専用レーンに投資してきた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day11/q03",
+          "sentence": "The essay discusses the effects of ___ on income inequality.",
+          "answer": "capitalism",
+          "base": "capitalism",
+          "hint": "c_________",
+          "ja": "資本主義",
+          "sentenceJa": "そのエッセイは資本主義が所得格差に与える影響について論じている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day11/q04",
+          "sentence": "The report includes a ___ of expenses by category.",
+          "answer": "breakdown",
+          "base": "breakdown",
+          "hint": "b________",
+          "ja": "内訳、故障",
+          "sentenceJa": "その報告書には項目別の費用の内訳が含まれている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day11/q05",
+          "sentence": "The museum displays a wide ___ of ancient artifacts.",
+          "answer": "array",
+          "base": "array",
+          "hint": "a____",
+          "ja": "配列、多様さ",
+          "sentenceJa": "その博物館は多種多様な古代の遺物を展示している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day11/q06",
+          "sentence": "The river ___ supports a wide variety of wildlife.",
+          "answer": "basin",
+          "base": "basin",
+          "hint": "b____",
+          "ja": "盆地、流域",
+          "sentenceJa": "その流域は多様な野生生物を支えている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day11/q07",
+          "sentence": "Most students live on ___ during their first year.",
+          "answer": "campus",
+          "base": "campus",
+          "hint": "c_____",
+          "ja": "キャンパス",
+          "sentenceJa": "ほとんどの学生は1年目にキャンパス内に住んでいる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day11/q08",
+          "sentence": "The ___ of the population lives in urban areas.",
+          "answer": "bulk",
+          "base": "bulk",
+          "hint": "b___",
+          "ja": "大部分、大量",
+          "sentenceJa": "人口の大部分は都市部に住んでいる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day11/q09",
+          "sentence": "She majored in ___ at university.",
+          "answer": "biology",
+          "base": "biology",
+          "hint": "b______",
+          "ja": "生物学",
+          "sentenceJa": "彼女は大学で生物学を専攻した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day11/q10",
+          "sentence": "Additional data can be found in the ___.",
+          "answer": "appendix",
+          "base": "appendix",
+          "hint": "a_______",
+          "ja": "付録",
+          "sentenceJa": "追加のデータは付録に記載されている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day11/q11",
+          "sentence": "The speech was met with enthusiastic ___.",
+          "answer": "applause",
+          "base": "applause",
+          "hint": "a_______",
+          "ja": "拍手",
+          "sentenceJa": "そのスピーチは熱烈な拍手で迎えられた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day11/q12",
+          "sentence": "The painting was sold at ___ for a record price.",
+          "answer": "auction",
+          "base": "auction",
+          "hint": "a______",
+          "ja": "競売",
+          "sentenceJa": "その絵画は競売で記録的な価格で売却された。"
+        },
+        {
+          "questionId": "2026-09/ielts/day11/q13",
+          "sentence": "An independent ___ confirmed the accuracy of the data.",
+          "answer": "audit",
+          "base": "audit",
+          "hint": "a____",
+          "ja": "監査",
+          "sentenceJa": "独立監査によってデータの正確性が確認された。"
+        },
+        {
+          "questionId": "2026-09/ielts/day11/q14",
+          "sentence": "Oil prices are typically measured per ___.",
+          "answer": "barrel",
+          "base": "barrel",
+          "hint": "b_____",
+          "ja": "樽、バレル",
+          "sentenceJa": "原油価格は通常バレル単位で測定される。"
+        },
+        {
+          "questionId": "2026-09/ielts/day11/q15",
+          "sentence": "The ___ was based on several assumptions.",
+          "answer": "calculation",
+          "base": "calculation",
+          "hint": "c__________",
+          "ja": "計算",
+          "sentenceJa": "その計算はいくつかの前提に基づいていた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day11/q16",
+          "sentence": "Some individuals can be ___ of the disease without symptoms.",
+          "answer": "carriers",
+          "base": "carrier",
+          "hint": "c______",
+          "ja": "保菌者、運搬者",
+          "sentenceJa": "一部の人は症状がなくてもその病気の保菌者になり得る。"
+        },
+        {
+          "questionId": "2026-09/ielts/day11/q17",
+          "sentence": "Economists warned of a housing market ___.",
+          "answer": "bubble",
+          "base": "bubble",
+          "hint": "b_____",
+          "ja": "泡、バブル",
+          "sentenceJa": "経済学者たちは住宅市場のバブルについて警告した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day11/q18",
+          "sentence": "Researchers collected rainwater samples in a ___.",
+          "answer": "bucket",
+          "base": "bucket",
+          "hint": "b_____",
+          "ja": "バケツ",
+          "sentenceJa": "研究者たちはバケツで雨水のサンプルを採取した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day11/q19",
+          "sentence": "Households in the lowest income ___ were most affected.",
+          "answer": "bracket",
+          "base": "bracket",
+          "hint": "b______",
+          "ja": "括弧、階層",
+          "sentenceJa": "最も低い所得層の世帯が最も影響を受けた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day11/q20",
+          "sentence": "The bridge is supported by steel ___.",
+          "answer": "beams",
+          "base": "beam",
+          "hint": "b___",
+          "ja": "梁、光線",
+          "sentenceJa": "その橋は鋼鉄の梁で支えられている。"
+        }
+      ]
+    },
+    {
+      "name": "Day 12",
+      "day": 12,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day12/q01",
+          "sentence": "The cutoff score seemed rather ___.",
+          "answer": "arbitrary",
+          "base": "arbitrary",
+          "hint": "a________",
+          "ja": "恣意的な",
+          "sentenceJa": "その合格基準はかなり恣意的に思えた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day12/q02",
+          "sentence": "The data was divided into ___ categories.",
+          "answer": "discrete",
+          "base": "discrete",
+          "hint": "d_______",
+          "ja": "個別の、離散した",
+          "sentenceJa": "そのデータは個別のカテゴリーに分けられた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day12/q03",
+          "sentence": "The plant is ___ to the region.",
+          "answer": "indigenous",
+          "base": "indigenous",
+          "hint": "i_________",
+          "ja": "先住の、固有の",
+          "sentenceJa": "その植物はその地域に固有のものだ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day12/q04",
+          "sentence": "Some critics argue that the evaluation criteria are too ___.",
+          "answer": "subjective",
+          "base": "subjective",
+          "hint": "s_________",
+          "ja": "主観的な",
+          "sentenceJa": "一部の批評家はその評価基準があまりに主観的だと主張している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day12/q05",
+          "sentence": "The drug can cause several ___ side effects.",
+          "answer": "adverse",
+          "base": "adverse",
+          "hint": "a______",
+          "ja": "不利な、悪影響を及ぼす",
+          "sentenceJa": "その薬にはいくつかの悪影響を及ぼす副作用がある可能性がある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day12/q06",
+          "sentence": "The market is highly ___ and changes quickly.",
+          "answer": "dynamic",
+          "base": "dynamic",
+          "hint": "d______",
+          "ja": "動的な",
+          "sentenceJa": "その市場は非常に動的で急速に変化する。"
+        },
+        {
+          "questionId": "2026-09/ielts/day12/q07",
+          "sentence": "Natural resources are ___ and must be managed carefully.",
+          "answer": "finite",
+          "base": "finite",
+          "hint": "f_____",
+          "ja": "有限の",
+          "sentenceJa": "天然資源は有限であり、慎重に管理されなければならない。"
+        },
+        {
+          "questionId": "2026-09/ielts/day12/q08",
+          "sentence": "The organization has a strict ___ structure.",
+          "answer": "hierarchical",
+          "base": "hierarchical",
+          "hint": "h___________",
+          "ja": "階層的な",
+          "sentenceJa": "その組織は厳格な階層構造を持っている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day12/q09",
+          "sentence": "___ stress can weaken the immune system.",
+          "answer": "chronic",
+          "base": "chronic",
+          "hint": "c______",
+          "ja": "慢性的な",
+          "sentenceJa": "慢性的なストレスは免疫システムを弱める可能性がある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day12/q10",
+          "sentence": "___ data was collected through a large-scale survey.",
+          "answer": "quantitative",
+          "base": "quantitative",
+          "hint": "q___________",
+          "ja": "量的な",
+          "sentenceJa": "量的データは大規模な調査によって収集された。"
+        },
+        {
+          "questionId": "2026-09/ielts/day12/q11",
+          "sentence": "The team carried out a ___ review of the literature.",
+          "answer": "systematic",
+          "base": "systematic",
+          "hint": "s_________",
+          "ja": "体系的な",
+          "sentenceJa": "そのチームは文献の体系的なレビューを行った。"
+        },
+        {
+          "questionId": "2026-09/ielts/day12/q12",
+          "sentence": "The committee found the candidate highly ___.",
+          "answer": "competent",
+          "base": "competent",
+          "hint": "c________",
+          "ja": "有能な",
+          "sentenceJa": "委員会はその候補者を非常に有能だと判断した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day12/q13",
+          "sentence": "The report reflects the ___ opinion of the researchers.",
+          "answer": "collective",
+          "base": "collective",
+          "hint": "c_________",
+          "ja": "集団の",
+          "sentenceJa": "その報告書は研究者たちの集団的な意見を反映している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day12/q14",
+          "sentence": "The region is experiencing an ___ shortage of clean water.",
+          "answer": "acute",
+          "base": "acute",
+          "hint": "a____",
+          "ja": "深刻な、鋭い",
+          "sentenceJa": "その地域はきれいな水の深刻な不足に直面している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day12/q15",
+          "sentence": "The two studies produced ___ results.",
+          "answer": "comparable",
+          "base": "comparable",
+          "hint": "c_________",
+          "ja": "匹敵する、比較可能な",
+          "sentenceJa": "その2つの研究は匹敵する結果を出した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day12/q16",
+          "sentence": "The test measures several aspects of ___ development.",
+          "answer": "cognitive",
+          "base": "cognitive",
+          "hint": "c________",
+          "ja": "認知の",
+          "sentenceJa": "そのテストは認知発達のいくつかの側面を測定する。"
+        },
+        {
+          "questionId": "2026-09/ielts/day12/q17",
+          "sentence": "The dam had a significant ___ impact on the river.",
+          "answer": "ecological",
+          "base": "ecological",
+          "hint": "e_________",
+          "ja": "生態学的な",
+          "sentenceJa": "そのダムはその川に重大な生態学的影響を与えた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day12/q18",
+          "sentence": "The researchers used a ___ approach based on interviews.",
+          "answer": "qualitative",
+          "base": "qualitative",
+          "hint": "q__________",
+          "ja": "質的な",
+          "sentenceJa": "研究者たちはインタビューに基づく質的アプローチを用いた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day12/q19",
+          "sentence": "The paper offers a ___ framework for the analysis.",
+          "answer": "conceptual",
+          "base": "conceptual",
+          "hint": "c_________",
+          "ja": "概念的な",
+          "sentenceJa": "その論文はその分析のための概念的な枠組みを提示している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day12/q20",
+          "sentence": "The ___ results were promising.",
+          "answer": "preliminary",
+          "base": "preliminary",
+          "hint": "p__________",
+          "ja": "予備的な",
+          "sentenceJa": "予備的な結果は有望だった。"
+        }
+      ]
+    },
+    {
+      "name": "Day 13",
+      "day": 13,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day13/q01",
+          "sentence": "The two groups scored 72% and 85%, ___.",
+          "answer": "respectively",
+          "base": "respectively",
+          "hint": "r___________",
+          "ja": "それぞれ",
+          "sentenceJa": "その2つのグループはそれぞれ72%と85%のスコアを取った。"
+        },
+        {
+          "questionId": "2026-09/ielts/day13/q02",
+          "sentence": "The chemical could ___ harm aquatic life.",
+          "answer": "potentially",
+          "base": "potentially",
+          "hint": "p__________",
+          "ja": "潜在的に",
+          "sentenceJa": "その化学物質は水生生物に害を及ぼす可能性がある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day13/q03",
+          "sentence": "___, the two variables are closely related.",
+          "answer": "apparently",
+          "base": "apparently",
+          "hint": "a_________",
+          "ja": "見たところ",
+          "sentenceJa": "見たところ、その2つの変数は密接に関連している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day13/q04",
+          "sentence": "The hypothesis was revised ___.",
+          "answer": "accordingly",
+          "base": "accordingly",
+          "hint": "a__________",
+          "ja": "それに応じて",
+          "sentenceJa": "その仮説はそれに応じて修正された。"
+        },
+        {
+          "questionId": "2026-09/ielts/day13/q05",
+          "sentence": "The results improved ___ after the intervention.",
+          "answer": "significantly",
+          "base": "significantly",
+          "hint": "s____________",
+          "ja": "著しく、有意に",
+          "sentenceJa": "介入後、結果は著しく改善した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day13/q06",
+          "sentence": "The study focused ___ on adult participants.",
+          "answer": "exclusively",
+          "base": "exclusively",
+          "hint": "e__________",
+          "ja": "～だけに、限定して",
+          "sentenceJa": "その研究は成人の参加者のみに焦点を当てた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day13/q07",
+          "sentence": "The disease is ___ rare in developed countries.",
+          "answer": "comparatively",
+          "base": "comparatively",
+          "hint": "c____________",
+          "ja": "比較的",
+          "sentenceJa": "その病気は先進国では比較的まれだ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day13/q08",
+          "sentence": "The outcome was ___ determined by early conditions.",
+          "answer": "largely",
+          "base": "largely",
+          "hint": "l______",
+          "ja": "主として",
+          "sentenceJa": "その結果は主に初期条件によって決まった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day13/q09",
+          "sentence": "The cost of the equipment is ___ low.",
+          "answer": "relatively",
+          "base": "relatively",
+          "hint": "r_________",
+          "ja": "比較的",
+          "sentenceJa": "その機材のコストは比較的低い。"
+        },
+        {
+          "questionId": "2026-09/ielts/day13/q10",
+          "sentence": "The new method performed only ___ better.",
+          "answer": "marginally",
+          "base": "marginally",
+          "hint": "m_________",
+          "ja": "わずかに",
+          "sentenceJa": "その新しい方法はわずかに良い結果を出しただけだった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day13/q11",
+          "sentence": "The theory is ___ concerned with human behavior.",
+          "answer": "primarily",
+          "base": "primarily",
+          "hint": "p________",
+          "ja": "主に",
+          "sentenceJa": "その理論は主に人間の行動に関するものだ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day13/q12",
+          "sentence": "Researchers are ___ relying on digital data.",
+          "answer": "increasingly",
+          "base": "increasingly",
+          "hint": "i___________",
+          "ja": "ますます",
+          "sentenceJa": "研究者たちはますますデジタルデータに頼るようになっている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day13/q13",
+          "sentence": "The participants were ___ university students.",
+          "answer": "predominantly",
+          "base": "predominantly",
+          "hint": "p____________",
+          "ja": "主に、大部分",
+          "sentenceJa": "参加者は主に大学生だった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day13/q14",
+          "sentence": "The experiment ___ confirmed the original hypothesis.",
+          "answer": "ultimately",
+          "base": "ultimately",
+          "hint": "u_________",
+          "ja": "最終的に",
+          "sentenceJa": "その実験は最終的に当初の仮説を裏付けた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day13/q15",
+          "sentence": "___, the change in policy caused the decline.",
+          "answer": "presumably",
+          "base": "presumably",
+          "hint": "p_________",
+          "ja": "おそらく",
+          "sentenceJa": "おそらく、その政策変更が減少を引き起こした。"
+        },
+        {
+          "questionId": "2026-09/ielts/day13/q16",
+          "sentence": "This is ___ the most influential study in the field.",
+          "answer": "arguably",
+          "base": "arguably",
+          "hint": "a_______",
+          "ja": "おそらく、議論の余地はあるが",
+          "sentenceJa": "これはおそらくこの分野で最も影響力のある研究だ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day13/q17",
+          "sentence": "___, the model should apply to any population.",
+          "answer": "theoretically",
+          "base": "theoretically",
+          "hint": "t____________",
+          "ja": "理論的には",
+          "sentenceJa": "理論的には、そのモデルはどの集団にも適用できるはずだ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day13/q18",
+          "sentence": "The data were ___ analyzed using statistical software.",
+          "answer": "subsequently",
+          "base": "subsequently",
+          "hint": "s___________",
+          "ja": "その後",
+          "sentenceJa": "そのデータはその後、統計ソフトを使って分析された。"
+        },
+        {
+          "questionId": "2026-09/ielts/day13/q19",
+          "sentence": "The topic has been ___ studied in previous research.",
+          "answer": "extensively",
+          "base": "extensively",
+          "hint": "e__________",
+          "ja": "広範囲に",
+          "sentenceJa": "そのテーマは以前の研究で広範囲に研究されてきた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day13/q20",
+          "sentence": "The sample size varied ___ between studies.",
+          "answer": "considerably",
+          "base": "considerably",
+          "hint": "c___________",
+          "ja": "かなり",
+          "sentenceJa": "サンプルサイズは研究によってかなり異なった。"
+        }
+      ]
+    },
+    {
+      "name": "Day 15",
+      "day": 15,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day15/q01",
+          "sentence": "Please ___ the order of the survey questions.",
+          "answer": "randomize",
+          "base": "randomize",
+          "hint": "r________",
+          "ja": "無作為化する",
+          "sentenceJa": "アンケートの質問の順番を無作為化してください。"
+        },
+        {
+          "questionId": "2026-09/ielts/day15/q02",
+          "sentence": "Please ___ the solution before use.",
+          "answer": "dilute",
+          "base": "dilute",
+          "hint": "d_____",
+          "ja": "薄める、希釈する",
+          "sentenceJa": "使用前に溶液を薄めてください。"
+        },
+        {
+          "questionId": "2026-09/ielts/day15/q03",
+          "sentence": "A neutral party ___ the dispute.",
+          "answer": "mediated",
+          "base": "mediate",
+          "hint": "m______",
+          "ja": "仲介する、調停する",
+          "sentenceJa": "中立の立場の者がその紛争を仲介した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day15/q04",
+          "sentence": "The price shock ___ a wave of layoffs.",
+          "answer": "precipitated",
+          "base": "precipitate",
+          "hint": "p__________",
+          "ja": "引き起こす、沈殿させる",
+          "sentenceJa": "その価格の急変が一連のレイオフを引き起こした。"
+        },
+        {
+          "questionId": "2026-09/ielts/day15/q05",
+          "sentence": "The system will ___ the data before transmission.",
+          "answer": "encode",
+          "base": "encode",
+          "hint": "e_____",
+          "ja": "符号化する",
+          "sentenceJa": "そのシステムは送信前にデータを符号化する予定だ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day15/q06",
+          "sentence": "It can be difficult to ___ from such a small sample.",
+          "answer": "generalize",
+          "base": "generalize",
+          "hint": "g_________",
+          "ja": "一般化する",
+          "sentenceJa": "そのような小さなサンプルから一般化するのは難しい場合がある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day15/q07",
+          "sentence": "The university will ___ a new research program.",
+          "answer": "initiate",
+          "base": "initiate",
+          "hint": "i_______",
+          "ja": "開始する",
+          "sentenceJa": "その大学は新しい研究プログラムを開始する予定だ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day15/q08",
+          "sentence": "Please ___ the disk before starting the program.",
+          "answer": "insert",
+          "base": "insert",
+          "hint": "i_____",
+          "ja": "挿入する",
+          "sentenceJa": "プログラムを開始する前にディスクを挿入してください。"
+        },
+        {
+          "questionId": "2026-09/ielts/day15/q09",
+          "sentence": "Please ___ the image before printing it.",
+          "answer": "invert",
+          "base": "invert",
+          "hint": "i_____",
+          "ja": "逆にする、反転させる",
+          "sentenceJa": "印刷する前に画像を反転させてください。"
+        },
+        {
+          "questionId": "2026-09/ielts/day15/q10",
+          "sentence": "Doctors ___ the patient with a rare condition.",
+          "answer": "diagnosed",
+          "base": "diagnose",
+          "hint": "d_______",
+          "ja": "診断する",
+          "sentenceJa": "医師たちはその患者を珍しい病状だと診断した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day15/q11",
+          "sentence": "The virus ___ thousands of people worldwide.",
+          "answer": "infected",
+          "base": "infect",
+          "hint": "i_____",
+          "ja": "感染させる",
+          "sentenceJa": "そのウイルスは世界中で何千人もの人々に感染した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day15/q12",
+          "sentence": "The nurse ___ the vaccine into the patient's arm.",
+          "answer": "injected",
+          "base": "inject",
+          "hint": "i_____",
+          "ja": "注入する、注射する",
+          "sentenceJa": "看護師は患者の腕にワクチンを注射した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day15/q13",
+          "sentence": "Many young graduates ___ to bigger cities for work.",
+          "answer": "migrated",
+          "base": "migrate",
+          "hint": "m______",
+          "ja": "移住する、移動する",
+          "sentenceJa": "多くの若い卒業生が仕事のために大都市へ移住した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day15/q14",
+          "sentence": "The professor will ___ the terms of the assignment.",
+          "answer": "dictate",
+          "base": "dictate",
+          "hint": "d______",
+          "ja": "書き取らせる、命令する",
+          "sentenceJa": "教授が課題の条件を指示する予定だ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day15/q15",
+          "sentence": "A power failure ___ the experiment.",
+          "answer": "interrupted",
+          "base": "interrupt",
+          "hint": "i________",
+          "ja": "中断させる",
+          "sentenceJa": "停電がその実験を中断させた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day15/q16",
+          "sentence": "The researcher ___ a sensor in the device.",
+          "answer": "embedded",
+          "base": "embed",
+          "hint": "e____",
+          "ja": "埋め込む",
+          "sentenceJa": "研究者はその装置にセンサーを埋め込んだ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day15/q17",
+          "sentence": "In this diagram, the arrow always ___ direction of flow.",
+          "answer": "denotes",
+          "base": "denote",
+          "hint": "d_____",
+          "ja": "示す、意味する",
+          "sentenceJa": "この図では、矢印はいつも流れの方向を示す。"
+        },
+        {
+          "questionId": "2026-09/ielts/day15/q18",
+          "sentence": "The metal surface ___ rapidly in the humid air.",
+          "answer": "oxidized",
+          "base": "oxidize",
+          "hint": "o______",
+          "ja": "酸化する",
+          "sentenceJa": "その金属表面は湿った空気の中で急速に酸化した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day15/q19",
+          "sentence": "The advertisement ___ many consumers.",
+          "answer": "deceived",
+          "base": "deceive",
+          "hint": "d______",
+          "ja": "欺く、だます",
+          "sentenceJa": "その広告は多くの消費者を欺いた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day15/q20",
+          "sentence": "This engine ___ far less carbon than older models.",
+          "answer": "emits",
+          "base": "emit",
+          "hint": "e___",
+          "ja": "放出する",
+          "sentenceJa": "このエンジンは旧型よりもはるかに少ない炭素を放出している。"
+        }
+      ]
+    },
+    {
+      "name": "Day 16",
+      "day": 16,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day16/q01",
+          "sentence": "The orientation program helps new students ___ themselves on campus.",
+          "answer": "orient",
+          "base": "orient",
+          "hint": "o_____",
+          "ja": "方向づける、慣れさせる",
+          "sentenceJa": "その案内プログラムは、新入生が学内に慣れる助けとなる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day16/q02",
+          "sentence": "The class ___ a range of digital tools.",
+          "answer": "utilized",
+          "base": "utilize",
+          "hint": "u______",
+          "ja": "活用する",
+          "sentenceJa": "そのクラスは様々なデジタルツールを活用した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day16/q03",
+          "sentence": "The scandal ___ public trust in the institution.",
+          "answer": "undermined",
+          "base": "undermine",
+          "hint": "u________",
+          "ja": "弱体化させる、損なう",
+          "sentenceJa": "そのスキャンダルはその機関への公衆の信頼を損なった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day16/q04",
+          "sentence": "Mosquitoes can ___ several serious diseases.",
+          "answer": "transmit",
+          "base": "transmit",
+          "hint": "t_______",
+          "ja": "伝達する、送信する",
+          "sentenceJa": "蚊はいくつかの深刻な病気を媒介することがある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day16/q05",
+          "sentence": "The teacher ___ each new word slowly for the class.",
+          "answer": "pronounced",
+          "base": "pronounce",
+          "hint": "p________",
+          "ja": "発音する",
+          "sentenceJa": "先生はクラスのために新出単語を一つずつゆっくり発音した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day16/q06",
+          "sentence": "The documentary ___ the effects of climate change.",
+          "answer": "portrayed",
+          "base": "portray",
+          "hint": "p______",
+          "ja": "描写する",
+          "sentenceJa": "そのドキュメンタリーは気候変動の影響を描写した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day16/q07",
+          "sentence": "Students ___ mostly through social media.",
+          "answer": "socialize",
+          "base": "socialize",
+          "hint": "s________",
+          "ja": "社交する、交流する",
+          "sentenceJa": "学生は主にソーシャルメディアを通じて交流する。"
+        },
+        {
+          "questionId": "2026-09/ielts/day16/q08",
+          "sentence": "This species still closely ___ its extinct ancestor.",
+          "answer": "resembles",
+          "base": "resemble",
+          "hint": "r_______",
+          "ja": "似ている",
+          "sentenceJa": "この種は今でもその絶滅した祖先によく似ている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day16/q09",
+          "sentence": "The committee decided to ___ the testing procedure.",
+          "answer": "standardize",
+          "base": "standardize",
+          "hint": "s__________",
+          "ja": "標準化する",
+          "sentenceJa": "委員会はその試験手順を標準化することを決定した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day16/q10",
+          "sentence": "We should not ___ guilt without evidence.",
+          "answer": "presume",
+          "base": "presume",
+          "hint": "p______",
+          "ja": "推定する、想定する",
+          "sentenceJa": "証拠なしに有罪だと推定すべきではない。"
+        },
+        {
+          "questionId": "2026-09/ielts/day16/q11",
+          "sentence": "The wind ___ leaves across the yard.",
+          "answer": "scattered",
+          "base": "scatter",
+          "hint": "s______",
+          "ja": "散らす、散らばる",
+          "sentenceJa": "風が庭中に葉を散らした。"
+        },
+        {
+          "questionId": "2026-09/ielts/day16/q12",
+          "sentence": "Historians ___ the timeline of events.",
+          "answer": "reconstructed",
+          "base": "reconstruct",
+          "hint": "r__________",
+          "ja": "再構築する",
+          "sentenceJa": "歴史家たちは出来事の年表を再構築した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day16/q13",
+          "sentence": "The new protocol ___ workplace accidents significantly.",
+          "answer": "minimized",
+          "base": "minimize",
+          "hint": "m_______",
+          "ja": "最小限にする",
+          "sentenceJa": "その新しい手順は職場の事故を大幅に減らした。"
+        },
+        {
+          "questionId": "2026-09/ielts/day16/q14",
+          "sentence": "Another team ___ the original experiment.",
+          "answer": "replicated",
+          "base": "replicate",
+          "hint": "r________",
+          "ja": "再現する、複製する",
+          "sentenceJa": "別のチームが元の実験を再現した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day16/q15",
+          "sentence": "A period of drought often ___ a famine.",
+          "answer": "precedes",
+          "base": "precede",
+          "hint": "p______",
+          "ja": "先行する、前に起こる",
+          "sentenceJa": "干ばつの期間はしばしば飢饉に先行する。"
+        },
+        {
+          "questionId": "2026-09/ielts/day16/q16",
+          "sentence": "The central bank acted to ___ the currency.",
+          "answer": "stabilize",
+          "base": "stabilize",
+          "hint": "s________",
+          "ja": "安定させる",
+          "sentenceJa": "中央銀行は通貨を安定させるために行動した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day16/q17",
+          "sentence": "The Earth ___ on its axis.",
+          "answer": "rotates",
+          "base": "rotate",
+          "hint": "r_____",
+          "ja": "回転する",
+          "sentenceJa": "地球はその軸を中心に回転している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day16/q18",
+          "sentence": "The new policy aims to ___ standards across all regions.",
+          "answer": "unify",
+          "base": "unify",
+          "hint": "u____",
+          "ja": "統一する",
+          "sentenceJa": "その新しい方針は全地域にわたって基準を統一することを目的としている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day16/q19",
+          "sentence": "The assistant ___ the entire interview.",
+          "answer": "transcribed",
+          "base": "transcribe",
+          "hint": "t_________",
+          "ja": "書き起こす",
+          "sentenceJa": "アシスタントはそのインタビュー全体を書き起こした。"
+        },
+        {
+          "questionId": "2026-09/ielts/day16/q20",
+          "sentence": "The software can ___ real-world traffic conditions.",
+          "answer": "simulate",
+          "base": "simulate",
+          "hint": "s_______",
+          "ja": "模擬する、再現する",
+          "sentenceJa": "そのソフトウェアは実際の交通状況を再現できる。"
+        }
+      ]
+    },
+    {
+      "name": "Day 17",
+      "day": 17,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day17/q01",
+          "sentence": "Infant ___ has dropped significantly over the past century.",
+          "answer": "mortality",
+          "base": "mortality",
+          "hint": "m________",
+          "ja": "死亡率",
+          "sentenceJa": "この一世紀で乳児死亡率は大幅に低下した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day17/q02",
+          "sentence": "The novel raises questions about ___ and justice.",
+          "answer": "morality",
+          "base": "morality",
+          "hint": "m_______",
+          "ja": "道徳",
+          "sentenceJa": "その小説は道徳と正義についての問いを投げかけている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day17/q03",
+          "sentence": "Earthquakes are a common ___ in this region.",
+          "answer": "occurrence",
+          "base": "occurrence",
+          "hint": "o_________",
+          "ja": "出来事、発生",
+          "sentenceJa": "地震はこの地域ではよくある出来事だ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day17/q04",
+          "sentence": "Teaching is a demanding but rewarding ___.",
+          "answer": "occupation",
+          "base": "occupation",
+          "hint": "o_________",
+          "ja": "職業",
+          "sentenceJa": "教職は大変だがやりがいのある職業だ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day17/q05",
+          "sentence": "The company once held a ___ on the local market.",
+          "answer": "monopoly",
+          "base": "monopoly",
+          "hint": "m_______",
+          "ja": "独占",
+          "sentenceJa": "その会社はかつて地元市場を独占していた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day17/q06",
+          "sentence": "Social ___ has declined in many developed countries.",
+          "answer": "mobility",
+          "base": "mobility",
+          "hint": "m_______",
+          "ja": "流動性、機動性",
+          "sentenceJa": "多くの先進国で社会的流動性が低下している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day17/q07",
+          "sentence": "Clean water is a basic ___ for survival.",
+          "answer": "necessity",
+          "base": "necessity",
+          "hint": "n________",
+          "ja": "必要性",
+          "sentenceJa": "きれいな水は生存のための基本的な必需品だ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day17/q08",
+          "sentence": "The publisher rejected her first ___.",
+          "answer": "manuscript",
+          "base": "manuscript",
+          "hint": "m_________",
+          "ja": "原稿",
+          "sentenceJa": "その出版社は彼女の最初の原稿を却下した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day17/q09",
+          "sentence": "The poet used a striking ___ to describe grief.",
+          "answer": "metaphor",
+          "base": "metaphor",
+          "hint": "m_______",
+          "ja": "隠喩、比喩",
+          "sentenceJa": "その詩人は悲しみを表現するために印象的な隠喩を用いた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day17/q10",
+          "sentence": "The campaign gained ___ after the first debate.",
+          "answer": "momentum",
+          "base": "momentum",
+          "hint": "m_______",
+          "ja": "勢い、運動量",
+          "sentenceJa": "その運動は最初の討論の後に勢いを増した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day17/q11",
+          "sentence": "It is a common ___ that we only use ten percent of our brains.",
+          "answer": "myth",
+          "base": "myth",
+          "hint": "m___",
+          "ja": "俗説、神話",
+          "sentenceJa": "私たちは脳の10パーセントしか使っていないというのはよくある俗説だ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day17/q12",
+          "sentence": "Researchers adjusted a key ___ in the model.",
+          "answer": "parameter",
+          "base": "parameter",
+          "hint": "p________",
+          "ja": "条件、設定値",
+          "sentenceJa": "研究者たちはそのモデルの重要な設定値を調整した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day17/q13",
+          "sentence": "The country's ___ led to decades of conflict.",
+          "answer": "partition",
+          "base": "partition",
+          "hint": "p________",
+          "ja": "分割",
+          "sentenceJa": "その国の分割は数十年にわたる紛争につながった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day17/q14",
+          "sentence": "The lawyer raised an ___ during the trial.",
+          "answer": "objection",
+          "base": "objection",
+          "hint": "o________",
+          "ja": "異議、反対",
+          "sentenceJa": "その弁護士は裁判中に異議を申し立てた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day17/q15",
+          "sentence": "The annual ___ of birds spans thousands of miles.",
+          "answer": "migration",
+          "base": "migration",
+          "hint": "m________",
+          "ja": "移住、渡り",
+          "sentenceJa": "鳥の毎年の渡りは何千マイルにも及ぶ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day17/q16",
+          "sentence": "The discovery represented a ___ shift in physics.",
+          "answer": "paradigm",
+          "base": "paradigm",
+          "hint": "p_______",
+          "ja": "考え方の枠組み",
+          "sentenceJa": "その発見は物理学の考え方を一変させた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day17/q17",
+          "sentence": "The startup found a profitable ___ in the market.",
+          "answer": "niche",
+          "base": "niche",
+          "hint": "n____",
+          "ja": "特定分野、すき間市場",
+          "sentenceJa": "その新興企業は市場で利益の出る特定分野を見つけた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day17/q18",
+          "sentence": "Rising ___ influenced the election results.",
+          "answer": "nationalism",
+          "base": "nationalism",
+          "hint": "n__________",
+          "ja": "国家主義",
+          "sentenceJa": "高まる国家主義が選挙結果に影響を与えた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day17/q19",
+          "sentence": "An independent ___ monitored the election.",
+          "answer": "observer",
+          "base": "observer",
+          "hint": "o_______",
+          "ja": "監視員、観察者",
+          "sentenceJa": "独立した監視員がその選挙を監視した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day17/q20",
+          "sentence": "Early symptoms can signal the ___ of the disease.",
+          "answer": "onset",
+          "base": "onset",
+          "hint": "o____",
+          "ja": "発症、始まり",
+          "sentenceJa": "初期症状はその病気の発症を示すことがある。"
+        }
+      ]
+    },
+    {
+      "name": "Day 18",
+      "day": 18,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day18/q01",
+          "sentence": "The ___ specializes in childhood development.",
+          "answer": "psychologist",
+          "base": "psychologist",
+          "hint": "p___________",
+          "ja": "心理学者",
+          "sentenceJa": "その心理学者は幼児期の発達を専門としている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day18/q02",
+          "sentence": "Analysts modeled several possible ___.",
+          "answer": "scenarios",
+          "base": "scenario",
+          "hint": "s_______",
+          "ja": "シナリオ",
+          "sentenceJa": "アナリストたちはいくつかの起こりうるシナリオをモデル化した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day18/q03",
+          "sentence": "There is a striking ___ between the two theories.",
+          "answer": "similarity",
+          "base": "similarity",
+          "hint": "s_________",
+          "ja": "類似点、類似性",
+          "sentenceJa": "その二つの理論の間には著しい類似点がある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day18/q04",
+          "sentence": "The ancient ___ questioned the nature of reality.",
+          "answer": "philosopher",
+          "base": "philosopher",
+          "hint": "p__________",
+          "ja": "哲学者",
+          "sentenceJa": "その古代の哲学者は現実の本質について問うた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day18/q05",
+          "sentence": "The board rejected the merger ___.",
+          "answer": "proposition",
+          "base": "proposition",
+          "hint": "p__________",
+          "ja": "提案",
+          "sentenceJa": "取締役会はその合併案を却下した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day18/q06",
+          "sentence": "She built an impressive design ___ during college.",
+          "answer": "portfolio",
+          "base": "portfolio",
+          "hint": "p________",
+          "ja": "ポートフォリオ、作品集",
+          "sentenceJa": "彼女は大学時代に印象的なデザインポートフォリオを作り上げた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day18/q07",
+          "sentence": "The test's ___ was questioned by critics.",
+          "answer": "reliability",
+          "base": "reliability",
+          "hint": "r__________",
+          "ja": "信頼性",
+          "sentenceJa": "その試験の信頼性は批評家から疑問視された。"
+        },
+        {
+          "questionId": "2026-09/ielts/day18/q08",
+          "sentence": "Participants completed a short ___ before the study.",
+          "answer": "questionnaire",
+          "base": "questionnaire",
+          "hint": "q____________",
+          "ja": "アンケート",
+          "sentenceJa": "参加者は研究の前に短いアンケートに回答した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day18/q09",
+          "sentence": "Remote work can improve employee ___.",
+          "answer": "productivity",
+          "base": "productivity",
+          "hint": "p___________",
+          "ja": "生産性",
+          "sentenceJa": "リモートワークは従業員の生産性を向上させることがある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day18/q10",
+          "sentence": "The new ___ introduced strict censorship laws.",
+          "answer": "regime",
+          "base": "regime",
+          "hint": "r_____",
+          "ja": "政権、体制",
+          "sentenceJa": "その新しい政権は厳しい検閲法を導入した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day18/q11",
+          "sentence": "A licensed ___ must approve the treatment.",
+          "answer": "practitioner",
+          "base": "practitioner",
+          "hint": "p___________",
+          "ja": "開業医、実践者",
+          "sentenceJa": "免許を持つ開業医がその治療を承認しなければならない。"
+        },
+        {
+          "questionId": "2026-09/ielts/day18/q12",
+          "sentence": "The orchestra expanded its ___.",
+          "answer": "repertoire",
+          "base": "repertoire",
+          "hint": "r_________",
+          "ja": "演目、得意分野",
+          "sentenceJa": "その管弦楽団は演目を増やした。"
+        },
+        {
+          "questionId": "2026-09/ielts/day18/q13",
+          "sentence": "Political ___ often oversimplifies complex issues.",
+          "answer": "rhetoric",
+          "base": "rhetoric",
+          "hint": "r_______",
+          "ja": "言葉遣い、修辞表現",
+          "sentenceJa": "政治的な言葉遣いはしばしば複雑な問題を単純化しすぎる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day18/q14",
+          "sentence": "The city's water comes from a nearby ___.",
+          "answer": "reservoir",
+          "base": "reservoir",
+          "hint": "r________",
+          "ja": "貯水池",
+          "sentenceJa": "その市の水は近くの貯水池から来ている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day18/q15",
+          "sentence": "The test has high ___ for early detection.",
+          "answer": "sensitivity",
+          "base": "sensitivity",
+          "hint": "s__________",
+          "ja": "感度、敏感さ",
+          "sentenceJa": "その検査は早期発見に対して高い感度を持つ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day18/q16",
+          "sentence": "Researchers must follow a strict ethical ___.",
+          "answer": "protocol",
+          "base": "protocol",
+          "hint": "p_______",
+          "ja": "手順、規約",
+          "sentenceJa": "研究者は厳格な倫理手順に従わなければならない。"
+        },
+        {
+          "questionId": "2026-09/ielts/day18/q17",
+          "sentence": "Economists often assume perfect ___ in consumers.",
+          "answer": "rationality",
+          "base": "rationality",
+          "hint": "r__________",
+          "ja": "合理性",
+          "sentenceJa": "経済学者はしばしば消費者に完全な合理性を仮定する。"
+        },
+        {
+          "questionId": "2026-09/ielts/day18/q18",
+          "sentence": "The company is searching for a suitable ___.",
+          "answer": "replacement",
+          "base": "replacement",
+          "hint": "r__________",
+          "ja": "後任者、交換",
+          "sentenceJa": "その会社は適切な後任者を探している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day18/q19",
+          "sentence": "The study explores unconscious ___ in hiring decisions.",
+          "answer": "prejudice",
+          "base": "prejudice",
+          "hint": "p________",
+          "ja": "偏見",
+          "sentenceJa": "その研究は採用決定における無意識の偏見を探っている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day18/q20",
+          "sentence": "The disease follows a predictable ___.",
+          "answer": "progression",
+          "base": "progression",
+          "hint": "p__________",
+          "ja": "進行、進展",
+          "sentenceJa": "その病気は予測可能な進行過程をたどる。"
+        }
+      ]
+    },
+    {
+      "name": "Day 19",
+      "day": 19,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day19/q01",
+          "sentence": "The material proved ___ to the original design.",
+          "answer": "inferior",
+          "base": "inferior",
+          "hint": "i_______",
+          "ja": "劣った",
+          "sentenceJa": "その素材は元の設計より劣ることが分かった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day19/q02",
+          "sentence": "Consumers are becoming more ___ of environmental issues.",
+          "answer": "conscious",
+          "base": "conscious",
+          "hint": "c________",
+          "ja": "意識している",
+          "sentenceJa": "消費者は環境問題をより意識するようになってきている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day19/q03",
+          "sentence": "The renovation improved the building's ___ appeal.",
+          "answer": "aesthetic",
+          "base": "aesthetic",
+          "hint": "a________",
+          "ja": "美的な",
+          "sentenceJa": "その改装はその建物の美的魅力を高めた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day19/q04",
+          "sentence": "The vaccine helps the body become ___ to the virus.",
+          "answer": "immune",
+          "base": "immune",
+          "hint": "i_____",
+          "ja": "免疫がある",
+          "sentenceJa": "そのワクチンは体がそのウイルスに対して免疫を持つ助けとなる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day19/q05",
+          "sentence": "In theory, the universe could be ___.",
+          "answer": "infinite",
+          "base": "infinite",
+          "hint": "i_______",
+          "ja": "無限の",
+          "sentenceJa": "理論上、宇宙は無限である可能性がある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day19/q06",
+          "sentence": "The delay was caused by a ___ failure.",
+          "answer": "mechanical",
+          "base": "mechanical",
+          "hint": "m_________",
+          "ja": "機械的な",
+          "sentenceJa": "その遅延は機械的な故障が原因だった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day19/q07",
+          "sentence": "The company reported a ___ profit of ten million dollars.",
+          "answer": "gross",
+          "base": "gross",
+          "hint": "g____",
+          "ja": "総計の",
+          "sentenceJa": "その会社は1000万ドルの総利益を報告した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day19/q08",
+          "sentence": "The reference is too ___ for most readers.",
+          "answer": "obscure",
+          "base": "obscure",
+          "hint": "o______",
+          "ja": "難解な、不明瞭な",
+          "sentenceJa": "その言及はほとんどの読者にとって難解すぎる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day19/q09",
+          "sentence": "The two samples were nearly ___ in composition.",
+          "answer": "identical",
+          "base": "identical",
+          "hint": "i________",
+          "ja": "同一の",
+          "sentenceJa": "その二つの試料は組成がほぼ同一だった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day19/q10",
+          "sentence": "The university offers several ___ scholarships.",
+          "answer": "athletic",
+          "base": "athletic",
+          "hint": "a_______",
+          "ja": "運動の、運動選手の",
+          "sentenceJa": "その大学はいくつかの運動部特待生制度を提供している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day19/q11",
+          "sentence": "The committee raised ___ concerns about the experiment.",
+          "answer": "ethical",
+          "base": "ethical",
+          "hint": "e______",
+          "ja": "倫理的な",
+          "sentenceJa": "その委員会はその実験に関する倫理的な懸念を提起した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day19/q12",
+          "sentence": "Growing up ___ has cognitive benefits.",
+          "answer": "bilingual",
+          "base": "bilingual",
+          "hint": "b________",
+          "ja": "バイリンガルの",
+          "sentenceJa": "バイリンガルとして育つことには認知的な利点がある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day19/q13",
+          "sentence": "The factory processes ___ oil into fuel.",
+          "answer": "crude",
+          "base": "crude",
+          "hint": "c____",
+          "ja": "未加工の、粗雑な",
+          "sentenceJa": "その工場は原油を燃料に加工する。"
+        },
+        {
+          "questionId": "2026-09/ielts/day19/q14",
+          "sentence": "The museum displays artifacts from the ___ era.",
+          "answer": "colonial",
+          "base": "colonial",
+          "hint": "c_______",
+          "ja": "植民地の",
+          "sentenceJa": "その博物館は植民地時代の遺物を展示している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day19/q15",
+          "sentence": "The new policy had only a ___ effect on sales.",
+          "answer": "marginal",
+          "base": "marginal",
+          "hint": "m_______",
+          "ja": "わずかな、限界的な",
+          "sentenceJa": "その新しい方針は売上にわずかな影響しか与えなかった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day19/q16",
+          "sentence": "The paper takes a ___ approach to the two systems.",
+          "answer": "comparative",
+          "base": "comparative",
+          "hint": "c__________",
+          "ja": "比較の",
+          "sentenceJa": "その論文はその二つのシステムを比較する手法をとっている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day19/q17",
+          "sentence": "The central bank adjusted its ___ policy.",
+          "answer": "monetary",
+          "base": "monetary",
+          "hint": "m_______",
+          "ja": "金融の、金銭的な",
+          "sentenceJa": "中央銀行はその金融政策を調整した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day19/q18",
+          "sentence": "The clinic specializes in ___ therapy.",
+          "answer": "behavioral",
+          "base": "behavioral",
+          "hint": "b_________",
+          "ja": "行動の",
+          "sentenceJa": "そのクリニックは行動療法を専門としている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day19/q19",
+          "sentence": "She has a strong ___ background.",
+          "answer": "mathematical",
+          "base": "mathematical",
+          "hint": "m___________",
+          "ja": "数学の",
+          "sentenceJa": "彼女は数学の強い素養を持っている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day19/q20",
+          "sentence": "The drink contains no ___ flavors.",
+          "answer": "artificial",
+          "base": "artificial",
+          "hint": "a_________",
+          "ja": "人工の",
+          "sentenceJa": "その飲み物には人工香料が含まれていない。"
+        }
+      ]
+    },
+    {
+      "name": "Day 20",
+      "day": 20,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day20/q01",
+          "sentence": "The task is not ___ demanding.",
+          "answer": "physically",
+          "base": "physically",
+          "hint": "p_________",
+          "ja": "肉体的に",
+          "sentenceJa": "その作業は肉体的にきついものではない。"
+        },
+        {
+          "questionId": "2026-09/ielts/day20/q02",
+          "sentence": "The results will be published ___.",
+          "answer": "shortly",
+          "base": "shortly",
+          "hint": "s______",
+          "ja": "間もなく",
+          "sentenceJa": "その結果は間もなく公表される予定だ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day20/q03",
+          "sentence": "The difference between the groups was ___ significant.",
+          "answer": "statistically",
+          "base": "statistically",
+          "hint": "s____________",
+          "ja": "統計的に",
+          "sentenceJa": "そのグループ間の差は統計的に有意だった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day20/q04",
+          "sentence": "The medicine is ___ effective within an hour.",
+          "answer": "supposedly",
+          "base": "supposedly",
+          "hint": "s_________",
+          "ja": "とされている、うわさでは",
+          "sentenceJa": "その薬は1時間以内に効くとされている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day20/q05",
+          "sentence": "The company cut costs, ___ increasing profit.",
+          "answer": "thereby",
+          "base": "thereby",
+          "hint": "t______",
+          "ja": "それによって",
+          "sentenceJa": "その会社はコストを削減し、それによって利益を増やした。"
+        },
+        {
+          "questionId": "2026-09/ielts/day20/q06",
+          "sentence": "The plan went ___ wrong from the start.",
+          "answer": "terribly",
+          "base": "terribly",
+          "hint": "t_______",
+          "ja": "ひどく",
+          "sentenceJa": "その計画は最初からひどくうまくいかなかった。"
+        },
+        {
+          "questionId": "2026-09/ielts/day20/q07",
+          "sentence": "The report is expected ___ next month.",
+          "answer": "sometime",
+          "base": "sometime",
+          "hint": "s_______",
+          "ja": "そのうち、いつか",
+          "sentenceJa": "その報告書は来月のいつか、公表される見込みだ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day20/q08",
+          "sentence": "The two theories fit together ___.",
+          "answer": "nicely",
+          "base": "nicely",
+          "hint": "n_____",
+          "ja": "うまく、見事に",
+          "sentenceJa": "その二つの理論はうまく調和している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day20/q09",
+          "sentence": "Access to the lab is ___ controlled.",
+          "answer": "strictly",
+          "base": "strictly",
+          "hint": "s_______",
+          "ja": "厳しく",
+          "sentenceJa": "その研究室への立ち入りは厳しく管理されている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day20/q10",
+          "sentence": "Public opinion has changed ___ over the decade.",
+          "answer": "enormously",
+          "base": "enormously",
+          "hint": "e_________",
+          "ja": "非常に、桁外れに",
+          "sentenceJa": "この10年で世論は非常に大きく変化した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day20/q11",
+          "sentence": "The information is ___ available online.",
+          "answer": "readily",
+          "base": "readily",
+          "hint": "r______",
+          "ja": "容易に",
+          "sentenceJa": "その情報はオンラインで容易に入手できる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day20/q12",
+          "sentence": "This herb is ___ used in traditional medicine.",
+          "answer": "commonly",
+          "base": "commonly",
+          "hint": "c_______",
+          "ja": "一般的に",
+          "sentenceJa": "このハーブは伝統医療で一般的に使われている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day20/q13",
+          "sentence": "The two experiments were conducted ___.",
+          "answer": "simultaneously",
+          "base": "simultaneously",
+          "hint": "s_____________",
+          "ja": "同時に",
+          "sentenceJa": "その二つの実験は同時に行われた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day20/q14",
+          "sentence": "Two factors, ___ cost and time, influenced the decision.",
+          "answer": "namely",
+          "base": "namely",
+          "hint": "n_____",
+          "ja": "すなわち",
+          "sentenceJa": "二つの要因、すなわちコストと時間が、その決定に影響を与えた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day20/q15",
+          "sentence": "The economy took a step ___.",
+          "answer": "backward",
+          "base": "backward",
+          "hint": "b_______",
+          "ja": "後方へ、逆行して",
+          "sentenceJa": "その経済は後退した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day20/q16",
+          "sentence": "The results were ___ consistent across all trials.",
+          "answer": "incredibly",
+          "base": "incredibly",
+          "hint": "i_________",
+          "ja": "信じられないほど",
+          "sentenceJa": "その結果は全ての試験を通して信じられないほど一貫していた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day20/q17",
+          "sentence": "The decision was based ___ on financial factors.",
+          "answer": "purely",
+          "base": "purely",
+          "hint": "p_____",
+          "ja": "純粋に",
+          "sentenceJa": "その決定は純粋に財務的な要因に基づいていた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day20/q18",
+          "sentence": "The two countries ___ signed the agreement.",
+          "answer": "formally",
+          "base": "formally",
+          "hint": "f_______",
+          "ja": "正式に",
+          "sentenceJa": "その二国は正式にその協定に署名した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day20/q19",
+          "sentence": "From this point ___, the data becomes less reliable.",
+          "answer": "onwards",
+          "base": "onwards",
+          "hint": "o______",
+          "ja": "それ以降",
+          "sentenceJa": "この時点以降、そのデータの信頼性は下がる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day20/q20",
+          "sentence": "Information now flows more ___ across borders.",
+          "answer": "freely",
+          "base": "freely",
+          "hint": "f_____",
+          "ja": "自由に",
+          "sentenceJa": "今では情報が国境を越えてより自由に流れている。"
+        }
+      ]
+    },
+    {
+      "name": "Day 22",
+      "day": 22,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day22/q01",
+          "sentence": "The court will ___ its earlier ruling.",
+          "answer": "affirm",
+          "base": "affirm",
+          "hint": "a_____",
+          "ja": "断言する、肯定する",
+          "sentenceJa": "裁判所は以前の判決を支持する予定だ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day22/q02",
+          "sentence": "The firm ___ its returns through careful planning.",
+          "answer": "maximized",
+          "base": "maximize",
+          "hint": "m_______",
+          "ja": "最大化する",
+          "sentenceJa": "その企業は入念な計画によって利益を最大化した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day22/q03",
+          "sentence": "The team ___ the original data set.",
+          "answer": "retrieved",
+          "base": "retrieve",
+          "hint": "r_______",
+          "ja": "取り戻す、検索する",
+          "sentenceJa": "チームは元のデータセットを取り戻した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day22/q04",
+          "sentence": "Please ___ the key formulas before the exam.",
+          "answer": "memorize",
+          "base": "memorize",
+          "hint": "m_______",
+          "ja": "暗記する",
+          "sentenceJa": "試験の前に主要な公式を暗記してください。"
+        },
+        {
+          "questionId": "2026-09/ielts/day22/q05",
+          "sentence": "Other scientists ___ the result independently.",
+          "answer": "reproduced",
+          "base": "reproduce",
+          "hint": "r________",
+          "ja": "再現する、複製する",
+          "sentenceJa": "他の科学者たちはその結果を独立して再現した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day22/q06",
+          "sentence": "Please ___ the schedule with the other team.",
+          "answer": "coordinate",
+          "base": "coordinate",
+          "hint": "c_________",
+          "ja": "調整する",
+          "sentenceJa": "他のチームとスケジュールを調整してください。"
+        },
+        {
+          "questionId": "2026-09/ielts/day22/q07",
+          "sentence": "The jury ___ a unanimous verdict.",
+          "answer": "rendered",
+          "base": "render",
+          "hint": "r_____",
+          "ja": "〜にする、下す",
+          "sentenceJa": "陪審団は全会一致の評決を下した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day22/q08",
+          "sentence": "The software ___ data from multiple sources.",
+          "answer": "aggregated",
+          "base": "aggregate",
+          "hint": "a________",
+          "ja": "集計する、集める",
+          "sentenceJa": "そのソフトウェアは複数の情報源からデータを集計した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day22/q09",
+          "sentence": "The panel ___ each submission carefully.",
+          "answer": "critiqued",
+          "base": "critique",
+          "hint": "c_______",
+          "ja": "批評する",
+          "sentenceJa": "審査団は各応募作を注意深く批評した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day22/q10",
+          "sentence": "Please ___ the introduction more concisely.",
+          "answer": "rewrite",
+          "base": "rewrite",
+          "hint": "r______",
+          "ja": "書き直す",
+          "sentenceJa": "序論をもっと簡潔に書き直してください。"
+        },
+        {
+          "questionId": "2026-09/ielts/day22/q11",
+          "sentence": "Researchers ___ public opinion through a nationwide survey.",
+          "answer": "gauged",
+          "base": "gauge",
+          "hint": "g____",
+          "ja": "測定する、判断する",
+          "sentenceJa": "研究者たちは全国調査を通じて世論を測定した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day22/q12",
+          "sentence": "The two departments ___ into one.",
+          "answer": "merged",
+          "base": "merge",
+          "hint": "m____",
+          "ja": "合併する、融合する",
+          "sentenceJa": "その二つの部門は一つに統合された。"
+        },
+        {
+          "questionId": "2026-09/ielts/day22/q13",
+          "sentence": "Students often struggle to ___ this abstract concept.",
+          "answer": "grasp",
+          "base": "grasp",
+          "hint": "g____",
+          "ja": "理解する、把握する",
+          "sentenceJa": "学生はしばしばこの抽象的な概念を理解するのに苦労する。"
+        },
+        {
+          "questionId": "2026-09/ielts/day22/q14",
+          "sentence": "The two research fields increasingly ___.",
+          "answer": "converge",
+          "base": "converge",
+          "hint": "c_______",
+          "ja": "収束する、一致する",
+          "sentenceJa": "その二つの研究分野はますます収束しつつある。"
+        },
+        {
+          "questionId": "2026-09/ielts/day22/q15",
+          "sentence": "The journal will ___ the study.",
+          "answer": "publish",
+          "base": "publish",
+          "hint": "p______",
+          "ja": "出版する、発表する",
+          "sentenceJa": "その学術誌はその研究を発表する予定だ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day22/q16",
+          "sentence": "The results ___ even the leading experts.",
+          "answer": "confounded",
+          "base": "confound",
+          "hint": "c_______",
+          "ja": "混同させる、当惑させる",
+          "sentenceJa": "その結果は第一線の専門家たちさえも当惑させた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day22/q17",
+          "sentence": "The editor ___ the complex terminology.",
+          "answer": "simplified",
+          "base": "simplify",
+          "hint": "s_______",
+          "ja": "単純化する",
+          "sentenceJa": "編集者はその複雑な専門用語を単純化した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day22/q18",
+          "sentence": "The new data ___ the earlier findings.",
+          "answer": "contradicted",
+          "base": "contradict",
+          "hint": "c_________",
+          "ja": "矛盾する、反論する",
+          "sentenceJa": "新しいデータは以前の調査結果と矛盾した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day22/q19",
+          "sentence": "The second experiment ___ the original hypothesis.",
+          "answer": "validated",
+          "base": "validate",
+          "hint": "v_______",
+          "ja": "検証する、実証する",
+          "sentenceJa": "二回目の実験は当初の仮説を実証した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day22/q20",
+          "sentence": "The study's conclusions must ___ themselves to the sample tested.",
+          "answer": "confine",
+          "base": "confine",
+          "hint": "c______",
+          "ja": "制限する、閉じ込める",
+          "sentenceJa": "その研究の結論は検証されたサンプルの範囲内に限定されなければならない。"
+        }
+      ]
+    },
+    {
+      "name": "Day 23",
+      "day": 23,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day23/q01",
+          "sentence": "Historians ___ the custom back to the medieval period.",
+          "answer": "trace",
+          "base": "trace",
+          "hint": "t____",
+          "ja": "たどる",
+          "sentenceJa": "歴史家はその習慣を中世まで遡ってたどる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day23/q02",
+          "sentence": "The new rule will ___ access to the archive.",
+          "answer": "restrict",
+          "base": "restrict",
+          "hint": "r_______",
+          "ja": "制限する",
+          "sentenceJa": "その新しい規則はアーカイブへのアクセスを制限する予定だ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day23/q03",
+          "sentence": "The team ___ the damaged manuscript.",
+          "answer": "restored",
+          "base": "restore",
+          "hint": "r______",
+          "ja": "回復させる、修復する",
+          "sentenceJa": "チームはその損傷した原稿を修復した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day23/q04",
+          "sentence": "Experts ___ the decline to climate change.",
+          "answer": "attributed",
+          "base": "attribute",
+          "hint": "a________",
+          "ja": "帰する、〜のせいにする",
+          "sentenceJa": "専門家たちはその減少を気候変動のせいだとした。"
+        },
+        {
+          "questionId": "2026-09/ielts/day23/q05",
+          "sentence": "The school ___ a new curriculum.",
+          "answer": "adopted",
+          "base": "adopt",
+          "hint": "a____",
+          "ja": "採用する",
+          "sentenceJa": "その学校は新しいカリキュラムを採用した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day23/q06",
+          "sentence": "Please ___ your argument before the next draft.",
+          "answer": "refine",
+          "base": "refine",
+          "hint": "r_____",
+          "ja": "洗練させる、精製する",
+          "sentenceJa": "次の草稿までに議論を洗練させてください。"
+        },
+        {
+          "questionId": "2026-09/ielts/day23/q07",
+          "sentence": "This device can ___ temperature with great precision.",
+          "answer": "measure",
+          "base": "measure",
+          "hint": "m______",
+          "ja": "測定する",
+          "sentenceJa": "この装置は非常に高い精度で温度を測定できる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day23/q08",
+          "sentence": "The population ___ rapidly in this region.",
+          "answer": "multiplied",
+          "base": "multiply",
+          "hint": "m_______",
+          "ja": "増やす、掛け算する",
+          "sentenceJa": "その地域の人口は急速に増加した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day23/q09",
+          "sentence": "Her comment ___ a deeper concern.",
+          "answer": "implied",
+          "base": "imply",
+          "hint": "i____",
+          "ja": "暗示する、意味する",
+          "sentenceJa": "彼女のコメントはより深い懸念を暗示していた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day23/q10",
+          "sentence": "The author will ___ that the policy has failed.",
+          "answer": "argue",
+          "base": "argue",
+          "hint": "a____",
+          "ja": "主張する",
+          "sentenceJa": "著者はその方針が失敗したと主張する予定だ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day23/q11",
+          "sentence": "Researchers ___ unusual behavior in the sample group.",
+          "answer": "observed",
+          "base": "observe",
+          "hint": "o______",
+          "ja": "観察する、気づく",
+          "sentenceJa": "研究者たちはそのサンプル群に異常な行動を観察した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day23/q12",
+          "sentence": "The editor ___ the two recordings together.",
+          "answer": "spliced",
+          "base": "splice",
+          "hint": "s_____",
+          "ja": "つなぎ合わせる",
+          "sentenceJa": "編集者はその二つの録音をつなぎ合わせた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day23/q13",
+          "sentence": "The report ___ a major breakthrough.",
+          "answer": "claimed",
+          "base": "claim",
+          "hint": "c____",
+          "ja": "主張する",
+          "sentenceJa": "その報告書は大きな進展を主張した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day23/q14",
+          "sentence": "Evidence increasingly ___ a link between the two.",
+          "answer": "suggests",
+          "base": "suggest",
+          "hint": "s______",
+          "ja": "示唆する、提案する",
+          "sentenceJa": "証拠はますますその二つの関連性を示唆している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day23/q15",
+          "sentence": "Let's ___ the variables remain constant.",
+          "answer": "assume",
+          "base": "assume",
+          "hint": "a_____",
+          "ja": "想定する",
+          "sentenceJa": "変数は一定のままだと想定しましょう。"
+        },
+        {
+          "questionId": "2026-09/ielts/day23/q16",
+          "sentence": "The survey ___ a surprising trend.",
+          "answer": "revealed",
+          "base": "reveal",
+          "hint": "r_____",
+          "ja": "明らかにする",
+          "sentenceJa": "その調査は驚くべき傾向を明らかにした。"
+        },
+        {
+          "questionId": "2026-09/ielts/day23/q17",
+          "sentence": "The government ___ several news reports.",
+          "answer": "censored",
+          "base": "censor",
+          "hint": "c_____",
+          "ja": "検閲する",
+          "sentenceJa": "政府はいくつかのニュース報道を検閲した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day23/q18",
+          "sentence": "The team ___ a comprehensive report.",
+          "answer": "compiled",
+          "base": "compile",
+          "hint": "c______",
+          "ja": "編集する、まとめる",
+          "sentenceJa": "チームは包括的な報告書をまとめた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day23/q19",
+          "sentence": "Please ___ that the deadline has changed.",
+          "answer": "note",
+          "base": "note",
+          "hint": "n___",
+          "ja": "気づく、記録する",
+          "sentenceJa": "締め切りが変更されたことにご留意ください。"
+        },
+        {
+          "questionId": "2026-09/ielts/day23/q20",
+          "sentence": "The committee will ___ a revised timeline.",
+          "answer": "propose",
+          "base": "propose",
+          "hint": "p______",
+          "ja": "提案する",
+          "sentenceJa": "委員会は修正されたスケジュールを提案する予定だ。"
+        }
+      ]
+    },
+    {
+      "name": "Day 24",
+      "day": 24,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day24/q01",
+          "sentence": "The ancient ___ left behind remarkable architecture.",
+          "answer": "civilization",
+          "base": "civilization",
+          "hint": "c___________",
+          "ja": "文明",
+          "sentenceJa": "その古代文明は驚くべき建築物を残した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day24/q02",
+          "sentence": "The ___ gained independence in the twentieth century.",
+          "answer": "colony",
+          "base": "colony",
+          "hint": "c_____",
+          "ja": "植民地",
+          "sentenceJa": "その植民地は20世紀に独立を果たした。"
+        },
+        {
+          "questionId": "2026-09/ielts/day24/q03",
+          "sentence": "Critics praised the novel's rich ___.",
+          "answer": "characterization",
+          "base": "characterization",
+          "hint": "c_______________",
+          "ja": "人物描写、特徴づけ",
+          "sentenceJa": "批評家たちはその小説の豊かな人物描写を称賛した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day24/q04",
+          "sentence": "The book critiques the modern ___ system.",
+          "answer": "capitalist",
+          "base": "capitalist",
+          "hint": "c_________",
+          "ja": "資本主義者",
+          "sentenceJa": "その本は現代の資本主義システムを批判している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day24/q05",
+          "sentence": "The offer includes a ___ of software tools.",
+          "answer": "bundle",
+          "base": "bundle",
+          "hint": "b_____",
+          "ja": "束、一式",
+          "sentenceJa": "その提供内容にはソフトウェアツールの一式が含まれている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day24/q06",
+          "sentence": "The professor offered valuable ___ on the text.",
+          "answer": "commentary",
+          "base": "commentary",
+          "hint": "c_________",
+          "ja": "論評、解説",
+          "sentenceJa": "教授はその文章について貴重な論評を提供した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day24/q07",
+          "sentence": "The factory's ___ affected hundreds of workers.",
+          "answer": "closure",
+          "base": "closure",
+          "hint": "c______",
+          "ja": "閉鎖",
+          "sentenceJa": "その工場の閉鎖は何百人もの労働者に影響を与えた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day24/q08",
+          "sentence": "The device measures temperature with high ___.",
+          "answer": "accuracy",
+          "base": "accuracy",
+          "hint": "a_______",
+          "ja": "精度、正確さ",
+          "sentenceJa": "その装置は高い精度で温度を測定する。"
+        },
+        {
+          "questionId": "2026-09/ielts/day24/q09",
+          "sentence": "The ___ of clean water varies across regions.",
+          "answer": "availability",
+          "base": "availability",
+          "hint": "a___________",
+          "ja": "入手可能性",
+          "sentenceJa": "きれいな水の入手可能性は地域によって異なる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day24/q10",
+          "sentence": "Scientists successfully created a ___ of the plant.",
+          "answer": "clone",
+          "base": "clone",
+          "hint": "c____",
+          "ja": "クローン",
+          "sentenceJa": "科学者たちはその植物のクローンを作り出すことに成功した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day24/q11",
+          "sentence": "The new ___ processes data much faster than before.",
+          "answer": "algorithm",
+          "base": "algorithm",
+          "hint": "a________",
+          "ja": "計算手順、処理手順",
+          "sentenceJa": "その新しい処理手順は以前よりもはるかに速くデータを処理する。"
+        },
+        {
+          "questionId": "2026-09/ielts/day24/q12",
+          "sentence": "The test measures a candidate's linguistic ___.",
+          "answer": "competence",
+          "base": "competence",
+          "hint": "c_________",
+          "ja": "能力、力量",
+          "sentenceJa": "その試験は候補者の言語運用能力を測定する。"
+        },
+        {
+          "questionId": "2026-09/ielts/day24/q13",
+          "sentence": "The magazine's ___ has grown steadily.",
+          "answer": "circulation",
+          "base": "circulation",
+          "hint": "c__________",
+          "ja": "発行部数、循環",
+          "sentenceJa": "その雑誌の発行部数は着実に伸びている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day24/q14",
+          "sentence": "She studied ___ before switching to sociology.",
+          "answer": "anthropology",
+          "base": "anthropology",
+          "hint": "a___________",
+          "ja": "人類学",
+          "sentenceJa": "彼女は社会学に転向する前に人類学を学んだ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day24/q15",
+          "sentence": "The artifact dates back to ___.",
+          "answer": "antiquity",
+          "base": "antiquity",
+          "hint": "a________",
+          "ja": "古代",
+          "sentenceJa": "その遺物は古代にまで遡る。"
+        },
+        {
+          "questionId": "2026-09/ielts/day24/q16",
+          "sentence": "Oil remains a vital global ___.",
+          "answer": "commodity",
+          "base": "commodity",
+          "hint": "c________",
+          "ja": "商品、必需品",
+          "sentenceJa": "石油は依然として世界的に重要な商品である。"
+        },
+        {
+          "questionId": "2026-09/ielts/day24/q17",
+          "sentence": "The ___ discovered a new species of insect.",
+          "answer": "biologist",
+          "base": "biologist",
+          "hint": "b________",
+          "ja": "生物学者",
+          "sentenceJa": "その生物学者は新種の昆虫を発見した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day24/q18",
+          "sentence": "Deforestation threatens the region's ___.",
+          "answer": "biodiversity",
+          "base": "biodiversity",
+          "hint": "b___________",
+          "ja": "生物多様性",
+          "sentenceJa": "森林伐採はその地域の生物多様性を脅かしている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day24/q19",
+          "sentence": "The ___ government controlled all industries.",
+          "answer": "communist",
+          "base": "communist",
+          "hint": "c________",
+          "ja": "共産主義者",
+          "sentenceJa": "その共産主義政府は全ての産業を管理していた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day24/q20",
+          "sentence": "The ___ of species relies on shared traits.",
+          "answer": "classification",
+          "base": "classification",
+          "hint": "c_____________",
+          "ja": "分類",
+          "sentenceJa": "種の分類は共通の特徴に依拠している。"
+        }
+      ]
+    },
+    {
+      "name": "Day 25",
+      "day": 25,
+      "items": [
+        {
+          "questionId": "2026-09/ielts/day25/q01",
+          "sentence": "The word carries a negative ___ in this context.",
+          "answer": "connotation",
+          "base": "connotation",
+          "hint": "c__________",
+          "ja": "含意、言外の意味",
+          "sentenceJa": "その単語はこの文脈では否定的な含意を持つ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day25/q02",
+          "sentence": "The exam tests reading ___ skills.",
+          "answer": "comprehension",
+          "base": "comprehension",
+          "hint": "c____________",
+          "ja": "理解、読解力",
+          "sentenceJa": "その試験は読解力を測定する。"
+        },
+        {
+          "questionId": "2026-09/ielts/day25/q03",
+          "sentence": "The material is a ___ of plastic and metal.",
+          "answer": "composite",
+          "base": "composite",
+          "hint": "c________",
+          "ja": "複合材、合成物",
+          "sentenceJa": "その素材はプラスチックと金属の複合材だ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day25/q04",
+          "sentence": "Researchers must obtain informed ___ from participants.",
+          "answer": "consent",
+          "base": "consent",
+          "hint": "c______",
+          "ja": "同意",
+          "sentenceJa": "研究者は参加者からインフォームドコンセントを得なければならない。"
+        },
+        {
+          "questionId": "2026-09/ielts/day25/q05",
+          "sentence": "The organization focuses on wildlife ___.",
+          "answer": "conservation",
+          "base": "conservation",
+          "hint": "c___________",
+          "ja": "保護、保全",
+          "sentenceJa": "その団体は野生生物の保護に重点を置いている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day25/q06",
+          "sentence": "Patients can book a free initial ___.",
+          "answer": "consultation",
+          "base": "consultation",
+          "hint": "c___________",
+          "ja": "相談、協議",
+          "sentenceJa": "患者は無料の初回相談を予約できる。"
+        },
+        {
+          "questionId": "2026-09/ielts/day25/q07",
+          "sentence": "The project required close ___ between teams.",
+          "answer": "coordination",
+          "base": "coordination",
+          "hint": "c___________",
+          "ja": "連携、調整",
+          "sentenceJa": "そのプロジェクトはチーム間の緊密な連携を必要とした。"
+        },
+        {
+          "questionId": "2026-09/ielts/day25/q08",
+          "sentence": "The surgery proceeded without any ___.",
+          "answer": "complication",
+          "base": "complication",
+          "hint": "c___________",
+          "ja": "合併症、複雑化",
+          "sentenceJa": "その手術は合併症もなく進行した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day25/q09",
+          "sentence": "The study analyzed a large ___ of newspaper articles.",
+          "answer": "corpus",
+          "base": "corpus",
+          "hint": "c_____",
+          "ja": "言語資料集",
+          "sentenceJa": "その研究は新聞記事の大規模な言語資料集を分析した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day25/q10",
+          "sentence": "The director aimed for visual ___ between scenes.",
+          "answer": "continuity",
+          "base": "continuity",
+          "hint": "c_________",
+          "ja": "連続性",
+          "sentenceJa": "その監督はシーン間の視覚的な連続性を目指した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day25/q11",
+          "sentence": "The decision sparked significant ___.",
+          "answer": "controversy",
+          "base": "controversy",
+          "hint": "c__________",
+          "ja": "論争",
+          "sentenceJa": "その決定は大きな論争を引き起こした。"
+        },
+        {
+          "questionId": "2026-09/ielts/day25/q12",
+          "sentence": "The default ___ works for most users.",
+          "answer": "configuration",
+          "base": "configuration",
+          "hint": "c____________",
+          "ja": "設定、構成",
+          "sentenceJa": "デフォルトの設定はほとんどのユーザーに適している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day25/q13",
+          "sentence": "The scandal damaged the politician's ___.",
+          "answer": "credibility",
+          "base": "credibility",
+          "hint": "c__________",
+          "ja": "信頼性",
+          "sentenceJa": "そのスキャンダルはその政治家の信頼性を傷つけた。"
+        },
+        {
+          "questionId": "2026-09/ielts/day25/q14",
+          "sentence": "He still believes the Earth is flat, despite evidence to the ___.",
+          "answer": "contrary",
+          "base": "contrary",
+          "hint": "c_______",
+          "ja": "反対、逆",
+          "sentenceJa": "反対の証拠があるにもかかわらず、彼は今でも地球が平らだと信じている。"
+        },
+        {
+          "questionId": "2026-09/ielts/day25/q15",
+          "sentence": "The historian studied the writer's personal ___.",
+          "answer": "correspondence",
+          "base": "correspondence",
+          "hint": "c_____________",
+          "ja": "書簡、通信",
+          "sentenceJa": "その歴史家はその作家の個人的な書簡を研究した。"
+        },
+        {
+          "questionId": "2026-09/ielts/day25/q16",
+          "sentence": "The ___ of the two rivers creates a natural landmark.",
+          "answer": "convergence",
+          "base": "convergence",
+          "hint": "c__________",
+          "ja": "収束、合流",
+          "sentenceJa": "その二つの川の合流点は自然の目印を作り出している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day25/q17",
+          "sentence": "The country's ___ guarantees basic freedoms.",
+          "answer": "constitution",
+          "base": "constitution",
+          "hint": "c___________",
+          "ja": "憲法",
+          "sentenceJa": "その国の憲法は基本的自由を保障している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day25/q18",
+          "sentence": "The novel explores the nature of human ___.",
+          "answer": "consciousness",
+          "base": "consciousness",
+          "hint": "c____________",
+          "ja": "意識",
+          "sentenceJa": "その小説は人間の意識の本質を探求している。"
+        },
+        {
+          "questionId": "2026-09/ielts/day25/q19",
+          "sentence": "The scarf is a perfect ___ to the outfit.",
+          "answer": "complement",
+          "base": "complement",
+          "hint": "c_________",
+          "ja": "添え物、補完するもの",
+          "sentenceJa": "そのスカーフはその服装に完璧に合う添え物だ。"
+        },
+        {
+          "questionId": "2026-09/ielts/day25/q20",
+          "sentence": "The report contains a clear ___.",
+          "answer": "contradiction",
+          "base": "contradiction",
+          "hint": "c____________",
+          "ja": "矛盾",
+          "sentenceJa": "その報告書には明らかな矛盾がある。"
+        }
+      ]
+    }
+  ]
+}

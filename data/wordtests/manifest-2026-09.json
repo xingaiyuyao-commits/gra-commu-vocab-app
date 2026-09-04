@@ -1,0 +1,23 @@
+{
+  "generatedAt": "2026-09-04",
+  "courses": {
+    "clacel": {
+      "sourcePdf": "Clacel_9月範囲.pdf",
+      "sha256": "b99f68dd60ed6a8ec57ea93e53ca59d7eb6ec1fac95ff6a92ad2ef46720fe125",
+      "datasetRevision": "2026-09-04-b99f68dd60ed",
+      "questions": 420
+    },
+    "toeic": {
+      "sourcePdf": "TOEIC_9月範囲.pdf",
+      "sha256": "baa854e99893d62b1d4f8d681b80f08998ad15dd4f61694916932c337c0ea184",
+      "datasetRevision": "2026-09-04-baa854e99893",
+      "questions": 440
+    },
+    "ielts": {
+      "sourcePdf": "IELTS_9月範囲.pdf",
+      "sha256": "3cfff2a5f4f55931b3bc7b5fa7844d72a1feea643cef805dd9268d46f5b07b11",
+      "datasetRevision": "2026-09-04-3cfff2a5f4f5",
+      "questions": 440
+    }
+  }
+}
