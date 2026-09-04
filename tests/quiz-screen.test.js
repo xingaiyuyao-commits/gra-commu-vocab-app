@@ -327,7 +327,7 @@ test("運営者の復帰情報はルーム終了の成功応答後にだけ削�
   const successfulLeave = hostSocket.emitted.filter((entry) => entry.event === "quiz:leave").at(-1);
   successfulLeave.cb({ ok: true });
   assert.deepEqual(JSON.parse(window.localStorage.getItem("quizHostRooms") || "{}"), {});
-  assert.equal(document.getElementById("mh-clacel-error").textContent, "ルームを終了しました。");
+  assert.equal(document.getElementById("mh-clacel-error").textContent, "ルームを終了しました");
 });
 
 test("参加者の復帰情報も退出成功応答まで保持し、失敗理由を表示する", () => {
@@ -493,13 +493,14 @@ test("複数ルーム結果: 上位3件を順位と主なミス傾向で表示�
   assert.equal(rows.length, 3);
   assert.match(rows[0].textContent, /seventh/);
   assert.equal(rows[0].querySelector(".mh-mistake-rank").textContent, "1");
-  assert.match(rows[0].querySelector(".mh-mistake-reason").textContent, /スペルミスの可能性/);
+  assert.equal(rows[0].querySelector(".mh-mistake-reason").textContent, "主なミス：スペルミス（3件）");
   assert.equal(rows[0].querySelector(".mh-mistake-meaning").textContent, "7番目");
   assert.doesNotMatch(rows[0].textContent, /4人が間違えました/);
   assert.equal(rows[1].querySelector(".mh-mistake-rank").textContent, "2");
-  assert.match(rows[1].querySelector(".mh-mistake-reason").textContent, /活用のし忘れ/);
+  assert.equal(rows[1].querySelector(".mh-mistake-reason").textContent, "主なミス：活用ミス（2件）");
   assert.equal(rows[2].querySelector(".mh-mistake-rank").textContent, "3");
   assert.match(rows[2].querySelector(".mh-mistake-reason").textContent, /未回答/);
+  assert.doesNotMatch(document.getElementById("mh-toeic-results").textContent, /自動判定|可能性/);
   assert.match(rows[1].textContent, /twelfth/);
   assert.match(rows[2].textContent, /third/);
   assert.doesNotMatch(document.getElementById("mh-toeic-results").textContent, /first/);
@@ -518,11 +519,13 @@ test("複数ルーム結果: つまずいた単語が空なら上位3件セク�
     setLabel: "Clacel Day 1", perfect: [], others: [], review: [], mistakes: [], isTrial: false,
   });
 
+  assert.equal(document.getElementById("mh-clacel-noperfect").textContent.trim(), "満点者はいません");
+
   const mistakeSection = document.getElementById("mh-clacel-mistake-section");
   assert.ok(mistakeSection, "誤答上位セクションがある");
   assert.equal(mistakeSection.hidden, true);
   assert.doesNotMatch(document.getElementById("mh-clacel-results").textContent, /全員正解でした/);
-  assert.match(document.getElementById("mh-clacel-noperfect").textContent, /満点の人はいませんでした/);
+  assert.equal(document.getElementById("mh-clacel-noperfect").textContent.trim(), "満点者はいません");
 });
 
 test("提出確認: 最終問題で「回答を確認」を押すと確認画面を表示する（即提出しない）", () => {
@@ -722,13 +725,13 @@ test("待機画面: 手動提出中は他の参加者待ち、全員提出後は
   assert.equal(document.getElementById("waiting-remain").textContent, "ほかの参加者の提出を待っています");
 
   fireSocketEvent("quiz:submitProgress", { submitted: 2, total: 2 });
-  assert.equal(document.getElementById("waiting-remain").textContent, "全員の提出が完了しました。ホストの結果発表を待っています");
+  assert.equal(document.getElementById("waiting-remain").textContent, "全員提出済み　ホストの結果発表を待っています");
 });
 
 test("問題画面: 更新防止と文法上の活用案内を分かれた文で表示する", () => {
   const { document } = loadQuizPage();
   const note = document.getElementById("q-note");
-  assert.match(note.textContent, /回答中は画面を閉じたり、更新したりしないでください。/);
+  assert.match(note.textContent, /回答中は画面を閉じたり、更新したりしないでください/);
   assert.match(note.textContent, /文法に合わせて活用させて答えてください/);
 });
 

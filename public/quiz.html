@@ -36,7 +36,7 @@
   .screen { display: none; }
   .screen.active { display: block; }
   .site-header { position: relative; min-height: 86px; padding: 12px 76px 0; margin: 0 0 20px; text-align: center; }
-  .voice-logo { position: absolute; top: 0; left: 0; display: block; width: 64px; height: 52px; object-fit: contain; }
+  .voice-logo { position: absolute; top: 0; left: 0; display: block; width: 64px; height: 52px; object-fit: contain; mix-blend-mode: multiply; }
   .site-title { margin: 0 0 7px; font-family: "Avenir Next", Avenir, "Helvetica Neue", sans-serif; font-size: clamp(1.75rem, 4.8vw, 2.65rem); font-weight: 800; letter-spacing: -.055em; line-height: 1; }
   .site-tagline { color: var(--muted-foreground); font-size: .9rem; font-weight: 600; }
   .card {
@@ -319,7 +319,7 @@
           <div id="mh-clacel-results" hidden>
             <p class="perfect-title">🏆 満点者</p>
             <ul class="rank-list" id="mh-clacel-perfect"></ul>
-            <p class="mh-progress" id="mh-clacel-noperfect" hidden>今回、満点の人はいませんでした</p>
+            <p class="mh-progress" id="mh-clacel-noperfect" hidden>満点者はいません</p>
             <div id="mh-clacel-mistake-section">
               <p class="mh-progress" style="margin-top:14px;">みんながつまずいた単語 上位3つ</p>
               <ul class="rank-list" id="mh-clacel-mistakes"></ul>
@@ -353,7 +353,7 @@
           <div id="mh-toeic-results" hidden>
             <p class="perfect-title">🏆 満点者</p>
             <ul class="rank-list" id="mh-toeic-perfect"></ul>
-            <p class="mh-progress" id="mh-toeic-noperfect" hidden>今回、満点の人はいませんでした</p>
+            <p class="mh-progress" id="mh-toeic-noperfect" hidden>満点者はいません</p>
             <div id="mh-toeic-mistake-section">
               <p class="mh-progress" style="margin-top:14px;">みんながつまずいた単語 上位3つ</p>
               <ul class="rank-list" id="mh-toeic-mistakes"></ul>
@@ -387,7 +387,7 @@
           <div id="mh-ielts-results" hidden>
             <p class="perfect-title">🏆 満点者</p>
             <ul class="rank-list" id="mh-ielts-perfect"></ul>
-            <p class="mh-progress" id="mh-ielts-noperfect" hidden>今回、満点の人はいませんでした</p>
+            <p class="mh-progress" id="mh-ielts-noperfect" hidden>満点者はいません</p>
             <div id="mh-ielts-mistake-section">
               <p class="mh-progress" style="margin-top:14px;">みんながつまずいた単語 上位3つ</p>
               <ul class="rank-list" id="mh-ielts-mistakes"></ul>
@@ -406,7 +406,7 @@
     </div>
     <div class="card" id="weekly-review-entry" hidden>
       <button type="button" id="btn-weekly-review"></button>
-      <p class="weekly-review-note">同じ端末・同じブラウザでのみ利用できます。次週のDay 1 19:30を過ぎると期限切れになります。ブラウザデータを削除した場合や、シークレット／プライベートモードでは復元できません。</p>
+      <p class="weekly-review-note">同じ端末・同じブラウザでのみ利用できます<br>次週のDay 1 19:30を過ぎると期限切れになります<br>ブラウザデータを削除した場合や、シークレット／プライベートモードでは復元できません</p>
     </div>
     <button class="leave" onclick="leaveRoom(false)">← ゲーム選択に戻る</button>
   </div>
@@ -454,7 +454,7 @@
         <button class="back" id="btn-back">← 戻る</button>
         <button id="btn-next">次へ</button>
       </div>
-      <p class="q-note" id="q-note">※回答中は画面を閉じたり、更新したりしないでください。<br>文法に合わせて活用させて答えてください（例：過去形・複数形など）</p>
+      <p class="q-note" id="q-note">※回答中は画面を閉じたり、更新したりしないでください<br>文法に合わせて活用させて答えてください（例：過去形・複数形など）</p>
     </div>
     <button class="leave" onclick="leaveRoom(true)">ルームを退出する</button>
   </div>
@@ -530,7 +530,7 @@
         <div class="summary-perfect">
           <span class="summary-label" id="perfect-count"></span>
           <ul class="perfect-names" id="perfect-list"></ul>
-          <span class="summary-label" id="no-perfect" style="display:none;">今回、満点の人はいませんでした</span>
+          <span class="summary-label" id="no-perfect" style="display:none;">満点者はいません</span>
         </div>
       </div>
       <section id="study-panel">
@@ -858,7 +858,7 @@
     if (isHost) {
       $("waiting-remain").textContent = remain > 0
         ? `あと${remain}人の提出を待っています`
-        : "全員の提出が完了しました。結果を発表できます";
+        : "全員提出済み　結果を発表できます";
       return;
     }
     if (Date.now() >= quizEndsAt) {
@@ -867,7 +867,7 @@
     }
     $("waiting-remain").textContent = remain > 0
       ? "ほかの参加者の提出を待っています"
-      : "全員の提出が完了しました。ホストの結果発表を待っています";
+      : "全員提出済み　ホストの結果発表を待っています";
   }
 
   // 復帰セッションがある場合はattemptRejoin()の応答が来るまで何も表示しない
@@ -1049,8 +1049,8 @@
   }
 
   const MISTAKE_REASON_LABELS = {
-    inflection: "活用のし忘れ",
-    spelling: "スペルミスの可能性",
+    inflection: "活用ミス",
+    spelling: "スペルミス",
     blank: "未回答",
     other: "別の単語・その他",
   };
@@ -1063,7 +1063,7 @@
     const count = Number(reasonCounts[reason]) || 0;
     return count > 0
       ? `${MISTAKE_REASON_LABELS[reason]}（${count}件）`
-      : "原因を判定できません";
+      : "その他";
   }
 
   function mhRenderResults(category, perfect, mistakes = []) {
@@ -1079,7 +1079,7 @@
     const topMistakes = mistakes.slice(0, 3);
     $(`mh-${category}-mistake-section`).hidden = topMistakes.length === 0;
     $(`mh-${category}-mistakes`).innerHTML = topMistakes.map((item, rank) =>
-      `<li class="mh-mistake-row"><span class="mh-mistake-rank" aria-label="${rank + 1}位">${rank + 1}</span><span><strong class="mh-mistake-word">${escapeHtml(item.answer)}</strong><small class="mh-mistake-meaning">${escapeHtml(item.ja)}</small><small class="mh-mistake-reason">主なミス傾向（自動判定）: ${escapeHtml(primaryMistakeReason(item.reasonCounts))}</small></span></li>`
+      `<li class="mh-mistake-row"><span class="mh-mistake-rank" aria-label="${rank + 1}位">${rank + 1}</span><span><strong class="mh-mistake-word">${escapeHtml(item.answer)}</strong><small class="mh-mistake-meaning">${escapeHtml(item.ja)}</small><small class="mh-mistake-reason">主なミス：${escapeHtml(primaryMistakeReason(item.reasonCounts))}</small></span></li>`
     ).join("");
     mhShow(category, "results");
   }
@@ -1100,14 +1100,14 @@
     s.on("quiz:readyToReveal", () => { $(`mh-${category}-reveal`).disabled = false; });
     s.on("quiz:results", ({ perfect, mistakes }) => mhRenderResults(category, perfect, mistakes));
     s.on("quiz:backToLobby", ({ cancelled } = {}) => {
-      if (cancelled) $(`mh-${category}-error`).textContent = "開催を中止しました。問題セットを選び直して開始できます。";
+      if (cancelled) $(`mh-${category}-error`).textContent = "開催を中止しました　問題セットを選び直せます";
       mhShow(category, "lobby");
     });
     s.on("quiz:roomClosed", () => {
       mhForgetRoom(category);
       mh[category].roomCode = null;
       mhShow(category, "idle");
-      $(`mh-${category}-error`).textContent = "ルームを終了しました。";
+      $(`mh-${category}-error`).textContent = "ルームを終了しました";
     });
     s.on("quiz:startError", ({ error }) => { $(`mh-${category}-error`).textContent = error; });
     s.on("quiz:actionError", ({ error }) => { $(`mh-${category}-error`).textContent = error; });
@@ -1121,7 +1121,7 @@
         if (!res?.ok) {
           mhForgetRoom(category);
           mh[category].roomCode = null;
-          return ($(`mh-${category}-error`).textContent = "接続を復帰できませんでした。ルームを作り直してください。");
+          return ($(`mh-${category}-error`).textContent = "接続を復帰できませんでした　ルームを作り直してください");
         }
         mh[category].seriesNames = res.seriesNames || [];
         mh[category].seriesMeta = res.seriesMeta || [];
@@ -1201,7 +1201,7 @@
       const selectedName = mh[category].seriesNames[Number($(`mh-${category}-series`).value)] || "問題セット";
       const course = CATEGORY_LABEL[category];
       openActionConfirm(
-        `${course} ${selectedName}を、参加者 ${mh[category].participantCount}人で開始します。`,
+        `${course} ${selectedName}を、参加者 ${mh[category].participantCount}人で開始します`,
         () => mh[category].socket.emit("quiz:startGame", { seriesIndex: Number($(`mh-${category}-series`).value) }),
         { title: "開始前の確認", confirmLabel: "この内容で開始" }
       );
@@ -1218,12 +1218,12 @@
     });
 
     $(`mh-${category}-cancel`).addEventListener("click", () => {
-      if (!confirm("この開催を中止しますか？回答は採点されません。")) return;
+      if (!confirm("この開催を中止しますか？\n回答は採点されません")) return;
       mh[category].socket.emit("quiz:cancelGame");
     });
 
     $(`mh-${category}-close`).addEventListener("click", () => {
-      if (!confirm(`${CATEGORY_LABEL[category]}のルームを終了しますか？参加者も退出します。`)) return;
+      if (!confirm(`${CATEGORY_LABEL[category]}のルームを終了しますか？\n参加者も退出します`)) return;
       mh[category].socket?.emit("quiz:leave", {}, (res) => {
         if (!res?.ok) {
           $(`mh-${category}-error`).textContent = res?.error || "ルームを終了できませんでした";
@@ -1232,7 +1232,7 @@
         mhForgetRoom(category);
         mh[category].roomCode = null;
         mhShow(category, "idle");
-        $(`mh-${category}-error`).textContent = "ルームを終了しました。";
+        $(`mh-${category}-error`).textContent = "ルームを終了しました";
       });
     });
   }
@@ -1258,7 +1258,7 @@
     const activeScreen = document.querySelector(".screen.active")?.id;
     clearSession();
     if (activeScreen === "screen-results" || activeScreen === "screen-retest") {
-      const message = "ルームは終了しました。この結果と解き直しは、この端末だけで引き続き利用できます。";
+      const message = "ルームは終了しました　この結果と解き直しは、この端末だけで引き続き利用できます";
       $("results-room-closed-notice").textContent = message;
       $("results-room-closed-notice").hidden = false;
       $("retest-room-closed-notice").textContent = message;
@@ -1460,7 +1460,7 @@
     $("results-set").textContent = setLabel || "";
     const result = QuizUi.calculateResult(answers, review);
     $("personal-score").textContent = `${result.score} / ${result.total}点`;
-    // 満点者が0人のときは「満点者 0人」と「満点の人はいませんでした」が同じ行で重複するので、件数は出さない
+    // 満点者が0人のときは案内と件数が重複するので、件数は出さない
     $("perfect-count").textContent = perfect.length > 0 ? `🏆 満点者 ${perfect.length}人` : "🏆";
     if (perfect.length > 0) {
       $("no-perfect").style.display = "none";
@@ -1572,7 +1572,7 @@
     const accepted = [item.answer, ...item.altAnswers].map((a) => String(a).trim().toLowerCase());
     const ok = accepted.includes(mine);
     if (ok) retestCorrect += 1;
-    $("retest-feedback").textContent = ok ? "正解 🎉" : "おしい。もう一度おぼえよう";
+    $("retest-feedback").textContent = ok ? "正解 🎉" : "おしい　もう一度おぼえよう";
     $("retest-feedback").className = `retest-feedback ${ok ? "ok" : "ng"}`;
     $("retest-correct").textContent = `正解：${[item.answer, ...item.altAnswers].join(" / ")}`;
     $("retest-answer").disabled = true;
@@ -1641,7 +1641,7 @@
     clearWaitingTimer();
     localStorage.removeItem("quizAnswers");
     clearPendingSubmission();
-    if (cancelled) $("entry-error").textContent = "開催は中止されました。ホストの案内をお待ちください。";
+    if (cancelled) $("entry-error").textContent = "開催は中止されました　ホストの案内をお待ちください";
     show("screen-lobby");
   });
 
