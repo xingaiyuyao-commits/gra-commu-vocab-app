@@ -518,120 +518,10 @@ io.on("connection", (socket) => {
 /* ========== 単語テスト（シリーズ別20問・満点者掲示板） ========== */
 
 const WORDTESTS = require("./wordtests");
+const { selectReviewQuestions, ReviewSelectionError } = require("./quiz-review-selection");
 const QUIZ_QUESTION_COUNT = 20;
 const QUIZ_TIME_LIMIT_SEC = 300; // 5分
-
-/* ---------- 単語リスト編集画面（管理用API） ---------- */
-
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "";
-const WORDTESTS_FILES = {
-  clacel: path.join(__dirname, "wordtests-clacel.js"),
-  ielts: path.join(__dirname, "wordtests-ielts.js"),
-  toeic: path.join(__dirname, "wordtests-toeic.js"),
-};
-
-function checkAdminAuth(req, res, next) {
-  if (!ADMIN_PASSWORD) {
-    return res.status(503).json({ error: "サーバーに ADMIN_PASSWORD が設定されていません" });
-  }
-  if (req.headers["x-admin-password"] !== ADMIN_PASSWORD) {
-    return res.status(401).json({ error: "パスワードが違います" });
-  }
-  next();
-}
-
-function makeHint(answer) {
-  return answer[0] + "_".repeat(answer.length - 1);
-}
-
-function validateWordtestsData(data) {
-  const errors = [];
-  if (!data.label) errors.push("label がありません");
-  if (!Array.isArray(data.series) || data.series.length === 0) errors.push("series がありません");
-  (data.series || []).forEach((s, si) => {
-    if (!s.name) errors.push(`series[${si}]: name がありません`);
-    if (s.isTrial !== undefined && typeof s.isTrial !== "boolean") errors.push(`${s.name || "series" + si}: isTrial は真偽値で指定してください`);
-    const seen = new Set();
-    (s.items || []).forEach((it, i) => {
-      const tag = `${s.name || "series" + si} #${i + 1}`;
-      if (!it.sentence || !it.sentence.includes("___")) errors.push(`${tag}: 例文に ___ がありません`);
-      if (!it.answer || !/^[a-z][a-z'-]*$/.test(it.answer.toLowerCase()))
-        errors.push(`${tag}: answer の形式が不正です`);
-      if (it.altAnswers !== undefined) {
-        if (!Array.isArray(it.altAnswers) || it.altAnswers.some((a) => !/^[a-z][a-z'-]*$/.test(String(a).toLowerCase())))
-          errors.push(`${tag}: altAnswers の形式が不正です`);
-      }
-      if (!it.base || !/^[a-z][a-z'-]*$/.test(it.base.toLowerCase())) errors.push(`${tag}: base の形式が不正です`);
-      if (!it.ja) errors.push(`${tag}: ja（日本語訳）がありません`);
-      if (!it.sentenceJa) errors.push(`${tag}: sentenceJa（例文和訳）がありません`);
-      const base = (it.base || "").toLowerCase();
-      if (seen.has(base)) errors.push(`${s.name}: base が重複しています（${base}）`);
-      seen.add(base);
-    });
-  });
-  return errors;
-}
-
-function serializeWordtestsFile(data, filePath) {
-  let headerComment = "";
-  if (fs.existsSync(filePath)) {
-    const existing = fs.readFileSync(filePath, "utf8");
-    const commentLines = [];
-    for (const line of existing.split("\n")) {
-      if (line.startsWith("//")) commentLines.push(line);
-      else break;
-    }
-    if (commentLines.length) headerComment = commentLines.join("\n") + "\n";
-  }
-  let out = headerComment;
-  out += "module.exports = {\n";
-  out += `  label: ${JSON.stringify(data.label)},\n`;
-  out += "  series: [\n";
-  data.series.forEach((s) => {
-    out += "    {\n";
-    out += `      name: ${JSON.stringify(s.name)},\n`;
-    if (s.isTrial !== undefined) out += `      isTrial: ${s.isTrial},\n`;
-    out += "      items: [\n";
-    s.items.forEach((it) => {
-      const answer = it.answer.toLowerCase();
-      const base = it.base.toLowerCase();
-      const altPart = Array.isArray(it.altAnswers) && it.altAnswers.length
-        ? `, altAnswers: ${JSON.stringify(it.altAnswers.map((a) => String(a).toLowerCase()))}`
-        : "";
-      out += `        { sentence: ${JSON.stringify(it.sentence)}, answer: ${JSON.stringify(answer)}${altPart}, base: ${JSON.stringify(base)}, hint: ${JSON.stringify(makeHint(answer))}, ja: ${JSON.stringify(it.ja)}, sentenceJa: ${JSON.stringify(it.sentenceJa)} },\n`;
-    });
-    out += "      ],\n";
-    out += "    },\n";
-  });
-  out += "  ],\n";
-  out += "};\n";
-  return out;
-}
-
-app.get("/api/admin/wordtests/:category", express.json(), checkAdminAuth, (req, res) => {
-  const filePath = WORDTESTS_FILES[req.params.category];
-  if (!filePath) return res.status(404).json({ error: "不明なカテゴリです" });
-  delete require.cache[require.resolve(filePath)];
-  res.json(require(filePath));
-});
-
-app.post("/api/admin/wordtests/:category", express.json({ limit: "2mb" }), checkAdminAuth, (req, res) => {
-  const category = req.params.category;
-  const filePath = WORDTESTS_FILES[category];
-  if (!filePath) return res.status(404).json({ error: "不明なカテゴリです" });
-
-  const errors = validateWordtestsData(req.body);
-  if (errors.length) return res.status(400).json({ error: "検証エラー", details: errors });
-
-  try {
-    fs.writeFileSync(filePath, serializeWordtestsFile(req.body, filePath), "utf8");
-    delete require.cache[require.resolve(filePath)];
-    WORDTESTS[category] = require(filePath);
-    res.json({ ok: true });
-  } catch (e) {
-    res.status(500).json({ error: "保存に失敗しました: " + e.message });
-  }
-});
+const QUIZ_REVIEW_TIME_LIMIT_SEC = 750; // 12分30秒
 
 const QUIZ_CATEGORIES = ["clacel", "ielts", "toeic"];
 const IS_RAILWAY_RUNTIME = Boolean(
@@ -665,6 +555,35 @@ function sanitizeQuizReasonCounts(counts) {
     reason,
     Math.max(0, Math.trunc(Number(counts?.[reason]) || 0)),
   ]).filter(([, count]) => count > 0));
+}
+
+function sanitizeHistoryQuestionStats(stats) {
+  if (!Array.isArray(stats)) return [];
+  return stats.flatMap((stat) => {
+    if (!stat || typeof stat !== "object" || Array.isArray(stat)) return [];
+    const questionId = String(stat.questionId || "");
+    const attempts = Number(stat.attempts);
+    const wrongCount = Number(stat.wrongCount);
+    const reasons = stat.reasonCounts;
+    if (!/^[a-z0-9/_-]+$/i.test(questionId)
+      || !Number.isInteger(attempts) || attempts < 0
+      || !Number.isInteger(wrongCount) || wrongCount < 0 || wrongCount > attempts
+      || !reasons || typeof reasons !== "object" || Array.isArray(reasons)
+      || Object.keys(reasons).some((reason) => !QUIZ_MISTAKE_REASONS.includes(reason))
+      || Object.values(reasons).some((count) => !Number.isInteger(count) || count < 0)) return [];
+    return [{ questionId, attempts, wrongCount, reasonCounts: sanitizeQuizReasonCounts(reasons) }];
+  });
+}
+
+function sanitizeStoredHistoryRecord(record) {
+  if (!record || typeof record !== "object" || Array.isArray(record)) return null;
+  const day = Number(record.day);
+  return {
+    ...record,
+    ...(Number.isInteger(day) && day > 0 ? { day } : {}),
+    ...(typeof record.datasetRevision === "string" && record.datasetRevision ? { datasetRevision: record.datasetRevision } : {}),
+    questionStats: sanitizeHistoryQuestionStats(record.questionStats),
+  };
 }
 
 function sanitizeRestoredQuizResults(results, roomIsTrial) {
@@ -742,14 +661,23 @@ function loadQuizState() {
         startedAt: Number(room.startedAt) || 0,
         endsAt: Number(room.endsAt) || 0,
         setLabel: String(room.setLabel || ""),
+        day: Number.isInteger(Number(room.day)) && Number(room.day) > 0 ? Number(room.day) : null,
+        datasetRevision: String(room.datasetRevision || ""),
+        isReview: room.isReview === true,
+        sourceDays: Array.isArray(room.sourceDays)
+          ? room.sourceDays.filter((day) => Number.isInteger(Number(day))).map(Number)
+          : [],
         isTrial,
         results: sanitizeRestoredQuizResults(room.results, isTrial),
         timeoutHandle: null,
       };
     }
-    const resultHistory = saved.resultHistory && typeof saved.resultHistory === "object" && !Array.isArray(saved.resultHistory)
+    const storedHistory = saved.resultHistory && typeof saved.resultHistory === "object" && !Array.isArray(saved.resultHistory)
       ? saved.resultHistory
       : {};
+    const resultHistory = Object.fromEntries(Object.entries(storedHistory)
+      .map(([key, record]) => [key, sanitizeStoredHistoryRecord(record)])
+      .filter(([, record]) => record));
     return { rooms: restored, resultHistory };
   } catch (error) {
     if (error.code !== "ENOENT") {
@@ -802,6 +730,10 @@ function persistQuizState() {
       startedAt: room.startedAt,
       endsAt: room.endsAt,
       setLabel: room.setLabel,
+      day: room.day,
+      datasetRevision: room.datasetRevision,
+      isReview: room.isReview,
+      sourceDays: room.sourceDays,
       isTrial: room.isTrial,
       results: room.results,
     };
@@ -1093,6 +1025,15 @@ function quizPublicPlayers(room) {
   }));
 }
 
+function quizSeriesMeta(category) {
+  return WORDTESTS[category].series.map((series) => ({
+    name: series.name,
+    count: series.isReview ? 50 : Math.min(QUIZ_QUESTION_COUNT, series.items.length),
+    timeLimitSec: series.isReview ? QUIZ_REVIEW_TIME_LIMIT_SEC : QUIZ_TIME_LIMIT_SEC,
+    isReview: series.isReview === true,
+  }));
+}
+
 function quizPlayersUpdate(roomCode) {
   const room = quizRooms[roomCode];
   if (!room || !room.players[room.host]) return;
@@ -1225,6 +1166,41 @@ function quizResultNow() {
   return new Date();
 }
 
+function buildQuestionStats(room, participants) {
+  return room.questions.map((question, index) => {
+    const wrongParticipants = participants.filter((participant) =>
+      (participant.wrongQuestionIndexes || []).includes(index));
+    const reasonCounts = {};
+    for (const participant of wrongParticipants) {
+      const reason = QUIZ_MISTAKE_REASONS.includes(participant.wrongAnswerReasons?.[index])
+        ? participant.wrongAnswerReasons[index]
+        : "other";
+      reasonCounts[reason] = (reasonCounts[reason] || 0) + 1;
+    }
+    return {
+      questionId: String(question.questionId || ""),
+      attempts: participants.length,
+      wrongCount: wrongParticipants.length,
+      reasonCounts: sanitizeQuizReasonCounts(reasonCounts),
+    };
+  });
+}
+
+function topThreeMistakes(questionStats, questions) {
+  return questionStats
+    .map((stat, index) => ({ stat, index }))
+    .filter(({ stat }) => stat.wrongCount > 0)
+    .sort((left, right) => right.stat.wrongCount - left.stat.wrongCount || left.index - right.index)
+    .slice(0, 3)
+    .map(({ stat, index }) => ({
+      index,
+      answer: questions[index].answer,
+      ja: questions[index].ja,
+      count: stat.wrongCount,
+      reasonCounts: stat.reasonCounts,
+    }));
+}
+
 // ホストの操作で結果発表を確定させる。参加者全員が提出済みであることを再確認してから発表する。
 function quizRevealResults(roomCode) {
   const room = quizRooms[roomCode];
@@ -1246,31 +1222,8 @@ function quizRevealResults(roomCode) {
   const others = entries
     .filter((e) => e.score !== e.total)
     .map((e) => ({ id: e.id, name: e.name, score: e.score, total: e.total }));
-  const mistakeCounts = new Map();
-  const mistakeReasonCounts = new Map();
-  for (const participant of participants) {
-    for (const index of participant.wrongQuestionIndexes || []) {
-      if (index >= 0 && index < room.questions.length) {
-        mistakeCounts.set(index, (mistakeCounts.get(index) || 0) + 1);
-        const reason = QUIZ_MISTAKE_REASONS.includes(participant.wrongAnswerReasons?.[index])
-          ? participant.wrongAnswerReasons[index]
-          : "other";
-        const reasons = mistakeReasonCounts.get(index) || {};
-        reasons[reason] = (reasons[reason] || 0) + 1;
-        mistakeReasonCounts.set(index, reasons);
-      }
-    }
-  }
-  const mistakes = [...mistakeCounts.entries()]
-    .sort(([indexA, countA], [indexB, countB]) => countB - countA || indexA - indexB)
-    .slice(0, 3)
-    .map(([index, count]) => ({
-      index,
-      answer: room.questions[index].answer,
-      ja: room.questions[index].ja,
-      count,
-      reasonCounts: sanitizeQuizReasonCounts(mistakeReasonCounts.get(index)),
-    }));
+  const questionStats = buildQuestionStats(room, participants);
+  const mistakes = topThreeMistakes(questionStats, room.questions);
   const now = quizResultNow();
   const resultAt = now.toISOString();
   const date = tokyoDateKey(now);
@@ -1289,8 +1242,11 @@ function quizRevealResults(roomCode) {
       date,
       category: room.category,
       setLabel: room.setLabel,
+      day: room.day,
+      datasetRevision: room.datasetRevision,
       participantCount: participants.length,
       perfectNames: perfect.map((entry) => entry.name),
+      questionStats,
       updatedAt: resultAt,
     };
   });
@@ -1335,6 +1291,10 @@ io.on("connection", (socket) => {
       players: {},
       questions: [],
       startedAt: 0,
+      day: null,
+      datasetRevision: "",
+      isReview: false,
+      sourceDays: [],
       results: null,
     };
     quizJoin(socket, roomCode, name, cb, newRoom);
@@ -1379,6 +1339,7 @@ io.on("connection", (socket) => {
       submitted: player.submittedAt !== null,
       autoSubmitted: player.submissionKind === "timeout",
       seriesNames: WORDTESTS[room.category].series.map((s) => s.name),
+      seriesMeta: quizSeriesMeta(room.category),
     };
     if (room.phase === "playing") {
       res.setLabel = room.setLabel;
@@ -1403,13 +1364,37 @@ io.on("connection", (socket) => {
     const cat = WORDTESTS[room.category];
     const series = cat && cat.series[Number(seriesIndex)];
     if (!series) return cb({ ok: false, error: "問題セットが見つかりません" });
+    let prepared;
+    try {
+      prepared = series.isReview
+        ? selectReviewQuestions({
+          category: room.category,
+          reviewDay: series.day,
+          datasetRevision: cat.datasetRevision,
+          sourceDays: series.sourceDays,
+          series: cat.series,
+          resultHistory,
+        })
+        : {
+          questions: shuffle(series.items).slice(0, QUIZ_QUESTION_COUNT),
+          sourceDays: [],
+          durationSec: QUIZ_TIME_LIMIT_SEC,
+        };
+    } catch (error) {
+      if (error instanceof ReviewSelectionError) return cb({ ok: false, error: error.message });
+      throw error;
+    }
     const previousTimeout = room.timeoutHandle;
     const saved = persistQuizMutation(roomCode, () => {
-      room.questions = shuffle(series.items).slice(0, QUIZ_QUESTION_COUNT);
+      room.questions = prepared.questions;
       room.phase = "playing";
       room.startedAt = Date.now();
-      room.endsAt = room.startedAt + QUIZ_TIME_LIMIT_SEC * 1000;
+      room.endsAt = room.startedAt + prepared.durationSec * 1000;
       room.setLabel = `${cat.label} ${series.name}`;
+      room.day = Number.isInteger(series.day) ? series.day : null;
+      room.datasetRevision = String(cat.datasetRevision || "");
+      room.isReview = series.isReview === true;
+      room.sourceDays = prepared.sourceDays;
       room.isTrial = series.isTrial === true;
       room.results = null;
       room.timeoutHandle = null;
@@ -1426,7 +1411,7 @@ io.on("connection", (socket) => {
       return cb({ ok: false, error: QUIZ_PERSISTENCE_ERROR });
     }
     if (previousTimeout) clearTimeout(previousTimeout);
-    room.timeoutHandle = setTimeout(() => quizForceFinish(roomCode), QUIZ_TIME_LIMIT_SEC * 1000);
+    room.timeoutHandle = setTimeout(() => quizForceFinish(roomCode), prepared.durationSec * 1000);
     cb({ ok: true });
     io.to(roomCode).emit("quiz:started", {
       setLabel: room.setLabel,
@@ -1555,6 +1540,7 @@ io.on("connection", (socket) => {
       playerId: id,
       sessionToken: room.players[id].sessionToken,
       seriesNames,
+      seriesMeta: quizSeriesMeta(room.category),
     };
     if (room.phase === "playing") {
       response.phase = room.phase;

@@ -25,7 +25,7 @@ To rotate the password, repeat these steps with a newly generated value. Rotatio
 
 ## Persistent data and backups
 
-Railway's existing `/data` volume contains `/data/quiz-rooms.json`. Version 2 of this file holds both active quiz rooms and `resultHistory`; do not replace the volume or copy this file into the repository.
+Railway's existing `/data` volume contains `/data/quiz-rooms.json`. Version 2 of this file holds both active quiz rooms and `resultHistory`; do not replace the volume or copy this file into the repository. Each completed date/course record now includes all-question aggregate statistics (`questionStats`) used to prioritize review-day questions. It does not store participants' raw answer text.
 
 Before deleting history, changing the volume, or performing a rollback that may affect the saved schema, take an access-controlled backup of `/data/quiz-rooms.json` using the Railway volume backup/export procedure. Confirm the backup is readable JSON with `version: 2`, and keep it in the approved private storage location.
 
@@ -41,6 +41,18 @@ Deletion removes only the selected date/course history record. Treat it as irrev
 ## Prohibited normal operation
 
 Do not use `railway up` for production. It uploads the local working tree and can include untracked files that do not exist in GitHub.
+
+The browser word-list editor and `ADMIN_PASSWORD` are obsolete. Do not recreate or configure them. Vocabulary updates must be imported from the approved PDFs with `scripts/import-september-pdfs.py`, reviewed through the generated files in `data/wordtests`, tested, committed, and deployed through GitHub. `RESULTS_ADMIN_PASSWORD` remains required and is unrelated to vocabulary editing.
+
+## September content and review-day checks
+
+1. Run `node --test tests/september-wordtests.test.js tests/quiz-review-selection.test.js tests/admin-words-removed.test.js`.
+2. Confirm Clacel has 420 imported questions, TOEIC 440, and IELTS 440; confirm Day 26 and later are not selectable.
+3. Create a normal room and confirm the selected Day uses the imported PDF questions and a 5-minute limit.
+4. Create Day 7, Day 14, or Day 21 and confirm it starts with exactly 50 unique questions, uses 8 or 9 questions from each preceding study day, and has a 12-minute-30-second limit.
+5. Restart the service while the review room is active and confirm the same question order and deadline are restored from `/data/quiz-rooms.json`.
+6. Reveal results and confirm the daily record stores 50 `questionStats` entries, then confirm the private results-history page still shows participant and perfect-score information.
+7. Confirm `/admin-words.html` and `/api/admin/wordtests/clacel` both return 404.
 
 ## Rollback
 

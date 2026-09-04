@@ -18,7 +18,6 @@ test("ブランドタイトルは全画面でホームと同じ書体・太さ�
     "index.html": "h1",
     "quiz.html": ".site-title",
     "results-history.html": ".site-title",
-    "admin-words.html": ".site-title",
   };
 
   for (const [file, selector] of Object.entries(selectors)) {
