@@ -477,6 +477,86 @@
       to { opacity: 1; transform: translateY(0); }
     }
   }
+
+  /* 本体と同じニュートラルなUIへ統一 */
+  :root {
+    --background: #f7f7f5;
+    --surface: #ffffff;
+    --ink: #202020;
+    --muted: #707070;
+    --line: #dededb;
+    --line-dark: #b8b8b3;
+    --gold: #c99820;
+    --gold-deep: #9a7419;
+    --bronze: #9a6748;
+    --danger: #b3473e;
+    --radius: .625rem;
+    --shadow: 0 1px 3px rgb(0 0 0 / .10), 0 1px 2px -1px rgb(0 0 0 / .10);
+  }
+  html { background: var(--background); }
+  body {
+    background-color: #f7f7f5;
+    background-image: linear-gradient(135deg, var(--background), var(--background) 60%, rgba(32, 32, 32, .035));
+    background-size: auto;
+    font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  .shell { width: min(1088px, 100%); padding: 16px clamp(16px, 3vw, 32px) 48px; }
+  .site-header {
+    grid-template-columns: 68px minmax(0, 1fr) 68px;
+    min-height: 86px;
+    gap: 12px;
+    padding: 12px 0 14px;
+    border-bottom: 0;
+  }
+  .voice-logo { width: 64px; height: 52px; mix-blend-mode: multiply; }
+  .site-title { font-family: "Avenir Next", Avenir, "Helvetica Neue", sans-serif; font-size: clamp(1.75rem, 4.8vw, 2.65rem); }
+  .site-tagline { font-size: .9rem; font-weight: 600; }
+  h1, .login-panel h1, .setup-panel h1, #month-title, #selected-date-title, .day-number, .stat strong {
+    font-family: ui-sans-serif, system-ui, sans-serif;
+  }
+  h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); font-weight: 800; line-height: 1.05; }
+  .intro { padding: 24px 0 22px; }
+  .lede { line-height: 1.55; }
+  .login-panel, .setup-panel, .calendar-panel, .details-panel {
+    border: 1px solid var(--line);
+    border-radius: .75rem;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .login-panel, .setup-panel { margin: 8vh auto 0; padding: 28px; }
+  .login-panel h1, .setup-panel h1 { font-size: 1.7rem; }
+  .field-label { margin-top: 24px; letter-spacing: 0; font-weight: 600; }
+  .password-input { min-height: 44px; border: 1px solid var(--line); border-radius: calc(var(--radius) - 2px); }
+  .primary-button, .month-button { border-radius: calc(var(--radius) - 2px); }
+  .primary-button { min-height: 44px; letter-spacing: 0; font-weight: 600; }
+  .quiet-button { border-bottom: 0; text-decoration: underline; text-underline-offset: 4px; }
+  .history-head { align-items: center; }
+  .history-head .quiet-button { margin-bottom: 0; }
+  .workspace { grid-template-columns: minmax(0, 1.35fr) minmax(320px, .8fr); gap: 16px; }
+  .calendar-toolbar { min-height: 72px; padding: 0 10px; border-bottom-color: var(--line); }
+  .month-button { font-family: inherit; font-size: 1.2rem; }
+  .month-button:hover { background: var(--ink); color: #fff; }
+  #month-title { font-size: clamp(1.35rem, 3vw, 1.8rem); font-weight: 800; }
+  .calendar-empty, .calendar-day { min-height: clamp(64px, 7vw, 84px); border-color: var(--line); }
+  .calendar-day:hover { background: var(--secondary, #f1f1ef); }
+  .day-number { font-size: .95rem; }
+  .legend { border-top-color: var(--line); }
+  .details-header { min-height: 72px; padding: 16px 18px; border-bottom-color: var(--line); }
+  #selected-date-title { font-size: 1.3rem; font-weight: 800; }
+  .course-card { padding: 18px; }
+  .course-name { font-size: 1.05rem; letter-spacing: -.01em; }
+  .set-label { margin: 10px 0 14px; }
+  .perfect-name { border-color: #ddc879; border-radius: 999px; background: #fff8dc; }
+  .record-stats { border-color: var(--line); }
+  .stat + .stat { border-left-color: var(--line); }
+  .stat strong { font-weight: 800; }
+
+  @media (max-width: 580px) {
+    .site-header { grid-template-columns: 48px minmax(0, 1fr) 48px; }
+    .site-header .voice-logo { width: 42px; height: 34px; }
+    .site-header .site-title { font-size: 1.05rem; }
+  }
 </style>
 </head>
 <body>
@@ -487,14 +567,12 @@
         <p class="site-title">ÖSH Vocabulary Challenge</p>
         <p class="site-tagline">みんなで満点を目指そう！</p>
       </div>
-      <span class="edition">Operations Archive / Results</span>
+      <span aria-hidden="true"></span>
     </header>
 
     <section id="login-screen" class="login-panel" hidden aria-labelledby="login-title">
-      <span class="panel-index">Admin access — 01</span>
-      <p class="eyebrow">Results archive</p>
       <h1 id="login-title">結果履歴</h1>
-      <p class="lede">運営用パスワードで、過去の開催結果を確認します。</p>
+      <p class="lede">運営用パスワードで過去の開催結果を確認できます</p>
       <form id="login-form">
         <label class="field-label" for="history-password">パスワード</label>
         <input id="history-password" class="password-input" type="password" autocomplete="current-password" aria-describedby="login-error" required />
@@ -504,8 +582,6 @@
     </section>
 
     <section id="setup-screen" class="setup-panel" hidden aria-labelledby="setup-title">
-      <span class="panel-index">Configuration — 503</span>
-      <p class="eyebrow">Setup required</p>
       <h1 id="setup-title">設定が必要です</h1>
       <p id="setup-error" class="alert" role="alert"></p>
     </section>
@@ -513,9 +589,8 @@
     <section id="history-screen" hidden aria-labelledby="history-title">
       <header class="history-head">
         <div class="intro">
-          <p class="eyebrow">Monthly results archive</p>
           <h1 id="history-title">結果履歴</h1>
-          <p class="lede">記録のある日を選ぶと、コースごとの参加人数と満点者を確認できます。</p>
+          <p class="lede">日付を選ぶとコースごとの参加人数と満点者を確認できます</p>
         </div>
         <button id="logout-button" class="quiet-button" type="button">ログアウト</button>
       </header>
@@ -543,7 +618,6 @@
 
         <aside class="details-panel" aria-labelledby="selected-date-title">
           <header class="details-header">
-            <p class="details-kicker">Selected date</p>
             <h2 id="selected-date-title"></h2>
           </header>
           <div id="course-details"></div>
@@ -592,7 +666,7 @@
     const response = await fetch(path, requestOptions);
     const payload = await response.json().catch(() => ({}));
     if (!response.ok) {
-      const error = new Error(payload.error || "通信に失敗しました。時間をおいて再度お試しください");
+      const error = new Error(payload.error || "通信に失敗しました　時間をおいて再度お試しください");
       error.status = response.status;
       throw error;
     }

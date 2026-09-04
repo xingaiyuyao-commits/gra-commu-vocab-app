@@ -193,6 +193,12 @@ test("結果履歴にもVOICEロゴと共通タイトルを表示する", async 
   assert.ok(header);
   assert.equal(header.querySelector(".voice-logo").getAttribute("src"), "/assets/voice-logo.png");
   assert.equal(header.querySelector(".site-title").textContent.trim(), "ÖSH Vocabulary Challenge");
+  assert.equal(page.window.getComputedStyle(page.document.body).backgroundColor, "rgb(247, 247, 245)");
+  assert.match(page.window.getComputedStyle(page.document.body).fontFamily, /ui-sans-serif|system-ui/);
+  assert.notEqual(page.window.getComputedStyle(header.querySelector(".voice-logo")).mixBlendMode, "normal");
+  assert.notEqual(page.window.getComputedStyle(page.document.querySelector(".calendar-panel")).borderRadius, "0px");
+  assert.equal(page.document.querySelector(".edition"), null);
+  assert.equal(page.document.querySelector(".eyebrow"), null);
 });
 
 test("別の日を選ぶと詳細を切り替え、前月・翌月ボタンは境界を越えた月を取得する", async (t) => {
