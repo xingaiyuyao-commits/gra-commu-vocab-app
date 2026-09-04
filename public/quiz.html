@@ -1356,8 +1356,6 @@
     const total = questions.length;
     $("bar").style.width = `${(idx / total) * 100}%`;
     $("q-num").textContent = `第${idx + 1}問 / ${total}`;
-    // 注意書きは第1問だけ。毎問出しても読まれず、設問を押し下げるだけになる
-    $("q-note").style.display = idx === 0 ? "" : "none";
     $("q-ja").textContent = q.ja;
     const initial = String(q.hint || "").slice(0, 1);
     $("q-hint").innerHTML = `${initial ? escapeHtml(initial) : ""}<span class="hint-line" aria-label="スペルのヒントの線"></span>`;
