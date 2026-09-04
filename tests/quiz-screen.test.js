@@ -211,54 +211,15 @@ test("参加・作成画面: エラーにrole=alert、入力欄がエラーと�
   assert.equal(document.getElementById("room").getAttribute("aria-describedby"), "entry-error");
 });
 
-test("参加画面: ルームコードは画面に表示せず、招待URL内だけで扱う", () => {
-  const { window, document, emitted } = loadQuizPage({ url: "http://localhost/quiz.html?mode=join" });
-  const joinSection = document.getElementById("join-section");
-  const roomLabel = document.querySelector('label[for="room"]');
-  const roomInput = document.getElementById("room");
-  const joinButton = document.getElementById("btn-join");
+test("参加画面: roomのない参加URLでは入力操作を隠して招待リンクの確認を案内する", () => {
+  const { document, emitted } = loadQuizPage({ url: "http://localhost/quiz.html?mode=join" });
 
-  assertVisible(joinSection, "参加欄");
-  assert.equal(roomLabel, null, "ルームコードのラベルを表示しない");
-  assert.equal(roomInput.type, "hidden");
-  assert.equal(roomInput.disabled, false);
-  assertVisible(joinButton, "参加ボタン");
-  assert.equal(joinButton.disabled, false);
-  assert.equal(joinButton.textContent.trim(), "参加する");
-  assert.equal(joinButton.classList.contains("secondary"), false, "参加ボタンはprimary表示");
-
-  setValue(window, document.getElementById("name"), " 参加者 ");
-  setValue(window, roomInput, "ab3k9p");
-  joinButton.dispatchEvent(new window.Event("click", { bubbles: true }));
-
-  const joinCalls = emitted.filter((entry) => entry.event === "quiz:joinRoom");
-  assert.equal(joinCalls.length, 1);
-  assert.equal(joinCalls[0].payload.roomCode, "AB3K9P");
-  assert.equal(joinCalls[0].payload.name, "参加者");
-});
-
-test("参加画面: 名前が空ならエラーを表示し、ルーム参加を送信しない", () => {
-  const { window, document, emitted } = loadQuizPage({ url: "http://localhost/quiz.html?mode=join" });
-  setValue(window, document.getElementById("room"), "AB3K9P");
-
-  document.getElementById("btn-join").dispatchEvent(new window.Event("click", { bubbles: true }));
-
-  assert.equal(document.getElementById("entry-error").textContent, "名前を入力してください");
+  assert.equal(document.querySelector('label[for="name"]').hidden, true);
+  assert.equal(document.getElementById("name").hidden, true);
+  assert.equal(document.getElementById("join-section").hidden, true);
+  assert.equal(document.getElementById("entry-home-link").hidden, true);
+  assert.equal(document.getElementById("entry-error").textContent, "招待リンクを確認してください");
   assert.equal(emitted.some((entry) => entry.event === "quiz:joinRoom"), false);
-});
-
-test("参加画面: 空のルームコードはサーバーへ送り、応答エラーをentry-errorに表示する", () => {
-  const { window, document, emitted } = loadQuizPage({ url: "http://localhost/quiz.html?mode=join" });
-  setValue(window, document.getElementById("name"), "参加者");
-
-  document.getElementById("btn-join").dispatchEvent(new window.Event("click", { bubbles: true }));
-
-  const joinCall = emitted.find((entry) => entry.event === "quiz:joinRoom");
-  assert.ok(joinCall, "空コードもサーバー側の検証へ送る");
-  assert.equal(joinCall.payload.roomCode, "");
-  assert.equal(joinCall.payload.name, "参加者");
-  joinCall.cb({ error: "ルームが見つかりません" });
-  assert.equal(document.getElementById("entry-error").textContent, "ルームが見つかりません");
 });
 
 test("参加画面: コース付き参加リンクではコードを見せず、名前の後の参加ボタンから参加できる", () => {
@@ -280,6 +241,7 @@ test("参加画面: コース付き参加リンクではコードを見せず、
   assert.equal(joinButton.disabled, false);
   assert.equal(joinButton.textContent.trim(), "参加する");
   assert.equal(joinButton.classList.contains("secondary"), false, "参加ボタンはprimary表示");
+  assert.equal(document.getElementById("entry-home-link").hidden, true, "参加者にはホームへ戻る動線を出さない");
   assertVisible(courseLabel, "コース名");
   assert.equal(document.getElementById("join-course-name").textContent, "Clacelコース");
   assert.ok(
@@ -292,6 +254,14 @@ test("参加画面: コース付き参加リンクではコードを見せず、
   const joinCall = emitted.find((entry) => entry.event === "quiz:joinRoom");
   assert.equal(joinCall.payload.roomCode, "AB3K9P");
   assert.equal(joinCall.payload.name, "参加者A");
+});
+
+test("作成画面: ホームに戻るボタンは表示する", async () => {
+  const { window, document } = loadQuizPage({ url: "http://localhost/quiz.html?mode=create" });
+  await new Promise((resolve) => window.setTimeout(resolve, 0));
+  const homeLink = document.getElementById("entry-home-link");
+  assertVisible(homeLink, "ホームに戻るボタン");
+  assert.equal(homeLink.textContent.trim(), "← ホームに戻る");
 });
 
 test("参加者の復帰情報はタブを閉じても残り、ルーム終了通知で削除される", () => {
