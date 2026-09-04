@@ -187,7 +187,7 @@ def build_dataset(course: str, source: Path, rows_by_day: dict[int, list[WordRow
                 "sentenceJa": row.translation,
             }
             clue = f"{item['sentence'].replace('___', '')} {item['ja']}".lower()
-            if standalone_pattern(item["answer"]).search(clue):
+            if any(standalone_pattern(value).search(clue) for value in (item["answer"], item["base"])):
                 raise ValueError(f"正答が問題文またはヒントへ露出しています: {question_id}")
             items.append(item)
         series.append({"name": f"Day {day}", "day": day, "items": items})
