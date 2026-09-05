@@ -976,6 +976,38 @@ app.get("/api/operator/session", (req, res) => {
   res.json({ authenticated: true });
 });
 
+// 復習日の開始時に確定した問題だけを、作成したホストが欠席者用PDFへ出力する。
+// 参加者や他の運営者が、URLだけで問題・解答を取得できないよう二重に確認する。
+app.post("/api/operator/review-pdf", express.json({ limit: "2kb" }), (req, res) => {
+  const operatorToken = operatorAuth.cookieToken(req.headers.cookie);
+  if (!operatorAuth.sessionTokenIsValid(operatorToken)) {
+    return res.status(401).json({ error: "運営者認証が必要です" });
+  }
+  const roomCode = String(req.body?.roomCode || "").toUpperCase().trim();
+  const playerId = String(req.body?.playerId || "");
+  const sessionToken = String(req.body?.sessionToken || "");
+  const room = quizRooms[roomCode];
+  if (!room) return res.status(404).json({ error: "ルームが見つかりません" });
+  const host = room.players?.[room.host];
+  if (room.host !== playerId || !host || !quizSessionTokenMatches(host.sessionToken, sessionToken)) {
+    return res.status(403).json({ error: "このPDFを作成する権限がありません" });
+  }
+  if (!room.isReview || !["playing", "finished"].includes(room.phase) || !Array.isArray(room.questions) || room.questions.length !== 50) {
+    return res.status(409).json({ error: "復習日の50問がまだ確定していません" });
+  }
+  res.json({
+    setLabel: room.setLabel,
+    questions: room.questions.map(({ sentence, answer, altAnswers, hint, ja, sentenceJa }) => ({
+      sentence,
+      answer,
+      altAnswers: Array.isArray(altAnswers) ? altAnswers : [],
+      hint,
+      ja,
+      sentenceJa,
+    })),
+  });
+});
+
 function requireResultsHistoryAuth(req, res, next) {
   const token = requestCookie(req, RESULTS_HISTORY_COOKIE);
   if (!resultsSessionTokenIsValid(token)) return res.status(401).json({ error: "認証が必要です" });
@@ -1432,6 +1464,7 @@ io.on("connection", (socket) => {
       seriesNames: WORDTESTS[room.category].series.map((s) => s.name),
       seriesMeta: quizSeriesMeta(room.category),
       selectedSeriesIndex: Number.isInteger(room.selectedSeriesIndex) ? room.selectedSeriesIndex : 0,
+      isReview: room.isReview === true,
     };
     if (room.phase === "playing") {
       res.setLabel = room.setLabel;
@@ -1533,6 +1566,7 @@ io.on("connection", (socket) => {
       setLabel: room.setLabel,
       total: room.questions.length,
       endsAt: room.endsAt,
+      isReview: room.isReview === true,
       questions: quizSanitizedQuestions(room),
     });
   });
