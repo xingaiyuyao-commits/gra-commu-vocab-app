@@ -18,6 +18,23 @@ STUDY_DAYS = (1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 20, 22
 EXPECTED_TOTALS = {"clacel": 420, "toeic": 440, "ielts": 440}
 LABELS = {"clacel": "Clacel", "toeic": "TOEIC", "ielts": "IELTS"}
 
+# 体験会は「簡単な20語」という選定だけを固定し、表示する例文・訳・活用形は
+# 必ず同じ承認済みPDFから取り込む。手入力の問題文をここへ戻さないこと。
+TRIAL_BASES = {
+    "clacel": (
+        "dig", "leave", "draw", "cover", "common", "raw", "round", "enough", "flat", "few",
+        "thin", "close", "empty", "less", "pretty", "alone", "yet", "lock", "plant", "grow",
+    ),
+    "toeic": (
+        "publish", "enclose", "notify", "depart", "renew", "expire", "inspect", "confirm", "submit", "purchase",
+        "attend", "vacation", "client", "refund", "deadline", "invoice", "receipt", "branch", "delivery", "bonus",
+    ),
+    "ielts": (
+        "obtain", "interact", "interpret", "generate", "derive", "assert", "clarify", "dominate", "allocate", "conserve",
+        "convert", "enhance", "estimate", "evaluate", "examine", "emerge", "modify", "acquire", "assess", "indicate",
+    ),
+}
+
 
 @dataclass(frozen=True)
 class WordRow:
@@ -166,34 +183,55 @@ def remove_answer_notes(meaning: str, answer: str) -> str:
     return without_full_width.strip()
 
 
+def build_item(course: str, question_id: str, row: WordRow) -> dict:
+    meaning = remove_answer_notes(row.meaning, row.answer)
+    # PDFの表記「leave O C」は正答を推測できてしまうため、承認済みの表示上の例外。
+    if course == "clacel" and row.base == "leave":
+        meaning = "OをCのままにしておく、置き忘れる、去る"
+    item = {
+        "questionId": question_id,
+        "sentence": replace_answer(row.example, row.answer),
+        "answer": row.answer,
+        "base": row.base,
+        "hint": row.base[0] + "_" * (len(row.base) - 1),
+        "ja": meaning,
+        "sentenceJa": row.translation,
+    }
+    clue = f"{item['sentence'].replace('___', '')} {item['ja']}".lower()
+    if any(standalone_pattern(value).search(clue) for value in (item["answer"], item["base"])):
+        raise ValueError(f"正答が問題文またはヒントへ露出しています: {question_id}")
+    return item
+
+
 def build_dataset(course: str, source: Path, rows_by_day: dict[int, list[WordRow]]) -> dict:
     source_hash = sha256(source)
     revision = f"2026-09-04-{source_hash[:12]}"
     series = []
     for day in STUDY_DAYS:
-        items = []
-        for index, row in enumerate(rows_by_day[day], 1):
-            question_id = f"2026-09/{course}/day{day:02d}/q{index:02d}"
-            meaning = remove_answer_notes(row.meaning, row.answer)
-            if course == "clacel" and row.base == "leave":
-                meaning = "OをCのままにしておく、置き忘れる、去る"
-            item = {
-                "questionId": question_id,
-                "sentence": replace_answer(row.example, row.answer),
-                "answer": row.answer,
-                "base": row.base,
-                "hint": row.base[0] + "_" * (len(row.base) - 1),
-                "ja": meaning,
-                "sentenceJa": row.translation,
-            }
-            clue = f"{item['sentence'].replace('___', '')} {item['ja']}".lower()
-            if any(standalone_pattern(value).search(clue) for value in (item["answer"], item["base"])):
-                raise ValueError(f"正答が問題文またはヒントへ露出しています: {question_id}")
-            items.append(item)
+        items = [
+            build_item(course, f"2026-09/{course}/day{day:02d}/q{index:02d}", row)
+            for index, row in enumerate(rows_by_day[day], 1)
+        ]
         series.append({"name": f"Day {day}", "day": day, "items": items})
     if sum(len(day["items"]) for day in series) != EXPECTED_TOTALS[course]:
         raise ValueError(f"{course}の問題数が不正です")
     return {"label": LABELS[course], "datasetRevision": revision, "series": series}
+
+
+def build_trials(rows_by_course: dict[str, dict[int, list[WordRow]]]) -> dict:
+    trials = {}
+    for course, bases in TRIAL_BASES.items():
+        rows = [row for rows_by_day in rows_by_course[course].values() for row in rows_by_day]
+        items = []
+        for index, base in enumerate(bases, 1):
+            matches = [row for row in rows if row.base == base]
+            if len(matches) != 1:
+                raise ValueError(f"体験会の見出し語 {course}/{base!r} がPDF内で一意ではありません: {len(matches)}件")
+            items.append(build_item(course, f"trial/{course}/q{index:02d}", matches[0]))
+        if len(items) != 20 or len({item["base"] for item in items}) != 20:
+            raise ValueError(f"{course}の体験会問題数または重複が不正です")
+        trials[course] = {"name": "体験会", "isTrial": True, "items": items}
+    return trials
 
 
 def main() -> None:
@@ -209,9 +247,12 @@ def main() -> None:
             raise FileNotFoundError(source)
 
     args.output.mkdir(parents=True, exist_ok=True)
-    manifest = {"generatedAt": "2026-09-04", "courses": {}}
+    manifest = {"generatedAt": "2026-09-04", "courses": {}, "trials": {}}
+    rows_by_course = {}
     for course, source in sources.items():
-        dataset = build_dataset(course, source, parse_pdf(source))
+        rows_by_day = parse_pdf(source)
+        rows_by_course[course] = rows_by_day
+        dataset = build_dataset(course, source, rows_by_day)
         destination = args.output / f"{course}-2026-09.json"
         destination.write_text(json.dumps(dataset, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         manifest["courses"][course] = {
@@ -221,6 +262,13 @@ def main() -> None:
             "questions": sum(len(day["items"]) for day in dataset["series"]),
         }
         print(f"{course}={manifest['courses'][course]['questions']}", flush=True)
+    trials = build_trials(rows_by_course)
+    (args.output / "trial.json").write_text(
+        json.dumps(trials, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    for course, trial in trials.items():
+        manifest["trials"][course] = {"questions": len(trial["items"]), "source": "approved-september-pdfs"}
     (args.output / "manifest-2026-09.json").write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
