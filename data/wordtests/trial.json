@@ -5,183 +5,183 @@
     "items": [
       {
         "questionId": "trial/clacel/q01",
-        "sentence": "The dog likes to ___ holes in the garden.",
+        "sentence": "I have to ___ some holes to plant my new flowers in.",
         "answer": "dig",
         "base": "dig",
         "hint": "d__",
-        "ja": "掘る",
-        "sentenceJa": "その犬は庭に穴を掘るのが好きだ。"
+        "ja": "を掘る",
+        "sentenceJa": "新しい花を植えるために穴をいくつか掘らなければなりません。"
       },
       {
         "questionId": "trial/clacel/q02",
-        "sentence": "She ___ her umbrella on the train yesterday.",
-        "answer": "left",
+        "sentence": "Try not to ___ anything in the taxi, you'll probably never see it again.",
+        "answer": "leave",
         "base": "leave",
         "hint": "l____",
-        "ja": "去る、残す、置き忘れる",
-        "sentenceJa": "彼女は昨日、電車に傘を置き忘れた。"
+        "ja": "OをCのままにしておく、置き忘れる、去る",
+        "sentenceJa": "タクシーには何も残さないようにしてください。おそらく二度と目にすることはないだろうから。"
       },
       {
         "questionId": "trial/clacel/q03",
-        "sentence": "She likes to ___ pictures of animals.",
+        "sentence": "I often ___ small pictures in my notebook.",
         "answer": "draw",
         "base": "draw",
         "hint": "d___",
-        "ja": "描く、引く",
-        "sentenceJa": "彼女は動物の絵を描くのが好きだ。"
+        "ja": "を描く、を引く",
+        "sentenceJa": "私はよくノートに小さな絵を描きます。"
       },
       {
         "questionId": "trial/clacel/q04",
-        "sentence": "This textbook ___ all the basic grammar rules.",
+        "sentence": "My dad ___ his classic car with a fabric sheet to protect it.",
         "answer": "covers",
         "base": "cover",
         "hint": "c____",
-        "ja": "覆う、（話題を）扱う",
-        "sentenceJa": "この教科書は基本的な文法規則をすべて扱っている。"
+        "ja": "を覆う",
+        "sentenceJa": "私の父はクラシックカーを保護するために布製のシートで覆っています。"
       },
       {
         "questionId": "trial/clacel/q05",
-        "sentence": "Smith is a very ___ family name in England.",
+        "sentence": "The phrase “Hi, how are you?” is a ___ greeting in English.",
         "answer": "common",
         "base": "common",
         "hint": "c_____",
-        "ja": "一般的な、共通の",
-        "sentenceJa": "スミスはイギリスでとても一般的な姓だ。"
+        "ja": "共通の、普通の、一般的な",
+        "sentenceJa": "「Hi, how are you?」は英語でよく使われる挨拶です。"
       },
       {
         "questionId": "trial/clacel/q06",
-        "sentence": "Sushi is made with ___ fish.",
+        "sentence": "You will get very sick if you eat ___ chicken.",
         "answer": "raw",
         "base": "raw",
         "hint": "r__",
-        "ja": "生の、未加工の",
-        "sentenceJa": "寿司は生の魚で作られる。"
+        "ja": "未加工の、生の",
+        "sentenceJa": "鶏肉を生で食べるとひどい病気になります。"
       },
       {
         "questionId": "trial/clacel/q07",
-        "sentence": "The earth is a large ___ object.",
+        "sentence": "Do you know the guy who is wearing ___ glasses right now?",
         "answer": "round",
         "base": "round",
         "hint": "r____",
-        "ja": "丸い",
-        "sentenceJa": "地球は大きな丸い物体だ。"
+        "ja": "丸い、〜回",
+        "sentenceJa": "あなたは今丸眼鏡をかけている男性を知っていますか?"
       },
       {
         "questionId": "trial/clacel/q08",
-        "sentence": "Do we have ___ chairs for everyone?",
+        "sentence": "My car has ___ gas to get there without stopping.",
         "answer": "enough",
         "base": "enough",
         "hint": "e_____",
         "ja": "十分な",
-        "sentenceJa": "全員分の十分な椅子はあるだろうか？"
+        "sentenceJa": "私の車には、止まらずにそこに着くのに十分なガソリンがあります。"
       },
       {
         "questionId": "trial/clacel/q09",
-        "sentence": "We need a ___ surface to set up the tent.",
+        "sentence": "You should only cut vegetables on a wide ___ surface.",
         "answer": "flat",
         "base": "flat",
         "hint": "f___",
-        "ja": "平らな",
-        "sentenceJa": "テントを張るには平らな地面が必要だ。"
+        "ja": "平らな、空気の抜けた、均一の、色褪せた、つまらない",
+        "sentenceJa": "野菜を切るときは、広い平らな面でのみ切ってください。"
       },
       {
         "questionId": "trial/clacel/q10",
-        "sentence": "Only a ___ students came to the early class.",
+        "sentence": "I have very ___ ingredients for dinner, so I will have to go shopping.",
         "answer": "few",
         "base": "few",
         "hint": "f__",
-        "ja": "ほとんどない、少しの",
-        "sentenceJa": "早朝の授業に来た学生はほとんどいなかった。"
+        "ja": "ほとんど〜ない、少数の〜、かなりの数",
+        "sentenceJa": "夕食の食材がほとんどないので、買い物に行かなければなりません。"
       },
       {
         "questionId": "trial/clacel/q11",
-        "sentence": "Cut the bread into ___ slices.",
+        "sentence": "This soup is a little ___, you should add some more broth.",
         "answer": "thin",
         "base": "thin",
         "hint": "t___",
-        "ja": "薄い、細い",
-        "sentenceJa": "パンを薄く切ってください。"
+        "ja": "薄い、細い、痩せた",
+        "sentenceJa": "このスープは少し薄いので、もう少しスープを加えた方がよいでしょう。"
       },
       {
         "questionId": "trial/clacel/q12",
-        "sentence": "My best friend lives ___ to my house.",
+        "sentence": "The bear got very ___ to our camp.",
         "answer": "close",
         "base": "close",
         "hint": "c____",
-        "ja": "近い、親しい",
-        "sentenceJa": "私の親友は私の家の近くに住んでいる。"
+        "ja": "接近した、親密な",
+        "sentenceJa": "クマは私たちのキャンプに非常に近づきました。"
       },
       {
         "questionId": "trial/clacel/q13",
-        "sentence": "The bottle is completely ___.",
+        "sentence": "I don’t need this ___ can so I’m going to throw it away.",
         "answer": "empty",
         "base": "empty",
         "hint": "e____",
         "ja": "空の",
-        "sentenceJa": "そのボトルは完全に空だ。"
+        "sentenceJa": "この空き缶はいらないので捨てます。"
       },
       {
         "questionId": "trial/clacel/q14",
-        "sentence": "Try to eat ___ and exercise more.",
+        "sentence": "I have ___ time to play games now than when I was a child.",
         "answer": "less",
         "base": "less",
         "hint": "l___",
-        "ja": "より少なく",
-        "sentenceJa": "食べる量を減らして、もっと運動するようにしてください。"
+        "ja": "(程度・回数が)より少なく",
+        "sentenceJa": "今は子供の頃に比べてゲームをする時間が減りました。"
       },
       {
         "questionId": "trial/clacel/q15",
-        "sentence": "The movie was ___ good, actually.",
+        "sentence": "I feel like I did ___ well on the test.",
         "answer": "pretty",
         "base": "pretty",
         "hint": "p_____",
-        "ja": "かなり、なかなか",
-        "sentenceJa": "その映画は実際、かなり良かった。"
+        "ja": "なかなか、結構",
+        "sentenceJa": "テストではかなり良い点が取れた気がします。"
       },
       {
         "questionId": "trial/clacel/q16",
-        "sentence": "He lives ___ in a small apartment.",
+        "sentence": "That amount of food ___ will be enough for multiple days.",
         "answer": "alone",
         "base": "alone",
         "hint": "a____",
-        "ja": "一人で",
-        "sentenceJa": "彼は小さなアパートに一人で住んでいる。"
+        "ja": "一人で、独力で、〜だけ",
+        "sentenceJa": "この量だけでも数日間は十分に食べられます。"
       },
       {
         "questionId": "trial/clacel/q17",
-        "sentence": "Have you finished your homework ___?",
+        "sentence": "I haven’t finished my homework ___.",
         "answer": "yet",
         "base": "yet",
         "hint": "y__",
-        "ja": "まだ、もう",
-        "sentenceJa": "もう宿題は終わった？"
+        "ja": "もう、まだ〜(ない)",
+        "sentenceJa": "私はまだ宿題を終えていません。"
       },
       {
         "questionId": "trial/clacel/q18",
-        "sentence": "Please ___ the door before you leave.",
+        "sentence": "Always ___ your car doors so people won't steal your things.",
         "answer": "lock",
         "base": "lock",
         "hint": "l___",
-        "ja": "鍵をかける",
-        "sentenceJa": "出かける前にドアに鍵をかけてください。"
+        "ja": "に鍵をかける",
+        "sentenceJa": "他人に物を盗まれないように、車のドアは常にロックしてください。"
       },
       {
         "questionId": "trial/clacel/q19",
-        "sentence": "Last spring, they ___ trees along the road.",
-        "answer": "planted",
+        "sentence": "I want to ___ flowers in my garden this year.",
+        "answer": "plant",
         "base": "plant",
         "hint": "p____",
-        "ja": "植える、仕込む",
-        "sentenceJa": "去年の春、彼らは道路沿いに木を植えた。"
+        "ja": "を植える、（種）をまく",
+        "sentenceJa": "今年は庭に花を植えたいと思っています。"
       },
       {
         "questionId": "trial/clacel/q20",
-        "sentence": "He ___ more confident as the weeks passed.",
-        "answer": "grew",
+        "sentence": "He will probably ___ another 6 inches.",
+        "answer": "grow",
         "base": "grow",
         "hint": "g___",
-        "ja": "育つ、〜になっていく",
-        "sentenceJa": "彼は数週間が経つにつれて自信を持つようになった。"
+        "ja": "成長する、増大する、を栽培する",
+        "sentenceJa": "おそらくあと6インチは伸びるだろう。"
       }
     ]
   },
@@ -191,21 +191,21 @@
     "items": [
       {
         "questionId": "trial/toeic/q01",
-        "sentence": "Last week, the magazine ___ an article about local businesses.",
+        "sentence": "The magazine ___ an article about local businesses.",
         "answer": "published",
         "base": "publish",
         "hint": "p______",
         "ja": "出版する、公表する",
-        "sentenceJa": "先週、その雑誌は地元企業についての記事を掲載した。"
+        "sentenceJa": "その雑誌は地元企業についての記事を掲載した。"
       },
       {
         "questionId": "trial/toeic/q02",
-        "sentence": "Yesterday, she ___ a photo with her letter.",
+        "sentence": "She ___ a photo with her letter.",
         "answer": "enclosed",
         "base": "enclose",
         "hint": "e______",
         "ja": "同封する",
-        "sentenceJa": "昨日、彼女は手紙に写真を同封した。"
+        "sentenceJa": "彼女は手紙に写真を同封した。"
       },
       {
         "questionId": "trial/toeic/q03",
@@ -227,30 +227,30 @@
       },
       {
         "questionId": "trial/toeic/q05",
-        "sentence": "She ___ her passport last month.",
+        "sentence": "She ___ her passport.",
         "answer": "renewed",
         "base": "renew",
         "hint": "r____",
         "ja": "更新する",
-        "sentenceJa": "彼女は先月パスポートを更新した。"
+        "sentenceJa": "彼女はパスポートを更新した。"
       },
       {
         "questionId": "trial/toeic/q06",
-        "sentence": "Currently, this coupon ___ at the end of the week.",
+        "sentence": "This coupon ___ at the end of the week.",
         "answer": "expires",
         "base": "expire",
         "hint": "e_____",
         "ja": "期限が切れる",
-        "sentenceJa": "現在、このクーポンは今週末に期限が切れる。"
+        "sentenceJa": "このクーポンは期限が切れる。"
       },
       {
         "questionId": "trial/toeic/q07",
-        "sentence": "A technician will ___ the equipment tomorrow.",
+        "sentence": "A technician will ___ the equipment.",
         "answer": "inspect",
         "base": "inspect",
         "hint": "i______",
         "ja": "検査する",
-        "sentenceJa": "明日、技術者が設備を点検する予定です。"
+        "sentenceJa": "技術者が設備を点検する予定です。"
       },
       {
         "questionId": "trial/toeic/q08",
@@ -299,12 +299,12 @@
       },
       {
         "questionId": "trial/toeic/q13",
-        "sentence": "Our biggest ___ signed a new contract today.",
+        "sentence": "Our biggest ___ signed a new contract.",
         "answer": "client",
         "base": "client",
         "hint": "c_____",
         "ja": "顧客、依頼人",
-        "sentenceJa": "今日、私たちの最大の顧客が新しい契約に署名した。"
+        "sentenceJa": "私たちの最大の顧客が新しい契約に署名した。"
       },
       {
         "questionId": "trial/toeic/q14",
@@ -326,12 +326,12 @@
       },
       {
         "questionId": "trial/toeic/q16",
-        "sentence": "The supplier sent an ___ for last month's order.",
+        "sentence": "The supplier sent an ___ for the order.",
         "answer": "invoice",
         "base": "invoice",
         "hint": "i______",
         "ja": "請求書",
-        "sentenceJa": "仕入先は先月分の注文の請求書を送ってきた。"
+        "sentenceJa": "仕入先は注文の請求書を送ってきた。"
       },
       {
         "questionId": "trial/toeic/q17",
@@ -358,7 +358,7 @@
         "base": "delivery",
         "hint": "d_______",
         "ja": "配達",
-        "sentenceJa": "50   ドルを超える注文には無料配達が利用できる。"
+        "sentenceJa": "50 ドルを超える注文には無料配達が利用できる。"
       },
       {
         "questionId": "trial/toeic/q20",
@@ -377,12 +377,12 @@
     "items": [
       {
         "questionId": "trial/ielts/q01",
-        "sentence": "Last year, researchers ___ the data from a large national survey.",
+        "sentence": "Researchers ___ the data from a large national survey.",
         "answer": "obtained",
         "base": "obtain",
         "hint": "o_____",
         "ja": "得る、入手する",
-        "sentenceJa": "昨年、研究者たちは大規模な全国調査からデータを入手した。"
+        "sentenceJa": "研究者たちは大規模な全国調査からデータを入手した。"
       },
       {
         "questionId": "trial/ielts/q02",
@@ -395,21 +395,21 @@
       },
       {
         "questionId": "trial/ielts/q03",
-        "sentence": "Last month, the research team carefully ___ the results of the study.",
+        "sentence": "The research team carefully ___ the results of the study.",
         "answer": "interpreted",
         "base": "interpret",
         "hint": "i________",
         "ja": "解釈する",
-        "sentenceJa": "先月、研究チームは研究結果を慎重に解釈した。"
+        "sentenceJa": "研究チームは研究結果を慎重に解釈した。"
       },
       {
         "questionId": "trial/ielts/q04",
-        "sentence": "Currently, this solar panel ___ enough electricity for one household.",
+        "sentence": "This solar panel ___ enough electricity for one household.",
         "answer": "generates",
         "base": "generate",
         "hint": "g_______",
         "ja": "生み出す、発生させる",
-        "sentenceJa": "現在、この太陽光パネルは一世帯分の電気を発電している。"
+        "sentenceJa": "この太陽光パネルは一世帯分の電気を発電している。"
       },
       {
         "questionId": "trial/ielts/q05",
@@ -440,12 +440,12 @@
       },
       {
         "questionId": "trial/ielts/q08",
-        "sentence": "Currently, a few large firms ___ the global market.",
+        "sentence": "A few large firms ___ the global market.",
         "answer": "dominate",
         "base": "dominate",
         "hint": "d_______",
         "ja": "支配する、優位を占める",
-        "sentenceJa": "現在、少数の大企業が世界市場を支配している。"
+        "sentenceJa": "少数の大企業が世界市場を支配している。"
       },
       {
         "questionId": "trial/ielts/q09",
@@ -467,12 +467,12 @@
       },
       {
         "questionId": "trial/ielts/q11",
-        "sentence": "Generally, plants ___ sunlight into energy.",
+        "sentence": "Plants ___ sunlight into energy.",
         "answer": "convert",
         "base": "convert",
         "hint": "c______",
         "ja": "変える、転換する",
-        "sentenceJa": "一般的に、植物は太陽光をエネルギーに変換する。"
+        "sentenceJa": "植物は太陽光をエネルギーに変換する。"
       },
       {
         "questionId": "trial/ielts/q12",
@@ -521,21 +521,21 @@
       },
       {
         "questionId": "trial/ielts/q17",
-        "sentence": "Last month, engineers ___ the design to reduce the cost.",
+        "sentence": "Engineers ___ the design to reduce the cost.",
         "answer": "modified",
         "base": "modify",
         "hint": "m_____",
         "ja": "修正する、変更する",
-        "sentenceJa": "先月、エンジニアはコストを削減するために設計を変更した。"
+        "sentenceJa": "エンジニアはコストを削減するために設計を変更した。"
       },
       {
         "questionId": "trial/ielts/q18",
-        "sentence": "Generally, children ___ language quickly in their early years.",
+        "sentence": "Children ___ language quickly in their early years.",
         "answer": "acquire",
         "base": "acquire",
         "hint": "a______",
         "ja": "習得する、獲得する",
-        "sentenceJa": "一般的に、子供は幼少期に言語を素早く習得する。"
+        "sentenceJa": "子供は幼少期に言語を素早く習得する。"
       },
       {
         "questionId": "trial/ielts/q19",

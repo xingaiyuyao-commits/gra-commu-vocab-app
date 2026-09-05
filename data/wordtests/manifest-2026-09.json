@@ -19,5 +19,19 @@
       "datasetRevision": "2026-09-04-3cfff2a5f4f5",
       "questions": 440
     }
+  },
+  "trials": {
+    "clacel": {
+      "questions": 20,
+      "source": "approved-september-pdfs"
+    },
+    "toeic": {
+      "questions": 20,
+      "source": "approved-september-pdfs"
+    },
+    "ielts": {
+      "questions": 20,
+      "source": "approved-september-pdfs"
+    }
   }
 }
