@@ -932,6 +932,36 @@ test("開始: ホストは回答画面を経由せず、開始と同時に提出
   assert.match(document.getElementById("waiting-set").textContent, /Day 1/);
 });
 
+test("復習日のホストだけが待機・結果画面から欠席者用PDFを開ける", () => {
+  const { window, document, fireSocketEvent } = loadQuizPage();
+  const actualPlayerId = window.localStorage.getItem("quizPlayerId");
+  let openedUrl = "";
+  window.open = (url) => {
+    openedUrl = url;
+    return { opener: window };
+  };
+  window.eval('currentRoomCode = "PDF7";');
+  fireSocketEvent("quiz:playersUpdate", {
+    hostId: actualPlayerId,
+    hostName: "Tina",
+    players: [{ id: actualPlayerId, name: "Tina", submitted: false }],
+  });
+  fireSocketEvent("quiz:started", {
+    setLabel: "TOEIC Day 7（復習50問）",
+    total: 50,
+    endsAt: Date.now() + 750000,
+    isReview: true,
+    questions: Array.from({ length: 50 }, () => ({ sentence: "I ___ tea.", answer: "drink", base: "drink", hint: "d____", ja: "飲む", sentenceJa: "" })),
+  });
+
+  assertVisible(document.getElementById("btn-absentee-pdf-waiting"), "復習日のホスト用PDFボタン");
+  document.getElementById("btn-absentee-pdf-waiting").dispatchEvent(new window.Event("click", { bubbles: true }));
+  assert.match(openedUrl, /^\/review-pdf\.html\?room=/);
+
+  fireSocketEvent("quiz:results", { setLabel: "TOEIC Day 7（復習50問）", perfect: [], review: [] });
+  assertVisible(document.getElementById("btn-absentee-pdf-results"), "結果画面のホスト用PDFボタン");
+});
+
 test("待機画面: 結果発表ボタンがある画面にどのコース・Dayかが大きく表示される", () => {
   const { window, document, fireSocketEvent } = loadQuizPage();
   const questions = [

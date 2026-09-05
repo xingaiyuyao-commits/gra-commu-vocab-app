@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>欠席者用復習問題</title>
+  <style>
+    :root { color: #202020; font-family: Arial, "Hiragino Sans", "Yu Gothic", sans-serif; }
+    body { max-width: 880px; margin: 0 auto; padding: 32px 28px 64px; line-height: 1.55; }
+    header { border-bottom: 2px solid #202020; margin-bottom: 28px; padding-bottom: 18px; }
+    .brand { color: #777; font-size: .75rem; font-weight: 700; letter-spacing: .12em; margin: 0 0 10px; }
+    h1 { font-size: 1.8rem; margin: 0; }
+    .sub { color: #666; margin: 6px 0 0; }
+    .actions { display: flex; gap: 10px; margin: 0 0 24px; }
+    button { background: #202020; border: 0; color: #fff; cursor: pointer; font: inherit; font-weight: 700; padding: 12px 18px; }
+    .notice { color: #666; font-size: .9rem; margin: 0 0 20px; }
+    .question { break-inside: avoid; border-bottom: 1px solid #ddd; padding: 17px 0; }
+    .qno { color: #bd8b13; font-size: .8rem; font-weight: 700; letter-spacing: .08em; margin: 0 0 4px; }
+    .meaning { font-size: 1.05rem; font-weight: 700; margin: 0; }
+    .hint { color: #777; font-family: Georgia, serif; font-size: 1.1rem; letter-spacing: .08em; margin: 5px 0; }
+    .sentence { font-size: 1.05rem; margin: 4px 0; }
+    .sentence-ja { color: #666; font-size: .92rem; margin: 4px 0; }
+    .answer-line { border-bottom: 1px solid #555; height: 24px; margin-top: 12px; width: 100%; }
+    .answer-key { break-before: page; margin-top: 36px; }
+    .answer-key h2 { border-bottom: 2px solid #202020; padding-bottom: 8px; }
+    .answer { break-inside: avoid; border-bottom: 1px solid #ddd; padding: 10px 0; }
+    .answer h3 { font-size: 1rem; margin: 0; }
+    .answer p { font-size: .92rem; margin: 3px 0; }
+    .error { color: #b54740; font-weight: 700; }
+    @media print {
+      @page { margin: 16mm 14mm; }
+      body { max-width: none; padding: 0; }
+      .actions, .notice { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main id="app"><p>復習問題を準備しています…</p></main>
+  <script>
+    const app = document.getElementById("app");
+    const escapeHtml = (value) => String(value || "")
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    const roomCode = new URLSearchParams(location.search).get("room") || "";
+
+    function render(documentData) {
+      document.title = `${documentData.setLabel} 欠席者用復習問題`;
+      const questions = documentData.questions;
+      app.innerHTML = `
+        <header>
+          <p class="brand">ÖSH VOCABULARY CHALLENGE</p>
+          <h1>${escapeHtml(documentData.setLabel)}　欠席者用復習問題</h1>
+          <p class="sub">全50問</p>
+        </header>
+        <div class="actions"><button type="button" id="print">印刷・PDFとして保存</button></div>
+        <p class="notice">問題を解き終えてから、最後のページで答えを確認してください。</p>
+        <section aria-label="問題">${questions.map((question, index) => `
+          <article class="question">
+            <p class="qno">QUESTION ${String(index + 1).padStart(2, "0")}</p>
+            <p class="meaning">${escapeHtml(question.ja)}</p>
+            <p class="hint">${escapeHtml(question.hint || "")}</p>
+            <p class="sentence">${escapeHtml(question.sentence)}</p>
+            <p class="sentence-ja">${escapeHtml(question.sentenceJa)}</p>
+            <div class="answer-line" aria-label="解答欄"></div>
+          </article>`).join("")}
+        </section>
+        <section class="answer-key" aria-label="答え">
+          <h2>答え・復習用一覧</h2>
+          ${questions.map((question, index) => {
+            const answers = [question.answer, ...(question.altAnswers || [])].join(" / ");
+            const completed = String(question.sentence || "").replace("___", answers);
+            return `<article class="answer">
+              <h3>${index + 1}. ${escapeHtml(answers)}　<span>${escapeHtml(question.ja)}</span></h3>
+              <p>${escapeHtml(completed)}</p>
+              <p>${escapeHtml(question.sentenceJa)}</p>
+            </article>`;
+          }).join("")}
+        </section>`;
+      document.getElementById("print").addEventListener("click", () => window.print());
+    }
+
+    async function load() {
+      let session;
+      try { session = JSON.parse(localStorage.getItem("quizSession") || "null"); } catch {}
+      if (!session || session.roomCode !== roomCode || !session.playerId || !session.sessionToken) {
+        throw new Error("このブラウザで作成した復習日のルームを開いてください。");
+      }
+      const response = await fetch("/api/operator/review-pdf", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ roomCode, playerId: session.playerId, sessionToken: session.sessionToken }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "復習問題を取得できませんでした。");
+      if (!Array.isArray(data.questions) || data.questions.length !== 50) {
+        throw new Error("復習日の50問が確認できませんでした。");
+      }
+      render(data);
+    }
+
+    load().catch((error) => {
+      app.innerHTML = `<p class="error">${escapeHtml(error.message)}</p>`;
+    });
+  </script>
+</body>
+</html>

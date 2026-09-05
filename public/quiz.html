@@ -504,6 +504,7 @@
         <p class="waiting-remain" id="waiting-remain">提出状況を確認しています…</p>
       </div>
       <button id="btn-reveal-results" style="margin-top:14px; display:none;" disabled>結果発表を見る</button>
+      <button id="btn-absentee-pdf-waiting" class="secondary" style="margin-top:14px;" hidden>欠席者用PDFを作る</button>
     </div>
     <button class="leave" onclick="leaveRoom(false)">ルームを退出する</button>
   </div>
@@ -565,6 +566,7 @@
     <p class="results-guidance" id="host-results-note" hidden>参加者の確認後、本日のルームを終了してください</p>
     <p class="results-guidance" id="results-next-note">次回は新しい招待リンクから参加してください</p>
     <p class="results-guidance" id="results-save-status" hidden></p>
+    <button class="secondary" id="btn-absentee-pdf-results" hidden>欠席者用PDFを作る</button>
     <button class="leave" id="results-leave" onclick="leaveRoom(false)">本日のルームを終了する</button>
   </div>
 </div>
@@ -632,6 +634,7 @@
   let waitingTotal = 0;
   let currentRoomCode = null;
   let currentSetLabel = "";
+  let isReviewSet = false;
   let actionConfirmHandler = null;
 
   function openActionConfirm(message, onConfirm, { title = "確認", confirmLabel = "結果を発表する" } = {}) {
@@ -665,7 +668,27 @@
     localStorage.removeItem("quizAnswers");
     localStorage.removeItem("quizPendingSubmission");
     currentRoomCode = null;
+    isReviewSet = false;
   }
+
+  function renderAbsenteePdfButtons() {
+    const visible = isHost && isReviewSet && Boolean(currentRoomCode);
+    $("btn-absentee-pdf-waiting").hidden = !visible;
+    $("btn-absentee-pdf-results").hidden = !visible;
+  }
+
+  function openAbsenteePdf() {
+    if (!isHost || !isReviewSet || !currentRoomCode) return;
+    const pdfWindow = window.open(`/review-pdf.html?room=${encodeURIComponent(currentRoomCode)}`, "_blank");
+    if (!pdfWindow) {
+      alert("PDF画面を開けませんでした。ポップアップを許可してから、もう一度お試しください。");
+      return;
+    }
+    pdfWindow.opener = null;
+  }
+
+  $("btn-absentee-pdf-waiting").addEventListener("click", openAbsenteePdf);
+  $("btn-absentee-pdf-results").addEventListener("click", openAbsenteePdf);
   function persistAnswers() {
     if (currentRoomCode) localStorage.setItem("quizAnswers", JSON.stringify({ roomCode: currentRoomCode, answers, idx }));
   }
@@ -1370,6 +1393,7 @@
 
   socket.on("quiz:playersUpdate", ({ hostId, hostName, players, nextSeries }) => {
     isHost = hostId === playerId;
+    renderAbsenteePdfButtons();
     $("host-controls").style.display = isHost ? "" : "none";
     $("wait-host").style.display = isHost ? "none" : "";
     $("host-name").textContent = hostName;
@@ -1410,7 +1434,7 @@
   });
 
   // --- テスト ---
-  function enterStartedQuiz({ setLabel, total, endsAt, questions: qs }) {
+  function enterStartedQuiz({ setLabel, total, endsAt, isReview = false, questions: qs }) {
     questions = qs;
     answers = Array(total).fill("");
     idx = 0;
@@ -1419,6 +1443,8 @@
     persistAnswers();
     quizEndsAt = endsAt;
     currentSetLabel = setLabel;
+    isReviewSet = isReview === true;
+    renderAbsenteePdfButtons();
     $("quiz-set").textContent = setLabel;
     $("btn-reveal-results").disabled = true;
     if (isHost) {
@@ -1625,6 +1651,7 @@
     $("host-results-note").hidden = !isHost;
     $("results-next-note").hidden = isHost;
     $("results-leave").hidden = !isHost;
+    renderAbsenteePdfButtons();
     $("results-leave").textContent = "本日のルームを終了する";
     const saveStatus = $("results-save-status");
     saveStatus.hidden = isHost;
@@ -1761,6 +1788,8 @@
       isHost = res.isHost;
       selectedCategory = res.category;
       currentRoomCode = session.roomCode;
+      isReviewSet = res.isReview === true;
+      renderAbsenteePdfButtons();
       seriesNames = res.seriesNames || [];
       seriesMeta = res.seriesMeta || [];
       $("lobby-category").textContent = `${CATEGORY_LABEL[selectedCategory]}のルーム`;
