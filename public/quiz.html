@@ -627,8 +627,10 @@
   let idx = 0;
   let editingFromConfirmation = false;
   let quizEndsAt = 0;
+  let quizTimerDeadline = 0;
   let timerInterval = null;
   let waitingTimerInterval = null;
+  let draftSaveTimer = null;
   let submissionWasAutomatic = false;
   let waitingSubmitted = 0;
   let waitingTotal = 0;
@@ -696,10 +698,41 @@
     try {
       const saved = JSON.parse(localStorage.getItem("quizAnswers") || "null");
       if (saved && saved.roomCode === roomCode && Array.isArray(saved.answers) && saved.answers.length === length) {
-        return { answers: saved.answers, idx: Math.min(Math.max(saved.idx || 0, 0), length - 1) };
+        return { found: true, answers: saved.answers, idx: Math.min(Math.max(saved.idx || 0, 0), length - 1) };
       }
     } catch {}
-    return { answers: Array(length).fill(""), idx: 0 };
+    return { found: false, answers: Array(length).fill(""), idx: 0 };
+  }
+
+  function setQuizTimer(endsAt, remainingMs) {
+    quizEndsAt = Number(endsAt) || 0;
+    const hasServerRemaining = typeof remainingMs === "number" && Number.isFinite(remainingMs);
+    const fallback = Math.max(0, quizEndsAt - Date.now());
+    const safeRemaining = hasServerRemaining ? Math.max(0, remainingMs) : fallback;
+    quizTimerDeadline = performance.now() + safeRemaining;
+  }
+
+  function quizRemainingMs() {
+    return Math.max(0, quizTimerDeadline - performance.now());
+  }
+
+  function clearDraftSaveTimer() {
+    if (draftSaveTimer) {
+      clearTimeout(draftSaveTimer);
+      draftSaveTimer = null;
+    }
+  }
+
+  function sendDraftNow() {
+    clearDraftSaveTimer();
+    if (isHost || !currentRoomCode || !questions.length) return;
+    socket.emit("quiz:saveDraft", { answers });
+  }
+
+  function scheduleDraftSave() {
+    clearDraftSaveTimer();
+    // 連続入力中のディスク保存をまとめ、問題移動時と期限直前は別途即時保存する。
+    draftSaveTimer = setTimeout(sendDraftNow, 750);
   }
   function loadPendingSubmission() {
     try {
@@ -785,7 +818,7 @@
   }
 
   function updateWaitingTimerDisplay() {
-    const remainMs = Math.max(0, quizEndsAt - Date.now());
+    const remainMs = quizRemainingMs();
     const remainSec = Math.ceil(remainMs / 1000);
     const m = Math.floor(remainSec / 60);
     const s = remainSec % 60;
@@ -797,12 +830,16 @@
   }
 
   function updateTimerDisplay() {
-    const remainMs = Math.max(0, quizEndsAt - Date.now());
+    const remainMs = quizRemainingMs();
     const remainSec = Math.ceil(remainMs / 1000);
     const m = Math.floor(remainSec / 60);
     const s = remainSec % 60;
     $("quiz-timer").textContent = `残り時間 ${m}:${String(s).padStart(2, "0")}`;
-    if (remainMs <= 0) submitQuiz(true);
+    if (remainMs <= 1_000 && document.getElementById("screen-quiz").classList.contains("active")) {
+      saveCurrent();
+      sendDraftNow();
+    }
+    if (remainMs <= 0) clearQuizTimer();
   }
 
   function submitQuiz(automatic = false) {
@@ -822,6 +859,18 @@
     const automatic = pending ? pending.automatic === true : submissionWasAutomatic;
     socket.emit("quiz:submit", { answers: answersToSend, automatic }, (res) => {
       if (!res?.ok) {
+        if (automatic && Number.isFinite(res?.remainingMs) && res.remainingMs > 0 && questions.length) {
+          clearPendingSubmission();
+          submissionWasAutomatic = false;
+          setQuizTimer(quizEndsAt, res.remainingMs);
+          renderQuestion();
+          show("screen-quiz");
+          clearQuizTimer();
+          updateTimerDisplay();
+          timerInterval = setInterval(updateTimerDisplay, 1000);
+          $("answer").focus();
+          return;
+        }
         const message = res?.error || "回答を保存できませんでした";
         $("entry-error").textContent = message;
         renderWaitingStatus();
@@ -952,7 +1001,7 @@
         : "全員提出済み　結果を発表できます";
       return;
     }
-    if (Date.now() >= quizEndsAt) {
+    if (quizRemainingMs() <= 0) {
       $("waiting-remain").textContent = "ホストの結果発表を待っています";
       return;
     }
@@ -1434,14 +1483,14 @@
   });
 
   // --- テスト ---
-  function enterStartedQuiz({ setLabel, total, endsAt, isReview = false, questions: qs }) {
+  function enterStartedQuiz({ setLabel, total, endsAt, remainingMs, isReview = false, questions: qs }) {
     questions = qs;
     answers = Array(total).fill("");
     idx = 0;
     editingFromConfirmation = false;
     submissionWasAutomatic = false;
     persistAnswers();
-    quizEndsAt = endsAt;
+    setQuizTimer(endsAt, remainingMs);
     currentSetLabel = setLabel;
     isReviewSet = isReview === true;
     renderAbsenteePdfButtons();
@@ -1481,7 +1530,11 @@
       : (idx === total - 1 ? "回答を確認" : "次へ");
   }
 
-  function saveCurrent() { answers[idx] = $("answer").value; persistAnswers(); }
+  function saveCurrent() {
+    answers[idx] = $("answer").value;
+    persistAnswers();
+    scheduleDraftSave();
+  }
 
   function showSubmitConfirmation() {
     const summary = QuizUi.getSubmissionSummary(answers);
@@ -1521,6 +1574,7 @@
 
   $("btn-back").addEventListener("click", () => {
     saveCurrent();
+    sendDraftNow();
     idx--;
     persistAnswers();
     renderQuestion();
@@ -1529,6 +1583,7 @@
 
   $("btn-next").addEventListener("click", () => {
     saveCurrent();
+    sendDraftNow();
     if (editingFromConfirmation) {
       editingFromConfirmation = false;
       showSubmitConfirmation();
@@ -1758,6 +1813,18 @@
     show("screen-results");
   });
 
+  socket.on("quiz:timeExpired", ({ submitted, total } = {}) => {
+    setQuizTimer(quizEndsAt, 0);
+    clearQuizTimer();
+    submissionWasAutomatic = true;
+    clearPendingSubmission();
+    if (isHost) return;
+    $("waiting-count").textContent = `${Number(submitted) || 0} / ${Number(total) || 0}人`;
+    renderWaitingStatus();
+    renderWaitingRemain(submitted, total);
+    show("screen-waiting");
+  });
+
   socket.on("quiz:backToLobby", ({ cancelled } = {}) => {
     clearQuizTimer();
     clearWaitingTimer();
@@ -1801,7 +1868,7 @@
       if (res.phase === "playing" && !res.isHost && pending && !res.submitted) {
         questions = res.questions;
         answers = pending.answers;
-        quizEndsAt = res.endsAt;
+        setQuizTimer(res.endsAt, res.remainingMs);
         currentSetLabel = res.setLabel;
         $("quiz-set").textContent = res.setLabel;
         $("waiting-count").textContent = `${res.submittedCount} / ${res.totalCount}人`;
@@ -1811,11 +1878,15 @@
         sendPendingSubmission();
       } else if (res.phase === "playing" && !res.isHost && !res.submitted) {
         questions = res.questions;
-        quizEndsAt = res.endsAt;
+        setQuizTimer(res.endsAt, res.remainingMs);
         currentSetLabel = res.setLabel;
         $("quiz-set").textContent = res.setLabel;
         const restored = loadSavedAnswers(currentRoomCode, questions.length);
-        answers = restored.answers;
+        answers = restored.found
+          ? restored.answers
+          : (Array.isArray(res.draftAnswers) && res.draftAnswers.length === questions.length
+            ? res.draftAnswers
+            : restored.answers);
         idx = restored.idx;
         renderQuestion();
         show("screen-quiz");

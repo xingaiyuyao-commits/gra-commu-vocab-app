@@ -216,8 +216,10 @@ async function runLoadTest(resources) {
 
     const readyToReveal = waitForEvent(host, "quiz:readyToReveal");
     await mapWithConcurrency(participants, MAX_CONCURRENCY, async (socket, index) => {
+      const answers = answersForParticipant(room.questions, index);
+      assert.deepEqual(await emitWithAck(socket, "quiz:saveDraft", { answers }), { ok: true });
       const response = await emitWithAck(socket, "quiz:submit", {
-        answers: answersForParticipant(room.questions, index),
+        answers,
       });
       assert.deepEqual(response, { ok: true });
       submitted += 1;
