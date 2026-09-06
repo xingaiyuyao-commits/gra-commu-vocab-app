@@ -37,7 +37,7 @@ Changing `OPERATOR_PASSWORD` immediately invalidates existing operator sessions.
 
 ## Participant result retention
 
-Participant results and retry content are stored only in that participant's browser for seven days, keyed by room code, with a maximum of 21 records. After a host ends a room, reopening that day's invitation link restores the saved result in the same browser. A new day's invitation link always opens the new join flow. Clearing browser data, using another device/browser, private browsing, storage denial, or closing before receiving the announced result prevents restoration. No participant answer text is added to the Railway volume.
+Participant results and retry content are stored only in that participant's browser for seven days, keyed by room code, with a maximum of 21 records. After a host ends a room, reopening that day's invitation link restores the saved result in the same browser. A new day's invitation link always opens the new join flow. Clearing browser data, using another device/browser, private browsing, storage denial, or closing before receiving the announced result prevents restoration. During an active room only, the latest answer draft is temporarily written to the Railway volume so reloads and server restarts can recover it. Drafts are cleared when the participant submits or the server deadline finalizes the answers, and raw answer text is never copied into result history.
 
 ## Persistent data and backups
 

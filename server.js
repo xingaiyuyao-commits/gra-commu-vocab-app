@@ -646,6 +646,11 @@ function loadQuizState() {
             submissionKind: resetLegacySubmission
               ? null
               : (["manual", "timeout"].includes(player.submissionKind) ? player.submissionKind : null),
+            draftAnswers: resetLegacySubmission
+              ? []
+              : (Array.isArray(player.draftAnswers)
+                ? player.draftAnswers.map((answer) => String(answer ?? "").slice(0, 100))
+                : []),
             score: resetLegacySubmission ? 0 : (Number(player.score) || 0),
             wrongQuestionIndexes: resetLegacySubmission
               ? []
@@ -737,6 +742,7 @@ function persistQuizState() {
         sessionToken: player.sessionToken,
         submittedAt: player.submittedAt,
         submissionKind: player.submissionKind,
+        draftAnswers: player.draftAnswers,
         score: player.score,
         wrongQuestionIndexes: player.wrongQuestionIndexes,
         wrongAnswerReasons: player.wrongAnswerReasons,
@@ -1211,6 +1217,26 @@ function quizSanitizedQuestions(room) {
   return room.questions.map((q) => ({ sentence: q.sentence, hint: quizHint(q.base), ja: q.ja, sentenceJa: q.sentenceJa }));
 }
 
+function quizSanitizeAnswers(room, answers) {
+  const source = Array.isArray(answers) ? answers : [];
+  return room.questions.map((_question, index) => String(source[index] ?? "").slice(0, 100));
+}
+
+function quizApplySubmission(room, player, answers, submissionKind) {
+  const normalizedAnswers = quizSanitizeAnswers(room, answers);
+  player.wrongQuestionIndexes = room.questions
+    .map((question, index) => (quizAnswerMatches(question, normalizedAnswers[index]) ? null : index))
+    .filter((index) => index !== null);
+  player.wrongAnswerReasons = Object.fromEntries(player.wrongQuestionIndexes.map((index) => [
+    index,
+    quizMistakeReason(room.questions[index], normalizedAnswers[index]),
+  ]));
+  player.score = room.questions.length - player.wrongQuestionIndexes.length;
+  player.submittedAt = Date.now();
+  player.submissionKind = submissionKind;
+  player.draftAnswers = [];
+}
+
 // ホストは開催者であり自分では回答しないため、提出必須人数・採点・結果表示の対象から常に除く
 function quizParticipants(room) {
   return Object.entries(room.players)
@@ -1218,7 +1244,7 @@ function quizParticipants(room) {
     .map(([id, p]) => ({ id, ...p }));
 }
 
-// 制限時間が来たら、まだ提出していない参加者を0点扱いで確定させる。
+// 制限時間が来たら、まだ提出していない参加者をサーバー保存済みの最新回答で確定させる。
 // ただしこれだけでは結果発表は行わない（発表はホストのquiz:revealResults操作を待つ）。
 function quizForceFinish(roomCode) {
   const room = quizRooms[roomCode];
@@ -1227,13 +1253,7 @@ function quizForceFinish(roomCode) {
     room.timeoutHandle = null;
     for (const p of quizParticipants(room)) {
       if (p.submittedAt === null) {
-        room.players[p.id].score = 0;
-        room.players[p.id].wrongQuestionIndexes = room.questions.map((_question, index) => index);
-        room.players[p.id].wrongAnswerReasons = Object.fromEntries(
-          room.questions.map((_question, index) => [index, "blank"]),
-        );
-        room.players[p.id].submittedAt = Date.now();
-        room.players[p.id].submissionKind = "timeout";
+        quizApplySubmission(room, room.players[p.id], room.players[p.id].draftAnswers, "timeout");
       }
     }
   });
@@ -1244,6 +1264,10 @@ function quizForceFinish(roomCode) {
   }
   const participants = quizParticipants(room);
   io.to(roomCode).emit("quiz:submitProgress", {
+    submitted: participants.filter((p) => p.submittedAt !== null).length,
+    total: participants.length,
+  });
+  io.to(roomCode).emit("quiz:timeExpired", {
     submitted: participants.filter((p) => p.submittedAt !== null).length,
     total: participants.length,
   });
@@ -1470,7 +1494,9 @@ io.on("connection", (socket) => {
       res.setLabel = room.setLabel;
       res.total = room.questions.length;
       res.endsAt = room.endsAt;
+      res.remainingMs = Math.max(0, room.endsAt - Date.now());
       res.questions = quizSanitizedQuestions(room);
+      if (!res.isHost && !res.submitted) res.draftAnswers = quizSanitizeAnswers(room, player.draftAnswers);
       const participants = quizParticipants(room);
       res.submittedCount = participants.filter((p) => p.submittedAt !== null).length;
       res.totalCount = participants.length;
@@ -1550,6 +1576,7 @@ io.on("connection", (socket) => {
       for (const p of Object.values(room.players)) {
         p.submittedAt = null;
         p.submissionKind = null;
+        p.draftAnswers = [];
         p.score = 0;
         p.wrongQuestionIndexes = [];
         p.wrongAnswerReasons = {};
@@ -1566,9 +1593,25 @@ io.on("connection", (socket) => {
       setLabel: room.setLabel,
       total: room.questions.length,
       endsAt: room.endsAt,
+      remainingMs: Math.max(0, room.endsAt - Date.now()),
       isReview: room.isReview === true,
       questions: quizSanitizedQuestions(room),
     });
+  });
+
+  socket.on("quiz:saveDraft", ({ answers } = {}, cb = () => {}) => {
+    const roomCode = socket.data.quizRoomCode;
+    const room = quizRooms[roomCode];
+    const playerId = socket.data.quizPlayerId;
+    const player = room?.players?.[playerId];
+    if (!room || room.phase !== "playing" || !player || playerId === room.host || player.submittedAt !== null) {
+      return cb({ ok: false, error: "回答を保存できませんでした" });
+    }
+    const normalizedAnswers = quizSanitizeAnswers(room, answers);
+    if (!persistQuizMutation(roomCode, () => { player.draftAnswers = normalizedAnswers; })) {
+      return cb({ ok: false, error: QUIZ_PERSISTENCE_ERROR });
+    }
+    cb({ ok: true });
   });
 
   socket.on("quiz:submit", ({ answers, automatic = false } = {}, cb = () => {}) => {
@@ -1578,23 +1621,20 @@ io.on("connection", (socket) => {
     if (socket.data.quizPlayerId === room.host) return cb({ ok: false, error: "運営者は提出できません" }); // ホストは開催者であり回答しない
     const player = room.players[socket.data.quizPlayerId];
     if (!player) return cb({ ok: false, error: "参加者が見つかりません" });
+    if (automatic && Date.now() < room.endsAt) {
+      return cb({
+        ok: false,
+        error: "制限時間前の自動提出は受け付けません",
+        remainingMs: Math.max(0, room.endsAt - Date.now()),
+      });
+    }
     if (player.submittedAt !== null) {
       const participants = quizParticipants(room);
       const submittedCount = participants.filter((p) => p.submittedAt !== null).length;
       return cb({ ok: true, submittedCount, totalCount: participants.length });
     }
-    const arr = Array.isArray(answers) ? answers : [];
     const saved = persistQuizMutation(roomCode, () => {
-      player.wrongQuestionIndexes = room.questions
-        .map((q, index) => (quizAnswerMatches(q, arr[index]) ? null : index))
-        .filter((index) => index !== null);
-      player.wrongAnswerReasons = Object.fromEntries(player.wrongQuestionIndexes.map((index) => [
-        index,
-        quizMistakeReason(room.questions[index], arr[index]),
-      ]));
-      player.score = room.questions.length - player.wrongQuestionIndexes.length;
-      player.submittedAt = Date.now();
-      player.submissionKind = automatic ? "timeout" : "manual";
+      quizApplySubmission(room, player, answers, automatic ? "timeout" : "manual");
     });
     if (!saved) return cb({ ok: false, error: QUIZ_PERSISTENCE_ERROR });
     const participants = quizParticipants(room);
@@ -1637,6 +1677,7 @@ io.on("connection", (socket) => {
       for (const p of Object.values(room.players)) {
         p.submittedAt = null;
         p.submissionKind = null;
+        p.draftAnswers = [];
         p.score = 0;
         p.wrongQuestionIndexes = [];
         p.wrongAnswerReasons = {};
@@ -1671,6 +1712,7 @@ io.on("connection", (socket) => {
       for (const p of Object.values(room.players)) {
         p.submittedAt = null;
         p.submissionKind = null;
+        p.draftAnswers = [];
         p.score = 0;
         p.wrongQuestionIndexes = [];
         p.wrongAnswerReasons = {};
@@ -1712,6 +1754,7 @@ io.on("connection", (socket) => {
         sessionToken: makeQuizSessionToken(),
         submittedAt: null,
         submissionKind: null,
+        draftAnswers: [],
         score: 0,
         wrongQuestionIndexes: [],
         wrongAnswerReasons: {},
@@ -1738,7 +1781,9 @@ io.on("connection", (socket) => {
       response.setLabel = room.setLabel;
       response.total = room.questions.length;
       response.endsAt = room.endsAt;
+      response.remainingMs = Math.max(0, room.endsAt - Date.now());
       response.questions = quizSanitizedQuestions(room);
+      response.draftAnswers = quizSanitizeAnswers(room, room.players[id].draftAnswers);
     }
     cb(response);
     quizPlayersUpdate(roomCode);

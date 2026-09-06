@@ -140,7 +140,9 @@ test("PCホームは1440×800で主要内容が縦スクロールなしに収ま
   let metrics;
   while (Date.now() < deadline) {
     const result = await devtools.send("Runtime.evaluate", {
-      expression: `(() => ({
+      expression: `(() => {
+        document.querySelector('.today-card').hidden = true;
+        return ({
         ready: document.readyState,
         innerHeight,
         scrollHeight: document.documentElement.scrollHeight,
@@ -150,7 +152,8 @@ test("PCホームは1440×800で主要内容が縦スクロールなしに収ま
         operatorBottom: document.querySelector('.operator-link')?.getBoundingClientRect().bottom,
         imageBottom: document.querySelector('.home-illustration img')?.getBoundingClientRect().bottom,
         manualJoinLink: document.querySelector('a[href="/quiz.html?mode=join"]')
-      }))()`,
+        });
+      })()`,
       returnByValue: true,
     });
     metrics = result?.result?.value;

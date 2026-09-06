@@ -663,7 +663,7 @@ test("提出確認: 「この内容で提出」を押すとquiz:submitが送信�
   assert.ok(document.getElementById("screen-waiting").classList.contains("active"));
 });
 
-test("提出確認: 制限時間終了時は確認を挟まず自動提出される", () => {
+test("端末上の表示時間が0秒でもブラウザから自動提出しない", () => {
   const { document, fireSocketEvent, emitted } = loadQuizPage();
   const questions = [
     { sentence: "I ___ tea.", answer: "drink", base: "drink", hint: "d____", ja: "飲む", sentenceJa: "" },
@@ -673,14 +673,142 @@ test("提出確認: 制限時間終了時は確認を挟まず自動提出され
     setLabel: "Day 1", total: 1, endsAt: Date.now() - 1000, questions,
   });
 
-  assert.ok(emitted.some((e) => e.event === "quiz:submit"));
+  assert.equal(emitted.some((e) => e.event === "quiz:submit"), false);
   assert.equal(document.getElementById("screen-confirm").classList.contains("active"), false);
+  assert.ok(document.getElementById("screen-quiz").classList.contains("active"));
+  assert.equal(document.getElementById("quiz-timer").textContent, "残り時間 0:00");
+
+  fireSocketEvent("quiz:timeExpired", { submitted: 1, total: 1 });
   assert.ok(document.getElementById("screen-waiting").classList.contains("active"));
   assert.equal(document.getElementById("waiting-status").textContent, "制限時間になったため、自動で提出しました");
-  assert.equal(document.getElementById("waiting-remain").textContent, "ホストの結果発表を待っています");
+  assert.equal(document.getElementById("waiting-count").textContent, "1 / 1人");
+});
 
-  emitted.find((e) => e.event === "quiz:submit").cb({ ok: true, submittedCount: 2, totalCount: 2 });
-  assert.equal(document.getElementById("waiting-count").textContent, "2 / 2人");
+test("IELTSで端末時計が進んでいても新しいルームごとに開始直後の自動提出をしない", () => {
+  const serverStartedAt = Date.parse("2026-09-06T19:30:00+09:00");
+  const questions = [
+    { sentence: "A ___ B.", hint: "a____", ja: "例", sentenceJa: "例文" },
+  ];
+
+  for (const roomCode of ["IEL1", "IEL2"]) {
+    const page = loadQuizPage({
+      url: `http://localhost/quiz.html?mode=join&room=${roomCode}&cat=ielts`,
+      nowIso: "2026-09-06T19:40:00+09:00",
+    });
+    page.fireSocketEvent("quiz:started", {
+      setLabel: "IELTS Day 1",
+      total: 1,
+      endsAt: serverStartedAt + 300_000,
+      remainingMs: 300_000,
+      questions,
+    });
+
+    assert.equal(
+      page.emitted.some((entry) => entry.event === "quiz:submit"),
+      false,
+      `${roomCode}でも端末の時計だけを理由に提出しない`,
+    );
+    assert.ok(page.document.getElementById("screen-quiz").classList.contains("active"));
+    assert.equal(page.document.getElementById("quiz-timer").textContent, "残り時間 5:00");
+    page.close();
+  }
+});
+
+test("旧画面が保存した早すぎる自動提出は拒否応答後にIELTSの回答画面へ戻す", () => {
+  const roomCode = "IEL3";
+  const questions = [
+    { sentence: "A ___ B.", hint: "a____", ja: "例", sentenceJa: "例文" },
+  ];
+  const page = loadQuizPage({
+    url: `http://localhost/quiz.html?mode=join&room=${roomCode}&cat=ielts`,
+    nowIso: "2026-09-06T19:40:00+09:00",
+    storedValues: {
+      quizSession: JSON.stringify({ roomCode, category: "ielts", playerId: "participant", sessionToken: "token" }),
+      quizPendingSubmission: JSON.stringify({ roomCode, answers: ["answering"], automatic: true }),
+    },
+  });
+  page.fireSocketEvent("connect");
+  const rejoin = page.emitted.find((entry) => entry.event === "quiz:rejoin");
+  rejoin.cb({
+    ok: true,
+    isHost: false,
+    category: "ielts",
+    phase: "playing",
+    submitted: false,
+    setLabel: "IELTS Day 1",
+    endsAt: Date.parse("2026-09-06T19:35:00+09:00"),
+    remainingMs: 240_000,
+    questions,
+    submittedCount: 0,
+    totalCount: 1,
+    seriesNames: [],
+    seriesMeta: [],
+  });
+  const submit = page.emitted.find((entry) => entry.event === "quiz:submit");
+  submit.cb({ ok: false, error: "制限時間前の自動提出は受け付けません", remainingMs: 240_000 });
+
+  assert.ok(page.document.getElementById("screen-quiz").classList.contains("active"));
+  assert.equal(page.document.getElementById("answer").value, "answering");
+  assert.equal(page.window.localStorage.getItem("quizPendingSubmission"), null);
+  assert.equal(page.document.getElementById("quiz-timer").textContent, "残り時間 4:00");
+  page.close();
+});
+
+test("再読込時にブラウザ内回答がなくてもサーバー保存済みの入力へ復帰する", () => {
+  const roomCode = "DRAF";
+  const questions = [
+    { sentence: "A ___ B.", hint: "a____", ja: "例", sentenceJa: "例文" },
+  ];
+  const page = loadQuizPage({
+    url: `http://localhost/quiz.html?mode=join&room=${roomCode}&cat=ielts`,
+    storedValues: {
+      quizSession: JSON.stringify({ roomCode, category: "ielts", playerId: "participant", sessionToken: "token" }),
+    },
+  });
+  page.fireSocketEvent("connect");
+  const rejoin = page.emitted.find((entry) => entry.event === "quiz:rejoin");
+  rejoin.cb({
+    ok: true,
+    isHost: false,
+    category: "ielts",
+    phase: "playing",
+    submitted: false,
+    setLabel: "IELTS Day 1",
+    endsAt: Date.now() + 300_000,
+    remainingMs: 300_000,
+    questions,
+    draftAnswers: ["restored-answer"],
+    submittedCount: 0,
+    totalCount: 1,
+    seriesNames: [],
+    seriesMeta: [],
+  });
+
+  assert.ok(page.document.getElementById("screen-quiz").classList.contains("active"));
+  assert.equal(page.document.getElementById("answer").value, "restored-answer");
+  page.close();
+});
+
+test("サーバー期限の直前に入力中の回答を待たずに下書き保存する", () => {
+  const page = loadQuizPage();
+  let monotonicNow = 0;
+  Object.defineProperty(page.window.performance, "now", { value: () => monotonicNow });
+  page.window.eval('currentRoomCode = "DRAF";');
+  page.fireSocketEvent("quiz:started", {
+    setLabel: "IELTS Day 1",
+    total: 1,
+    endsAt: Date.now() + 500,
+    remainingMs: 500,
+    questions: [{ sentence: "A ___ B.", hint: "a____", ja: "例", sentenceJa: "例文" }],
+  });
+  page.document.getElementById("answer").value = "latest";
+  page.document.getElementById("answer").dispatchEvent(new page.window.Event("input", { bubbles: true }));
+  monotonicNow = 500;
+  page.window.eval("updateTimerDisplay()");
+
+  const draft = page.emitted.find((entry) => entry.event === "quiz:saveDraft");
+  assert.deepEqual(Array.from(draft?.payload?.answers || []), ["latest"]);
+  page.close();
 });
 
 test("回答中: 入力途中の一文字ごとに現在の回答と問題番号を保存する", () => {

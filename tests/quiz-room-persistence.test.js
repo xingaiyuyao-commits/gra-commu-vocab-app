@@ -943,3 +943,68 @@ test("進行中のテストは再起動後も期限を復元し、期限到来�
     "未提出者は全問を誤答として保存する"
   );
 });
+
+test("サーバー期限前の自動提出を拒否し、期限時は保存済み下書きを採点する", async (t) => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-authoritative-timeout-"));
+  const stateFile = path.join(tempDir, "quiz-rooms.json");
+  fs.writeFileSync(stateFile, JSON.stringify({ version: 2, rooms: {}, resultHistory: {} }));
+  const sockets = [];
+  const children = [];
+
+  t.after(async () => {
+    for (const socket of sockets) socket.disconnect();
+    for (const child of children) await stopServer(child);
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  const first = await startServer(stateFile);
+  children.push(first.child);
+  const host = await connect(first.baseUrl);
+  const participant = await connect(first.baseUrl);
+  sockets.push(host, participant);
+  const room = await emitWithAck(host, "quiz:createRoom", { category: "ielts", name: "ホスト" });
+  const entered = await emitWithAck(participant, "quiz:joinRoom", { roomCode: room.roomCode, name: "参加者" });
+  const startedEvent = waitForEvent(participant, "quiz:started");
+  assert.deepEqual(await emitWithAck(host, "quiz:startGame", { seriesIndex: 0 }), { ok: true });
+  const [started] = await startedEvent;
+  assert.ok(started.remainingMs > 290_000 && started.remainingMs <= 300_000);
+
+  const early = await emitWithAck(participant, "quiz:submit", { answers: [], automatic: true });
+  assert.equal(early.ok, false);
+  assert.equal(early.error, "制限時間前の自動提出は受け付けません");
+  assert.ok(early.remainingMs > 290_000);
+
+  const answers = Array(started.total).fill("");
+  answers[0] = "draft-answer";
+  assert.deepEqual(await emitWithAck(participant, "quiz:saveDraft", { answers }), { ok: true });
+  participant.disconnect();
+  const reconnected = await connect(first.baseUrl);
+  sockets.push(reconnected);
+  const resumed = await rejoin(reconnected, room.roomCode, entered.playerId, entered.sessionToken);
+  assert.equal(resumed.submitted, false);
+  assert.equal(resumed.draftAnswers[0], "draft-answer");
+  reconnected.disconnect();
+  const beforeRestart = JSON.parse(fs.readFileSync(stateFile, "utf8"));
+  assert.equal(beforeRestart.rooms[room.roomCode].players[entered.playerId].draftAnswers[0], "draft-answer");
+
+  beforeRestart.rooms[room.roomCode].questions = fixedQuestions();
+  beforeRestart.rooms[room.roomCode].players[entered.playerId].draftAnswers = ["alpha", "bravo", "charlie", "delta"];
+  beforeRestart.rooms[room.roomCode].endsAt = Date.now() + 700;
+  fs.writeFileSync(stateFile, JSON.stringify(beforeRestart));
+  host.disconnect();
+  participant.disconnect();
+  await stopServer(first.child);
+
+  const second = await startServer(stateFile);
+  children.push(second.child);
+  const returning = await connect(second.baseUrl);
+  sockets.push(returning);
+  await delay(900);
+  const state = await rejoin(returning, room.roomCode, entered.playerId, entered.sessionToken);
+  assert.equal(state.submitted, true);
+  assert.equal(state.autoSubmitted, true);
+  const afterTimeout = JSON.parse(fs.readFileSync(stateFile, "utf8"));
+  const savedPlayer = afterTimeout.rooms[room.roomCode].players[entered.playerId];
+  assert.equal(savedPlayer.score, 4);
+  assert.deepEqual(savedPlayer.wrongQuestionIndexes, []);
+});
