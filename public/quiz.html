@@ -1113,6 +1113,7 @@
     $("lobby-category").textContent = `${CATEGORY_LABEL[selectedCategory]}のルーム`;
     if (res.isHost) renderJoinShare("lobby-share", "lobby-join-url", "lobby-qr", "lobby-copy", res.roomCode, res.category);
     fillSeries();
+    if (res.isHost) $("sel-series").value = String(res.selectedSeriesIndex || 0);
     if (res.phase === "playing") return enterStartedQuiz(res);
     show("screen-lobby");
   }
@@ -1347,6 +1348,7 @@
         mh[category].seriesNames = res.seriesNames || [];
         mh[category].seriesMeta = res.seriesMeta || [];
         mhFillSeries(category);
+        $(`mh-${category}-series`).value = String(res.selectedSeriesIndex || 0);
         renderJoinShare(`mh-${category}-share`, `mh-${category}-join-url`, `mh-${category}-qr`, `mh-${category}-copy`, res.roomCode, category);
         mhRenderPlayers(category, [{ name, submitted: false }]);
         mhShow(category, "lobby");

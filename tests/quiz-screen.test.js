@@ -401,8 +401,17 @@ test("参加・作成画面: 名前を入力してから作成ボタンを押す
   assert.equal(createCall.payload.category, "clacel");
   assert.equal(createCall.payload.name, "ホスト太郎");
 
-  createCall.cb({ roomCode: "ABCD", isHost: true, category: "clacel", playerId: "host", sessionToken: "token", seriesNames: ["Day 1", "Day 2"] });
+  createCall.cb({
+    roomCode: "ABCD",
+    isHost: true,
+    category: "clacel",
+    playerId: "host",
+    sessionToken: "token",
+    seriesNames: ["体験会", "Day 1", "Day 2"],
+    selectedSeriesIndex: 2,
+  });
   assert.equal(document.getElementById("mh-clacel-join-url").textContent, "http://localhost/quiz.html?mode=join&room=ABCD&cat=clacel");
+  assert.equal(document.getElementById("mh-clacel-series").value, "2", "サーバーが決めた今日のDayを初期選択する");
   assert.equal(document.getElementById("mh-clacel-lobby").hidden, false);
 });
 
