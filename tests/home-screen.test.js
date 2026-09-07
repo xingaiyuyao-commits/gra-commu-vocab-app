@@ -60,7 +60,7 @@ test("ホームの開催導線は認証済み応答のときだけ表示する",
       url: "http://localhost/",
       runScripts: "dangerously",
       beforeParse(window) {
-        window.QuizUi = { getStudyDay: () => null };
+        window.QuizUi = { getStudyDay: () => null, getHomeStudyDay: () => null };
         window.fetch = async () => ({ status, ok: status === 200, json: async () => ({ authenticated: status === 200 }) });
       },
     });

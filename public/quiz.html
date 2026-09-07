@@ -918,6 +918,10 @@
   }
 
   function renderWeeklyReviewEntry(now = new Date()) {
+    if (entryMode === "create" || isHost) {
+      $("weekly-review-entry").hidden = true;
+      return;
+    }
     let count = 0;
     try {
       const raw = localStorage.getItem(WEEKLY_MISTAKE_KEY);

@@ -5,11 +5,17 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   const DAY_MS = 24 * 60 * 60 * 1000;
   const PROJECT_START = Date.parse("2026-09-06T19:30:00+09:00");
+  const HOME_PROJECT_START = Date.parse("2026-09-06T00:00:00+09:00");
   const WEEKLY_MISTAKE_MAX_WORDS = 420;
   const WEEKLY_CATEGORIES = new Set(["clacel", "toeic", "ielts"]);
 
   function getStudyDay(date) {
     const elapsed = date.getTime() - PROJECT_START;
+    return elapsed < 0 ? null : Math.floor(elapsed / DAY_MS) + 1;
+  }
+
+  function getHomeStudyDay(date) {
+    const elapsed = date.getTime() - HOME_PROJECT_START;
     return elapsed < 0 ? null : Math.floor(elapsed / DAY_MS) + 1;
   }
 
@@ -207,6 +213,7 @@
 
   return {
     getStudyDay,
+    getHomeStudyDay,
     getProjectWeek,
     countWeeklyMistakes,
     readWeeklyMistakes,
