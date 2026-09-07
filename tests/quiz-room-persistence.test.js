@@ -863,6 +863,42 @@ test("運営者退出の保存に失敗したら通知も成功応答もせず�
   assert.equal(participantState.ok, true);
 });
 
+test("ロビーで選んだDayを保存し、再起動後も同じ問題セットを維持する", async (t) => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-series-selection-"));
+  const stateFile = path.join(tempDir, "quiz-rooms.json");
+  const sockets = [];
+  const children = [];
+
+  t.after(async () => {
+    for (const socket of sockets) socket.disconnect();
+    for (const child of children) await stopServer(child);
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  const first = await startServer(stateFile);
+  children.push(first.child);
+  const host = await connect(first.baseUrl);
+  sockets.push(host);
+  const room = await emitWithAck(host, "quiz:createRoom", { category: "toeic", name: "ホスト" });
+  assert.deepEqual(await emitWithAck(host, "quiz:selectSeries", { seriesIndex: 2 }), { ok: true });
+
+  const saved = JSON.parse(fs.readFileSync(stateFile, "utf8"));
+  assert.equal(saved.rooms[room.roomCode].selectedSeriesIndex, 2, "Day2の選択を保存する");
+
+  host.disconnect();
+  await stopServer(first.child);
+  const second = await startServer(stateFile);
+  children.push(second.child);
+  const returningHost = await connect(second.baseUrl);
+  sockets.push(returningHost);
+  const restored = await emitWithAck(returningHost, "quiz:rejoin", {
+    roomCode: room.roomCode,
+    playerId: room.playerId,
+    sessionToken: room.sessionToken,
+  });
+  assert.equal(restored.selectedSeriesIndex, 2, "再起動後もDay2を維持する");
+});
+
 test("進行中のテストは再起動後も期限を復元し、期限到来時に未提出者を確定する", async (t) => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-playing-room-"));
   const stateFile = path.join(tempDir, "quiz-rooms.json");
