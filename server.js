@@ -756,6 +756,7 @@ function persistQuizState() {
       datasetRevision: room.datasetRevision,
       isReview: room.isReview,
       sourceDays: room.sourceDays,
+      selectedSeriesIndex: room.selectedSeriesIndex,
       isTrial: room.isTrial,
       results: room.results,
     };
