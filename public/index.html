@@ -85,13 +85,19 @@
 </main>
 <script src="/ui-logic.js"></script>
 <script>
-  const studyDay = QuizUi.getStudyDay(new Date());
-  if (studyDay !== null) {
-    const today = new Date();
-    document.getElementById("today-date").textContent = `${today.getMonth() + 1}月${today.getDate()}日`;
+  function renderStudyDay(studyDay, dateLabel) {
+    if (!Number.isInteger(studyDay) || studyDay < 1) return;
+    document.getElementById("today-date").textContent = dateLabel;
     document.getElementById("today-day").textContent = `Day ${studyDay}`;
     document.getElementById("today-card").hidden = false;
   }
+  fetch("/api/study-day", { cache: "no-store" })
+    .then((response) => response.ok ? response.json() : Promise.reject(new Error("study day unavailable")))
+    .then(({ studyDay, dateLabel }) => renderStudyDay(studyDay, dateLabel))
+    .catch(() => {
+      const today = new Date();
+      renderStudyDay(QuizUi.getStudyDay(today), `${today.getMonth() + 1}月${today.getDate()}日`);
+    });
   fetch("/api/operator/session", { cache: "no-store" })
     .then((response) => {
       if (response.ok) document.getElementById("operator-entry").hidden = false;

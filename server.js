@@ -519,6 +519,7 @@ io.on("connection", (socket) => {
 /* ========== 単語テスト（シリーズ別20問・満点者掲示板） ========== */
 
 const WORDTESTS = require("./wordtests");
+const { getStudyDay } = require("./public/ui-logic");
 const { selectReviewQuestions, ReviewSelectionError } = require("./quiz-review-selection");
 const QUIZ_QUESTION_COUNT = 20;
 const QUIZ_TIME_LIMIT_SEC = 300; // 5分
@@ -1147,6 +1148,13 @@ function quizSeriesMeta(category) {
   }));
 }
 
+function quizDefaultSeriesIndex(category, date = quizResultNow()) {
+  const studyDay = getStudyDay(date);
+  if (studyDay === null) return 0;
+  const index = WORDTESTS[category].series.findIndex((series) => series.day === studyDay);
+  return index >= 0 ? index : 0;
+}
+
 function quizPlayersUpdate(roomCode) {
   const room = quizRooms[roomCode];
   if (!room || !room.players[room.host]) return;
@@ -1308,6 +1316,20 @@ function quizResultNow() {
   return new Date();
 }
 
+app.get("/api/study-day", (_req, res) => {
+  const now = quizResultNow();
+  const parts = new Intl.DateTimeFormat("ja-JP", {
+    timeZone: "Asia/Tokyo",
+    month: "numeric",
+    day: "numeric",
+  }).formatToParts(now);
+  const value = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  res.set("Cache-Control", "no-store").json({
+    studyDay: getStudyDay(now),
+    dateLabel: `${value.month}月${value.day}日`,
+  });
+});
+
 function buildQuestionStats(room, participants) {
   return room.questions.map((question, index) => {
     const wrongParticipants = participants.filter((participant) =>
@@ -1439,7 +1461,7 @@ io.on("connection", (socket) => {
       isReview: false,
       sourceDays: [],
       results: null,
-      selectedSeriesIndex: 0,
+      selectedSeriesIndex: quizDefaultSeriesIndex(category),
     };
     quizJoin(socket, roomCode, name, cb, newRoom);
   });
@@ -1775,6 +1797,7 @@ io.on("connection", (socket) => {
       sessionToken: room.players[id].sessionToken,
       seriesNames,
       seriesMeta: quizSeriesMeta(room.category),
+      selectedSeriesIndex: Number.isInteger(room.selectedSeriesIndex) ? room.selectedSeriesIndex : 0,
     };
     if (room.phase === "playing") {
       response.phase = room.phase;

@@ -78,3 +78,24 @@ test("ホームの開催導線は認証済み応答のときだけ表示する",
   assert.equal(authenticated.window.document.getElementById("operator-entry").hidden, false);
   authenticated.window.close();
 });
+
+test("ホームの学習日は端末時計ではなくサーバー応答を表示する", async () => {
+  const dom = new JSDOM(html, {
+    url: "http://localhost/",
+    runScripts: "dangerously",
+    beforeParse(window) {
+      window.QuizUi = { getStudyDay: () => 99 };
+      window.fetch = async (url) => {
+        if (url === "/api/study-day") {
+          return { ok: true, json: async () => ({ studyDay: 2, dateLabel: "9月7日" }) };
+        }
+        return { status: 401, ok: false, json: async () => ({}) };
+      };
+    },
+  });
+  await new Promise((resolve) => dom.window.setTimeout(resolve, 0));
+  assert.equal(dom.window.document.getElementById("today-date").textContent, "9月7日");
+  assert.equal(dom.window.document.getElementById("today-day").textContent, "Day 2");
+  assert.equal(dom.window.document.getElementById("today-card").hidden, false);
+  dom.window.close();
+});
