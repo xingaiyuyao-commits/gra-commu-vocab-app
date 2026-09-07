@@ -139,6 +139,30 @@ test("週間復習入口: 今週の保存語があるクイズ入口だけに正
   assert.match(entry.textContent, /シークレット|プライベート/);
 });
 
+test("週間復習入口: 保存語があってもホスト作成画面には表示しない", async () => {
+  const { window, document } = loadQuizPage({
+    url: "http://localhost/quiz.html?mode=create",
+  });
+  setWindowTime(window, "2026-09-08T19:30:00+09:00");
+  window.localStorage.setItem("oshQuizWeeklyMistakesV1", JSON.stringify({
+    weekId: "2026-09-06",
+    records: [{
+      at: "2026-09-07T10:30:00.000Z",
+      category: "ielts",
+      setLabel: "Day 2",
+      words: [{
+        answer: "induce", altAnswers: [], ja: "引き起こす",
+        sentence: "It can ___ change.", sentenceJa: "それは変化を引き起こすことがある。",
+      }],
+    }],
+  }));
+
+  window.eval("renderWeeklyReviewEntry()");
+
+  assert.equal(document.getElementById("weekly-review-entry").hidden, true);
+  await new Promise((resolve) => window.setTimeout(resolve, 0));
+});
+
 test("週間復習: 起動時に生回答とルームコードを含む旧保存キーを削除し、新形式へ移行しない", () => {
   const legacy = JSON.stringify({ roomCode: "RAW-ROOM-CODE", answers: ["personal raw answer"] });
   const { window } = loadQuizPage({ storedValues: { quizMistakeHistory: legacy } });

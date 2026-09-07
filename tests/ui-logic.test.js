@@ -3,6 +3,7 @@ const assert = require("node:assert/strict");
 
 const {
   getStudyDay,
+  getHomeStudyDay,
   getProjectWeek,
   countWeeklyMistakes,
   readWeeklyMistakes,
@@ -11,6 +12,12 @@ const {
   getSubmissionSummary,
   calculateResult,
 } = require("../public/ui-logic");
+
+test("ホーム表示は9月6日をDay 1、9月7日をDay 2として暦日で進める", () => {
+  assert.equal(getHomeStudyDay(new Date("2026-09-06T00:00:00+09:00")), 1);
+  assert.equal(getHomeStudyDay(new Date("2026-09-07T00:00:00+09:00")), 2);
+  assert.equal(getHomeStudyDay(new Date("2026-09-07T19:29:59+09:00")), 2);
+});
 
 test("正式Day 1の開始前はDayを表示しない", () => {
   assert.equal(getStudyDay(new Date("2026-09-06T19:29:59+09:00")), null);

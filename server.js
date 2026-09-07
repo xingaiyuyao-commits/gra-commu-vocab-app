@@ -519,7 +519,7 @@ io.on("connection", (socket) => {
 /* ========== 単語テスト（シリーズ別20問・満点者掲示板） ========== */
 
 const WORDTESTS = require("./wordtests");
-const { getStudyDay } = require("./public/ui-logic");
+const { getStudyDay, getHomeStudyDay } = require("./public/ui-logic");
 const { selectReviewQuestions, ReviewSelectionError } = require("./quiz-review-selection");
 const QUIZ_QUESTION_COUNT = 20;
 const QUIZ_TIME_LIMIT_SEC = 300; // 5分
@@ -1325,7 +1325,7 @@ app.get("/api/study-day", (_req, res) => {
   }).formatToParts(now);
   const value = Object.fromEntries(parts.map((part) => [part.type, part.value]));
   res.set("Cache-Control", "no-store").json({
-    studyDay: getStudyDay(now),
+    studyDay: getHomeStudyDay(now),
     dateLabel: `${value.month}月${value.day}日`,
   });
 });

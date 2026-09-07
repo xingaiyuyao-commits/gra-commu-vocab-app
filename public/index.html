@@ -96,7 +96,7 @@
     .then(({ studyDay, dateLabel }) => renderStudyDay(studyDay, dateLabel))
     .catch(() => {
       const today = new Date();
-      renderStudyDay(QuizUi.getStudyDay(today), `${today.getMonth() + 1}月${today.getDate()}日`);
+      renderStudyDay(QuizUi.getHomeStudyDay(today), `${today.getMonth() + 1}月${today.getDate()}日`);
     });
   fetch("/api/operator/session", { cache: "no-store" })
     .then((response) => {
