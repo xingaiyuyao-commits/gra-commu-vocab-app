@@ -50,7 +50,7 @@
   const error = document.getElementById("operator-login-error");
 
   fetch("/api/operator/session", { cache: "no-store" })
-    .then((response) => { if (response.ok) location.replace("/"); })
+    .then((response) => { if (response.ok) location.replace("/quiz.html?mode=create"); })
     .catch(() => {});
 
   form.addEventListener("submit", async (event) => {
@@ -69,7 +69,7 @@
         error.textContent = body.error || "ログインできませんでした";
         return;
       }
-      location.replace("/");
+      location.replace("/quiz.html?mode=create");
     } catch {
       error.textContent = "通信できませんでした。接続を確認してもう一度お試しください";
     } finally {
