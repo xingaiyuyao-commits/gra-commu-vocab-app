@@ -2,6 +2,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+const vm = require("node:vm");
 const { JSDOM } = require("jsdom");
 
 const html = fs.readFileSync(path.join(__dirname, "..", "public", "operator-login.html"), "utf8");
@@ -48,4 +49,32 @@ test("運営者ログイン失敗を画面内に表示する", async () => {
   await new Promise((resolve) => dom.window.setTimeout(resolve, 0));
   assert.equal(document.getElementById("operator-login-error").textContent, "認証に失敗しました");
   dom.window.close();
+});
+
+test("運営者ログイン成功後はホームを経由せず開催画面へ移動する", async () => {
+  const document = new JSDOM(html).window.document;
+  const script = [...document.querySelectorAll("script")].at(-1).textContent;
+  let onSubmit;
+  const replaced = [];
+  const elements = {
+    "operator-login-form": { addEventListener: (_event, handler) => { onSubmit = handler; } },
+    "operator-password": { value: "shared secret" },
+    "operator-login-button": { disabled: false },
+    "operator-login-error": { textContent: "" },
+  };
+  const fetch = async (url) => ({
+    ok: url === "/api/operator/login",
+    status: url === "/api/operator/login" ? 200 : 401,
+    json: async () => ({}),
+  });
+
+  vm.runInNewContext(script, {
+    document: { getElementById: (id) => elements[id] },
+    fetch,
+    location: { replace: (url) => replaced.push(url) },
+    JSON,
+  });
+  await onSubmit({ preventDefault() {} });
+
+  assert.deepEqual(replaced, ["/quiz.html?mode=create"]);
 });

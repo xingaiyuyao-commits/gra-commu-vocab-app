@@ -25,17 +25,17 @@ test("ホームにルームコード手入力の参加導線を表示しない",
   assert.doesNotMatch(html, /class="join-cta"/);
 });
 
-test("ホームでは3コースを説明表示にし、開催導線は認証確認まで隠す", () => {
+test("ホームでは3コースを説明表示にし、未ログインでも運営者ログイン導線を表示する", () => {
   const document = new JSDOM(html).window.document;
   const courseRows = [...document.querySelectorAll(".course-row")];
 
   assert.equal(courseRows.length, 3);
   assert.deepEqual(courseRows.map((row) => row.tagName), ["DIV", "DIV", "DIV"]);
   assert.deepEqual(courseRows.map((row) => row.querySelector("strong").textContent), ["Clacel", "TOEIC", "IELTS"]);
-  const operatorEntry = document.querySelector('#operator-entry[href="/quiz.html?mode=create"]');
+  const operatorEntry = document.querySelector('#operator-entry[href="/operator-login.html"]');
   assert.ok(operatorEntry);
-  assert.equal(operatorEntry.hidden, true);
-  assert.equal(operatorEntry.textContent.trim(), "開催画面を開く");
+  assert.equal(operatorEntry.hidden, false);
+  assert.equal(operatorEntry.textContent.trim(), "運営者ログイン");
 });
 
 test("承認済みのコース説明と二段組レイアウトを表示する", () => {
@@ -54,14 +54,17 @@ test("承認済みのコース説明と二段組レイアウトを表示する",
   assert.doesNotMatch(html, /[。]/, "ホームの短い説明文には句点を重ねない");
 });
 
-test("ホームの開催導線は認証済み応答のときだけ表示する", async () => {
+test("ホームの運営導線はログイン状態に応じて行き先を切り替え、通信失敗でも消えない", async () => {
   async function render(status) {
     const dom = new JSDOM(html, {
       url: "http://localhost/",
       runScripts: "dangerously",
       beforeParse(window) {
         window.QuizUi = { getStudyDay: () => null, getHomeStudyDay: () => null };
-        window.fetch = async () => ({ status, ok: status === 200, json: async () => ({ authenticated: status === 200 }) });
+        window.fetch = async (url) => {
+          if (url === "/api/operator/session" && status === "network-error") throw new Error("offline");
+          return { status, ok: status === 200, json: async () => ({ authenticated: status === 200 }) };
+        };
       },
     });
     await new Promise((resolve) => dom.window.setTimeout(resolve, 0));
@@ -70,13 +73,24 @@ test("ホームの開催導線は認証済み応答のときだけ表示する",
 
   const unauthorized = await render(401);
   const unauthorizedEntry = unauthorized.window.document.getElementById("operator-entry");
-  assert.equal(unauthorizedEntry.hidden, true);
-  assert.equal(unauthorized.window.getComputedStyle(unauthorizedEntry).display, "none");
+  assert.equal(unauthorizedEntry.hidden, false);
+  assert.equal(unauthorizedEntry.textContent.trim(), "運営者ログイン");
+  assert.equal(unauthorizedEntry.getAttribute("href"), "/operator-login.html");
   unauthorized.window.close();
 
   const authenticated = await render(200);
-  assert.equal(authenticated.window.document.getElementById("operator-entry").hidden, false);
+  const authenticatedEntry = authenticated.window.document.getElementById("operator-entry");
+  assert.equal(authenticatedEntry.hidden, false);
+  assert.equal(authenticatedEntry.textContent.trim(), "開催画面を開く");
+  assert.equal(authenticatedEntry.getAttribute("href"), "/quiz.html?mode=create");
   authenticated.window.close();
+
+  const networkError = await render("network-error");
+  const networkErrorEntry = networkError.window.document.getElementById("operator-entry");
+  assert.equal(networkErrorEntry.hidden, false);
+  assert.equal(networkErrorEntry.textContent.trim(), "運営者ログイン");
+  assert.equal(networkErrorEntry.getAttribute("href"), "/operator-login.html");
+  networkError.window.close();
 });
 
 test("ホームの学習日は端末時計ではなくサーバー応答を表示する", async () => {
