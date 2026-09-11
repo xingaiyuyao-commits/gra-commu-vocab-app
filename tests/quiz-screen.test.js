@@ -217,6 +217,18 @@ test("参加・作成画面: Clacel/TOEIC/IELTSそれぞれの作成ボタンが
   assert.equal(document.querySelector(".container").classList.contains("wide"), true, "作成画面ではcontainerが横に広がる");
 });
 
+test("開催画面: 問題セットに実施日・Day・問題数・時間を表示する", () => {
+  const { window } = loadQuizPage({ url: "http://localhost/quiz.html?mode=create" });
+  assert.equal(
+    window.eval('seriesOptionLabel({ dateLabel: "9月13日", name: "Day 8", count: 20, timeLimitSec: 300, isReview: false }, "Day 8")'),
+    "9月13日（Day 8・20問・5分）",
+  );
+  assert.equal(
+    window.eval('seriesOptionLabel({ dateLabel: "9月12日", name: "Day 7（復習50問）", count: 50, timeLimitSec: 750, isReview: true }, "Day 7（復習50問）")'),
+    "9月12日（Day 7・復習50問・12分30秒）",
+  );
+});
+
 test("未認証で作成URLを直接開いても開催UIを表示しない", async () => {
   const { window, document } = loadQuizPage({
     url: "http://localhost/quiz.html?mode=create",

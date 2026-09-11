@@ -605,9 +605,15 @@
     const minutes = Math.floor(meta.timeLimitSec / 60);
     const seconds = meta.timeLimitSec % 60;
     const duration = seconds ? `${minutes}分${seconds}秒` : `${minutes}分`;
-    return meta.isReview
-      ? `${meta.name}・${duration}`
-      : `${meta.name}（${meta.count}問・${duration}）`;
+    if (!meta.dateLabel) {
+      return meta.isReview
+        ? `${meta.name}・${duration}`
+        : `${meta.name}（${meta.count}問・${duration}）`;
+    }
+    const name = meta.isReview
+      ? meta.name.replace(/（復習50問）$/, "・復習50問")
+      : `${meta.name}・${meta.count}問`;
+    return `${meta.dateLabel}（${name}・${duration}）`;
   }
 
   function getPlayerId() {
