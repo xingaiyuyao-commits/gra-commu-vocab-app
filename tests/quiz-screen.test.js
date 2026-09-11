@@ -227,6 +227,39 @@ test("未認証で作成URLを直接開いても開催UIを表示しない", asy
   assert.equal(document.getElementById("create-section").hidden, true);
 });
 
+test("開催画面: 過去の参加者セッションと復習結果が残っていても開催画面を優先する", async () => {
+  const storedResult = JSON.stringify({
+    version: 1,
+    records: [{
+      roomCode: "ABCD", category: "ielts", setLabel: "IELTS Day 1",
+      resultAt: "2026-09-04T10:30:00.000Z", expiresAt: Date.parse("2026-09-11T10:30:00.000Z"),
+      perfect: [],
+      review: [{ sentence: "It can ___ change.", answer: "induce", altAnswers: [], ja: "引き起こす" }],
+      answers: ["induce"], playerId: "participant", isTrial: false,
+    }],
+  });
+  const { window, document, fakeSocket } = loadQuizPage({
+    url: "http://localhost/quiz.html?mode=create",
+    nowIso: "2026-09-05T10:30:00.000Z",
+    storedValues: {
+      quizSession: JSON.stringify({
+        roomCode: "ABCD", category: "ielts", playerId: "participant", sessionToken: "participant-token",
+      }),
+      oshQuizSavedResultsV1: storedResult,
+    },
+  });
+
+  fakeSocket.fire("connect");
+  const rejoin = fakeSocket.emitted.find((entry) => entry.event === "quiz:rejoin");
+  assert.equal(rejoin, undefined, "開催モードでは参加者セッションへ再接続しない");
+  await new Promise((resolve) => window.setTimeout(resolve, 0));
+
+  assert.equal(document.getElementById("screen-entry").classList.contains("active"), true);
+  assert.equal(document.getElementById("screen-results").classList.contains("active"), false);
+  assert.equal(document.getElementById("create-section").hidden, false);
+  assert.equal(window.localStorage.getItem("oshQuizSavedResultsV1"), storedResult, "参加者の復習履歴は消さない");
+});
+
 test("参加・作成画面: エラーにrole=alert、入力欄がエラーと関連付けられている", () => {
   const { document } = loadQuizPage();
   const error = document.getElementById("entry-error");
