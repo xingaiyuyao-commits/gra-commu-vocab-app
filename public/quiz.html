@@ -1021,7 +1021,7 @@
   const presetRoom = entryParams.get("room")?.trim().toUpperCase() || null;
   let savedSession;
   try { savedSession = JSON.parse(localStorage.getItem("quizSession") || "null"); } catch { savedSession = null; }
-  const hasMatchingSession = savedSession?.roomCode
+  const hasMatchingSession = entryMode !== "create" && savedSession?.roomCode
     && (!presetRoom || savedSession.roomCode === presetRoom);
   if (!hasMatchingSession) show("screen-entry");
   renderWeeklyReviewEntry();
@@ -1844,6 +1844,7 @@
   // socket.ioは切断後に自動で再接続するが、サーバー側は新しい接続として扱うため
   // 部屋への再joinはこちらで明示的にやり直す必要がある（"connect"は初回接続時にも発火する）
   function attemptRejoin() {
+    if (entryMode === "create") return;
     let session;
     try { session = JSON.parse(localStorage.getItem("quizSession") || "null"); } catch { session = null; }
     if (!session || !session.roomCode) return;
