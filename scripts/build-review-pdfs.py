@@ -11,7 +11,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
 from reportlab.pdfbase import pdfmetrics
-from reportlab.pdfbase.cidfonts import UnicodeCIDFont
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
     BaseDocTemplate,
     Frame,
@@ -38,7 +38,7 @@ LINE = colors.HexColor("#D9D7D2")
 
 
 def register_fonts():
-    pdfmetrics.registerFont(UnicodeCIDFont("HeiseiKakuGo-W5"))
+    pdfmetrics.registerFont(TTFont("OshJP", "/System/Library/Fonts/Supplemental/Arial Unicode.ttf"))
 
 
 def page_footer(canvas, doc):
@@ -46,7 +46,7 @@ def page_footer(canvas, doc):
     canvas.setStrokeColor(LINE)
     canvas.line(18 * mm, 13 * mm, A4[0] - 18 * mm, 13 * mm)
     canvas.setFillColor(GRAY)
-    canvas.setFont("HeiseiKakuGo-W5", 7.5)
+    canvas.setFont("OshJP", 7.5)
     canvas.drawString(18 * mm, 8.5 * mm, "ÖSH Vocabulary Challenge")
     canvas.drawRightString(A4[0] - 18 * mm, 8.5 * mm, str(doc.page))
     canvas.restoreState()
@@ -55,15 +55,15 @@ def page_footer(canvas, doc):
 def styles():
     base = getSampleStyleSheet()
     return {
-        "title": ParagraphStyle("title", parent=base["Title"], fontName="HeiseiKakuGo-W5", fontSize=21, leading=27, textColor=INK, alignment=TA_CENTER, spaceAfter=4 * mm),
-        "subtitle": ParagraphStyle("subtitle", parent=base["Normal"], fontName="HeiseiKakuGo-W5", fontSize=9.5, leading=15, textColor=GRAY, alignment=TA_CENTER, spaceAfter=8 * mm),
-        "section": ParagraphStyle("section", parent=base["Heading2"], fontName="HeiseiKakuGo-W5", fontSize=16, leading=22, textColor=INK, spaceAfter=5 * mm),
-        "qno": ParagraphStyle("qno", parent=base["Normal"], fontName="HeiseiKakuGo-W5", fontSize=8, leading=10, textColor=GOLD, spaceAfter=1.5 * mm),
-        "meaning": ParagraphStyle("meaning", parent=base["Normal"], fontName="HeiseiKakuGo-W5", fontSize=10, leading=14, textColor=INK, spaceAfter=1 * mm),
-        "hint": ParagraphStyle("hint", parent=base["Normal"], fontName="HeiseiKakuGo-W5", fontSize=9, leading=12, textColor=GRAY, spaceAfter=1 * mm),
-        "sentence": ParagraphStyle("sentence", parent=base["Normal"], fontName="HeiseiKakuGo-W5", fontSize=10, leading=14, textColor=INK, spaceAfter=1 * mm),
-        "sentence_ja": ParagraphStyle("sentence_ja", parent=base["Normal"], fontName="HeiseiKakuGo-W5", fontSize=8.5, leading=12, textColor=GRAY, spaceAfter=2 * mm),
-        "answer": ParagraphStyle("answer", parent=base["Normal"], fontName="HeiseiKakuGo-W5", fontSize=8.5, leading=12, textColor=INK),
+        "title": ParagraphStyle("title", parent=base["Title"], fontName="OshJP", fontSize=21, leading=27, textColor=INK, alignment=TA_CENTER, spaceAfter=4 * mm),
+        "subtitle": ParagraphStyle("subtitle", parent=base["Normal"], fontName="OshJP", fontSize=9.5, leading=15, textColor=GRAY, alignment=TA_CENTER, spaceAfter=8 * mm),
+        "section": ParagraphStyle("section", parent=base["Heading2"], fontName="OshJP", fontSize=16, leading=22, textColor=INK, spaceAfter=5 * mm),
+        "qno": ParagraphStyle("qno", parent=base["Normal"], fontName="OshJP", fontSize=8, leading=10, textColor=GOLD, spaceAfter=1.5 * mm),
+        "meaning": ParagraphStyle("meaning", parent=base["Normal"], fontName="OshJP", fontSize=10, leading=14, textColor=INK, spaceAfter=1 * mm),
+        "hint": ParagraphStyle("hint", parent=base["Normal"], fontName="OshJP", fontSize=9, leading=12, textColor=GRAY, spaceAfter=1 * mm),
+        "sentence": ParagraphStyle("sentence", parent=base["Normal"], fontName="OshJP", fontSize=10, leading=14, textColor=INK, spaceAfter=1 * mm),
+        "sentence_ja": ParagraphStyle("sentence_ja", parent=base["Normal"], fontName="OshJP", fontSize=8.5, leading=12, textColor=GRAY, spaceAfter=2 * mm),
+        "answer": ParagraphStyle("answer", parent=base["Normal"], fontName="OshJP", fontSize=8.5, leading=12, textColor=INK),
     }
 
 
