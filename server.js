@@ -1572,6 +1572,7 @@ io.on("connection", (socket) => {
           sourceDays: series.sourceDays,
           series: cat.series,
           resultHistory,
+          fixedQuestionIds: series.fixedQuestionIds,
         })
         : {
           questions: shuffle(series.items).slice(0, QUIZ_QUESTION_COUNT),

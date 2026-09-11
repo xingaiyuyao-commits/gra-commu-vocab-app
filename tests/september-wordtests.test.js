@@ -64,3 +64,20 @@ test("Clacelのleaveヒントは正答を含まない", () => {
   assert.equal(leave.ja, "OをCのままにしておく、置き忘れる、去る");
   assert.equal(/leave/i.test(leave.ja), false);
 });
+
+test("9月12日のDay 7復習問題は3コースとも事前確定済みの50問を使う", () => {
+  const wordtests = require("../wordtests");
+  for (const course of ["clacel", "toeic", "ielts"]) {
+    const review = wordtests[course].series.find(({ day, isReview }) => day === 7 && isReview);
+    assert.ok(review, `${course}: Day 7`);
+    assert.equal(review.items.length, 0, course);
+    assert.equal(review.fixedQuestionIds.length, 50, course);
+    assert.equal(new Set(review.fixedQuestionIds).size, 50, course);
+    const counts = review.fixedQuestionIds.reduce((result, questionId) => {
+      const day = Number(/\/day(\d+)\//.exec(questionId)[1]);
+      result[day] = (result[day] || 0) + 1;
+      return result;
+    }, {});
+    assert.deepEqual(Object.values(counts).sort((left, right) => left - right), [8, 8, 8, 8, 9, 9], course);
+  }
+});

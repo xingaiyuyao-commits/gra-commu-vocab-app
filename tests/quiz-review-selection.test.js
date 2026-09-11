@@ -89,3 +89,21 @@ test("50問を一意に作れない場合は開始用エラーにする", () => 
     (error) => error instanceof ReviewSelectionError && /50問/.test(error.message),
   );
 });
+
+test("事前確定済みの復習50問は順序を変えず、そのまま開始に使う", () => {
+  const base = fixture();
+  const fixedQuestions = [
+    ...base.series[0].items.slice(0, 9),
+    ...base.series[1].items.slice(0, 9),
+    ...base.series.slice(2).flatMap(({ items }) => items.slice(0, 8)),
+  ];
+  const selected = selectReviewQuestions({
+    ...base,
+    fixedQuestionIds: fixedQuestions.map(({ questionId }) => questionId),
+    random: () => { throw new Error("固定済み問題では再抽選しない"); },
+  });
+
+  assert.deepEqual(selected.questions.map(({ questionId }) => questionId), fixedQuestions.map(({ questionId }) => questionId));
+  assert.deepEqual(countByDay(selected.questions), { 1: 9, 2: 9, 3: 8, 4: 8, 5: 8, 6: 8 });
+  assert.equal(selected.durationSec, 750);
+});
