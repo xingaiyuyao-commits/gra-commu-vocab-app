@@ -519,7 +519,7 @@ io.on("connection", (socket) => {
 /* ========== 単語テスト（シリーズ別20問・満点者掲示板） ========== */
 
 const WORDTESTS = require("./wordtests");
-const { getStudyDay, getHomeStudyDay } = require("./public/ui-logic");
+const { getStudyDay, getHomeStudyDay, getStudyDateLabel } = require("./public/ui-logic");
 const { selectReviewQuestions, ReviewSelectionError } = require("./quiz-review-selection");
 const QUIZ_QUESTION_COUNT = 20;
 const QUIZ_TIME_LIMIT_SEC = 300; // 5分
@@ -1143,6 +1143,7 @@ function quizPublicPlayers(room) {
 function quizSeriesMeta(category) {
   return WORDTESTS[category].series.map((series) => ({
     name: series.name,
+    dateLabel: getStudyDateLabel(series.day),
     count: series.isReview ? 50 : Math.min(QUIZ_QUESTION_COUNT, series.items.length),
     timeLimitSec: series.isReview ? QUIZ_REVIEW_TIME_LIMIT_SEC : QUIZ_TIME_LIMIT_SEC,
     isReview: series.isReview === true,
