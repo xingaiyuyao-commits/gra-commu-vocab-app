@@ -12,7 +12,7 @@ from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.graphics.shapes import Circle, Drawing, String
+from reportlab.graphics.shapes import Circle, Drawing, Rect, String
 from reportlab.platypus import (
     BaseDocTemplate,
     Frame,
@@ -86,6 +86,16 @@ def numbered_meaning(number, meaning, style, width):
     return row
 
 
+def score_field():
+    width = 25 * mm
+    height = 8 * mm
+    box_size = 7 * mm
+    drawing = Drawing(width, height)
+    drawing.add(Rect(0, 0.5 * mm, box_size, box_size, strokeColor=INK, fillColor=None, strokeWidth=0.8))
+    drawing.add(String(9 * mm, 2.1 * mm, "/ 50", fontName="OshJP", fontSize=11, fillColor=INK))
+    return drawing
+
+
 def load_questions(category):
     fixed = json.loads((ROOT / "data/wordtests/review-2026-09.json").read_text())
     label, filename = COURSES[category]
@@ -115,12 +125,24 @@ def build_pdf(category, output_dir):
         content = [
             numbered_meaning(index, question.get("ja", ""), style["meaning"], doc.width),
             Paragraph(escape(question.get("hint", "")), style["hint"]),
-            Paragraph(escape(question.get("sentence", "")).replace("___", "__________"), style["sentence"]),
+            Paragraph(escape(question.get("sentence", "")).replace("___", "_______________"), style["sentence"]),
             Paragraph(escape(question.get("sentenceJa", "")), style["sentence_ja"]),
         ]
         story.extend([KeepTogether(content), Spacer(1, 2 * mm)])
 
-    story.extend([PageBreak(), Paragraph("答え・復習用一覧", style["section"]), Paragraph("問題を解き終えてから確認してください。", style["subtitle"])])
+    answer_heading = Table(
+        [[Paragraph("答え・復習用一覧", style["section"]), score_field()]],
+        colWidths=[doc.width - 28 * mm, 28 * mm],
+    )
+    answer_heading.setStyle(TableStyle([
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+        ("ALIGN", (1, 0), (1, 0), "RIGHT"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ("TOPPADDING", (0, 0), (-1, -1), 0),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+    ]))
+    story.extend([PageBreak(), answer_heading, Paragraph("問題を解き終えてから確認してください。", style["subtitle"])])
     for start in range(0, 50, 10):
         rows = []
         for index, question in enumerate(questions[start:start + 10], start + 1):
