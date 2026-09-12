@@ -12,6 +12,7 @@ from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import mm
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.graphics.shapes import Circle, Drawing, String
 from reportlab.platypus import (
     BaseDocTemplate,
     Frame,
@@ -33,7 +34,6 @@ COURSES = {
 GOLD = colors.HexColor("#C99517")
 INK = colors.HexColor("#202020")
 GRAY = colors.HexColor("#666666")
-LIGHT = colors.HexColor("#F6F5F2")
 LINE = colors.HexColor("#D9D7D2")
 
 
@@ -58,13 +58,32 @@ def styles():
         "title": ParagraphStyle("title", parent=base["Title"], fontName="OshJP", fontSize=21, leading=27, textColor=INK, alignment=TA_CENTER, spaceAfter=4 * mm),
         "subtitle": ParagraphStyle("subtitle", parent=base["Normal"], fontName="OshJP", fontSize=9.5, leading=15, textColor=GRAY, alignment=TA_CENTER, spaceAfter=8 * mm),
         "section": ParagraphStyle("section", parent=base["Heading2"], fontName="OshJP", fontSize=16, leading=22, textColor=INK, spaceAfter=5 * mm),
-        "qno": ParagraphStyle("qno", parent=base["Normal"], fontName="OshJP", fontSize=8, leading=10, textColor=GOLD, spaceAfter=1.5 * mm),
         "meaning": ParagraphStyle("meaning", parent=base["Normal"], fontName="OshJP", fontSize=10, leading=14, textColor=INK, spaceAfter=1 * mm),
         "hint": ParagraphStyle("hint", parent=base["Normal"], fontName="OshJP", fontSize=9, leading=12, textColor=GRAY, spaceAfter=1 * mm),
         "sentence": ParagraphStyle("sentence", parent=base["Normal"], fontName="OshJP", fontSize=10, leading=14, textColor=INK, spaceAfter=1 * mm),
         "sentence_ja": ParagraphStyle("sentence_ja", parent=base["Normal"], fontName="OshJP", fontSize=8.5, leading=12, textColor=GRAY, spaceAfter=2 * mm),
         "answer": ParagraphStyle("answer", parent=base["Normal"], fontName="OshJP", fontSize=8.5, leading=12, textColor=INK),
     }
+
+
+def number_badge(number):
+    size = 13
+    drawing = Drawing(size, size)
+    drawing.add(Circle(size / 2, size / 2, size / 2 - 0.8, strokeColor=GOLD, fillColor=None, strokeWidth=0.8))
+    drawing.add(String(size / 2, size / 2 - (2.1 if number < 10 else 1.8), str(number), fontName="Helvetica", fontSize=6.2 if number < 10 else 5.3, fillColor=GOLD, textAnchor="middle"))
+    return drawing
+
+
+def numbered_meaning(number, meaning, style, width):
+    row = Table([[number_badge(number), Paragraph(escape(meaning), style)]], colWidths=[8 * mm, width - 8 * mm])
+    row.setStyle(TableStyle([
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ("TOPPADDING", (0, 0), (-1, -1), 0),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+    ]))
+    return row
 
 
 def load_questions(category):
@@ -93,35 +112,23 @@ def build_pdf(category, output_dir):
         Paragraph("問題", style["section"]),
     ]
     for index, question in enumerate(questions, 1):
-        answer_line = Table([[""]], colWidths=[doc.width - 10 * mm], rowHeights=[6 * mm])
-        answer_line.setStyle(TableStyle([("LINEBELOW", (0, 0), (-1, -1), 0.7, GRAY)]))
         content = [
-            Paragraph(f"QUESTION {index:02d}", style["qno"]),
-            Paragraph(escape(question.get("ja", "")), style["meaning"]),
+            numbered_meaning(index, question.get("ja", ""), style["meaning"], doc.width),
             Paragraph(escape(question.get("hint", "")), style["hint"]),
             Paragraph(escape(question.get("sentence", "")).replace("___", "__________"), style["sentence"]),
             Paragraph(escape(question.get("sentenceJa", "")), style["sentence_ja"]),
-            answer_line,
         ]
-        card = Table([[content]], colWidths=[doc.width], style=TableStyle([
-            ("BACKGROUND", (0, 0), (-1, -1), LIGHT),
-            ("BOX", (0, 0), (-1, -1), 0.5, LINE),
-            ("LEFTPADDING", (0, 0), (-1, -1), 5 * mm),
-            ("RIGHTPADDING", (0, 0), (-1, -1), 5 * mm),
-            ("TOPPADDING", (0, 0), (-1, -1), 3 * mm),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 3 * mm),
-        ]))
-        story.extend([card, Spacer(1, 3 * mm)])
+        story.extend([KeepTogether(content), Spacer(1, 2 * mm)])
 
     story.extend([PageBreak(), Paragraph("答え・復習用一覧", style["section"]), Paragraph("問題を解き終えてから確認してください。", style["subtitle"])])
     for start in range(0, 50, 10):
         rows = []
         for index, question in enumerate(questions[start:start + 10], start + 1):
             answers = " / ".join([question["answer"], *question.get("altAnswers", [])])
-            completed = question.get("sentence", "").replace("___", f"<b>{escape(answers)}</b>")
+            completed = question.get("sentence", "").replace("___", f"<font color='#C6463B'><b>{escape(question['answer'])}</b></font>")
             rows.append([
-                Paragraph(f"<b>{index}.</b>", style["answer"]),
-                Paragraph(f"<b>{escape(answers)}</b><br/>{escape(question.get('ja', ''))}<br/>{completed}<br/><font color='#666666'>{escape(question.get('sentenceJa', ''))}</font>", style["answer"]),
+                number_badge(index),
+                Paragraph(f"<font color='#C6463B'><b>{escape(answers)}</b></font><br/>{escape(question.get('ja', ''))}<br/>{completed}<br/><font color='#666666'>{escape(question.get('sentenceJa', ''))}</font>", style["answer"]),
             ])
         table = Table(rows, colWidths=[10 * mm, doc.width - 10 * mm], repeatRows=0)
         table.setStyle(TableStyle([
