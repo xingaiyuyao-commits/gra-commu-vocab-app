@@ -183,28 +183,20 @@
     display: grid !important;
     grid-template-columns: 3.4rem 5.8rem minmax(0, 1fr);
     gap: 10px;
-    min-height: 3.8rem;
-    border-left: 4px solid var(--border) !important;
+    min-height: 3.2rem;
+    padding: 10px 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--border) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
   }
   .leaderboard-rank {
-    display: grid;
-    place-items: center;
-    width: 2.6rem;
-    height: 2.6rem;
-    border-radius: 50%;
-    background: #ecebe7;
     color: var(--foreground);
     font-weight: 900;
   }
   .leaderboard-score { font-weight: 800; white-space: nowrap; }
   .leaderboard-names { display: flex; flex-wrap: wrap; gap: 6px; }
-  .leaderboard-name { display: inline-block; padding: 4px 10px; border-radius: 999px; background: var(--card); border: 1px solid var(--border); font-weight: 800; }
-  .leaderboard-row.rank-1 { border-color: #d29b19 !important; background: #fff8e3; box-shadow: 0 6px 18px rgba(210, 155, 25, .12); }
-  .leaderboard-row.rank-2 { border-color: #9ea4a8 !important; background: #f6f7f7; }
-  .leaderboard-row.rank-3 { border-color: #aa6e45 !important; background: #fbf2ec; }
-  .leaderboard-row.rank-1 .leaderboard-rank { background: #d7a21f; color: #201b0f; }
-  .leaderboard-row.rank-2 .leaderboard-rank { background: #a9afb2; color: #17191a; }
-  .leaderboard-row.rank-3 .leaderboard-rank { background: #aa6e45; color: #fff; }
+  .leaderboard-name { display: inline-block; font-weight: 800; }
   .mh-mistake-row { display: grid !important; grid-template-columns: 2rem minmax(0, 1fr); gap: 10px; align-items: center !important; }
   .mh-mistake-rank { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--primary); color: var(--primary-foreground); font-weight: 800; }
   .mh-mistake-row:nth-child(1) .mh-mistake-rank { background: var(--gold); color: #202020; }
@@ -1275,10 +1267,9 @@
 
   function leaderboardHtml(leaderboard = []) {
     return leaderboard.slice(0, 5).map((group) => {
-      const rank = Math.min(5, Math.max(1, Number(group.rank) || 1));
       const names = (group.players || []).map((player) =>
         `<span class="leaderboard-name">${escapeHtml(player.name)}</span>`).join("");
-      return `<li class="leaderboard-row rank-${rank}"><span class="leaderboard-rank">${escapeHtml(group.rank)}位</span><span class="leaderboard-score">${escapeHtml(group.score)} / ${escapeHtml(group.total)}点</span><span class="leaderboard-names">${names}</span></li>`;
+      return `<li class="leaderboard-row"><span class="leaderboard-rank">${escapeHtml(group.rank)}位</span><span class="leaderboard-score">${escapeHtml(group.score)} / ${escapeHtml(group.total)}点</span><span class="leaderboard-names">${names}</span></li>`;
     }).join("");
   }
 

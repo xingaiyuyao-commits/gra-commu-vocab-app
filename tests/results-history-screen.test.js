@@ -231,8 +231,7 @@ test("復習日の履歴は満点者一覧ではなくTOP 5を表示する", asy
   assert.match(toeic.textContent, /3位.*47 \/ 50点.*Nakayama/s);
   assert.match(toeic.textContent, /4位.*46 \/ 50点.*Miyu/s);
   assert.match(toeic.textContent, /5位.*45 \/ 50点.*Rina/s);
-  assert.ok(toeic.querySelector(".history-leaderboard-row.rank-1"));
-  assert.ok(toeic.querySelector(".history-leaderboard-row.rank-3"));
+  assert.equal(toeic.querySelector(".history-leaderboard-row").className, "history-leaderboard-row");
   assert.doesNotMatch(toeic.textContent, /満点者一覧|満点者数/);
   assert.equal(toeic.querySelector('[data-field="participants"]').textContent.trim(), "20");
 });
