@@ -4,6 +4,7 @@ import unittest
 from pathlib import Path
 
 from pypdf import PdfReader
+from reportlab.lib.units import mm
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -29,6 +30,12 @@ class ReviewPdfBuilderTest(unittest.TestCase):
     def test_answer_section_has_score_field_out_of_50(self):
         answer_page = next(page for page in self.pages if "答え・復習用一覧" in page)
         self.assertIn("/ 50", answer_page)
+
+    def test_score_box_is_fourteen_millimeters_square(self):
+        field = BUILDER.score_field()
+        box = next(item for item in field.contents if isinstance(item, BUILDER.Rect))
+        self.assertAlmostEqual(box.width, 14 * mm)
+        self.assertAlmostEqual(box.height, 14 * mm)
 
     def test_question_blank_is_one_and_a_half_times_longer(self):
         question_text = "\n".join(self.pages[:6])

@@ -87,12 +87,12 @@ def numbered_meaning(number, meaning, style, width):
 
 
 def score_field():
-    width = 25 * mm
-    height = 8 * mm
-    box_size = 7 * mm
+    width = 36 * mm
+    height = 15 * mm
+    box_size = 14 * mm
     drawing = Drawing(width, height)
     drawing.add(Rect(0, 0.5 * mm, box_size, box_size, strokeColor=INK, fillColor=None, strokeWidth=0.8))
-    drawing.add(String(9 * mm, 2.1 * mm, "/ 50", fontName="OshJP", fontSize=11, fillColor=INK))
+    drawing.add(String(17 * mm, 5 * mm, "/ 50", fontName="OshJP", fontSize=12, fillColor=INK))
     return drawing
 
 
@@ -132,7 +132,7 @@ def build_pdf(category, output_dir):
 
     answer_heading = Table(
         [[Paragraph("答え・復習用一覧", style["section"]), score_field()]],
-        colWidths=[doc.width - 28 * mm, 28 * mm],
+        colWidths=[doc.width - 38 * mm, 38 * mm],
     )
     answer_heading.setStyle(TableStyle([
         ("VALIGN", (0, 0), (-1, -1), "TOP"),
