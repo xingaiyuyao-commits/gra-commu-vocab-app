@@ -141,7 +141,7 @@ function player(name, sessionToken, overrides = {}) {
   };
 }
 
-function playingRoom({ category = "clacel", setLabel = "Clacel Day 1", players, isTrial = false }) {
+function playingRoom({ category = "clacel", setLabel = "Clacel Day 1", players, isTrial = false, isReview = false }) {
   return {
     category,
     host: "host",
@@ -153,10 +153,63 @@ function playingRoom({ category = "clacel", setLabel = "Clacel Day 1", players, 
     setLabel,
     day: 1,
     datasetRevision: "test-revision",
+    isReview,
     isTrial,
     results: null,
   };
 }
+
+test("復習日は上位3つの得点帯を1位・2位・3位として同点者全員へ発表する", async (t) => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-review-ranking-"));
+  const stateFile = path.join(tempDir, "quiz-rooms.json");
+  const submittedAt = Date.now() - 100;
+  fs.writeFileSync(stateFile, JSON.stringify({
+    version: 2,
+    rooms: {
+      ABCD: playingRoom({
+        setLabel: "Clacel Day 7（復習50問）",
+        isReview: true,
+        players: {
+          host: player("運営", "host-token"),
+          b: player("Kaho", "b-token", { submittedAt, score: 4 }),
+          a: player("Aica", "a-token", { submittedAt: submittedAt + 50, score: 4 }),
+          d: player("Tina", "d-token", { submittedAt, score: 3 }),
+          c: player("Ryan", "c-token", { submittedAt: submittedAt + 50, score: 3 }),
+          e: player("Nakayama", "e-token", { submittedAt, score: 2 }),
+          f: player("Miyu", "f-token", { submittedAt, score: 1 }),
+        },
+      }),
+    },
+    resultHistory: {},
+  }));
+
+  const { child, baseUrl } = await startServer(stateFile);
+  const host = await connect(baseUrl);
+  t.after(async () => {
+    host.disconnect();
+    await stopServer(child);
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  });
+  assert.equal((await rejoin(host, "ABCD", "host", "host-token")).ok, true);
+  const resultsEvent = waitForEvent(host, "quiz:results");
+  assert.deepEqual(await emitWithoutPayloadWithAck(host, "quiz:revealResults"), { ok: true });
+  const [results] = await resultsEvent;
+
+  assert.deepEqual(results.leaderboard, [
+    { rank: 1, score: 4, total: 4, players: [{ id: "a", name: "Aica" }, { id: "b", name: "Kaho" }] },
+    { rank: 2, score: 3, total: 4, players: [{ id: "c", name: "Ryan" }, { id: "d", name: "Tina" }] },
+    { rank: 3, score: 2, total: 4, players: [{ id: "e", name: "Nakayama" }] },
+  ]);
+  assert.equal(JSON.stringify(results.leaderboard).includes("timeMs"), false);
+  const saved = JSON.parse(fs.readFileSync(stateFile, "utf8"));
+  const history = Object.values(saved.resultHistory)[0];
+  assert.equal(history.isReview, true);
+  assert.deepEqual(history.leaderboard, [
+    { rank: 1, score: 4, total: 4, players: [{ name: "Aica" }, { name: "Kaho" }] },
+    { rank: 2, score: 3, total: 4, players: [{ name: "Ryan" }, { name: "Tina" }] },
+    { rank: 3, score: 2, total: 4, players: [{ name: "Nakayama" }] },
+  ]);
+});
 
 async function rejoin(socket, roomCode, playerId, sessionToken) {
   return emitWithAck(socket, "quiz:rejoin", { roomCode, playerId, sessionToken });

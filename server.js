@@ -577,6 +577,24 @@ function sanitizeHistoryQuestionStats(stats) {
   });
 }
 
+function sanitizeHistoryLeaderboard(leaderboard) {
+  if (!Array.isArray(leaderboard)) return [];
+  return leaderboard.slice(0, 3).flatMap((group, index) => {
+    const score = Number(group?.score);
+    const total = Number(group?.total);
+    const players = Array.isArray(group?.players)
+      ? group.players.flatMap((entry) => {
+        const name = String(entry?.name || "").trim();
+        return name ? [{ name }] : [];
+      })
+      : [];
+    if (!Number.isInteger(score) || score < 0
+      || !Number.isInteger(total) || total <= 0 || score > total
+      || players.length === 0) return [];
+    return [{ rank: index + 1, score, total, players }];
+  });
+}
+
 function sanitizeStoredHistoryRecord(record) {
   if (!record || typeof record !== "object" || Array.isArray(record)) return null;
   const day = Number(record.day);
@@ -585,6 +603,9 @@ function sanitizeStoredHistoryRecord(record) {
     ...(Number.isInteger(day) && day > 0 ? { day } : {}),
     ...(typeof record.datasetRevision === "string" && record.datasetRevision ? { datasetRevision: record.datasetRevision } : {}),
     questionStats: sanitizeHistoryQuestionStats(record.questionStats),
+    ...(record.isReview === true
+      ? { isReview: true, leaderboard: sanitizeHistoryLeaderboard(record.leaderboard) }
+      : {}),
   };
 }
 
@@ -607,11 +628,28 @@ function sanitizeRestoredQuizResults(results, roomIsTrial) {
       total: entry.total,
     }))
     : [];
+  const leaderboard = Array.isArray(results.leaderboard)
+    ? results.leaderboard.slice(0, 3).flatMap((group, index) => {
+      const score = Number(group?.score);
+      const total = Number(group?.total);
+      const players = Array.isArray(group?.players)
+        ? group.players.filter((entry) => entry && typeof entry === "object").map((entry) => ({
+          id: String(entry.id || ""),
+          name: String(entry.name || ""),
+        }))
+        : [];
+      if (!Number.isInteger(score) || score < 0
+        || !Number.isInteger(total) || total <= 0 || score > total
+        || players.length === 0) return [];
+      return [{ rank: index + 1, score, total, players }];
+    })
+    : [];
   return {
     ...(resultAt ? { resultAt } : {}),
     setLabel: String(results.setLabel || ""),
     perfect,
     others,
+    ...(results.isReview === true ? { leaderboard, isReview: true } : {}),
     review: Array.isArray(results.review) ? results.review : [],
     mistakes: Array.isArray(results.mistakes) ? results.mistakes.map((mistake) => ({
       ...mistake,
@@ -1047,6 +1085,9 @@ function sanitizedHistoryRecord(record) {
     participantCount: Number.isFinite(participantCount) ? Math.max(0, Math.trunc(participantCount)) : 0,
     perfectNames: Array.isArray(record?.perfectNames) ? record.perfectNames.map((name) => String(name)) : [],
     updatedAt: String(record?.updatedAt || ""),
+    ...(record?.isReview === true
+      ? { isReview: true, leaderboard: sanitizeHistoryLeaderboard(record.leaderboard) }
+      : {}),
   };
 }
 
@@ -1367,6 +1408,22 @@ function topThreeMistakes(questionStats, questions) {
     }));
 }
 
+function buildReviewLeaderboard(entries) {
+  const ordered = entries.slice().sort((left, right) =>
+    right.score - left.score
+    || left.name.localeCompare(right.name, "ja")
+    || left.id.localeCompare(right.id));
+  const scores = [...new Set(ordered.map((entry) => entry.score))].slice(0, 3);
+  return scores.map((score, index) => ({
+    rank: index + 1,
+    score,
+    total: ordered[0]?.total || 0,
+    players: ordered
+      .filter((entry) => entry.score === score)
+      .map((entry) => ({ id: entry.id, name: entry.name })),
+  }));
+}
+
 // ホストの操作で結果発表を確定させる。参加者全員が提出済みであることを再確認してから発表する。
 function quizRevealResults(roomCode) {
   const room = quizRooms[roomCode];
@@ -1388,6 +1445,7 @@ function quizRevealResults(roomCode) {
   const others = entries
     .filter((e) => e.score !== e.total)
     .map((e) => ({ id: e.id, name: e.name, score: e.score, total: e.total }));
+  const leaderboard = room.isReview ? buildReviewLeaderboard(entries) : [];
   const questionStats = buildQuestionStats(room, participants);
   const mistakes = topThreeMistakes(questionStats, room.questions);
   const now = quizResultNow();
@@ -1400,9 +1458,11 @@ function quizRevealResults(roomCode) {
       setLabel: room.setLabel,
       perfect,
       others,
+      leaderboard,
       review: room.questions.map((q) => ({ sentence: q.sentence, answer: q.answer, altAnswers: q.altAnswers, ja: q.ja, sentenceJa: q.sentenceJa })),
       mistakes,
       isTrial: room.isTrial === true,
+      isReview: room.isReview === true,
     };
     resultHistory[`${date}:${room.category}`] = {
       date,
@@ -1412,6 +1472,17 @@ function quizRevealResults(roomCode) {
       datasetRevision: room.datasetRevision,
       participantCount: participants.length,
       perfectNames: perfect.map((entry) => entry.name),
+      ...(room.isReview === true
+        ? {
+          isReview: true,
+          leaderboard: leaderboard.map((group) => ({
+            rank: group.rank,
+            score: group.score,
+            total: group.total,
+            players: group.players.map((entry) => ({ name: entry.name })),
+          })),
+        }
+        : {}),
       questionStats,
       updatedAt: resultAt,
     };

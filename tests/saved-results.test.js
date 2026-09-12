@@ -47,3 +47,17 @@ test("保存対象にセッショントークンや参加者名を含めない",
   assert.equal(saved.raw.includes("secret"), false);
   assert.equal(saved.raw.includes("Tina"), false);
 });
+
+test("復習日の順位を7日間の再表示用データへ保存する", () => {
+  const now = Date.parse("2026-09-04T10:30:01.000Z");
+  const leaderboard = [
+    { rank: 1, score: 50, total: 50, players: [{ id: "p1", name: "Kaho" }, { id: "p2", name: "Aica" }] },
+    { rank: 2, score: 48, total: 50, players: [{ id: "p3", name: "Ryan" }] },
+    { rank: 3, score: 47, total: 50, players: [{ id: "p4", name: "Nakayama" }] },
+  ];
+  const saved = Saved.upsert("", { ...record("ABCD"), isReview: true, leaderboard }, now);
+  const restored = Saved.find(saved.raw, "ABCD", now);
+
+  assert.equal(restored.isReview, true);
+  assert.deepEqual(restored.leaderboard, leaderboard);
+});
