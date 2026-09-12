@@ -413,6 +413,20 @@
     font-weight: 800;
     overflow-wrap: anywhere;
   }
+  .history-leaderboard { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+  .history-leaderboard-row {
+    display: grid;
+    grid-template-columns: 3.2rem 5.5rem minmax(0, 1fr);
+    gap: 10px;
+    align-items: center;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+  }
+  .history-leaderboard-rank, .history-leaderboard-score { font-weight: 800; white-space: nowrap; }
+  .history-leaderboard-row:nth-child(1) .history-leaderboard-rank { color: var(--gold-deep); }
+  .history-leaderboard-row:nth-child(3) .history-leaderboard-rank { color: var(--bronze); }
+  .history-leaderboard-names { display: flex; flex-wrap: wrap; gap: 6px; }
+  .history-leaderboard-name { padding: 4px 8px; background: #f5f1e8; font-size: .82rem; font-weight: 800; }
 
   .empty-copy { margin: 13px 0 0; color: var(--muted); font-size: 0.78rem; line-height: 1.65; }
 
@@ -468,6 +482,8 @@
     .legend { gap: 10px; padding: 12px; }
     .details-header { min-height: 76px; padding: 16px; }
     .course-card { padding: 18px 16px; }
+    .history-leaderboard-row { grid-template-columns: 3rem minmax(0, 1fr); }
+    .history-leaderboard-names { grid-column: 1 / -1; }
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -811,14 +827,39 @@
 
     const stats = document.createElement("div");
     stats.className = "record-stats";
-    stats.append(recordStat("参加人数", record.participantCount), recordStat("満点者", record.perfectNames.length));
+    stats.append(recordStat("参加人数", record.participantCount));
+    if (!record.isReview) stats.append(recordStat("満点者", record.perfectNames.length));
 
     const perfectLabel = document.createElement("p");
     perfectLabel.className = "perfect-label";
-    perfectLabel.textContent = "満点者一覧";
+    perfectLabel.textContent = record.isReview ? "復習日ランキング" : "満点者一覧";
     card.append(setLabel, perfectLabel);
 
-    if (record.perfectNames.length) {
+    if (record.isReview) {
+      const ranking = document.createElement("ol");
+      ranking.className = "history-leaderboard";
+      for (const group of (record.leaderboard || []).slice(0, 3)) {
+        const item = document.createElement("li");
+        item.className = "history-leaderboard-row";
+        const rank = document.createElement("span");
+        rank.className = "history-leaderboard-rank";
+        rank.textContent = `${group.rank}位`;
+        const score = document.createElement("span");
+        score.className = "history-leaderboard-score";
+        score.textContent = `${group.score} / ${group.total}点`;
+        const names = document.createElement("span");
+        names.className = "history-leaderboard-names";
+        for (const player of group.players || []) {
+          const name = document.createElement("span");
+          name.className = "history-leaderboard-name";
+          name.textContent = String(player.name || "");
+          names.append(name);
+        }
+        item.append(rank, score, names);
+        ranking.append(item);
+      }
+      card.append(ranking);
+    } else if (record.perfectNames.length) {
       const names = document.createElement("ul");
       names.className = "perfect-list";
       for (const name of record.perfectNames) {

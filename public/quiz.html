@@ -179,6 +179,11 @@
     margin-bottom: 6px; font-size: .95rem;
   }
   .rank-list .me { outline: 2px solid var(--primary); }
+  .leaderboard-row { display: grid !important; grid-template-columns: 3.4rem 5.8rem minmax(0, 1fr); gap: 10px; }
+  .leaderboard-rank { font-weight: 800; color: var(--foreground); }
+  .leaderboard-score { font-weight: 800; white-space: nowrap; }
+  .leaderboard-names { display: flex; flex-wrap: wrap; gap: 6px; }
+  .leaderboard-name { display: inline-block; padding: 2px 8px; border-radius: 999px; background: var(--card); border: 1px solid var(--border); }
   .mh-mistake-row { display: grid !important; grid-template-columns: 2rem minmax(0, 1fr); gap: 10px; align-items: center !important; }
   .mh-mistake-rank { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--primary); color: var(--primary-foreground); font-weight: 800; }
   .mh-mistake-row:nth-child(1) .mh-mistake-rank { background: var(--gold); color: #202020; }
@@ -237,6 +242,8 @@
   .perfect-names { display: flex; flex-wrap: wrap; gap: 5px; max-height: 4.6rem; overflow-y: auto; list-style: none; }
   .perfect-names li { padding: 3px 8px; border: 1px solid var(--border); border-radius: 999px; font-size: .8rem; background: var(--secondary); }
   .perfect-names .me { outline: 2px solid var(--primary); }
+  .perfect-names.review-ranking { display: grid; width: 100%; max-height: none; overflow: visible; }
+  .perfect-names.review-ranking li { border-radius: calc(var(--radius) - 2px); background: var(--secondary); }
 
   /* スクショの案内文はカードの外。撮影画像に写り込ませない */
   .shot-hint { font-size: .85rem; color: var(--muted-foreground); margin: 0 0 6px 4px; }
@@ -277,6 +284,9 @@
     .summary-perfect { flex-wrap: nowrap; width: 100%; }
     .summary-bar .perfect-names { flex-wrap: nowrap; overflow-x: auto; max-height: none; }
     .summary-bar .perfect-names li { flex: 0 0 auto; }
+    .summary-bar .perfect-names.review-ranking { display: grid; overflow: visible; }
+    .leaderboard-row { grid-template-columns: 3rem minmax(0, 1fr); }
+    .leaderboard-names { grid-column: 1 / -1; }
     .review-legend { display: none; }
   }
 </style>
@@ -333,7 +343,7 @@
             <button id="mh-clacel-cancel" class="secondary">開催を中止</button>
           </div>
           <div id="mh-clacel-results" hidden>
-            <p class="perfect-title">🏆 満点者</p>
+            <p class="perfect-title" id="mh-clacel-award-title">🏆 満点者</p>
             <ul class="rank-list" id="mh-clacel-perfect"></ul>
             <p class="mh-progress" id="mh-clacel-noperfect" hidden>満点者はいません</p>
             <div id="mh-clacel-mistake-section">
@@ -367,7 +377,7 @@
             <button id="mh-toeic-cancel" class="secondary">開催を中止</button>
           </div>
           <div id="mh-toeic-results" hidden>
-            <p class="perfect-title">🏆 満点者</p>
+            <p class="perfect-title" id="mh-toeic-award-title">🏆 満点者</p>
             <ul class="rank-list" id="mh-toeic-perfect"></ul>
             <p class="mh-progress" id="mh-toeic-noperfect" hidden>満点者はいません</p>
             <div id="mh-toeic-mistake-section">
@@ -401,7 +411,7 @@
             <button id="mh-ielts-cancel" class="secondary">開催を中止</button>
           </div>
           <div id="mh-ielts-results" hidden>
-            <p class="perfect-title">🏆 満点者</p>
+            <p class="perfect-title" id="mh-ielts-award-title">🏆 満点者</p>
             <ul class="rank-list" id="mh-ielts-perfect"></ul>
             <p class="mh-progress" id="mh-ielts-noperfect" hidden>満点者はいません</p>
             <div id="mh-ielts-mistake-section">
@@ -773,10 +783,12 @@
           setLabel: data.setLabel || currentSetLabel,
           resultAt: data.resultAt,
           perfect: data.perfect,
+          leaderboard: data.leaderboard,
           review: data.review,
           answers,
           playerId,
           isTrial: data.isTrial === true,
+          isReview: data.isReview === true,
         },
       );
       if (!stored.ok) return false;
@@ -1240,9 +1252,22 @@
       : "その他";
   }
 
-  function mhRenderResults(category, perfect, mistakes = []) {
+  function leaderboardHtml(leaderboard = []) {
+    return leaderboard.slice(0, 3).map((group) => {
+      const names = (group.players || []).map((player) =>
+        `<span class="leaderboard-name">${escapeHtml(player.name)}</span>`).join("");
+      return `<li class="leaderboard-row"><span class="leaderboard-rank">${escapeHtml(group.rank)}位</span><span class="leaderboard-score">${escapeHtml(group.score)} / ${escapeHtml(group.total)}点</span><span class="leaderboard-names">${names}</span></li>`;
+    }).join("");
+  }
+
+  function mhRenderResults(category, { perfect = [], leaderboard = [], mistakes = [], isReview = false } = {}) {
     mhStopTimer(category);
-    if (perfect.length > 0) {
+    $(`mh-${category}-award-title`).textContent = isReview ? "🏆 復習日ランキング" : "🏆 満点者";
+    if (isReview) {
+      $(`mh-${category}-noperfect`).hidden = true;
+      $(`mh-${category}-perfect`).hidden = false;
+      $(`mh-${category}-perfect`).innerHTML = leaderboardHtml(leaderboard);
+    } else if (perfect.length > 0) {
       $(`mh-${category}-noperfect`).hidden = true;
       $(`mh-${category}-perfect`).hidden = false;
       $(`mh-${category}-perfect`).innerHTML = perfect.map((p) => `<li><span>🏆 ${escapeHtml(p.name)}</span></li>`).join("");
@@ -1272,7 +1297,7 @@
       $(`mh-${category}-reveal`).disabled = submitted < total;
     });
     s.on("quiz:readyToReveal", () => { $(`mh-${category}-reveal`).disabled = false; });
-    s.on("quiz:results", ({ perfect, mistakes }) => mhRenderResults(category, perfect, mistakes));
+    s.on("quiz:results", (results) => mhRenderResults(category, results));
     s.on("quiz:backToLobby", ({ cancelled } = {}) => {
       if (cancelled) $(`mh-${category}-error`).textContent = "開催を中止しました　問題セットを選び直せます";
       mhShow(category, "lobby");
@@ -1309,7 +1334,7 @@
           mhShow(category, "waiting");
           mhStartTimer(category);
         } else if (res.phase === "finished" && res.results) {
-          mhRenderResults(category, res.results.perfect || [], res.results.mistakes || []);
+          mhRenderResults(category, res.results);
         } else {
           mhShow(category, "lobby");
         }
@@ -1631,16 +1656,24 @@
   });
 
   // --- 結果 ---
-  function renderResults({ resultAt, setLabel, perfect = [], review = [], isTrial = false }) {
+  function renderResults({ resultAt, setLabel, perfect = [], leaderboard = [], review = [], isTrial = false, isReview = false }) {
     clearQuizTimer();
     clearWaitingTimer();
     clearPendingSubmission();
     $("results-set").textContent = setLabel || "";
     const result = QuizUi.calculateResult(answers, review);
     $("personal-score").textContent = `${result.score} / ${result.total}点`;
-    // 満点者が0人のときは案内と件数が重複するので、件数は出さない
-    $("perfect-count").textContent = perfect.length > 0 ? `🏆 満点者 ${perfect.length}人` : "🏆";
-    if (perfect.length > 0) {
+    // 復習日は得点帯ごとの上位3位、通常日は従来どおり満点者を発表する
+    $("perfect-count").textContent = isReview
+      ? "🏆 復習日ランキング"
+      : (perfect.length > 0 ? `🏆 満点者 ${perfect.length}人` : "🏆");
+    if (isReview) {
+      $("no-perfect").style.display = "none";
+      $("perfect-list").style.display = "";
+      $("perfect-list").classList.add("review-ranking");
+      $("perfect-list").innerHTML = leaderboardHtml(leaderboard);
+    } else if (perfect.length > 0) {
+      $("perfect-list").classList.remove("review-ranking");
       $("no-perfect").style.display = "none";
       $("perfect-list").style.display = "";
       // 6人の中から自分を探させないよう、自分だけ先頭に固定する
@@ -1649,6 +1682,7 @@
       $("perfect-list").innerHTML = ordered.map((p) =>
         `<li class="${p.id === playerId ? "me" : ""}">${escapeHtml(p.name)}</li>`).join("");
     } else {
+      $("perfect-list").classList.remove("review-ranking");
       $("perfect-list").style.display = "none";
       $("perfect-list").innerHTML = "";
       $("no-perfect").style.display = "";
@@ -1723,7 +1757,7 @@
     const saveStatus = $("results-save-status");
     saveStatus.hidden = isHost;
     if (!isHost) {
-      const saved = saveParticipantResult({ resultAt, setLabel, perfect, review, isTrial });
+      const saved = saveParticipantResult({ resultAt, setLabel, perfect, leaderboard, review, isTrial, isReview });
       saveStatus.textContent = saved === false
         ? "この画面を閉じると結果を復元できません"
         : "この結果と復習内容は、このブラウザに7日間保存されます";

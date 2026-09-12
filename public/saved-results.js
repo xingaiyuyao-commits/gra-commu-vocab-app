@@ -10,6 +10,24 @@
   const MAX_RECORDS = 21;
   const CATEGORIES = new Set(["clacel", "toeic", "ielts"]);
 
+  function normalizeLeaderboard(value) {
+    if (!Array.isArray(value)) return [];
+    return value.slice(0, 3).flatMap((group, index) => {
+      const score = Number(group?.score);
+      const total = Number(group?.total);
+      const players = Array.isArray(group?.players)
+        ? group.players.flatMap((entry) => {
+          const name = String(entry?.name || "").trim();
+          return name ? [{ id: String(entry?.id || ""), name }] : [];
+        })
+        : [];
+      if (!Number.isInteger(score) || score < 0
+        || !Number.isInteger(total) || total <= 0 || score > total
+        || players.length === 0) return [];
+      return [{ rank: index + 1, score, total, players }];
+    });
+  }
+
   function normalizeRecord(value, now = Date.now()) {
     if (!value || typeof value !== "object") return null;
     const roomCode = String(value.roomCode || "").trim().toUpperCase();
@@ -33,6 +51,7 @@
       perfect: Array.isArray(value.perfect)
         ? value.perfect.map((entry) => ({ id: String(entry?.id || ""), name: String(entry?.name || "") }))
         : [],
+      leaderboard: value.isReview === true ? normalizeLeaderboard(value.leaderboard) : [],
       review: value.review.map((item) => ({
         sentence: String(item?.sentence || ""),
         answer: String(item?.answer || ""),
@@ -43,6 +62,7 @@
       answers: value.answers.map((answer) => String(answer || "")),
       playerId: String(value.playerId || ""),
       isTrial: value.isTrial === true,
+      isReview: value.isReview === true,
     };
   }
 

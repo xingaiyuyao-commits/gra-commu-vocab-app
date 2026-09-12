@@ -33,6 +33,21 @@ const septemberRecords = [
   },
 ];
 
+const reviewDayRecord = {
+  date: "2026-09-12",
+  category: "toeic",
+  setLabel: "TOEIC Day 7（復習50問）",
+  participantCount: 20,
+  perfectNames: ["Aica", "Kaho"],
+  isReview: true,
+  leaderboard: [
+    { rank: 1, score: 50, total: 50, players: [{ name: "Aica" }, { name: "Kaho" }] },
+    { rank: 2, score: 48, total: 50, players: [{ name: "Ryan" }] },
+    { rank: 3, score: 47, total: 50, players: [{ name: "Nakayama" }] },
+  ],
+  updatedAt: "2026-09-12T11:00:00.000Z",
+};
+
 function response(status, body) {
   return {
     ok: status >= 200 && status < 300,
@@ -199,6 +214,21 @@ test("結果履歴にもVOICEロゴと共通タイトルを表示する", async 
   assert.notEqual(page.window.getComputedStyle(page.document.querySelector(".calendar-panel")).borderRadius, "0px");
   assert.equal(page.document.querySelector(".edition"), null);
   assert.equal(page.document.querySelector(".eyebrow"), null);
+});
+
+test("復習日の履歴は満点者一覧ではなく上位3つの得点帯を表示する", async (t) => {
+  const page = loadPage(() => response(200, [...septemberRecords, reviewDayRecord]));
+  t.after(() => page.close());
+  await settle();
+
+  click(page.window, page.document.querySelector('[data-date="2026-09-12"]'));
+  const toeic = page.document.querySelector('[data-course-card="toeic"]');
+  assert.match(toeic.textContent, /復習日ランキング/);
+  assert.match(toeic.textContent, /1位.*50 \/ 50点.*Aica.*Kaho/s);
+  assert.match(toeic.textContent, /2位.*48 \/ 50点.*Ryan/s);
+  assert.match(toeic.textContent, /3位.*47 \/ 50点.*Nakayama/s);
+  assert.doesNotMatch(toeic.textContent, /満点者一覧|満点者数/);
+  assert.equal(toeic.querySelector('[data-field="participants"]').textContent.trim(), "20");
 });
 
 test("別の日を選ぶと詳細を切り替え、前月・翌月ボタンは境界を越えた月を取得する", async (t) => {
