@@ -577,7 +577,7 @@ test("複数ルーム結果: 上位3件を順位と主なミス傾向で表示�
   assert.doesNotMatch(document.getElementById("mh-toeic-results").textContent, /first/);
 });
 
-test("復習日のホスト結果は上位3つの得点帯を同点者全員で表示する", () => {
+test("復習日のホスト結果はTOP 5を順位別の表彰デザインで表示する", () => {
   const { window, document, fakeSockets } = loadQuizPage({ url: "http://localhost/quiz.html?mode=create" });
   setValue(window, document.getElementById("name"), "ホスト");
   document.getElementById("mh-toeic-create").dispatchEvent(new window.Event("click", { bubbles: true }));
@@ -593,14 +593,20 @@ test("復習日のホスト結果は上位3つの得点帯を同点者全員で�
       { rank: 1, score: 50, total: 50, players: [{ id: "a", name: "Aica" }, { id: "b", name: "Kaho" }] },
       { rank: 2, score: 48, total: 50, players: [{ id: "c", name: "Ryan" }] },
       { rank: 3, score: 47, total: 50, players: [{ id: "d", name: "Nakayama" }] },
+      { rank: 4, score: 46, total: 50, players: [{ id: "e", name: "Miyu" }] },
+      { rank: 5, score: 45, total: 50, players: [{ id: "f", name: "Rina" }] },
     ],
     mistakes: [],
   });
 
-  assert.equal(document.getElementById("mh-toeic-award-title").textContent.trim(), "🏆 復習日ランキング");
+  assert.equal(document.getElementById("mh-toeic-award-title").textContent.trim(), "🏆 復習日 TOP 5");
   assert.match(document.getElementById("mh-toeic-perfect").textContent, /1位.*50 \/ 50点.*Aica.*Kaho/s);
   assert.match(document.getElementById("mh-toeic-perfect").textContent, /2位.*48 \/ 50点.*Ryan/s);
   assert.match(document.getElementById("mh-toeic-perfect").textContent, /3位.*47 \/ 50点.*Nakayama/s);
+  assert.match(document.getElementById("mh-toeic-perfect").textContent, /4位.*46 \/ 50点.*Miyu/s);
+  assert.match(document.getElementById("mh-toeic-perfect").textContent, /5位.*45 \/ 50点.*Rina/s);
+  assert.ok(document.querySelector("#mh-toeic-perfect .leaderboard-row.rank-1"));
+  assert.ok(document.querySelector("#mh-toeic-perfect .leaderboard-row.rank-3"));
   assert.equal(document.getElementById("mh-toeic-noperfect").hidden, true);
 });
 
@@ -1319,7 +1325,7 @@ test("結果画面: ホストは進行役なので自分の点数・正答率・
   assert.match(document.getElementById("perfect-list").innerHTML, /Aica/);
 });
 
-test("復習日の参加者結果は満点者一覧ではなく上位3つの得点帯を表示する", () => {
+test("復習日の参加者結果は満点者一覧ではなくTOP 5を表示する", () => {
   const { document, fireSocketEvent } = loadQuizPage();
   const questions = [{ sentence: "I ___ tea.", answer: "drink", base: "drink", hint: "d____", ja: "飲む", sentenceJa: "" }];
   fireSocketEvent("quiz:started", {
@@ -1334,14 +1340,18 @@ test("復習日の参加者結果は満点者一覧ではなく上位3つの得�
       { rank: 1, score: 50, total: 50, players: [{ id: "a", name: "Aica" }, { id: "b", name: "Kaho" }] },
       { rank: 2, score: 48, total: 50, players: [{ id: "c", name: "Ryan" }] },
       { rank: 3, score: 47, total: 50, players: [{ id: "d", name: "Nakayama" }] },
+      { rank: 4, score: 46, total: 50, players: [{ id: "e", name: "Miyu" }] },
+      { rank: 5, score: 45, total: 50, players: [{ id: "f", name: "Rina" }] },
     ],
     review: questions,
   });
 
-  assert.equal(document.getElementById("perfect-count").textContent.trim(), "🏆 復習日ランキング");
+  assert.equal(document.getElementById("perfect-count").textContent.trim(), "🏆 復習日 TOP 5");
   assert.match(document.getElementById("perfect-list").textContent, /1位.*50 \/ 50点.*Aica.*Kaho/s);
   assert.match(document.getElementById("perfect-list").textContent, /2位.*48 \/ 50点.*Ryan/s);
   assert.match(document.getElementById("perfect-list").textContent, /3位.*47 \/ 50点.*Nakayama/s);
+  assert.match(document.getElementById("perfect-list").textContent, /4位.*46 \/ 50点.*Miyu/s);
+  assert.match(document.getElementById("perfect-list").textContent, /5位.*45 \/ 50点.*Rina/s);
   assert.equal(document.getElementById("no-perfect").style.display, "none");
 });
 

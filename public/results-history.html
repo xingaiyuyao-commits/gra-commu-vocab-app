@@ -421,10 +421,23 @@
     align-items: center;
     padding: 10px 12px;
     border: 1px solid var(--line);
+    border-left-width: 4px;
+  }
+  .history-leaderboard-rank {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: #ecebe7;
   }
   .history-leaderboard-rank, .history-leaderboard-score { font-weight: 800; white-space: nowrap; }
-  .history-leaderboard-row:nth-child(1) .history-leaderboard-rank { color: var(--gold-deep); }
-  .history-leaderboard-row:nth-child(3) .history-leaderboard-rank { color: var(--bronze); }
+  .history-leaderboard-row.rank-1 { border-color: #d29b19; background: #fff8e3; }
+  .history-leaderboard-row.rank-2 { border-color: #9ea4a8; background: #f6f7f7; }
+  .history-leaderboard-row.rank-3 { border-color: #aa6e45; background: #fbf2ec; }
+  .history-leaderboard-row.rank-1 .history-leaderboard-rank { background: #d7a21f; color: #201b0f; }
+  .history-leaderboard-row.rank-2 .history-leaderboard-rank { background: #a9afb2; color: #17191a; }
+  .history-leaderboard-row.rank-3 .history-leaderboard-rank { background: #aa6e45; color: #fff; }
   .history-leaderboard-names { display: flex; flex-wrap: wrap; gap: 6px; }
   .history-leaderboard-name { padding: 4px 8px; background: #f5f1e8; font-size: .82rem; font-weight: 800; }
 
@@ -832,15 +845,16 @@
 
     const perfectLabel = document.createElement("p");
     perfectLabel.className = "perfect-label";
-    perfectLabel.textContent = record.isReview ? "復習日ランキング" : "満点者一覧";
+    perfectLabel.textContent = record.isReview ? "復習日 TOP 5" : "満点者一覧";
     card.append(setLabel, perfectLabel);
 
     if (record.isReview) {
       const ranking = document.createElement("ol");
       ranking.className = "history-leaderboard";
-      for (const group of (record.leaderboard || []).slice(0, 3)) {
+      for (const group of (record.leaderboard || []).slice(0, 5)) {
         const item = document.createElement("li");
-        item.className = "history-leaderboard-row";
+        const safeRank = Math.min(5, Math.max(1, Number(group.rank) || 1));
+        item.className = `history-leaderboard-row rank-${safeRank}`;
         const rank = document.createElement("span");
         rank.className = "history-leaderboard-rank";
         rank.textContent = `${group.rank}位`;
