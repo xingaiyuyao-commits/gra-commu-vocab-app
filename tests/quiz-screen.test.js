@@ -577,7 +577,7 @@ test("複数ルーム結果: 上位3件を順位と主なミス傾向で表示�
   assert.doesNotMatch(document.getElementById("mh-toeic-results").textContent, /first/);
 });
 
-test("復習日のホスト結果はTOP 5を順位別の表彰デザインで表示する", () => {
+test("復習日のホスト結果はTOP 5を色付き表彰カードにせず表示する", () => {
   const { window, document, fakeSockets } = loadQuizPage({ url: "http://localhost/quiz.html?mode=create" });
   setValue(window, document.getElementById("name"), "ホスト");
   document.getElementById("mh-toeic-create").dispatchEvent(new window.Event("click", { bubbles: true }));
@@ -605,8 +605,7 @@ test("復習日のホスト結果はTOP 5を順位別の表彰デザインで表
   assert.match(document.getElementById("mh-toeic-perfect").textContent, /3位.*47 \/ 50点.*Nakayama/s);
   assert.match(document.getElementById("mh-toeic-perfect").textContent, /4位.*46 \/ 50点.*Miyu/s);
   assert.match(document.getElementById("mh-toeic-perfect").textContent, /5位.*45 \/ 50点.*Rina/s);
-  assert.ok(document.querySelector("#mh-toeic-perfect .leaderboard-row.rank-1"));
-  assert.ok(document.querySelector("#mh-toeic-perfect .leaderboard-row.rank-3"));
+  assert.equal(document.querySelector("#mh-toeic-perfect .leaderboard-row").className, "leaderboard-row");
   assert.equal(document.getElementById("mh-toeic-noperfect").hidden, true);
 });
 
