@@ -54,10 +54,13 @@ test("復習日の順位を7日間の再表示用データへ保存する", () =
     { rank: 1, score: 50, total: 50, players: [{ id: "p1", name: "Kaho" }, { id: "p2", name: "Aica" }] },
     { rank: 2, score: 48, total: 50, players: [{ id: "p3", name: "Ryan" }] },
     { rank: 3, score: 47, total: 50, players: [{ id: "p4", name: "Nakayama" }] },
+    { rank: 4, score: 46, total: 50, players: [{ id: "p5", name: "Miyu" }] },
+    { rank: 5, score: 45, total: 50, players: [{ id: "p6", name: "Rina" }] },
+    { rank: 6, score: 44, total: 50, players: [{ id: "p7", name: "Sora" }] },
   ];
   const saved = Saved.upsert("", { ...record("ABCD"), isReview: true, leaderboard }, now);
   const restored = Saved.find(saved.raw, "ABCD", now);
 
   assert.equal(restored.isReview, true);
-  assert.deepEqual(restored.leaderboard, leaderboard);
+  assert.deepEqual(restored.leaderboard, leaderboard.slice(0, 5));
 });

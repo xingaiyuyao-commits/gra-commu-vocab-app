@@ -179,11 +179,32 @@
     margin-bottom: 6px; font-size: .95rem;
   }
   .rank-list .me { outline: 2px solid var(--primary); }
-  .leaderboard-row { display: grid !important; grid-template-columns: 3.4rem 5.8rem minmax(0, 1fr); gap: 10px; }
-  .leaderboard-rank { font-weight: 800; color: var(--foreground); }
+  .leaderboard-row {
+    display: grid !important;
+    grid-template-columns: 3.4rem 5.8rem minmax(0, 1fr);
+    gap: 10px;
+    min-height: 3.8rem;
+    border-left: 4px solid var(--border) !important;
+  }
+  .leaderboard-rank {
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 50%;
+    background: #ecebe7;
+    color: var(--foreground);
+    font-weight: 900;
+  }
   .leaderboard-score { font-weight: 800; white-space: nowrap; }
   .leaderboard-names { display: flex; flex-wrap: wrap; gap: 6px; }
-  .leaderboard-name { display: inline-block; padding: 2px 8px; border-radius: 999px; background: var(--card); border: 1px solid var(--border); }
+  .leaderboard-name { display: inline-block; padding: 4px 10px; border-radius: 999px; background: var(--card); border: 1px solid var(--border); font-weight: 800; }
+  .leaderboard-row.rank-1 { border-color: #d29b19 !important; background: #fff8e3; box-shadow: 0 6px 18px rgba(210, 155, 25, .12); }
+  .leaderboard-row.rank-2 { border-color: #9ea4a8 !important; background: #f6f7f7; }
+  .leaderboard-row.rank-3 { border-color: #aa6e45 !important; background: #fbf2ec; }
+  .leaderboard-row.rank-1 .leaderboard-rank { background: #d7a21f; color: #201b0f; }
+  .leaderboard-row.rank-2 .leaderboard-rank { background: #a9afb2; color: #17191a; }
+  .leaderboard-row.rank-3 .leaderboard-rank { background: #aa6e45; color: #fff; }
   .mh-mistake-row { display: grid !important; grid-template-columns: 2rem minmax(0, 1fr); gap: 10px; align-items: center !important; }
   .mh-mistake-rank { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--primary); color: var(--primary-foreground); font-weight: 800; }
   .mh-mistake-row:nth-child(1) .mh-mistake-rank { background: var(--gold); color: #202020; }
@@ -1253,16 +1274,17 @@
   }
 
   function leaderboardHtml(leaderboard = []) {
-    return leaderboard.slice(0, 3).map((group) => {
+    return leaderboard.slice(0, 5).map((group) => {
+      const rank = Math.min(5, Math.max(1, Number(group.rank) || 1));
       const names = (group.players || []).map((player) =>
         `<span class="leaderboard-name">${escapeHtml(player.name)}</span>`).join("");
-      return `<li class="leaderboard-row"><span class="leaderboard-rank">${escapeHtml(group.rank)}位</span><span class="leaderboard-score">${escapeHtml(group.score)} / ${escapeHtml(group.total)}点</span><span class="leaderboard-names">${names}</span></li>`;
+      return `<li class="leaderboard-row rank-${rank}"><span class="leaderboard-rank">${escapeHtml(group.rank)}位</span><span class="leaderboard-score">${escapeHtml(group.score)} / ${escapeHtml(group.total)}点</span><span class="leaderboard-names">${names}</span></li>`;
     }).join("");
   }
 
   function mhRenderResults(category, { perfect = [], leaderboard = [], mistakes = [], isReview = false } = {}) {
     mhStopTimer(category);
-    $(`mh-${category}-award-title`).textContent = isReview ? "🏆 復習日ランキング" : "🏆 満点者";
+    $(`mh-${category}-award-title`).textContent = isReview ? "🏆 復習日 TOP 5" : "🏆 満点者";
     if (isReview) {
       $(`mh-${category}-noperfect`).hidden = true;
       $(`mh-${category}-perfect`).hidden = false;
@@ -1663,9 +1685,9 @@
     $("results-set").textContent = setLabel || "";
     const result = QuizUi.calculateResult(answers, review);
     $("personal-score").textContent = `${result.score} / ${result.total}点`;
-    // 復習日は得点帯ごとの上位3位、通常日は従来どおり満点者を発表する
+    // 復習日は5人目と同点の参加者まで、通常日は従来どおり満点者を発表する
     $("perfect-count").textContent = isReview
-      ? "🏆 復習日ランキング"
+      ? "🏆 復習日 TOP 5"
       : (perfect.length > 0 ? `🏆 満点者 ${perfect.length}人` : "🏆");
     if (isReview) {
       $("no-perfect").style.display = "none";

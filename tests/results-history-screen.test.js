@@ -44,6 +44,8 @@ const reviewDayRecord = {
     { rank: 1, score: 50, total: 50, players: [{ name: "Aica" }, { name: "Kaho" }] },
     { rank: 2, score: 48, total: 50, players: [{ name: "Ryan" }] },
     { rank: 3, score: 47, total: 50, players: [{ name: "Nakayama" }] },
+    { rank: 4, score: 46, total: 50, players: [{ name: "Miyu" }] },
+    { rank: 5, score: 45, total: 50, players: [{ name: "Rina" }] },
   ],
   updatedAt: "2026-09-12T11:00:00.000Z",
 };
@@ -216,17 +218,21 @@ test("結果履歴にもVOICEロゴと共通タイトルを表示する", async 
   assert.equal(page.document.querySelector(".eyebrow"), null);
 });
 
-test("復習日の履歴は満点者一覧ではなく上位3つの得点帯を表示する", async (t) => {
+test("復習日の履歴は満点者一覧ではなくTOP 5を表示する", async (t) => {
   const page = loadPage(() => response(200, [...septemberRecords, reviewDayRecord]));
   t.after(() => page.close());
   await settle();
 
   click(page.window, page.document.querySelector('[data-date="2026-09-12"]'));
   const toeic = page.document.querySelector('[data-course-card="toeic"]');
-  assert.match(toeic.textContent, /復習日ランキング/);
+  assert.match(toeic.textContent, /復習日 TOP 5/);
   assert.match(toeic.textContent, /1位.*50 \/ 50点.*Aica.*Kaho/s);
   assert.match(toeic.textContent, /2位.*48 \/ 50点.*Ryan/s);
   assert.match(toeic.textContent, /3位.*47 \/ 50点.*Nakayama/s);
+  assert.match(toeic.textContent, /4位.*46 \/ 50点.*Miyu/s);
+  assert.match(toeic.textContent, /5位.*45 \/ 50点.*Rina/s);
+  assert.ok(toeic.querySelector(".history-leaderboard-row.rank-1"));
+  assert.ok(toeic.querySelector(".history-leaderboard-row.rank-3"));
   assert.doesNotMatch(toeic.textContent, /満点者一覧|満点者数/);
   assert.equal(toeic.querySelector('[data-field="participants"]').textContent.trim(), "20");
 });

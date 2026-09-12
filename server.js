@@ -579,7 +579,7 @@ function sanitizeHistoryQuestionStats(stats) {
 
 function sanitizeHistoryLeaderboard(leaderboard) {
   if (!Array.isArray(leaderboard)) return [];
-  return leaderboard.slice(0, 3).flatMap((group, index) => {
+  return leaderboard.slice(0, 5).flatMap((group, index) => {
     const score = Number(group?.score);
     const total = Number(group?.total);
     const players = Array.isArray(group?.players)
@@ -629,7 +629,7 @@ function sanitizeRestoredQuizResults(results, roomIsTrial) {
     }))
     : [];
   const leaderboard = Array.isArray(results.leaderboard)
-    ? results.leaderboard.slice(0, 3).flatMap((group, index) => {
+    ? results.leaderboard.slice(0, 5).flatMap((group, index) => {
       const score = Number(group?.score);
       const total = Number(group?.total);
       const players = Array.isArray(group?.players)
@@ -1413,12 +1413,15 @@ function buildReviewLeaderboard(entries) {
     right.score - left.score
     || left.name.localeCompare(right.name, "ja")
     || left.id.localeCompare(right.id));
-  const scores = [...new Set(ordered.map((entry) => entry.score))].slice(0, 3);
+  const cutoffScore = ordered[Math.min(4, ordered.length - 1)]?.score;
+  if (cutoffScore === undefined) return [];
+  const finalists = ordered.filter((entry) => entry.score >= cutoffScore);
+  const scores = [...new Set(finalists.map((entry) => entry.score))];
   return scores.map((score, index) => ({
     rank: index + 1,
     score,
-    total: ordered[0]?.total || 0,
-    players: ordered
+    total: finalists[0]?.total || 0,
+    players: finalists
       .filter((entry) => entry.score === score)
       .map((entry) => ({ id: entry.id, name: entry.name })),
   }));

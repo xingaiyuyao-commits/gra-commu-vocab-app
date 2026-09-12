@@ -12,7 +12,7 @@
 
   function normalizeLeaderboard(value) {
     if (!Array.isArray(value)) return [];
-    return value.slice(0, 3).flatMap((group, index) => {
+    return value.slice(0, 5).flatMap((group, index) => {
       const score = Number(group?.score);
       const total = Number(group?.total);
       const players = Array.isArray(group?.players)
