@@ -19,7 +19,7 @@ test("参加リンクではコース名を名前入力より上に表示する",
 test("再接続したホストがコピーする参加リンクにもコース情報を付ける", () => {
   assert.match(
     quizHtml,
-    /renderJoinShare\("lobby-share", "lobby-join-url", "lobby-qr", "lobby-copy", session\.roomCode, selectedCategory\)/
+    /renderJoinShare\("lobby-share", "lobby-join-url", "lobby-qr", "lobby-copy", session\.roomCode, selectedCategory, res\.scheduledJoinUrl\)/
   );
 });
 

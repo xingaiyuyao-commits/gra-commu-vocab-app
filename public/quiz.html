@@ -54,6 +54,7 @@
     font-size: 1.05rem;
     font-weight: 700;
   }
+  .scheduled-status { margin: 0 0 14px; color: var(--muted-foreground); font-size: .9rem; line-height: 1.6; }
   label { font-size: .875rem; font-weight: 500; display: block; margin-bottom: 6px; }
   input, select {
     width: 100%;
@@ -328,6 +329,7 @@
   <div class="screen" id="screen-entry">
     <div class="card">
       <p id="join-course-label" class="join-course-label" hidden><strong id="join-course-name"></strong></p>
+      <p id="scheduled-status" class="scheduled-status" role="status" hidden></p>
       <label for="name">名前</label>
       <input id="name" maxlength="12" placeholder="例：コミュニティ名" aria-describedby="entry-error" />
       <div id="create-section">
@@ -978,11 +980,11 @@
     }
   }
 
-  function renderJoinShare(shareId, urlId, qrId, copyId, roomCode, category) {
+  function renderJoinShare(shareId, urlId, qrId, copyId, roomCode, category, providedUrl = null) {
     const box = $(shareId);
     if (!box) return;
     if (!roomCode) return (box.hidden = true);
-    const url = joinUrlFor(roomCode, category);
+    const url = providedUrl || joinUrlFor(roomCode, category);
     box.hidden = false;
     $(urlId).textContent = url;
     if (qrId && $(qrId)) $(qrId).hidden = true;
@@ -1050,9 +1052,15 @@
   const entryParams = new URLSearchParams(location.search);
   const entryMode = entryParams.get("mode");
   const presetRoom = entryParams.get("room")?.trim().toUpperCase() || null;
+  const scheduledDate = entryParams.get("date") || "";
+  const scheduledCourse = entryParams.get("course") || "";
+  const scheduledToken = entryParams.get("token") || "";
+  const isScheduledEntry = entryMode === "scheduled";
+  let scheduledRoomCode = null;
+  let scheduledPollId = null;
   let savedSession;
   try { savedSession = JSON.parse(localStorage.getItem("quizSession") || "null"); } catch { savedSession = null; }
-  const hasMatchingSession = entryMode !== "create" && savedSession?.roomCode
+  const hasMatchingSession = entryMode !== "create" && !isScheduledEntry && savedSession?.roomCode
     && (!presetRoom || savedSession.roomCode === presetRoom);
   if (!hasMatchingSession) show("screen-entry");
   renderWeeklyReviewEntry();
@@ -1066,6 +1074,61 @@
   const nameLabel = document.querySelector('label[for="name"]');
   const nameInput = $("name");
   const entryHomeLink = $("entry-home-link");
+
+  function setScheduledInputsVisible(visible) {
+    if (nameLabel) nameLabel.hidden = !visible;
+    if (nameInput) nameInput.hidden = !visible;
+    if (joinSection) {
+      joinSection.hidden = !visible;
+      joinSection.style.display = visible ? "" : "none";
+    }
+  }
+
+  function renderScheduledStatus(status, roomCode = null, error = "") {
+    const statusElement = $("scheduled-status");
+    const messages = {
+      waiting: "開始までこの画面でお待ちください",
+      lobby: "名前を入力して参加してください",
+      playing: "回答はすでに始まっています",
+      finished: "この回は終了しました",
+      future: "このリンクは当日に利用できます",
+      expired: "この回は終了しました",
+    };
+    statusElement.hidden = false;
+    statusElement.textContent = error || messages[status] || "参加リンクを確認してください";
+    scheduledRoomCode = roomCode ? String(roomCode).toUpperCase() : null;
+    const canResume = Boolean(scheduledRoomCode && savedSession?.roomCode === scheduledRoomCode);
+    const canJoin = status === "lobby" && Boolean(scheduledRoomCode) && !canResume;
+    setScheduledInputsVisible(canJoin);
+    if (canResume) {
+      if (scheduledPollId !== null) clearInterval(scheduledPollId);
+      scheduledPollId = null;
+      attemptRejoin();
+    } else if (canJoin) {
+      if (scheduledPollId !== null) clearInterval(scheduledPollId);
+      scheduledPollId = null;
+      nameInput?.focus();
+    } else if (!["waiting"].includes(status) && scheduledPollId !== null) {
+      clearInterval(scheduledPollId);
+      scheduledPollId = null;
+    }
+  }
+
+  async function pollScheduledEntry() {
+    if (scheduledCourse !== "clacel" || !/^\d{4}-\d{2}-\d{2}$/.test(scheduledDate) || !scheduledToken) {
+      renderScheduledStatus("invalid", null, "参加リンクが正しくありません");
+      return;
+    }
+    try {
+      const response = await fetch(`/api/scheduled/clacel/${encodeURIComponent(scheduledDate)}?token=${encodeURIComponent(scheduledToken)}`, { cache: "no-store" });
+      const body = await response.json();
+      if (!response.ok) return renderScheduledStatus("invalid", null, body.error || "参加リンクが正しくありません");
+      renderScheduledStatus(body.status, body.roomCode);
+    } catch {
+      renderScheduledStatus("waiting", null, "接続を確認しています。しばらくお待ちください");
+    }
+  }
+
   if (entryMode === "create") {
     fetch("/api/operator/session", { cache: "no-store" })
       .then((response) => {
@@ -1086,6 +1149,15 @@
       });
     if (joinSection) joinSection.style.display = "none";
     document.querySelector(".container")?.classList.add("wide");
+  } else if (isScheduledEntry) {
+    if (createSection) createSection.style.display = "none";
+    if (entryHomeLink) entryHomeLink.hidden = true;
+    if (roomLabel) roomLabel.hidden = true;
+    if (roomInput) roomInput.style.display = "none";
+    showCourseLabel("clacel");
+    setScheduledInputsVisible(false);
+    pollScheduledEntry();
+    scheduledPollId = setInterval(pollScheduledEntry, 3000);
   } else if (entryMode === "join" || presetRoom) {
     if (createSection) createSection.style.display = "none";
     if (entryHomeLink) entryHomeLink.hidden = true;
@@ -1146,7 +1218,7 @@
     seriesNames = res.seriesNames || [];
     seriesMeta = res.seriesMeta || [];
     $("lobby-category").textContent = `${CATEGORY_LABEL[selectedCategory]}のルーム`;
-    if (res.isHost) renderJoinShare("lobby-share", "lobby-join-url", "lobby-qr", "lobby-copy", res.roomCode, res.category);
+    if (res.isHost) renderJoinShare("lobby-share", "lobby-join-url", "lobby-qr", "lobby-copy", res.roomCode, res.category, res.scheduledJoinUrl);
     fillSeries();
     if (res.isHost) $("sel-series").value = String(res.selectedSeriesIndex || 0);
     if (res.phase === "playing") return enterStartedQuiz(res);
@@ -1157,7 +1229,7 @@
     const name = $("name").value.trim();
     if (!name) return ($("entry-error").textContent = "名前を入力してください");
     $("entry-error").textContent = "";
-    const roomCode = String(presetRoom || roomInput?.value || "").trim().toUpperCase().slice(0, 6);
+    const roomCode = String(scheduledRoomCode || presetRoom || roomInput?.value || "").trim().toUpperCase().slice(0, 6);
     socket.emit("quiz:joinRoom", { roomCode, name }, onEntered);
   });
 
@@ -1338,7 +1410,7 @@
         mh[category].seriesNames = res.seriesNames || [];
         mh[category].seriesMeta = res.seriesMeta || [];
         mh[category].endsAt = res.endsAt || 0;
-        renderJoinShare(`mh-${category}-share`, `mh-${category}-join-url`, `mh-${category}-qr`, `mh-${category}-copy`, mh[category].roomCode, category);
+        renderJoinShare(`mh-${category}-share`, `mh-${category}-join-url`, `mh-${category}-qr`, `mh-${category}-copy`, mh[category].roomCode, category, res.scheduledJoinUrl);
         mhFillSeries(category);
         $(`mh-${category}-series`).value = String(res.selectedSeriesIndex || 0);
         if (res.phase === "playing") {
@@ -1397,7 +1469,7 @@
         mh[category].seriesMeta = res.seriesMeta || [];
         mhFillSeries(category);
         $(`mh-${category}-series`).value = String(res.selectedSeriesIndex || 0);
-        renderJoinShare(`mh-${category}-share`, `mh-${category}-join-url`, `mh-${category}-qr`, `mh-${category}-copy`, res.roomCode, category);
+        renderJoinShare(`mh-${category}-share`, `mh-${category}-join-url`, `mh-${category}-qr`, `mh-${category}-copy`, res.roomCode, category, res.scheduledJoinUrl);
         mhRenderPlayers(category, [{ name, submitted: false }]);
         mhShow(category, "lobby");
       });
@@ -1902,6 +1974,7 @@
     try { session = JSON.parse(localStorage.getItem("quizSession") || "null"); } catch { session = null; }
     if (!session || !session.roomCode) return;
     if (presetRoom && session.roomCode !== presetRoom) return;
+    if (isScheduledEntry && (!scheduledRoomCode || session.roomCode !== scheduledRoomCode)) return;
     socket.emit("quiz:rejoin", { roomCode: session.roomCode, playerId: session.playerId, sessionToken: session.sessionToken }, (res) => {
       if (!res || !res.ok) {
         const roomCode = session.roomCode;
@@ -1920,7 +1993,7 @@
       seriesNames = res.seriesNames || [];
       seriesMeta = res.seriesMeta || [];
       $("lobby-category").textContent = `${CATEGORY_LABEL[selectedCategory]}のルーム`;
-      if (isHost) renderJoinShare("lobby-share", "lobby-join-url", "lobby-qr", "lobby-copy", session.roomCode, selectedCategory);
+      if (isHost) renderJoinShare("lobby-share", "lobby-join-url", "lobby-qr", "lobby-copy", session.roomCode, selectedCategory, res.scheduledJoinUrl);
       fillSeries();
       if (isHost) $("sel-series").value = String(res.selectedSeriesIndex || 0);
 

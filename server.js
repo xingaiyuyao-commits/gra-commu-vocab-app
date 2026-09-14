@@ -6,6 +6,13 @@ const { isIP, SocketAddress } = require("net");
 const { createHash, createHmac, randomBytes, timingSafeEqual } = require("crypto");
 const { Server } = require("socket.io");
 const { createOperatorAuth } = require("./operator-auth");
+const {
+  listScheduledDates,
+  makeScheduledToken,
+  verifyScheduledToken,
+  scheduledDateIsValid,
+  scheduledDateState,
+} = require("./scheduled-clacel-links");
 const QUESTIONS = require("./questions");
 const SENTENCES = require("./sentences");
 
@@ -662,7 +669,7 @@ function sanitizeRestoredQuizResults(results, roomIsTrial) {
 }
 
 function loadQuizState() {
-  if (!QUIZ_ROOM_STATE_FILE) return { rooms: {}, resultHistory: {} };
+  if (!QUIZ_ROOM_STATE_FILE) return { rooms: {}, resultHistory: {}, scheduledClacelEvents: {} };
   try {
     const saved = JSON.parse(fs.readFileSync(QUIZ_ROOM_STATE_FILE, "utf8"));
     const isVersionOne = saved.version === 1;
@@ -718,6 +725,7 @@ function loadQuizState() {
           ? Number(room.selectedSeriesIndex)
           : 0,
         isTrial,
+        scheduledDate: scheduledDateIsValid(room.scheduledDate) ? room.scheduledDate : null,
         results: sanitizeRestoredQuizResults(room.results, isTrial),
         timeoutHandle: null,
       };
@@ -728,7 +736,23 @@ function loadQuizState() {
     const resultHistory = Object.fromEntries(Object.entries(storedHistory)
       .map(([key, record]) => [key, sanitizeStoredHistoryRecord(record)])
       .filter(([, record]) => record));
-    return { rooms: restored, resultHistory };
+    const storedScheduledEvents = saved.scheduledClacelEvents
+      && typeof saved.scheduledClacelEvents === "object"
+      && !Array.isArray(saved.scheduledClacelEvents)
+      ? saved.scheduledClacelEvents
+      : {};
+    const scheduledClacelEvents = Object.fromEntries(Object.entries(storedScheduledEvents).flatMap(([date, event]) => {
+      if (!scheduledDateIsValid(date) || !event || typeof event !== "object") return [];
+      if (event.status === "finished") return [[date, { status: "finished", roomCode: null }]];
+      const roomCode = String(event.roomCode || "");
+      const room = restored[roomCode];
+      if (event.status !== "active" || !room || room.category !== "clacel") {
+        return [];
+      }
+      room.scheduledDate = date;
+      return [[date, { status: "active", roomCode }]];
+    }));
+    return { rooms: restored, resultHistory, scheduledClacelEvents };
   } catch (error) {
     if (error.code !== "ENOENT") {
       quizPersistenceHealth.ready = false;
@@ -736,15 +760,18 @@ function loadQuizState() {
       quizPersistenceHealth.restoreFailed = true;
       console.error("quiz room restore failed:", error.message);
     }
-    return { rooms: {}, resultHistory: {} };
+    return { rooms: {}, resultHistory: {}, scheduledClacelEvents: {} };
   }
 }
 
 const quizState = loadQuizState();
 const quizRooms = quizState.rooms; // roomCode -> room state
 const resultHistory = quizState.resultHistory; // yyyy-mm-dd:category -> daily result
+const scheduledClacelEvents = quizState.scheduledClacelEvents; // yyyy-mm-dd -> fixed Clacel link state
 const RESULTS_ADMIN_PASSWORD = process.env.RESULTS_ADMIN_PASSWORD || "";
 const OPERATOR_PASSWORD = process.env.OPERATOR_PASSWORD || "";
+const SCHEDULE_LINK_SECRET = process.env.SCHEDULE_LINK_SECRET || "";
+const PUBLIC_BASE_URL = String(process.env.PUBLIC_BASE_URL || "").replace(/\/$/, "");
 const operatorAuth = createOperatorAuth({
   password: OPERATOR_PASSWORD,
   secureCookie: IS_RAILWAY_RUNTIME || process.env.NODE_ENV === "production",
@@ -796,6 +823,7 @@ function persistQuizState() {
       sourceDays: room.sourceDays,
       selectedSeriesIndex: room.selectedSeriesIndex,
       isTrial: room.isTrial,
+      scheduledDate: room.scheduledDate,
       results: room.results,
     };
   }
@@ -803,7 +831,7 @@ function persistQuizState() {
   const temporaryFile = `${QUIZ_ROOM_STATE_FILE}.${process.pid}.tmp`;
   try {
     fs.mkdirSync(directory, { recursive: true });
-    fs.writeFileSync(temporaryFile, JSON.stringify({ version: 2, rooms, resultHistory }), { mode: 0o600 });
+    fs.writeFileSync(temporaryFile, JSON.stringify({ version: 3, rooms, resultHistory, scheduledClacelEvents }), { mode: 0o600 });
     fs.renameSync(temporaryFile, QUIZ_ROOM_STATE_FILE);
     quizPersistenceHealth.ready = true;
     quizPersistenceHealth.lastError = null;
@@ -831,6 +859,7 @@ function cloneQuizState() {
   return {
     rooms: Object.fromEntries(Object.entries(quizRooms).map(([code, room]) => [code, cloneQuizRoom(room)])),
     resultHistory: JSON.parse(JSON.stringify(resultHistory)),
+    scheduledClacelEvents: JSON.parse(JSON.stringify(scheduledClacelEvents)),
   };
 }
 
@@ -845,6 +874,8 @@ function persistQuizMutation(roomCode, mutate) {
   Object.assign(quizRooms, before.rooms);
   for (const key of Object.keys(resultHistory)) delete resultHistory[key];
   Object.assign(resultHistory, before.resultHistory);
+  for (const date of Object.keys(scheduledClacelEvents)) delete scheduledClacelEvents[date];
+  Object.assign(scheduledClacelEvents, before.scheduledClacelEvents);
   return false;
 }
 
@@ -1020,6 +1051,35 @@ app.get("/api/operator/session", (req, res) => {
     return res.status(401).json({ authenticated: false });
   }
   res.json({ authenticated: true });
+});
+
+app.get("/api/operator/scheduled-clacel-links", (req, res) => {
+  const operatorToken = operatorAuth.cookieToken(req.headers.cookie);
+  if (!operatorAuth.sessionTokenIsValid(operatorToken)) {
+    return res.status(401).json({ error: "運営者認証が必要です" });
+  }
+  if (!SCHEDULE_LINK_SECRET) {
+    return res.status(503).json({ error: "固定参加リンクが設定されていません" });
+  }
+  const origin = scheduledRequestOrigin(req);
+  res.json({
+    links: listScheduledDates().map((date) => ({
+      date,
+      scheduledAt: `${date}T19:00:00+09:00`,
+      url: scheduledJoinUrl(date, origin),
+    })),
+  });
+});
+
+app.get("/api/scheduled/clacel/:date", (req, res) => {
+  res.set("Cache-Control", "no-store");
+  const date = String(req.params.date || "");
+  if (!scheduledDateIsValid(date)) return res.status(404).json({ error: "対象日ではありません" });
+  if (!SCHEDULE_LINK_SECRET) return res.status(503).json({ error: "固定参加リンクが設定されていません" });
+  if (!verifyScheduledToken(date, req.query.token, SCHEDULE_LINK_SECRET)) {
+    return res.status(403).json({ error: "参加リンクが正しくありません" });
+  }
+  res.json(scheduledClacelStatus(date));
 });
 
 // 復習日の開始時に確定した問題だけを、作成したホストが欠席者用PDFへ出力する。
@@ -1198,6 +1258,12 @@ function quizDefaultSeriesIndex(category, date = quizResultNow()) {
   return index >= 0 ? index : 0;
 }
 
+function quizScheduledSeriesIndex(category, date) {
+  const studyDay = getHomeStudyDay(new Date(`${date}T12:00:00+09:00`));
+  const index = WORDTESTS[category].series.findIndex((series) => series.day === studyDay);
+  return index >= 0 ? index : 0;
+}
+
 function quizPlayersUpdate(roomCode) {
   const room = quizRooms[roomCode];
   if (!room || !room.players[room.host]) return;
@@ -1359,6 +1425,40 @@ function quizResultNow() {
   return new Date();
 }
 
+function scheduledRequestOrigin(req) {
+  if (PUBLIC_BASE_URL) return PUBLIC_BASE_URL;
+  const forwardedProtocol = String(req.headers["x-forwarded-proto"] || "").split(",", 1)[0].trim();
+  return `${forwardedProtocol || req.protocol}://${req.get("host")}`;
+}
+
+function scheduledSocketOrigin(socket) {
+  if (PUBLIC_BASE_URL) return PUBLIC_BASE_URL;
+  const forwardedProtocol = String(socket.handshake.headers["x-forwarded-proto"] || "").split(",", 1)[0].trim();
+  const protocol = forwardedProtocol || (IS_RAILWAY_RUNTIME ? "https" : "http");
+  return `${protocol}://${socket.handshake.headers.host}`;
+}
+
+function scheduledJoinUrl(date, origin) {
+  const url = new URL("/quiz.html", origin);
+  url.searchParams.set("mode", "scheduled");
+  url.searchParams.set("date", date);
+  url.searchParams.set("course", "clacel");
+  url.searchParams.set("token", makeScheduledToken(date, SCHEDULE_LINK_SECRET));
+  return url.toString();
+}
+
+function scheduledClacelStatus(date) {
+  const dateState = scheduledDateState(date, quizResultNow());
+  if (dateState !== "today") return { status: dateState, date };
+  const event = scheduledClacelEvents[date];
+  if (!event) return { status: "waiting", date };
+  if (event.status === "finished") return { status: "finished", date };
+  const room = quizRooms[event.roomCode];
+  if (!room || room.category !== "clacel") return { status: "waiting", date };
+  if (room.phase === "lobby") return { status: "lobby", date, roomCode: event.roomCode };
+  return { status: room.phase === "playing" ? "playing" : "finished", date, roomCode: event.roomCode };
+}
+
 app.get("/api/study-day", (_req, res) => {
   const now = quizResultNow();
   const parts = new Intl.DateTimeFormat("ja-JP", {
@@ -1502,7 +1602,12 @@ function quizFinalizePlayerLeave(roomCode, playerId) {
   const player = room.players[playerId];
   if (room.host === playerId) {
     const timeoutHandle = room.timeoutHandle;
-    if (!persistQuizMutation(roomCode, () => { delete quizRooms[roomCode]; })) {
+    if (!persistQuizMutation(roomCode, () => {
+      if (room.scheduledDate) {
+        scheduledClacelEvents[room.scheduledDate] = { status: "finished", roomCode: null };
+      }
+      delete quizRooms[roomCode];
+    })) {
       return { ok: false, error: QUIZ_PERSISTENCE_ERROR };
     }
     if (timeoutHandle) clearTimeout(timeoutHandle);
@@ -1524,6 +1629,40 @@ io.on("connection", (socket) => {
   socket.on("quiz:createRoom", ({ category, name } = {}, cb = () => {}) => {
     if (!socketOperatorIsAuthenticated(socket)) return rejectOperatorAction(cb);
     if (!QUIZ_CATEGORIES.includes(category)) return cb({ error: "カテゴリが不正です" });
+    const roomCreationNow = quizResultNow();
+    const currentTokyoDate = tokyoDateKey(roomCreationNow);
+    const scheduledDate = category === "clacel"
+      && SCHEDULE_LINK_SECRET
+      && scheduledDateState(currentTokyoDate, roomCreationNow) === "today"
+      ? currentTokyoDate
+      : null;
+    const existingScheduled = scheduledDate ? scheduledClacelEvents[scheduledDate] : null;
+    if (existingScheduled?.status === "active" && quizRooms[existingScheduled.roomCode]) {
+      const existingRoom = quizRooms[existingScheduled.roomCode];
+      if (existingRoom.phase !== "lobby") {
+        return cb({ error: "本日のClacelルームはすでに開始されています" });
+      }
+      const host = existingRoom.players[existingRoom.host];
+      socket.join(existingScheduled.roomCode);
+      socket.data.quizRoomCode = existingScheduled.roomCode;
+      socket.data.quizPlayerId = existingRoom.host;
+      cb({
+        roomCode: existingScheduled.roomCode,
+        isHost: true,
+        reused: true,
+        category: "clacel",
+        playerId: existingRoom.host,
+        sessionToken: host.sessionToken,
+        seriesNames: WORDTESTS.clacel.series.map((series) => series.name),
+        seriesMeta: quizSeriesMeta("clacel"),
+        selectedSeriesIndex: existingRoom.selectedSeriesIndex,
+        scheduledJoinUrl: scheduledJoinUrl(scheduledDate, scheduledSocketOrigin(socket)),
+      });
+      return quizPlayersUpdate(existingScheduled.roomCode);
+    }
+    if (existingScheduled?.status === "finished") {
+      return cb({ error: "本日のClacelルームは終了しています" });
+    }
     const roomCode = makeQuizRoomCode();
     const newRoom = {
       category,
@@ -1536,8 +1675,11 @@ io.on("connection", (socket) => {
       datasetRevision: "",
       isReview: false,
       sourceDays: [],
+      scheduledDate,
       results: null,
-      selectedSeriesIndex: quizDefaultSeriesIndex(category),
+      selectedSeriesIndex: scheduledDate
+        ? quizScheduledSeriesIndex(category, scheduledDate)
+        : quizDefaultSeriesIndex(category),
     };
     quizJoin(socket, roomCode, name, cb, newRoom);
   });
@@ -1588,6 +1730,9 @@ io.on("connection", (socket) => {
       selectedSeriesIndex: Number.isInteger(room.selectedSeriesIndex) ? room.selectedSeriesIndex : 0,
       isReview: room.isReview === true,
     };
+    if (res.isHost && room.scheduledDate) {
+      res.scheduledJoinUrl = scheduledJoinUrl(room.scheduledDate, scheduledSocketOrigin(socket));
+    }
     if (room.phase === "playing") {
       res.setLabel = room.setLabel;
       res.total = room.questions.length;
@@ -1636,6 +1781,12 @@ io.on("connection", (socket) => {
     const cat = WORDTESTS[room.category];
     const series = cat && cat.series[Number(seriesIndex)];
     if (!series) return cb({ ok: false, error: "問題セットが見つかりません" });
+    if (room.scheduledDate) {
+      const expectedSeriesIndex = quizScheduledSeriesIndex(room.category, room.scheduledDate);
+      if (Number(seriesIndex) !== expectedSeriesIndex) {
+        return cb({ ok: false, error: "固定参加リンクの日付と問題Dayが一致していません" });
+      }
+    }
     let prepared;
     try {
       prepared = series.isReview
@@ -1847,7 +1998,12 @@ io.on("connection", (socket) => {
     const room = newRoom || quizRooms[roomCode];
     const id = makeQuizPlayerId(room);
     const saved = persistQuizMutation(roomCode, () => {
-      if (newRoom) quizRooms[roomCode] = room;
+      if (newRoom) {
+        quizRooms[roomCode] = room;
+        if (room.scheduledDate) {
+          scheduledClacelEvents[room.scheduledDate] = { status: "active", roomCode };
+        }
+      }
       room.players[id] = {
         name: String(name || "名無し").slice(0, 12),
         sessionToken: makeQuizSessionToken(),
@@ -1876,6 +2032,9 @@ io.on("connection", (socket) => {
       seriesMeta: quizSeriesMeta(room.category),
       selectedSeriesIndex: Number.isInteger(room.selectedSeriesIndex) ? room.selectedSeriesIndex : 0,
     };
+    if (response.isHost && room.scheduledDate) {
+      response.scheduledJoinUrl = scheduledJoinUrl(room.scheduledDate, scheduledSocketOrigin(sock));
+    }
     if (room.phase === "playing") {
       response.phase = room.phase;
       response.setLabel = room.setLabel;

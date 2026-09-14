@@ -15,6 +15,7 @@ function loadQuizPage({
   nowIso = null,
   storedValues = {},
   operatorSessionStatus = 200,
+  fetchHandler = null,
 } = {}) {
   const publicDir = path.join(__dirname, "..", "..", "public");
   let html = fs.readFileSync(path.join(publicDir, "quiz.html"), "utf8");
@@ -85,11 +86,13 @@ function loadQuizPage({
         window.localStorage.setItem(key, String(value));
       }
       window.io = () => createFakeSocket();
-      window.fetch = async (requestUrl) => ({
-        status: operatorSessionStatus,
-        ok: operatorSessionStatus === 200,
-        json: async () => ({ authenticated: operatorSessionStatus === 200, requestUrl }),
-      });
+      window.fetch = fetchHandler
+        ? (requestUrl, options) => fetchHandler(requestUrl, options)
+        : async (requestUrl) => ({
+          status: operatorSessionStatus,
+          ok: operatorSessionStatus === 200,
+          json: async () => ({ authenticated: operatorSessionStatus === 200, requestUrl }),
+        });
       // quiz.htmlはタイマー表示のため実際のsetIntervalを使うが、
       // テストではプロセスが終了しなくなるため無効化する（タイマー発火自体はテスト対象外）
       window.setInterval = () => 0;
