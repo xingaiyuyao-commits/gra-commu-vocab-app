@@ -526,7 +526,7 @@ io.on("connection", (socket) => {
 /* ========== 単語テスト（シリーズ別20問・満点者掲示板） ========== */
 
 const WORDTESTS = require("./wordtests");
-const { getStudyDay, getHomeStudyDay } = require("./public/ui-logic");
+const { getStudyDay, getHomeStudyDay, getStudyDateLabel } = require("./public/ui-logic");
 const { selectReviewQuestions, ReviewSelectionError } = require("./quiz-review-selection");
 const QUIZ_QUESTION_COUNT = 20;
 const QUIZ_TIME_LIMIT_SEC = 300; // 5分
@@ -584,6 +584,24 @@ function sanitizeHistoryQuestionStats(stats) {
   });
 }
 
+function sanitizeHistoryLeaderboard(leaderboard) {
+  if (!Array.isArray(leaderboard)) return [];
+  return leaderboard.slice(0, 5).flatMap((group, index) => {
+    const score = Number(group?.score);
+    const total = Number(group?.total);
+    const players = Array.isArray(group?.players)
+      ? group.players.flatMap((entry) => {
+        const name = String(entry?.name || "").trim();
+        return name ? [{ name }] : [];
+      })
+      : [];
+    if (!Number.isInteger(score) || score < 0
+      || !Number.isInteger(total) || total <= 0 || score > total
+      || players.length === 0) return [];
+    return [{ rank: index + 1, score, total, players }];
+  });
+}
+
 function sanitizeStoredHistoryRecord(record) {
   if (!record || typeof record !== "object" || Array.isArray(record)) return null;
   const day = Number(record.day);
@@ -592,6 +610,9 @@ function sanitizeStoredHistoryRecord(record) {
     ...(Number.isInteger(day) && day > 0 ? { day } : {}),
     ...(typeof record.datasetRevision === "string" && record.datasetRevision ? { datasetRevision: record.datasetRevision } : {}),
     questionStats: sanitizeHistoryQuestionStats(record.questionStats),
+    ...(record.isReview === true
+      ? { isReview: true, leaderboard: sanitizeHistoryLeaderboard(record.leaderboard) }
+      : {}),
   };
 }
 
@@ -614,11 +635,28 @@ function sanitizeRestoredQuizResults(results, roomIsTrial) {
       total: entry.total,
     }))
     : [];
+  const leaderboard = Array.isArray(results.leaderboard)
+    ? results.leaderboard.slice(0, 5).flatMap((group, index) => {
+      const score = Number(group?.score);
+      const total = Number(group?.total);
+      const players = Array.isArray(group?.players)
+        ? group.players.filter((entry) => entry && typeof entry === "object").map((entry) => ({
+          id: String(entry.id || ""),
+          name: String(entry.name || ""),
+        }))
+        : [];
+      if (!Number.isInteger(score) || score < 0
+        || !Number.isInteger(total) || total <= 0 || score > total
+        || players.length === 0) return [];
+      return [{ rank: index + 1, score, total, players }];
+    })
+    : [];
   return {
     ...(resultAt ? { resultAt } : {}),
     setLabel: String(results.setLabel || ""),
     perfect,
     others,
+    ...(results.isReview === true ? { leaderboard, isReview: true } : {}),
     review: Array.isArray(results.review) ? results.review : [],
     mistakes: Array.isArray(results.mistakes) ? results.mistakes.map((mistake) => ({
       ...mistake,
@@ -1107,6 +1145,9 @@ function sanitizedHistoryRecord(record) {
     participantCount: Number.isFinite(participantCount) ? Math.max(0, Math.trunc(participantCount)) : 0,
     perfectNames: Array.isArray(record?.perfectNames) ? record.perfectNames.map((name) => String(name)) : [],
     updatedAt: String(record?.updatedAt || ""),
+    ...(record?.isReview === true
+      ? { isReview: true, leaderboard: sanitizeHistoryLeaderboard(record.leaderboard) }
+      : {}),
   };
 }
 
@@ -1203,6 +1244,7 @@ function quizPublicPlayers(room) {
 function quizSeriesMeta(category) {
   return WORDTESTS[category].series.map((series) => ({
     name: series.name,
+    dateLabel: getStudyDateLabel(series.day),
     count: series.isReview ? 50 : Math.min(QUIZ_QUESTION_COUNT, series.items.length),
     timeLimitSec: series.isReview ? QUIZ_REVIEW_TIME_LIMIT_SEC : QUIZ_TIME_LIMIT_SEC,
     isReview: series.isReview === true,
@@ -1466,6 +1508,25 @@ function topThreeMistakes(questionStats, questions) {
     }));
 }
 
+function buildReviewLeaderboard(entries) {
+  const ordered = entries.slice().sort((left, right) =>
+    right.score - left.score
+    || left.name.localeCompare(right.name, "ja")
+    || left.id.localeCompare(right.id));
+  const cutoffScore = ordered[Math.min(4, ordered.length - 1)]?.score;
+  if (cutoffScore === undefined) return [];
+  const finalists = ordered.filter((entry) => entry.score >= cutoffScore);
+  const scores = [...new Set(finalists.map((entry) => entry.score))];
+  return scores.map((score, index) => ({
+    rank: index + 1,
+    score,
+    total: finalists[0]?.total || 0,
+    players: finalists
+      .filter((entry) => entry.score === score)
+      .map((entry) => ({ id: entry.id, name: entry.name })),
+  }));
+}
+
 // ホストの操作で結果発表を確定させる。参加者全員が提出済みであることを再確認してから発表する。
 function quizRevealResults(roomCode) {
   const room = quizRooms[roomCode];
@@ -1487,6 +1548,7 @@ function quizRevealResults(roomCode) {
   const others = entries
     .filter((e) => e.score !== e.total)
     .map((e) => ({ id: e.id, name: e.name, score: e.score, total: e.total }));
+  const leaderboard = room.isReview ? buildReviewLeaderboard(entries) : [];
   const questionStats = buildQuestionStats(room, participants);
   const mistakes = topThreeMistakes(questionStats, room.questions);
   const now = quizResultNow();
@@ -1499,9 +1561,11 @@ function quizRevealResults(roomCode) {
       setLabel: room.setLabel,
       perfect,
       others,
+      leaderboard,
       review: room.questions.map((q) => ({ sentence: q.sentence, answer: q.answer, altAnswers: q.altAnswers, ja: q.ja, sentenceJa: q.sentenceJa })),
       mistakes,
       isTrial: room.isTrial === true,
+      isReview: room.isReview === true,
     };
     resultHistory[`${date}:${room.category}`] = {
       date,
@@ -1511,6 +1575,17 @@ function quizRevealResults(roomCode) {
       datasetRevision: room.datasetRevision,
       participantCount: participants.length,
       perfectNames: perfect.map((entry) => entry.name),
+      ...(room.isReview === true
+        ? {
+          isReview: true,
+          leaderboard: leaderboard.map((group) => ({
+            rank: group.rank,
+            score: group.score,
+            total: group.total,
+            players: group.players.map((entry) => ({ name: entry.name })),
+          })),
+        }
+        : {}),
       questionStats,
       updatedAt: resultAt,
     };
@@ -1722,6 +1797,7 @@ io.on("connection", (socket) => {
           sourceDays: series.sourceDays,
           series: cat.series,
           resultHistory,
+          fixedQuestionIds: series.fixedQuestionIds,
         })
         : {
           questions: shuffle(series.items).slice(0, QUIZ_QUESTION_COUNT),

@@ -217,6 +217,18 @@ test("参加・作成画面: Clacel/TOEIC/IELTSそれぞれの作成ボタンが
   assert.equal(document.querySelector(".container").classList.contains("wide"), true, "作成画面ではcontainerが横に広がる");
 });
 
+test("開催画面: 問題セットに実施日・Day・問題数・時間を表示する", () => {
+  const { window } = loadQuizPage({ url: "http://localhost/quiz.html?mode=create" });
+  assert.equal(
+    window.eval('seriesOptionLabel({ dateLabel: "9月13日", name: "Day 8", count: 20, timeLimitSec: 300, isReview: false }, "Day 8")'),
+    "9月13日（Day 8・20問・5分）",
+  );
+  assert.equal(
+    window.eval('seriesOptionLabel({ dateLabel: "9月12日", name: "Day 7（復習50問）", count: 50, timeLimitSec: 750, isReview: true }, "Day 7（復習50問）")'),
+    "9月12日（Day 7・復習50問・12分30秒）",
+  );
+});
+
 test("未認証で作成URLを直接開いても開催UIを表示しない", async () => {
   const { window, document } = loadQuizPage({
     url: "http://localhost/quiz.html?mode=create",
@@ -225,6 +237,39 @@ test("未認証で作成URLを直接開いても開催UIを表示しない", asy
   await new Promise((resolve) => window.setTimeout(resolve, 0));
   assert.equal(document.getElementById("operator-auth-required").hidden, false);
   assert.equal(document.getElementById("create-section").hidden, true);
+});
+
+test("開催画面: 過去の参加者セッションと復習結果が残っていても開催画面を優先する", async () => {
+  const storedResult = JSON.stringify({
+    version: 1,
+    records: [{
+      roomCode: "ABCD", category: "ielts", setLabel: "IELTS Day 1",
+      resultAt: "2026-09-04T10:30:00.000Z", expiresAt: Date.parse("2026-09-11T10:30:00.000Z"),
+      perfect: [],
+      review: [{ sentence: "It can ___ change.", answer: "induce", altAnswers: [], ja: "引き起こす" }],
+      answers: ["induce"], playerId: "participant", isTrial: false,
+    }],
+  });
+  const { window, document, fakeSocket } = loadQuizPage({
+    url: "http://localhost/quiz.html?mode=create",
+    nowIso: "2026-09-05T10:30:00.000Z",
+    storedValues: {
+      quizSession: JSON.stringify({
+        roomCode: "ABCD", category: "ielts", playerId: "participant", sessionToken: "participant-token",
+      }),
+      oshQuizSavedResultsV1: storedResult,
+    },
+  });
+
+  fakeSocket.fire("connect");
+  const rejoin = fakeSocket.emitted.find((entry) => entry.event === "quiz:rejoin");
+  assert.equal(rejoin, undefined, "開催モードでは参加者セッションへ再接続しない");
+  await new Promise((resolve) => window.setTimeout(resolve, 0));
+
+  assert.equal(document.getElementById("screen-entry").classList.contains("active"), true);
+  assert.equal(document.getElementById("screen-results").classList.contains("active"), false);
+  assert.equal(document.getElementById("create-section").hidden, false);
+  assert.equal(window.localStorage.getItem("oshQuizSavedResultsV1"), storedResult, "参加者の復習履歴は消さない");
 });
 
 test("参加・作成画面: エラーにrole=alert、入力欄がエラーと関連付けられている", () => {
@@ -609,6 +654,7 @@ test("参加・作成画面: ホストの複数コース作成パネルは開始
 
   s.fire("quiz:results", { setLabel: "TOEIC Day 1", perfect: [{ name: "Aさん" }], others: [] });
   assert.equal(document.getElementById("mh-toeic-results").hidden, false);
+  assert.equal(document.getElementById("mh-toeic-award-title").textContent.trim(), "🏆 満点者");
   assert.match(document.getElementById("mh-toeic-perfect").innerHTML, /Aさん/);
   assert.equal(document.getElementById("mh-toeic-again"), null, "同じルームでの再開催操作を表示しない");
   assert.match(document.getElementById("mh-toeic-results").textContent, /参加者の確認後、本日のルームを終了してください/);
@@ -656,6 +702,38 @@ test("複数ルーム結果: 上位3件を順位と主なミス傾向で表示�
   assert.match(rows[1].textContent, /twelfth/);
   assert.match(rows[2].textContent, /third/);
   assert.doesNotMatch(document.getElementById("mh-toeic-results").textContent, /first/);
+});
+
+test("復習日のホスト結果はTOP 5を色付き表彰カードにせず表示する", () => {
+  const { window, document, fakeSockets } = loadQuizPage({ url: "http://localhost/quiz.html?mode=create" });
+  setValue(window, document.getElementById("name"), "ホスト");
+  document.getElementById("mh-toeic-create").dispatchEvent(new window.Event("click", { bubbles: true }));
+  const hostSocket = fakeSockets[1];
+  hostSocket.emitted.find((entry) => entry.event === "quiz:createRoom").cb({
+    roomCode: "WXYZ", category: "toeic", playerId: "host", sessionToken: "token", seriesNames: ["Day 7"],
+  });
+
+  hostSocket.fire("quiz:results", {
+    isReview: true,
+    perfect: [],
+    leaderboard: [
+      { rank: 1, score: 50, total: 50, players: [{ id: "a", name: "Aica" }, { id: "b", name: "Kaho" }] },
+      { rank: 2, score: 48, total: 50, players: [{ id: "c", name: "Ryan" }] },
+      { rank: 3, score: 47, total: 50, players: [{ id: "d", name: "Nakayama" }] },
+      { rank: 4, score: 46, total: 50, players: [{ id: "e", name: "Miyu" }] },
+      { rank: 5, score: 45, total: 50, players: [{ id: "f", name: "Rina" }] },
+    ],
+    mistakes: [],
+  });
+
+  assert.equal(document.getElementById("mh-toeic-award-title").textContent.trim(), "🏆 復習日 TOP 5");
+  assert.match(document.getElementById("mh-toeic-perfect").textContent, /1位.*50 \/ 50点.*Aica.*Kaho/s);
+  assert.match(document.getElementById("mh-toeic-perfect").textContent, /2位.*48 \/ 50点.*Ryan/s);
+  assert.match(document.getElementById("mh-toeic-perfect").textContent, /3位.*47 \/ 50点.*Nakayama/s);
+  assert.match(document.getElementById("mh-toeic-perfect").textContent, /4位.*46 \/ 50点.*Miyu/s);
+  assert.match(document.getElementById("mh-toeic-perfect").textContent, /5位.*45 \/ 50点.*Rina/s);
+  assert.equal(document.querySelector("#mh-toeic-perfect .leaderboard-row").className, "leaderboard-row");
+  assert.equal(document.getElementById("mh-toeic-noperfect").hidden, true);
 });
 
 test("複数ルーム結果: つまずいた単語が空なら上位3件セクションを隠し、『全員正解でした』を表示しない", () => {
@@ -1371,6 +1449,36 @@ test("結果画面: ホストは進行役なので自分の点数・正答率・
   assert.equal(document.getElementById("review-card").style.display, "none");
   assert.notEqual(document.getElementById("perfect-list").style.display, "none");
   assert.match(document.getElementById("perfect-list").innerHTML, /Aica/);
+});
+
+test("復習日の参加者結果は満点者一覧ではなくTOP 5を表示する", () => {
+  const { document, fireSocketEvent } = loadQuizPage();
+  const questions = [{ sentence: "I ___ tea.", answer: "drink", base: "drink", hint: "d____", ja: "飲む", sentenceJa: "" }];
+  fireSocketEvent("quiz:started", {
+    setLabel: "TOEIC Day 7（復習50問）", total: 1, endsAt: Date.now() + 60000, questions, isReview: true,
+  });
+  fireSocketEvent("quiz:results", {
+    resultAt: "2026-09-12T10:30:00.000Z",
+    setLabel: "TOEIC Day 7（復習50問）",
+    isReview: true,
+    perfect: [],
+    leaderboard: [
+      { rank: 1, score: 50, total: 50, players: [{ id: "a", name: "Aica" }, { id: "b", name: "Kaho" }] },
+      { rank: 2, score: 48, total: 50, players: [{ id: "c", name: "Ryan" }] },
+      { rank: 3, score: 47, total: 50, players: [{ id: "d", name: "Nakayama" }] },
+      { rank: 4, score: 46, total: 50, players: [{ id: "e", name: "Miyu" }] },
+      { rank: 5, score: 45, total: 50, players: [{ id: "f", name: "Rina" }] },
+    ],
+    review: questions,
+  });
+
+  assert.equal(document.getElementById("perfect-count").textContent.trim(), "🏆 復習日 TOP 5");
+  assert.match(document.getElementById("perfect-list").textContent, /1位.*50 \/ 50点.*Aica.*Kaho/s);
+  assert.match(document.getElementById("perfect-list").textContent, /2位.*48 \/ 50点.*Ryan/s);
+  assert.match(document.getElementById("perfect-list").textContent, /3位.*47 \/ 50点.*Nakayama/s);
+  assert.match(document.getElementById("perfect-list").textContent, /4位.*46 \/ 50点.*Miyu/s);
+  assert.match(document.getElementById("perfect-list").textContent, /5位.*45 \/ 50点.*Rina/s);
+  assert.equal(document.getElementById("no-perfect").style.display, "none");
 });
 
 test("単一ルーム結果: 空の誤答上位でも『全員正解でした』を表示しない", () => {

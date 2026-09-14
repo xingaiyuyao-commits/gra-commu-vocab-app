@@ -141,7 +141,7 @@ function player(name, sessionToken, overrides = {}) {
   };
 }
 
-function playingRoom({ category = "clacel", setLabel = "Clacel Day 1", players, isTrial = false }) {
+function playingRoom({ category = "clacel", setLabel = "Clacel Day 1", players, isTrial = false, isReview = false }) {
   return {
     category,
     host: "host",
@@ -153,10 +153,106 @@ function playingRoom({ category = "clacel", setLabel = "Clacel Day 1", players, 
     setLabel,
     day: 1,
     datasetRevision: "test-revision",
+    isReview,
     isTrial,
     results: null,
   };
 }
+
+test("復習日は上位5名を発表し、5人目と同点の参加者も同順位で全員含める", async (t) => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-review-ranking-"));
+  const stateFile = path.join(tempDir, "quiz-rooms.json");
+  const submittedAt = Date.now() - 100;
+  fs.writeFileSync(stateFile, JSON.stringify({
+    version: 2,
+    rooms: {
+      ABCD: playingRoom({
+        setLabel: "Clacel Day 7（復習50問）",
+        isReview: true,
+        players: {
+          host: player("運営", "host-token"),
+          a: player("Aica", "a-token", { submittedAt, score: 4 }),
+          b: player("Kaho", "b-token", { submittedAt, score: 3 }),
+          c: player("Ryan", "c-token", { submittedAt, score: 2 }),
+          d: player("Tina", "d-token", { submittedAt, score: 1 }),
+          e: player("Nakayama", "e-token", { submittedAt, score: 0 }),
+          f: player("Miyu", "f-token", { submittedAt, score: 0 }),
+          g: player("Rina", "g-token", { submittedAt, score: 0 }),
+        },
+      }),
+    },
+    resultHistory: {},
+  }));
+
+  const { child, baseUrl } = await startServer(stateFile);
+  const host = await connect(baseUrl);
+  t.after(async () => {
+    host.disconnect();
+    await stopServer(child);
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  });
+  assert.equal((await rejoin(host, "ABCD", "host", "host-token")).ok, true);
+  const resultsEvent = waitForEvent(host, "quiz:results");
+  assert.deepEqual(await emitWithoutPayloadWithAck(host, "quiz:revealResults"), { ok: true });
+  const [results] = await resultsEvent;
+
+  assert.deepEqual(results.leaderboard, [
+    { rank: 1, score: 4, total: 4, players: [{ id: "a", name: "Aica" }] },
+    { rank: 2, score: 3, total: 4, players: [{ id: "b", name: "Kaho" }] },
+    { rank: 3, score: 2, total: 4, players: [{ id: "c", name: "Ryan" }] },
+    { rank: 4, score: 1, total: 4, players: [{ id: "d", name: "Tina" }] },
+    { rank: 5, score: 0, total: 4, players: [{ id: "f", name: "Miyu" }, { id: "e", name: "Nakayama" }, { id: "g", name: "Rina" }] },
+  ]);
+  assert.equal(JSON.stringify(results.leaderboard).includes("timeMs"), false);
+  const saved = JSON.parse(fs.readFileSync(stateFile, "utf8"));
+  const history = Object.values(saved.resultHistory)[0];
+  assert.equal(history.isReview, true);
+  assert.deepEqual(history.leaderboard, [
+    { rank: 1, score: 4, total: 4, players: [{ name: "Aica" }] },
+    { rank: 2, score: 3, total: 4, players: [{ name: "Kaho" }] },
+    { rank: 3, score: 2, total: 4, players: [{ name: "Ryan" }] },
+    { rank: 4, score: 1, total: 4, players: [{ name: "Tina" }] },
+    { rank: 5, score: 0, total: 4, players: [{ name: "Miyu" }, { name: "Nakayama" }, { name: "Rina" }] },
+  ]);
+});
+
+test("復習日の参加者が5人未満でも得点ごとの順位を保って全員発表する", async (t) => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-review-small-ranking-"));
+  const stateFile = path.join(tempDir, "quiz-rooms.json");
+  const submittedAt = Date.now() - 100;
+  fs.writeFileSync(stateFile, JSON.stringify({
+    version: 2,
+    rooms: {
+      ABCD: playingRoom({
+        setLabel: "Clacel Day 7（復習50問）",
+        isReview: true,
+        players: {
+          host: player("運営", "host-token"),
+          a: player("Aica", "a-token", { submittedAt, score: 4 }),
+          b: player("Kaho", "b-token", { submittedAt, score: 2 }),
+        },
+      }),
+    },
+    resultHistory: {},
+  }));
+
+  const { child, baseUrl } = await startServer(stateFile);
+  const host = await connect(baseUrl);
+  t.after(async () => {
+    host.disconnect();
+    await stopServer(child);
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  });
+  assert.equal((await rejoin(host, "ABCD", "host", "host-token")).ok, true);
+  const resultsEvent = waitForEvent(host, "quiz:results");
+  assert.deepEqual(await emitWithoutPayloadWithAck(host, "quiz:revealResults"), { ok: true });
+  const [results] = await resultsEvent;
+
+  assert.deepEqual(results.leaderboard, [
+    { rank: 1, score: 4, total: 4, players: [{ id: "a", name: "Aica" }] },
+    { rank: 2, score: 2, total: 4, players: [{ id: "b", name: "Kaho" }] },
+  ]);
+});
 
 async function rejoin(socket, roomCode, playerId, sessionToken) {
   return emitWithAck(socket, "quiz:rejoin", { roomCode, playerId, sessionToken });

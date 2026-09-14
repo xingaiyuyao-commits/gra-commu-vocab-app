@@ -4,6 +4,7 @@ const assert = require("node:assert/strict");
 const {
   getStudyDay,
   getHomeStudyDay,
+  getStudyDateLabel,
   getProjectWeek,
   countWeeklyMistakes,
   readWeeklyMistakes,
@@ -12,6 +13,13 @@ const {
   getSubmissionSummary,
   calculateResult,
 } = require("../public/ui-logic");
+
+test("Day番号を9月の実施日表示へ変換する", () => {
+  assert.equal(getStudyDateLabel(1), "9月6日");
+  assert.equal(getStudyDateLabel(7), "9月12日");
+  assert.equal(getStudyDateLabel(25), "9月30日");
+  assert.equal(getStudyDateLabel(null), "");
+});
 
 test("ホーム表示は9月6日をDay 1、9月7日をDay 2として暦日で進める", () => {
   assert.equal(getHomeStudyDay(new Date("2026-09-06T00:00:00+09:00")), 1);

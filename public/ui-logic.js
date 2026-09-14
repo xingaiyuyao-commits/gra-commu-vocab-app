@@ -19,6 +19,16 @@
     return elapsed < 0 ? null : Math.floor(elapsed / DAY_MS) + 1;
   }
 
+  function getStudyDateLabel(day) {
+    if (!Number.isInteger(day) || day < 1) return "";
+    const date = new Date(HOME_PROJECT_START + (day - 1) * DAY_MS);
+    return new Intl.DateTimeFormat("ja-JP", {
+      month: "long",
+      day: "numeric",
+      timeZone: "Asia/Tokyo",
+    }).format(date);
+  }
+
   function getProjectWeek(date) {
     const elapsed = date.getTime() - PROJECT_START;
     if (elapsed < 0) return null;
@@ -214,6 +224,7 @@
   return {
     getStudyDay,
     getHomeStudyDay,
+    getStudyDateLabel,
     getProjectWeek,
     countWeeklyMistakes,
     readWeeklyMistakes,

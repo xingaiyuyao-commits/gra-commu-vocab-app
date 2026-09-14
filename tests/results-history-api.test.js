@@ -430,6 +430,40 @@ test("本番ログインCookieだけにSecure属性を付ける", async (t) => {
   assert.match(setCookie, /;\s*Secure/i);
 });
 
+test("復習日の履歴APIは上位5得点帯までを返す", async (t) => {
+  const password = "review-ranking-secret";
+  const review = historyRecord("2026-09-12", "toeic", {
+    setLabel: "TOEIC Day 7（復習50問）",
+    isReview: true,
+    leaderboard: [
+      { rank: 9, score: 50, total: 50, players: [{ id: "a", name: "Aica", timeMs: 123 }, { id: "b", name: "Kaho" }] },
+      { rank: 10, score: 48, total: 50, players: [{ id: "c", name: "Ryan" }] },
+      { rank: 11, score: 47, total: 50, players: [{ id: "d", name: "Nakayama" }] },
+      { rank: 12, score: 46, total: 50, players: [{ id: "e", name: "Miyu" }] },
+      { rank: 13, score: 45, total: 50, players: [{ id: "f", name: "Rina" }] },
+      { rank: 14, score: 44, total: 50, players: [{ id: "g", name: "Sora" }] },
+    ],
+  });
+  const { baseUrl } = await startServer(t, {
+    password,
+    resultHistory: { "2026-09-12:toeic": review },
+  });
+  const { cookie } = await login(baseUrl, password);
+  const response = await fetch(`${baseUrl}/api/results-history?month=2026-09`, { headers: { Cookie: cookie } });
+  const [record] = await response.json();
+
+  assert.equal(record.isReview, true);
+  assert.deepEqual(record.leaderboard, [
+    { rank: 1, score: 50, total: 50, players: [{ name: "Aica" }, { name: "Kaho" }] },
+    { rank: 2, score: 48, total: 50, players: [{ name: "Ryan" }] },
+    { rank: 3, score: 47, total: 50, players: [{ name: "Nakayama" }] },
+    { rank: 4, score: 46, total: 50, players: [{ name: "Miyu" }] },
+    { rank: 5, score: 45, total: 50, players: [{ name: "Rina" }] },
+  ]);
+  assert.equal(JSON.stringify(record.leaderboard).includes("timeMs"), false);
+  assert.equal(JSON.stringify(record.leaderboard).includes("Sora"), false);
+});
+
 test("正しい署名でも期限切れのCookieは実APIで拒否する", async (t) => {
   const password = "expired-cookie-secret";
   const { baseUrl } = await startServer(t, { password });
