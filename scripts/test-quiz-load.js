@@ -248,7 +248,7 @@ async function runLoadTest(resources) {
   assert.deepEqual(await emitWithoutPayloadWithAck(host, "quiz:playAgain"), { ok: true });
   const review = await runRound(7, 50, 750);
   assert.match(review.started.setLabel, /Day 7（復習50問）/);
-  assert.equal(review.saved.version, 2);
+  assert.equal(review.saved.version, 3);
   assert.equal(review.saved.rooms[created.roomCode].results.resultAt, FIXED_NOW);
   assert.deepEqual(review.saved.rooms[created.roomCode].results.mistakes, review.results.mistakes);
   assert.equal(review.saved.resultHistory[HISTORY_KEY].participantCount, PARTICIPANT_COUNT);

@@ -246,6 +246,94 @@ test("参加画面: roomのない参加URLでは入力操作を隠して招待�
   assert.equal(emitted.some((entry) => entry.event === "quiz:joinRoom"), false);
 });
 
+test("日付固定リンク: 開催前はClacelの待機案内だけを表示する", async () => {
+  const requested = [];
+  const { window, document, emitted } = loadQuizPage({
+    url: "http://localhost/quiz.html?mode=scheduled&date=2026-09-14&course=clacel&token=signed-token",
+    fetchHandler: async (url) => {
+      requested.push(String(url));
+      return { status: 200, ok: true, json: async () => ({ status: "waiting", date: "2026-09-14" }) };
+    },
+  });
+  await new Promise((resolve) => window.setTimeout(resolve, 0));
+
+  assert.equal(requested[0], "/api/scheduled/clacel/2026-09-14?token=signed-token");
+  assert.equal(document.getElementById("entry-home-link").hidden, true);
+  assert.equal(document.getElementById("create-section").style.display, "none");
+  assert.equal(document.querySelector('label[for="name"]').hidden, true);
+  assert.equal(document.getElementById("name").hidden, true);
+  assert.equal(document.getElementById("join-section").hidden, true);
+  assert.equal(document.getElementById("join-course-name").textContent, "Clacelコース");
+  assert.equal(document.getElementById("scheduled-status").textContent, "開始までこの画面でお待ちください");
+  assert.equal(emitted.some((entry) => entry.event === "quiz:joinRoom"), false);
+});
+
+test("日付固定リンク: 当日ロビーができたら名前入力を出し、取得したルームへ参加する", async () => {
+  const { window, document, emitted } = loadQuizPage({
+    url: "http://localhost/quiz.html?mode=scheduled&date=2026-09-14&course=clacel&token=signed-token",
+    fetchHandler: async () => ({
+      status: 200,
+      ok: true,
+      json: async () => ({ status: "lobby", date: "2026-09-14", roomCode: "ABCD" }),
+    }),
+  });
+  await new Promise((resolve) => window.setTimeout(resolve, 0));
+
+  assert.equal(document.querySelector('label[for="name"]').hidden, false);
+  assert.equal(document.getElementById("name").hidden, false);
+  assert.equal(document.getElementById("join-section").hidden, false);
+  assert.equal(document.getElementById("scheduled-status").textContent, "名前を入力して参加してください");
+  setValue(window, document.getElementById("name"), "参加者");
+  document.getElementById("btn-join").dispatchEvent(new window.Event("click", { bubbles: true }));
+  const joined = emitted.find((entry) => entry.event === "quiz:joinRoom");
+  assert.equal(joined.payload.roomCode, "ABCD");
+  assert.equal(joined.payload.name, "参加者");
+});
+
+test("日付固定リンク: 開始後・終了後・未来日・不正URLを参加可能にしない", async () => {
+  for (const [status, message] of [
+    ["playing", "回答はすでに始まっています"],
+    ["finished", "この回は終了しました"],
+    ["future", "このリンクは当日に利用できます"],
+  ]) {
+    const page = loadQuizPage({
+      url: "http://localhost/quiz.html?mode=scheduled&date=2026-09-14&course=clacel&token=signed-token",
+      fetchHandler: async () => ({ status: 200, ok: true, json: async () => ({ status }) }),
+    });
+    await new Promise((resolve) => page.window.setTimeout(resolve, 0));
+    assert.equal(page.document.getElementById("scheduled-status").textContent, message);
+    assert.equal(page.document.getElementById("join-section").hidden, true);
+  }
+
+  const invalid = loadQuizPage({
+    url: "http://localhost/quiz.html?mode=scheduled&date=2026-09-14&course=clacel&token=bad",
+    fetchHandler: async () => ({ status: 403, ok: false, json: async () => ({ error: "参加リンクが正しくありません" }) }),
+  });
+  await new Promise((resolve) => invalid.window.setTimeout(resolve, 0));
+  assert.equal(invalid.document.getElementById("scheduled-status").textContent, "参加リンクが正しくありません");
+  assert.equal(invalid.document.getElementById("join-section").hidden, true);
+});
+
+test("日付固定リンク: 開始後でも同じルームの参加者だけは回答画面へ再接続する", async () => {
+  const storedValues = {
+    quizSession: JSON.stringify({ roomCode: "ABCD", playerId: "participant", sessionToken: "session", category: "clacel" }),
+  };
+  const { window, emitted } = loadQuizPage({
+    url: "http://localhost/quiz.html?mode=scheduled&date=2026-09-14&course=clacel&token=signed-token",
+    storedValues,
+    fetchHandler: async () => ({
+      status: 200,
+      ok: true,
+      json: async () => ({ status: "playing", date: "2026-09-14", roomCode: "ABCD" }),
+    }),
+  });
+  await new Promise((resolve) => window.setTimeout(resolve, 0));
+  const rejoin = emitted.find((entry) => entry.event === "quiz:rejoin");
+  assert.ok(rejoin);
+  assert.equal(rejoin.payload.roomCode, "ABCD");
+  assert.equal(rejoin.payload.playerId, "participant");
+});
+
 test("参加画面: コース付き参加リンクではコードを見せず、名前の後の参加ボタンから参加できる", () => {
   const { window, document, emitted } = loadQuizPage({
     url: "http://localhost/quiz.html?room=ab3k9p&cat=clacel",
@@ -437,6 +525,45 @@ test("参加・作成画面: 名前を入力してから作成ボタンを押す
   assert.equal(document.getElementById("mh-clacel-join-url").textContent, "http://localhost/quiz.html?mode=join&room=ABCD&cat=clacel");
   assert.equal(document.getElementById("mh-clacel-series").value, "2", "サーバーが決めた今日のDayを初期選択する");
   assert.equal(document.getElementById("mh-clacel-lobby").hidden, false);
+});
+
+test("ホスト画面: Clacelは日付固定URLを表示し、TOEICは従来URLを表示する", () => {
+  const { window, document, fakeSockets } = loadQuizPage({ url: "http://localhost/quiz.html?mode=create" });
+  setValue(window, document.getElementById("name"), "ホスト");
+
+  document.getElementById("mh-clacel-create").dispatchEvent(new window.Event("click", { bubbles: true }));
+  fakeSockets[1].emitted.find((entry) => entry.event === "quiz:createRoom").cb({
+    roomCode: "ABCD", isHost: true, category: "clacel", playerId: "h1", sessionToken: "t1",
+    seriesNames: ["Day 1"], scheduledJoinUrl: "https://example.test/quiz.html?mode=scheduled&date=2026-09-14&course=clacel&token=token",
+  });
+  assert.equal(
+    document.getElementById("mh-clacel-join-url").textContent,
+    "https://example.test/quiz.html?mode=scheduled&date=2026-09-14&course=clacel&token=token",
+  );
+
+  document.getElementById("mh-toeic-create").dispatchEvent(new window.Event("click", { bubbles: true }));
+  fakeSockets[2].emitted.find((entry) => entry.event === "quiz:createRoom").cb({
+    roomCode: "WXYZ", isHost: true, category: "toeic", playerId: "h2", sessionToken: "t2", seriesNames: ["Day 1"],
+  });
+  assert.equal(document.getElementById("mh-toeic-join-url").textContent, "http://localhost/quiz.html?mode=join&room=WXYZ&cat=toeic");
+});
+
+test("ホスト画面: 再接続後もClacelの日付固定URLを表示する", () => {
+  const storedValues = {
+    quizHostRooms: JSON.stringify({ clacel: { roomCode: "ABCD", playerId: "host", sessionToken: "session" } }),
+  };
+  const { document, fakeSockets } = loadQuizPage({ storedValues });
+  const clacelSocket = fakeSockets[1];
+  clacelSocket.fire("connect");
+  const rejoin = clacelSocket.emitted.find((entry) => entry.event === "quiz:rejoin");
+  rejoin.cb({
+    ok: true, isHost: true, category: "clacel", phase: "lobby", seriesNames: ["Day 1"],
+    scheduledJoinUrl: "https://example.test/quiz.html?mode=scheduled&date=2026-09-14&course=clacel&token=token",
+  });
+  assert.equal(
+    document.getElementById("mh-clacel-join-url").textContent,
+    "https://example.test/quiz.html?mode=scheduled&date=2026-09-14&course=clacel&token=token",
+  );
 });
 
 test("参加・作成画面: ホストの複数コース作成パネルは開始〜結果発表〜終了まで1画面で完結する", () => {

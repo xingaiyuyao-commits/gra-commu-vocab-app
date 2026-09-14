@@ -61,7 +61,7 @@ test("負荷スクリプトは実Socket.IOで通常日・復習日・再起動�
     ]
   );
   assert.deepEqual(summary.history, {
-    stateVersion: 2,
+    stateVersion: 3,
     key: "2042-01-02:clacel",
     participantCount: 99,
     perfectNames: ["Load-001"],

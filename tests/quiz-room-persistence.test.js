@@ -204,7 +204,7 @@ test("復習日は50問・12分30秒で開始し、再起動しても同じ問�
   assert.equal(afterRestart.endsAt, beforeRestart.endsAt);
 });
 
-test("version 1のルームを履歴なしのversion 2へ移行して復帰できる", async (t) => {
+test("version 1のルームを履歴と固定リンク状態を持つversion 3へ移行して復帰できる", async (t) => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-v1-migration-"));
   const stateFile = path.join(tempDir, "quiz-rooms.json");
   fs.writeFileSync(stateFile, JSON.stringify({
@@ -235,8 +235,9 @@ test("version 1のルームを履歴なしのversion 2へ移行して復帰で�
   const restored = await rejoin(socket, "ABCD", "host", "host-token");
   assert.equal(restored.ok, true);
   const migrated = JSON.parse(fs.readFileSync(stateFile, "utf8"));
-  assert.equal(migrated.version, 2);
+  assert.equal(migrated.version, 3);
   assert.deepEqual(migrated.resultHistory, {});
+  assert.deepEqual(migrated.scheduledClacelEvents, {});
   assert.equal(migrated.rooms.ABCD.players.host.name, "ホスト");
 });
 
@@ -495,7 +496,7 @@ test("結果確定は同日同コースを置換し、別コースとホスト�
   assert.equal(results.isTrial, false);
 
   const finalized = JSON.parse(fs.readFileSync(stateFile, "utf8"));
-  assert.equal(finalized.version, 2);
+  assert.equal(finalized.version, 3);
   assert.deepEqual(finalized.resultHistory[toeicKey], toeic, "別コースの結果を残す");
   const current = finalized.resultHistory[historyKey];
   assert.equal(Object.keys(finalized.resultHistory).filter((key) => key.endsWith(":clacel")).length, 1);
@@ -542,7 +543,7 @@ test("結果確定は同日同コースを置換し、別コースとホスト�
   const second = await startServer(stateFile);
   children.push(second.child);
   const restarted = JSON.parse(fs.readFileSync(stateFile, "utf8"));
-  assert.equal(restarted.version, 2);
+  assert.equal(restarted.version, 3);
   assert.deepEqual(restarted.rooms, {});
   assert.deepEqual(restarted.resultHistory[historyKey], replaced);
   assert.deepEqual(restarted.resultHistory[toeicKey], toeic);
