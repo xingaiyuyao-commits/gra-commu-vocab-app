@@ -206,7 +206,7 @@ test("実サーバー: プレイヤー固有トークンだけが再参加とID�
   assert.equal(stderr.includes(participantResponse.sessionToken), false, "参加者トークンをエラーログに出さない");
 });
 
-test("実サーバー: 制限時間内の途中参加者へ進行中の同じ問題と期限を返し、提出人数へ加える", async (t) => {
+test("実サーバー: 3コースとも制限時間内の途中参加者へ同じ問題と期限を返し、提出人数へ加える", async (t) => {
   const port = await reservePort();
   const baseUrl = `http://127.0.0.1:${port}`;
   const child = spawn(process.execPath, ["server.js"], {
@@ -242,37 +242,40 @@ test("実サーバー: 制限時間内の途中参加者へ進行中の同じ問
     return connection.socket;
   }
 
-  const host = await openSocket();
-  const room = await emitWithAck(host, "quiz:createRoom", { category: "clacel", name: "ホスト" });
-  const first = await openSocket();
-  await emitWithAck(first, "quiz:joinRoom", { roomCode: room.roomCode, name: "先発参加者" });
+  for (const category of ["clacel", "toeic", "ielts"]) {
+    const host = await openSocket();
+    const room = await emitWithAck(host, "quiz:createRoom", { category, name: `${category}ホスト` });
+    const first = await openSocket();
+    await emitWithAck(first, "quiz:joinRoom", { roomCode: room.roomCode, name: `${category}先発参加者` });
 
-  const startedForFirst = waitForEvent(first, "quiz:started", ({ questions } = {}) => Array.isArray(questions));
-  const startResponse = await emitWithAck(host, "quiz:startGame", { seriesIndex: 0 });
-  assert.equal(startResponse.ok, true);
-  const started = await startedForFirst;
+    const startedForFirst = waitForEvent(first, "quiz:started", ({ questions } = {}) => Array.isArray(questions));
+    const startResponse = await emitWithAck(host, "quiz:startGame", { seriesIndex: 0 });
+    assert.equal(startResponse.ok, true, `${category}を開始できる`);
+    const started = await startedForFirst;
 
-  const readyBeforeLateJoin = waitForEvent(host, "quiz:readyToReveal", () => true);
-  const firstSubmit = await emitWithAck(first, "quiz:submit", { answers: [] });
-  assert.equal(firstSubmit.ok, true);
-  await readyBeforeLateJoin;
+    const readyBeforeLateJoin = waitForEvent(host, "quiz:readyToReveal", () => true);
+    const firstSubmit = await emitWithAck(first, "quiz:submit", { answers: [] });
+    assert.equal(firstSubmit.ok, true, `${category}の先発参加者が提出できる`);
+    await readyBeforeLateJoin;
 
-  const progressAfterLateJoin = waitForEvent(
-    host,
-    "quiz:submitProgress",
-    ({ submitted, total } = {}) => submitted === 1 && total === 2,
-  );
-  const late = await openSocket();
-  const lateResponse = await emitWithAck(late, "quiz:joinRoom", {
-    roomCode: room.roomCode,
-    name: "途中参加者",
-  });
+    const progressAfterLateJoin = waitForEvent(
+      host,
+      "quiz:submitProgress",
+      ({ submitted, total } = {}) => submitted === 1 && total === 2,
+    );
+    const late = await openSocket();
+    const lateResponse = await emitWithAck(late, "quiz:joinRoom", {
+      roomCode: room.roomCode,
+      name: `${category}途中参加者`,
+    });
 
-  assert.equal(lateResponse.error, undefined);
-  assert.equal(lateResponse.phase, "playing");
-  assert.equal(lateResponse.setLabel, started.setLabel);
-  assert.equal(lateResponse.total, started.total);
-  assert.equal(lateResponse.endsAt, started.endsAt, "先発参加者と同じ終了時刻を使う");
-  assert.deepEqual(lateResponse.questions, started.questions, "途中参加でも同じ出題順を使う");
-  await progressAfterLateJoin;
+    assert.equal(lateResponse.error, undefined, `${category}は制限時間内の途中参加を受け付ける`);
+    assert.equal(lateResponse.category, category);
+    assert.equal(lateResponse.phase, "playing");
+    assert.equal(lateResponse.setLabel, started.setLabel);
+    assert.equal(lateResponse.total, started.total);
+    assert.equal(lateResponse.endsAt, started.endsAt, `${category}は先発参加者と同じ終了時刻を使う`);
+    assert.deepEqual(lateResponse.questions, started.questions, `${category}は途中参加でも同じ出題順を使う`);
+    await progressAfterLateJoin;
+  }
 });
