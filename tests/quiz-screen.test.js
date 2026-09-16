@@ -335,9 +335,30 @@ test("日付固定リンク: 当日ロビーができたら名前入力を出し
   assert.equal(joined.payload.name, "参加者");
 });
 
-test("日付固定リンク: 開始後・終了後・未来日・不正URLを参加可能にしない", async () => {
+test("日付固定リンク: 開始後でも残り時間内は新しい参加者が同じルームへ参加できる", async () => {
+  const { window, document, emitted } = loadQuizPage({
+    url: "http://localhost/quiz.html?mode=scheduled&date=2026-09-14&course=clacel&token=signed-token",
+    fetchHandler: async () => ({
+      status: 200,
+      ok: true,
+      json: async () => ({ status: "playing", date: "2026-09-14", roomCode: "ABCD" }),
+    }),
+  });
+  await new Promise((resolve) => window.setTimeout(resolve, 0));
+
+  assert.equal(document.querySelector('label[for="name"]').hidden, false);
+  assert.equal(document.getElementById("name").hidden, false);
+  assert.equal(document.getElementById("join-section").hidden, false);
+  assert.equal(document.getElementById("scheduled-status").textContent, "回答は始まっています。残り時間内は途中から参加できます");
+  setValue(window, document.getElementById("name"), "途中参加者");
+  document.getElementById("btn-join").dispatchEvent(new window.Event("click", { bubbles: true }));
+  const joined = emitted.find((entry) => entry.event === "quiz:joinRoom");
+  assert.equal(joined.payload.roomCode, "ABCD");
+  assert.equal(joined.payload.name, "途中参加者");
+});
+
+test("日付固定リンク: 終了後・未来日・不正URLを参加可能にしない", async () => {
   for (const [status, message] of [
-    ["playing", "回答はすでに始まっています"],
     ["finished", "この回は終了しました"],
     ["future", "このリンクは当日に利用できます"],
   ]) {
