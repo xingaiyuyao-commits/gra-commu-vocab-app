@@ -1089,7 +1089,7 @@
     const messages = {
       waiting: "開始までこの画面でお待ちください",
       lobby: "名前を入力して参加してください",
-      playing: "回答はすでに始まっています",
+      playing: "回答は始まっています。残り時間内は途中から参加できます",
       finished: "この回は終了しました",
       future: "このリンクは当日に利用できます",
       expired: "この回は終了しました",
@@ -1098,7 +1098,7 @@
     statusElement.textContent = error || messages[status] || "参加リンクを確認してください";
     scheduledRoomCode = roomCode ? String(roomCode).toUpperCase() : null;
     const canResume = Boolean(scheduledRoomCode && savedSession?.roomCode === scheduledRoomCode);
-    const canJoin = status === "lobby" && Boolean(scheduledRoomCode) && !canResume;
+    const canJoin = ["lobby", "playing"].includes(status) && Boolean(scheduledRoomCode) && !canResume;
     setScheduledInputsVisible(canJoin);
     if (canResume) {
       if (scheduledPollId !== null) clearInterval(scheduledPollId);
