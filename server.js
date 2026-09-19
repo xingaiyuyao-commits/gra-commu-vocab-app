@@ -528,6 +528,10 @@ io.on("connection", (socket) => {
 const WORDTESTS = require("./wordtests");
 const { getStudyDay, getHomeStudyDay, getStudyDateLabel } = require("./public/ui-logic");
 const { selectReviewQuestions, ReviewSelectionError } = require("./quiz-review-selection");
+const {
+  ensureAllReadyReviewQuestionSets,
+  reviewQuestionSetKey,
+} = require("./review-question-sets");
 const QUIZ_QUESTION_COUNT = 20;
 const QUIZ_TIME_LIMIT_SEC = 300; // 5分
 const QUIZ_REVIEW_TIME_LIMIT_SEC = 750; // 12分30秒
@@ -616,6 +620,27 @@ function sanitizeStoredHistoryRecord(record) {
   };
 }
 
+function sanitizeStoredReviewQuestionSet(record) {
+  if (!record || typeof record !== "object" || Array.isArray(record)) return null;
+  const category = String(record.category || "").toLowerCase();
+  const reviewDay = Number(record.reviewDay);
+  const sourceDays = Array.isArray(record.sourceDays) ? record.sourceDays.map(Number) : [];
+  const questionIds = Array.isArray(record.questionIds) ? record.questionIds.map(String) : [];
+  if (!QUIZ_CATEGORIES.includes(category)
+    || !Number.isInteger(reviewDay) || reviewDay <= 0
+    || sourceDays.length !== 6 || sourceDays.some((day) => !Number.isInteger(day) || day <= 0)
+    || questionIds.length !== 50 || new Set(questionIds).size !== 50
+    || questionIds.some((questionId) => !/^[a-z0-9/_-]+$/i.test(questionId))) return null;
+  return {
+    reviewDay,
+    category,
+    datasetRevision: String(record.datasetRevision || ""),
+    sourceDays,
+    questionIds,
+    readyAt: String(record.readyAt || ""),
+  };
+}
+
 function sanitizeRestoredQuizResults(results, roomIsTrial) {
   if (!results || typeof results !== "object") return null;
   const resultAt = typeof results.resultAt === "string" && !Number.isNaN(Date.parse(results.resultAt))
@@ -669,7 +694,9 @@ function sanitizeRestoredQuizResults(results, roomIsTrial) {
 }
 
 function loadQuizState() {
-  if (!QUIZ_ROOM_STATE_FILE) return { rooms: {}, resultHistory: {}, scheduledClacelEvents: {} };
+  if (!QUIZ_ROOM_STATE_FILE) return {
+    rooms: {}, resultHistory: {}, scheduledClacelEvents: {}, reviewQuestionSets: {},
+  };
   try {
     const saved = JSON.parse(fs.readFileSync(QUIZ_ROOM_STATE_FILE, "utf8"));
     const isVersionOne = saved.version === 1;
@@ -752,7 +779,15 @@ function loadQuizState() {
       room.scheduledDate = date;
       return [[date, { status: "active", roomCode }]];
     }));
-    return { rooms: restored, resultHistory, scheduledClacelEvents };
+    const storedReviewQuestionSets = saved.reviewQuestionSets
+      && typeof saved.reviewQuestionSets === "object"
+      && !Array.isArray(saved.reviewQuestionSets)
+      ? saved.reviewQuestionSets
+      : {};
+    const reviewQuestionSets = Object.fromEntries(Object.entries(storedReviewQuestionSets)
+      .map(([key, record]) => [key, sanitizeStoredReviewQuestionSet(record)])
+      .filter(([key, record]) => record && key === reviewQuestionSetKey(record.reviewDay, record.category)));
+    return { rooms: restored, resultHistory, scheduledClacelEvents, reviewQuestionSets };
   } catch (error) {
     if (error.code !== "ENOENT") {
       quizPersistenceHealth.ready = false;
@@ -760,7 +795,7 @@ function loadQuizState() {
       quizPersistenceHealth.restoreFailed = true;
       console.error("quiz room restore failed:", error.message);
     }
-    return { rooms: {}, resultHistory: {}, scheduledClacelEvents: {} };
+    return { rooms: {}, resultHistory: {}, scheduledClacelEvents: {}, reviewQuestionSets: {} };
   }
 }
 
@@ -768,6 +803,7 @@ const quizState = loadQuizState();
 const quizRooms = quizState.rooms; // roomCode -> room state
 const resultHistory = quizState.resultHistory; // yyyy-mm-dd:category -> daily result
 const scheduledClacelEvents = quizState.scheduledClacelEvents; // yyyy-mm-dd -> fixed Clacel link state
+const reviewQuestionSets = quizState.reviewQuestionSets; // reviewDay:category -> 確定済み50問
 const RESULTS_ADMIN_PASSWORD = process.env.RESULTS_ADMIN_PASSWORD || "";
 const OPERATOR_PASSWORD = process.env.OPERATOR_PASSWORD || "";
 const SCHEDULE_LINK_SECRET = process.env.SCHEDULE_LINK_SECRET || "";
@@ -831,7 +867,13 @@ function persistQuizState() {
   const temporaryFile = `${QUIZ_ROOM_STATE_FILE}.${process.pid}.tmp`;
   try {
     fs.mkdirSync(directory, { recursive: true });
-    fs.writeFileSync(temporaryFile, JSON.stringify({ version: 3, rooms, resultHistory, scheduledClacelEvents }), { mode: 0o600 });
+    fs.writeFileSync(temporaryFile, JSON.stringify({
+      version: 4,
+      rooms,
+      resultHistory,
+      scheduledClacelEvents,
+      reviewQuestionSets,
+    }), { mode: 0o600 });
     fs.renameSync(temporaryFile, QUIZ_ROOM_STATE_FILE);
     quizPersistenceHealth.ready = true;
     quizPersistenceHealth.lastError = null;
@@ -860,6 +902,7 @@ function cloneQuizState() {
     rooms: Object.fromEntries(Object.entries(quizRooms).map(([code, room]) => [code, cloneQuizRoom(room)])),
     resultHistory: JSON.parse(JSON.stringify(resultHistory)),
     scheduledClacelEvents: JSON.parse(JSON.stringify(scheduledClacelEvents)),
+    reviewQuestionSets: JSON.parse(JSON.stringify(reviewQuestionSets)),
   };
 }
 
@@ -876,6 +919,8 @@ function persistQuizMutation(roomCode, mutate) {
   Object.assign(resultHistory, before.resultHistory);
   for (const date of Object.keys(scheduledClacelEvents)) delete scheduledClacelEvents[date];
   Object.assign(scheduledClacelEvents, before.scheduledClacelEvents);
+  for (const key of Object.keys(reviewQuestionSets)) delete reviewQuestionSets[key];
+  Object.assign(reviewQuestionSets, before.reviewQuestionSets);
   return false;
 }
 
@@ -1204,6 +1249,29 @@ app.delete("/api/results-history/:date/:category", requireResultsHistoryAuth, (r
     return res.status(500).json({ error: QUIZ_PERSISTENCE_ERROR });
   }
   res.json({ ok: true });
+});
+
+ensureAllReadyReviewQuestionSets({
+  wordtests: WORDTESTS,
+  resultHistory,
+  reviewQuestionSets,
+});
+
+app.get("/api/review-forms/ready", (_req, res) => {
+  res.set("Cache-Control", "no-store");
+  const reviewSets = Object.values(reviewQuestionSets)
+    .map((record) => ({
+      reviewDay: record.reviewDay,
+      category: record.category,
+      course: WORDTESTS[record.category]?.label || record.category,
+      dateLabel: getStudyDateLabel(record.reviewDay),
+      datasetRevision: record.datasetRevision,
+      sourceDays: record.sourceDays.slice(),
+      questionIds: record.questionIds.slice(),
+      readyAt: record.readyAt,
+    }))
+    .sort((left, right) => left.reviewDay - right.reviewDay || left.category.localeCompare(right.category));
+  res.json({ reviewSets });
 });
 
 if (QUIZ_ROOM_STATE_FILE && !quizPersistenceHealth.restoreFailed) persistQuizState();
@@ -1589,6 +1657,12 @@ function quizRevealResults(roomCode) {
       questionStats,
       updatedAt: resultAt,
     };
+    ensureAllReadyReviewQuestionSets({
+      wordtests: { [room.category]: WORDTESTS[room.category] },
+      resultHistory,
+      reviewQuestionSets,
+      now: resultAt,
+    });
   });
   if (!saved) return false;
   io.to(roomCode).emit("quiz:results", room.results);
@@ -1797,7 +1871,8 @@ io.on("connection", (socket) => {
           sourceDays: series.sourceDays,
           series: cat.series,
           resultHistory,
-          fixedQuestionIds: series.fixedQuestionIds,
+          fixedQuestionIds: reviewQuestionSets[reviewQuestionSetKey(series.day, room.category)]?.questionIds
+            || series.fixedQuestionIds,
         })
         : {
           questions: shuffle(series.items).slice(0, QUIZ_QUESTION_COUNT),

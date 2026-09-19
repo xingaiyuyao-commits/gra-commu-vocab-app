@@ -176,7 +176,7 @@ test("当日のClacelルームは一度だけ固定URLへ紐づき、開始・�
     status: "finished", date: TODAY,
   });
   const stored = JSON.parse(fs.readFileSync(stateFile, "utf8"));
-  assert.equal(stored.version, 3);
+  assert.equal(stored.version, 4);
   assert.equal(stored.scheduledClacelEvents[TODAY].status, "finished");
 
   host.disconnect();
