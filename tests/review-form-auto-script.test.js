@@ -50,3 +50,12 @@ test("サイトの50問に不足・重複があればフォームを作成せず
     /50問/,
   );
 });
+
+test("Apps Scriptのマニフェストにフォーム複製用のDrive権限がある", () => {
+  const filename = path.join(__dirname, "..", "scripts", "google-apps-script", "appsscript.json");
+  const manifest = JSON.parse(fs.readFileSync(filename, "utf8"));
+
+  assert.ok(manifest.oauthScopes.includes("https://www.googleapis.com/auth/drive"));
+  assert.ok(manifest.oauthScopes.includes("https://www.googleapis.com/auth/forms"));
+  assert.ok(manifest.oauthScopes.includes("https://www.googleapis.com/auth/script.external_request"));
+});
