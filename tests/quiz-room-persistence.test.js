@@ -6,6 +6,7 @@ const os = require("node:os");
 const path = require("node:path");
 const net = require("node:net");
 const { io: createSocketClient } = require("socket.io-client");
+const wordtests = require("../wordtests");
 
 const TEST_OPERATOR_PASSWORD = "test-operator-password";
 const operatorCookies = new Map();
@@ -300,7 +301,55 @@ test("復習日は50問・12分30秒で開始し、再起動しても同じ問�
   assert.equal(afterRestart.endsAt, beforeRestart.endsAt);
 });
 
-test("version 1のルームを履歴と固定リンク状態を持つversion 3へ移行して復帰できる", async (t) => {
+test("6日目の結果後に復習50問を保存し、フォーム連携APIとサイト開催で同じ順序を使う", async (t) => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-review-form-sync-"));
+  const stateFile = path.join(tempDir, "quiz-rooms.json");
+  fs.writeFileSync(stateFile, JSON.stringify({
+    version: 3,
+    rooms: {},
+    resultHistory: {
+      "2026-09-18:clacel": {
+        date: "2026-09-18",
+        category: "clacel",
+        setLabel: "Clacel Day 13",
+        day: 13,
+        datasetRevision: wordtests.clacel.datasetRevision,
+        participantCount: 1,
+        perfectNames: [],
+        questionStats: [],
+        updatedAt: "2026-09-18T11:00:00.000Z",
+      },
+    },
+    scheduledClacelEvents: {},
+  }));
+
+  const { child, baseUrl } = await startServer(stateFile);
+  const host = await connect(baseUrl);
+  t.after(async () => {
+    host.disconnect();
+    await stopServer(child);
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  const manifestResponse = await fetch(`${baseUrl}/api/review-forms/ready`);
+  assert.equal(manifestResponse.status, 200);
+  const manifest = await manifestResponse.json();
+  const clacel = manifest.reviewSets.find((record) => record.category === "clacel" && record.reviewDay === 14);
+  assert.equal(clacel.questionIds.length, 50);
+  assert.equal(new Set(clacel.questionIds).size, 50);
+
+  const created = await emitWithAck(host, "quiz:createRoom", { category: "clacel", name: "ホスト" });
+  const reviewIndex = wordtests.clacel.series.findIndex(({ day }) => day === 14);
+  const started = await emitWithAck(host, "quiz:startGame", { seriesIndex: reviewIndex });
+  assert.deepEqual(started, { ok: true });
+
+  const saved = JSON.parse(fs.readFileSync(stateFile, "utf8"));
+  assert.equal(saved.version, 4);
+  assert.deepEqual(saved.reviewQuestionSets["14:clacel"].questionIds, clacel.questionIds);
+  assert.deepEqual(saved.rooms[created.roomCode].questions.map(({ questionId }) => questionId), clacel.questionIds);
+});
+
+test("version 1のルームを履歴・固定リンク・復習問題を持つversion 4へ移行して復帰できる", async (t) => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-v1-migration-"));
   const stateFile = path.join(tempDir, "quiz-rooms.json");
   fs.writeFileSync(stateFile, JSON.stringify({
@@ -331,7 +380,7 @@ test("version 1のルームを履歴と固定リンク状態を持つversion 3�
   const restored = await rejoin(socket, "ABCD", "host", "host-token");
   assert.equal(restored.ok, true);
   const migrated = JSON.parse(fs.readFileSync(stateFile, "utf8"));
-  assert.equal(migrated.version, 3);
+  assert.equal(migrated.version, 4);
   assert.deepEqual(migrated.resultHistory, {});
   assert.deepEqual(migrated.scheduledClacelEvents, {});
   assert.equal(migrated.rooms.ABCD.players.host.name, "ホスト");
@@ -592,7 +641,7 @@ test("結果確定は同日同コースを置換し、別コースとホスト�
   assert.equal(results.isTrial, false);
 
   const finalized = JSON.parse(fs.readFileSync(stateFile, "utf8"));
-  assert.equal(finalized.version, 3);
+  assert.equal(finalized.version, 4);
   assert.deepEqual(finalized.resultHistory[toeicKey], toeic, "別コースの結果を残す");
   const current = finalized.resultHistory[historyKey];
   assert.equal(Object.keys(finalized.resultHistory).filter((key) => key.endsWith(":clacel")).length, 1);
@@ -639,7 +688,7 @@ test("結果確定は同日同コースを置換し、別コースとホスト�
   const second = await startServer(stateFile);
   children.push(second.child);
   const restarted = JSON.parse(fs.readFileSync(stateFile, "utf8"));
-  assert.equal(restarted.version, 3);
+  assert.equal(restarted.version, 4);
   assert.deepEqual(restarted.rooms, {});
   assert.deepEqual(restarted.resultHistory[historyKey], replaced);
   assert.deepEqual(restarted.resultHistory[toeicKey], toeic);
