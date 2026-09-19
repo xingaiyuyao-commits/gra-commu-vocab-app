@@ -81,3 +81,21 @@ test("9月12日のDay 7復習問題は3コースとも事前確定済みの50問
     assert.deepEqual(Object.values(counts).sort((left, right) => left - right), [8, 8, 8, 8, 9, 9], course);
   }
 });
+
+test("9月19日のDay 14復習問題はGoogleフォームと共有する確定済み50問を使う", () => {
+  const wordtests = require("../wordtests");
+  for (const course of ["clacel", "toeic", "ielts"]) {
+    const review = wordtests[course].series.find(({ day, isReview }) => day === 14 && isReview);
+    assert.ok(review, `${course}: Day 14`);
+    assert.equal(review.items.length, 0, course);
+    assert.equal(review.fixedQuestionIds.length, 50, course);
+    assert.equal(new Set(review.fixedQuestionIds).size, 50, course);
+    const counts = review.fixedQuestionIds.reduce((result, questionId) => {
+      const day = Number(/\/day(\d+)\//.exec(questionId)[1]);
+      result[day] = (result[day] || 0) + 1;
+      return result;
+    }, {});
+    assert.deepEqual(Object.keys(counts).map(Number).sort((a, b) => a - b), [8, 9, 10, 11, 12, 13], course);
+    assert.deepEqual(Object.values(counts).sort((left, right) => left - right), [8, 8, 8, 8, 9, 9], course);
+  }
+});
