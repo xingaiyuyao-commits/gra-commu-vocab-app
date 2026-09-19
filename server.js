@@ -1103,6 +1103,9 @@ app.post("/api/operator/review-pdf", express.json({ limit: "2kb" }), (req, res) 
   }
   res.json({
     setLabel: room.setLabel,
+    courseLabel: WORDTESTS[room.category]?.label || room.category,
+    day: room.day,
+    dateLabel: getStudyDateLabel(room.day),
     questions: room.questions.map(({ sentence, answer, altAnswers, hint, ja, sentenceJa }) => ({
       sentence,
       answer,

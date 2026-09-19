@@ -6,31 +6,37 @@
   <title>欠席者用復習問題</title>
   <style>
     :root { color: #202020; font-family: Arial, "Hiragino Sans", "Yu Gothic", sans-serif; }
-    body { max-width: 880px; margin: 0 auto; padding: 32px 28px 64px; line-height: 1.55; }
-    header { border-bottom: 2px solid #202020; margin-bottom: 28px; padding-bottom: 18px; }
-    .brand { color: #777; font-size: .75rem; font-weight: 700; letter-spacing: .12em; margin: 0 0 10px; }
+    body { max-width: 880px; margin: 0 auto; padding: 32px 28px 64px; line-height: 1.45; }
+    header { border-bottom: 1px solid #aaa; margin-bottom: 20px; padding-bottom: 16px; text-align: center; }
     h1 { font-size: 1.8rem; margin: 0; }
-    .sub { color: #666; margin: 6px 0 0; }
+    .sub { color: #666; font-size: .95rem; margin: 5px 0 0; }
     .actions { display: flex; gap: 10px; margin: 0 0 24px; }
     button { background: #202020; border: 0; color: #fff; cursor: pointer; font: inherit; font-weight: 700; padding: 12px 18px; }
     .notice { color: #666; font-size: .9rem; margin: 0 0 20px; }
-    .question { break-inside: avoid; border-bottom: 1px solid #ddd; padding: 17px 0; }
-    .qno { color: #bd8b13; font-size: .8rem; font-weight: 700; letter-spacing: .08em; margin: 0 0 4px; }
-    .meaning { font-size: 1.05rem; font-weight: 700; margin: 0; }
-    .hint { color: #777; font-family: Georgia, serif; font-size: 1.1rem; letter-spacing: .08em; margin: 5px 0; }
-    .sentence { font-size: 1.05rem; margin: 4px 0; }
-    .sentence-ja { color: #666; font-size: .92rem; margin: 4px 0; }
-    .answer-line { border-bottom: 1px solid #555; height: 24px; margin-top: 12px; width: 100%; }
+    .question { break-inside: avoid; padding: 7px 0 9px; }
+    .question-heading { align-items: center; display: flex; gap: 10px; }
+    .qno { align-items: center; border: 1px solid #c99517; border-radius: 50%; color: #c99517; display: inline-flex; flex: 0 0 22px; font-size: .68rem; height: 22px; justify-content: center; margin: 0; }
+    .meaning { font-size: 1rem; font-weight: 700; margin: 0; }
+    .hint { color: #777; font-family: Georgia, serif; font-size: .96rem; letter-spacing: .06em; margin: 2px 0 2px 32px; }
+    .sentence { font-size: 1rem; margin: 2px 0 2px 32px; }
+    .sentence-ja { color: #666; font-size: .88rem; margin: 2px 0 2px 32px; }
+    .answer-line { border-bottom: 1px solid #555; height: 18px; margin: 5px 0 0 32px; width: calc(100% - 32px); }
     .answer-key { break-before: page; margin-top: 36px; }
-    .answer-key h2 { border-bottom: 2px solid #202020; padding-bottom: 8px; }
-    .answer { break-inside: avoid; border-bottom: 1px solid #ddd; padding: 10px 0; }
+    .answer-heading { align-items: flex-start; border-bottom: 2px solid #202020; display: flex; justify-content: space-between; margin-bottom: 8px; padding-bottom: 8px; }
+    .answer-key h2 { margin: 0; }
+    .score { align-items: center; display: flex; gap: 8px; }
+    .score-box { border: 1px solid #202020; box-sizing: border-box; display: block; height: 53px; width: 53px; }
+    .score-denominator { font-size: 1.1rem; white-space: nowrap; }
+    .answer { break-inside: avoid; border-bottom: 1px solid #ddd; padding: 8px 0; }
     .answer h3 { font-size: 1rem; margin: 0; }
     .answer p { font-size: .92rem; margin: 3px 0; }
+    .answer-word { color: #c6463b; }
     .error { color: #b54740; font-weight: 700; }
     @media print {
       @page { margin: 16mm 14mm; }
       body { max-width: none; padding: 0; }
       .actions, .notice { display: none; }
+      .score-box { height: 14mm; width: 14mm; }
     }
   </style>
 </head>
@@ -48,30 +54,29 @@
       const questions = documentData.questions;
       app.innerHTML = `
         <header>
-          <p class="brand">ÖSH VOCABULARY CHALLENGE</p>
-          <h1>${escapeHtml(documentData.setLabel)}　欠席者用復習問題</h1>
-          <p class="sub">全50問</p>
+          <h1>ÖSH Vocabulary Challenge</h1>
+          <p class="sub">${escapeHtml(documentData.courseLabel)}　${escapeHtml(documentData.dateLabel)}（Day ${escapeHtml(documentData.day)}）復習問題　全50問</p>
         </header>
         <div class="actions"><button type="button" id="print">印刷・PDFとして保存</button></div>
         <p class="notice">問題を解き終えてから、最後のページで答えを確認してください。</p>
         <section aria-label="問題">${questions.map((question, index) => `
           <article class="question">
-            <p class="qno">QUESTION ${String(index + 1).padStart(2, "0")}</p>
-            <p class="meaning">${escapeHtml(question.ja)}</p>
+            <div class="question-heading"><p class="qno">${index + 1}</p><p class="meaning">${escapeHtml(question.ja)}</p></div>
             <p class="hint">${escapeHtml(question.hint || "")}</p>
-            <p class="sentence">${escapeHtml(question.sentence)}</p>
+            <p class="sentence">${escapeHtml(question.sentence).replace("___", "_______________")}</p>
             <p class="sentence-ja">${escapeHtml(question.sentenceJa)}</p>
             <div class="answer-line" aria-label="解答欄"></div>
           </article>`).join("")}
         </section>
         <section class="answer-key" aria-label="答え">
-          <h2>答え・復習用一覧</h2>
+          <div class="answer-heading"><h2>答え・復習用一覧</h2><div class="score"><span class="score-box" aria-label="点数記入欄"></span><span class="score-denominator">/ 50</span></div></div>
+          <p class="notice-answer">問題を解き終えてから確認してください。</p>
           ${questions.map((question, index) => {
             const answers = [question.answer, ...(question.altAnswers || [])].join(" / ");
-            const completed = String(question.sentence || "").replace("___", answers);
+            const completed = escapeHtml(question.sentence).replace("___", `<span class="answer-word"><b>${escapeHtml(question.answer)}</b></span>`);
             return `<article class="answer">
-              <h3>${index + 1}. ${escapeHtml(answers)}　<span>${escapeHtml(question.ja)}</span></h3>
-              <p>${escapeHtml(completed)}</p>
+              <h3>${index + 1}. <span class="answer-word">${escapeHtml(answers)}</span>　<span>${escapeHtml(question.ja)}</span></h3>
+              <p>${completed}</p>
               <p>${escapeHtml(question.sentenceJa)}</p>
             </article>`;
           }).join("")}

@@ -150,6 +150,9 @@ test("復習開始後はホストだけが欠席者用PDFの50問を取得でき
   assert.equal(response.status, 200);
   const document = await response.json();
   assert.equal(document.setLabel, "TOEIC Day 7（復習50問）");
+  assert.equal(document.courseLabel, "TOEIC");
+  assert.equal(document.day, 7);
+  assert.equal(document.dateLabel, "9月12日");
   assert.equal(document.questions.length, 50);
   assert.equal(document.questions[0].sentence, "The example has ___ number 1.");
   assert.equal(Object.hasOwn(document.questions[0], "sessionToken"), false);
