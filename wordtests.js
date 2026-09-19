@@ -8,6 +8,7 @@ const COURSE_DATA = {
 };
 
 const FIXED_REVIEW_SETS = require("./data/wordtests/review-2026-09.json");
+const DAY14_FIXED_REVIEW_SET = require("./data/wordtests/review-day14-2026-09.json");
 
 const REVIEW_DAYS = [
   { day: 7, sourceDays: [1, 2, 3, 4, 5, 6] },
@@ -16,7 +17,8 @@ const REVIEW_DAYS = [
 ];
 
 function fixedReviewQuestionIds(category, datasetRevision, reviewDay, sourceDays, studySeries) {
-  const fixed = FIXED_REVIEW_SETS.days?.[String(reviewDay)]?.courses?.[category];
+  const fixed = (reviewDay === 14 ? DAY14_FIXED_REVIEW_SET : FIXED_REVIEW_SETS.days?.[String(reviewDay)])
+    ?.courses?.[category];
   if (!fixed) return [];
   if (fixed.datasetRevision !== datasetRevision) {
     throw new Error(`${category} Day ${reviewDay} の確定済み復習問題は教材版と一致しません`);
