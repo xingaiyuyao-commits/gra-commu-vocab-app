@@ -1269,6 +1269,32 @@ app.post("/api/results-history/logout", (_req, res) => {
   res.json({ ok: true });
 });
 
+// Public aggregate feed for scheduled attendance reporting. Never return names,
+// scores, question data, or authentication material from this endpoint.
+app.get("/api/participation-counts", (req, res) => {
+  res.set("Cache-Control", "no-store");
+  if (quizPersistenceHealth.restoreFailed || !quizPersistenceHealth.ready) {
+    return res.status(503).json({ error: "参加人数を取得できません" });
+  }
+  const month = String(req.query.month || "");
+  if (!validHistoryMonth(month)) {
+    return res.status(400).json({ error: "monthはYYYY-MM形式で指定してください" });
+  }
+  const records = Object.values(resultHistory)
+    .filter((record) => record && String(record.date || "").startsWith(`${month}-`)
+      && QUIZ_CATEGORIES.includes(record.category))
+    .map((record) => {
+      const count = Number(record.participantCount);
+      return {
+        date: String(record.date),
+        category: String(record.category),
+        participantCount: Number.isFinite(count) ? Math.max(0, Math.trunc(count)) : 0,
+      };
+    })
+    .sort((a, b) => a.date.localeCompare(b.date) || a.category.localeCompare(b.category));
+  res.json(records);
+});
+
 app.get("/api/results-history", requireResultsHistoryAuth, (req, res) => {
   const month = String(req.query.month || "");
   if (!validHistoryMonth(month)) return res.status(400).json({ error: "monthはYYYY-MM形式で指定してください" });
