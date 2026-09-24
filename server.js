@@ -1306,7 +1306,7 @@ app.get("/participation-counts.html", (req, res) => {
     return res.status(400).type("text/plain").send("monthはYYYY-MM形式で指定してください");
   }
   const rows = Object.values(resultHistory)
-    .filter((record) => record && /^\\d{4}-\\d{2}-\\d{2}$/.test(String(record.date || ""))
+    .filter((record) => record && /^\d{4}-\d{2}-\d{2}$/.test(String(record.date || ""))
       && String(record.date).startsWith(`${month}-`)
       && QUIZ_CATEGORIES.includes(record.category))
     .map((record) => {
