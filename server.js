@@ -1269,19 +1269,12 @@ app.post("/api/results-history/logout", (_req, res) => {
   res.json({ ok: true });
 });
 
-// Read-only aggregate feed for scheduled attendance reporting. Keep the token separate
-// from the results-history password and never return names or scores.
+// Public aggregate feed for scheduled attendance reporting. Never return names,
+// scores, question data, or authentication material from this endpoint.
 app.get("/api/participation-counts", (req, res) => {
   res.set("Cache-Control", "no-store");
-  const reportToken = process.env.PARTICIPATION_REPORT_TOKEN || "";
-  if (!reportToken || quizPersistenceHealth.restoreFailed) {
-    return res.status(503).json({ error: "参加人数の取得を利用できません" });
-  }
-  const provided = /^Bearer (.+)$/.exec(String(req.headers.authorization || ""))?.[1] || "";
-  const expectedHash = createHash("sha256").update(reportToken).digest();
-  const providedHash = createHash("sha256").update(provided).digest();
-  if (!provided || !timingSafeEqual(expectedHash, providedHash)) {
-    return res.status(401).json({ error: "認証に失敗しました" });
+  if (quizPersistenceHealth.restoreFailed || !quizPersistenceHealth.ready) {
+    return res.status(503).json({ error: "参加人数を取得できません" });
   }
   const month = String(req.query.month || "");
   if (!validHistoryMonth(month)) {
