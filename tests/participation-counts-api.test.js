@@ -6,7 +6,7 @@ const os = require("node:os");
 const path = require("node:path");
 const net = require("node:net");
 
-async function startServer(t, token) {
+async function startServer(t) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "participation-counts-"));
   const stateFile = path.join(dir, "quiz-rooms.json");
   fs.writeFileSync(stateFile, JSON.stringify({
@@ -33,11 +33,9 @@ async function startServer(t, token) {
     probe.close(() => resolve(value));
   }));
   const env = { ...process.env, PORT: String(port), QUIZ_ROOM_STATE_FILE: stateFile };
-  delete env.PARTICIPATION_REPORT_TOKEN;
   delete env.RAILWAY_ENVIRONMENT_ID;
   delete env.RAILWAY_SERVICE_ID;
   delete env.RAILWAY_PROJECT_ID;
-  if (token) env.PARTICIPATION_REPORT_TOKEN = token;
   const child = spawn(process.execPath, ["server.js"], {
     cwd: path.join(__dirname, ".."), env, stdio: "ignore",
   });
@@ -59,15 +57,10 @@ async function startServer(t, token) {
   throw new Error("server did not start");
 }
 
-test("attendance feed requires a separate token and returns counts only", async (t) => {
-  const baseUrl = await startServer(t, "a-dedicated-report-token");
+test("public attendance feed returns counts only", async (t) => {
+  const baseUrl = await startServer(t);
   const endpoint = `${baseUrl}/api/participation-counts?month=2026-09`;
-  const unauthenticated = await fetch(endpoint);
-  assert.equal(unauthenticated.status, 401);
-  assert.equal(unauthenticated.headers.get("cache-control"), "no-store");
-  assert.equal((await fetch(endpoint, { headers: { Authorization: "Bearer wrong" } })).status, 401);
-  const headers = { Authorization: "Bearer a-dedicated-report-token" };
-  const response = await fetch(endpoint, { headers });
+  const response = await fetch(endpoint);
   assert.equal(response.status, 200);
   assert.equal(response.headers.get("cache-control"), "no-store");
   const records = await response.json();
@@ -76,12 +69,5 @@ test("attendance feed requires a separate token and returns counts only", async 
     { date: "2026-09-24", category: "toeic", participantCount: 20 },
   ]);
   assert.equal(JSON.stringify(records).includes("private"), false);
-  assert.equal((await fetch(`${baseUrl}/api/participation-counts?month=2026-13`, { headers })).status, 400);
-});
-
-test("attendance feed stays unavailable without a token", async (t) => {
-  const baseUrl = await startServer(t, "");
-  const response = await fetch(`${baseUrl}/api/participation-counts?month=2026-09`);
-  assert.equal(response.status, 503);
-  assert.equal(response.headers.get("cache-control"), "no-store");
+  assert.equal((await fetch(`${baseUrl}/api/participation-counts?month=2026-13`)).status, 400);
 });
