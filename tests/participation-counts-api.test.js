@@ -73,8 +73,8 @@ test("public attendance feed returns counts only", async (t) => {
   const view = await fetch(`${baseUrl}/participation-counts.html?month=2026-09`);
   assert.equal(view.status, 200);
   const html = await view.text();
-  assert.match(html, /2026-09-24<\\/td><td>Clacel<\\/td><td>28/);
-  assert.match(html, /2026-09-24<\\/td><td>TOEIC<\\/td><td>20/);
+  assert.ok(html.includes("<td>2026-09-24</td><td>Clacel</td><td>28</td>"));
+  assert.ok(html.includes("<td>2026-09-24</td><td>TOEIC</td><td>20</td>"));
   assert.equal(html.includes("private"), false);
   assert.equal((await fetch(`${baseUrl}/participation-counts.html?month=2026-13`)).status, 400);
 });
