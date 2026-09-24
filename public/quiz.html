@@ -1115,12 +1115,12 @@
   }
 
   async function pollScheduledEntry() {
-    if (scheduledCourse !== "clacel" || !/^\d{4}-\d{2}-\d{2}$/.test(scheduledDate) || !scheduledToken) {
+    if (!CATEGORY_LABEL[scheduledCourse] || !/^\d{4}-\d{2}-\d{2}$/.test(scheduledDate) || !scheduledToken) {
       renderScheduledStatus("invalid", null, "参加リンクが正しくありません");
       return;
     }
     try {
-      const response = await fetch(`/api/scheduled/clacel/${encodeURIComponent(scheduledDate)}?token=${encodeURIComponent(scheduledToken)}`, { cache: "no-store" });
+      const response = await fetch(`/api/scheduled/${encodeURIComponent(scheduledCourse)}/${encodeURIComponent(scheduledDate)}?token=${encodeURIComponent(scheduledToken)}`, { cache: "no-store" });
       const body = await response.json();
       if (!response.ok) return renderScheduledStatus("invalid", null, body.error || "参加リンクが正しくありません");
       renderScheduledStatus(body.status, body.roomCode);
@@ -1154,7 +1154,7 @@
     if (entryHomeLink) entryHomeLink.hidden = true;
     if (roomLabel) roomLabel.hidden = true;
     if (roomInput) roomInput.style.display = "none";
-    showCourseLabel("clacel");
+    showCourseLabel(scheduledCourse);
     setScheduledInputsVisible(false);
     pollScheduledEntry();
     scheduledPollId = setInterval(pollScheduledEntry, 3000);

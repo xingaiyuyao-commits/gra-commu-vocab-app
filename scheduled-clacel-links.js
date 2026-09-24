@@ -2,6 +2,7 @@ const { createHmac, timingSafeEqual } = require("node:crypto");
 
 const SCHEDULE_START_DATE = "2026-09-14";
 const SCHEDULE_END_DATE = "2026-09-30";
+const SCHEDULED_COURSES = Object.freeze(["clacel", "toeic", "ielts"]);
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 function listScheduledDates() {
@@ -16,16 +17,20 @@ function scheduledDateIsValid(date) {
     && date <= SCHEDULE_END_DATE;
 }
 
-function makeScheduledToken(date, secret) {
-  if (!scheduledDateIsValid(date) || !secret) return "";
+function scheduledCourseIsValid(course) {
+  return SCHEDULED_COURSES.includes(String(course || ""));
+}
+
+function makeScheduledToken(date, secret, course = "clacel") {
+  if (!scheduledDateIsValid(date) || !secret || !scheduledCourseIsValid(course)) return "";
   return createHmac("sha256", secret)
-    .update(`clacel:${date}:v1`)
+    .update(`${course}:${date}:v1`)
     .digest("base64url");
 }
 
-function verifyScheduledToken(date, token, secret) {
-  if (!scheduledDateIsValid(date) || typeof token !== "string" || !token || !secret) return false;
-  const expected = Buffer.from(makeScheduledToken(date, secret));
+function verifyScheduledToken(date, token, secret, course = "clacel") {
+  if (!scheduledDateIsValid(date) || !scheduledCourseIsValid(course) || typeof token !== "string" || !token || !secret) return false;
+  const expected = Buffer.from(makeScheduledToken(date, secret, course));
   const provided = Buffer.from(token);
   return expected.length === provided.length && timingSafeEqual(expected, provided);
 }
@@ -52,10 +57,12 @@ function scheduledDateState(date, now = new Date()) {
 module.exports = {
   SCHEDULE_START_DATE,
   SCHEDULE_END_DATE,
+  SCHEDULED_COURSES,
   listScheduledDates,
   makeScheduledToken,
   verifyScheduledToken,
   scheduledDateIsValid,
+  scheduledCourseIsValid,
   scheduledDateState,
   tokyoDateKey,
 };
