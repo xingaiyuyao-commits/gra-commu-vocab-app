@@ -98,6 +98,10 @@ function scheduledStatusUrl(baseUrl, date = TODAY, token = makeScheduledToken(da
   return `${baseUrl}/api/scheduled/clacel/${date}?token=${encodeURIComponent(token)}`;
 }
 
+function courseStatusUrl(baseUrl, course, date = TODAY, token = makeScheduledToken(date, LINK_SECRET, course)) {
+  return `${baseUrl}/api/scheduled/${course}/${date}?token=${encodeURIComponent(token)}`;
+}
+
 function makeStateFile(t) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), "osh-scheduled-clacel-"));
   const stateFile = path.join(directory, "quiz-rooms.json");
@@ -122,6 +126,16 @@ test("運営者だけが9月14日から30日までの固定参加URLを取得で
   assert.match(body.links[0].url, new RegExp(`^${baseUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}/quiz\\.html\\?`));
   assert.match(body.links[0].url, /mode=scheduled/);
   assert.match(body.links[0].url, /course=clacel/);
+
+  assert.equal((await fetch(`${baseUrl}/api/operator/scheduled-links`)).status, 401);
+  const allResponse = await fetch(`${baseUrl}/api/operator/scheduled-links`, { headers: { Cookie: cookie } });
+  assert.equal(allResponse.status, 200);
+  const allBody = await allResponse.json();
+  assert.deepEqual(Object.keys(allBody.courses), ["clacel", "toeic", "ielts"]);
+  for (const course of ["clacel", "toeic", "ielts"]) {
+    assert.equal(allBody.courses[course].length, 17);
+    assert.match(allBody.courses[course][10].url, new RegExp(`course=${course}`));
+  }
 });
 
 test("公開ステータスAPIは署名と東京日付を検証する", async (t) => {
@@ -188,12 +202,12 @@ test("当日のClacelルームは一度だけ固定URLへ紐づき、開始・�
   });
 });
 
-test("TOEICとIELTSは同じ日に通常どおり別ルームを作成できる", async (t) => {
+test("3コースは同じ日に固定URLへ別々のルームを紐づける", async (t) => {
   const stateFile = makeStateFile(t);
-  const { baseUrl } = await startServer(t, stateFile);
-  const cookie = await login(baseUrl);
-  const first = await connect(baseUrl, cookie);
-  const second = await connect(baseUrl, cookie);
+  const server = await startServer(t, stateFile);
+  const cookie = await login(server.baseUrl);
+  const first = await connect(server.baseUrl, cookie);
+  const second = await connect(server.baseUrl, cookie);
   t.after(() => { first.disconnect(); second.disconnect(); });
 
   const toeic = await emit(first, "quiz:createRoom", { category: "toeic", name: "T" });
@@ -201,6 +215,24 @@ test("TOEICとIELTSは同じ日に通常どおり別ルームを作成できる"
   assert.equal(toeic.error, undefined);
   assert.equal(ielts.error, undefined);
   assert.notEqual(toeic.roomCode, ielts.roomCode);
-  assert.equal(toeic.scheduledJoinUrl, undefined);
-  assert.equal(ielts.scheduledJoinUrl, undefined);
+  assert.match(toeic.scheduledJoinUrl, /course=toeic/);
+  assert.match(ielts.scheduledJoinUrl, /course=ielts/);
+  assert.deepEqual(await (await fetch(courseStatusUrl(server.baseUrl, "toeic"))).json(), {
+    status: "lobby", date: TODAY, roomCode: toeic.roomCode,
+  });
+  assert.deepEqual(await (await fetch(courseStatusUrl(server.baseUrl, "ielts"))).json(), {
+    status: "lobby", date: TODAY, roomCode: ielts.roomCode,
+  });
+  assert.equal((await fetch(courseStatusUrl(server.baseUrl, "toeic", TODAY, makeScheduledToken(TODAY, LINK_SECRET, "ielts")))).status, 403);
+
+  first.disconnect();
+  second.disconnect();
+  await stopServer(server.child);
+  const restarted = await startServer(t, stateFile);
+  assert.deepEqual(await (await fetch(courseStatusUrl(restarted.baseUrl, "toeic"))).json(), {
+    status: "lobby", date: TODAY, roomCode: toeic.roomCode,
+  });
+  assert.deepEqual(await (await fetch(courseStatusUrl(restarted.baseUrl, "ielts"))).json(), {
+    status: "lobby", date: TODAY, roomCode: ielts.roomCode,
+  });
 });

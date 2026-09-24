@@ -313,6 +313,23 @@ test("日付固定リンク: 開催前はClacelの待機案内だけを表示す
   assert.equal(emitted.some((entry) => entry.event === "quiz:joinRoom"), false);
 });
 
+test("日付固定リンク: TOEICとIELTSも各コースの公開APIと表示を使う", async () => {
+  for (const [course, label] of [["toeic", "TOEICコース"], ["ielts", "IELTSコース"]]) {
+    const requested = [];
+    const { window, document } = loadQuizPage({
+      url: `http://localhost/quiz.html?mode=scheduled&date=2026-09-24&course=${course}&token=${course}-token`,
+      fetchHandler: async (url) => {
+        requested.push(String(url));
+        return { status: 200, ok: true, json: async () => ({ status: "waiting", date: "2026-09-24" }) };
+      },
+    });
+    await new Promise((resolve) => window.setTimeout(resolve, 0));
+    assert.equal(requested[0], `/api/scheduled/${course}/2026-09-24?token=${course}-token`);
+    assert.equal(document.getElementById("join-course-name").textContent, label);
+    window.close();
+  }
+});
+
 test("日付固定リンク: 当日ロビーができたら名前入力を出し、取得したルームへ参加する", async () => {
   const { window, document, emitted } = loadQuizPage({
     url: "http://localhost/quiz.html?mode=scheduled&date=2026-09-14&course=clacel&token=signed-token",

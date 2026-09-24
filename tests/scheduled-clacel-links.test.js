@@ -28,6 +28,21 @@ test("Clacelの日付に対して再現可能な署名を作成する", () => {
   );
 });
 
+test("3コースで別々の再現可能な署名を作成しClacelの既存署名は変えない", () => {
+  const clacel = makeScheduledToken("2026-09-14", "test-secret", "clacel");
+  const toeic = makeScheduledToken("2026-09-14", "test-secret", "toeic");
+  const ielts = makeScheduledToken("2026-09-14", "test-secret", "ielts");
+
+  assert.equal(clacel, "b_O4MoWsASsHDP_-q6-14mlTciS26ark2sgdw-2yMa4");
+  assert.notEqual(toeic, clacel);
+  assert.notEqual(ielts, clacel);
+  assert.notEqual(toeic, ielts);
+  assert.equal(verifyScheduledToken("2026-09-14", toeic, "test-secret", "toeic"), true);
+  assert.equal(verifyScheduledToken("2026-09-14", ielts, "test-secret", "ielts"), true);
+  assert.equal(verifyScheduledToken("2026-09-14", toeic, "test-secret", "ielts"), false);
+  assert.equal(makeScheduledToken("2026-09-14", "test-secret", "unknown"), "");
+});
+
 test("正しい署名だけを受理し日付・署名・対象範囲の改変を拒否する", () => {
   const token = "b_O4MoWsASsHDP_-q6-14mlTciS26ark2sgdw-2yMa4";
   assert.equal(verifyScheduledToken("2026-09-14", token, "test-secret"), true);
