@@ -23,6 +23,14 @@ Production URL: https://gra-commu-vocab-test-production-77e7.up.railway.app/
 
 To rotate the password, repeat these steps with a newly generated value. Rotation invalidates existing results-history sessions, so log in again and confirm the old value no longer works. If the variable is absent, all `/api/results-history` endpoints intentionally return 503.
 
+## Read-only participation counts feed
+
+Set a strong, unique `PARTICIPATION_REPORT_TOKEN` as a Railway service variable. Keep it separate from `RESULTS_ADMIN_PASSWORD` and store it in the approved secret manager. Without this variable, the endpoint returns 503. Do not place the token in Git, a URL, a scheduled-task prompt, or logs.
+
+A client with this token can request `GET /api/participation-counts?month=YYYY-MM` using the `Authorization: Bearer <token>` header. The response includes only `date`, `category`, and `participantCount` for each completed date/course record; it does not include names, scores, or question data. An invalid or absent token returns 401. Rotate the token by updating the Railway variable and any client secret store together.
+
+After deployment, verify an unauthorized request returns 401, an authorized request returns the expected counts, and `/healthz` remains healthy. This endpoint is meant for a server-side scheduled client that can keep the token secret. Do not put the token in browser JavaScript.
+
 ## Shared operator password
 
 `OPERATOR_PASSWORD` is required for creating and controlling rooms. Keep it separate from `RESULTS_ADMIN_PASSWORD`, and never put its value in Git, screenshots, command output, or public messages.
