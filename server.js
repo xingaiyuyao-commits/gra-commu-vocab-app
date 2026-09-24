@@ -1295,6 +1295,41 @@ app.get("/api/participation-counts", (req, res) => {
   res.json(records);
 });
 
+// Human-readable view of the same public aggregate data for scheduled reports.
+app.get("/participation-counts.html", (req, res) => {
+  res.set("Cache-Control", "no-store");
+  if (quizPersistenceHealth.restoreFailed || !quizPersistenceHealth.ready) {
+    return res.status(503).type("text/plain").send("参加人数を取得できません");
+  }
+  const month = String(req.query.month || "");
+  if (!validHistoryMonth(month)) {
+    return res.status(400).type("text/plain").send("monthはYYYY-MM形式で指定してください");
+  }
+  const rows = Object.values(resultHistory)
+    .filter((record) => record && /^\\d{4}-\\d{2}-\\d{2}$/.test(String(record.date || ""))
+      && String(record.date).startsWith(`${month}-`)
+      && QUIZ_CATEGORIES.includes(record.category))
+    .map((record) => {
+      const count = Number(record.participantCount);
+      return {
+        date: String(record.date),
+        category: String(record.category),
+        count: Number.isFinite(count) ? Math.max(0, Math.trunc(count)) : 0,
+      };
+    })
+    .sort((a, b) => a.date.localeCompare(b.date) || a.category.localeCompare(b.category));
+  const body = rows.map((row) => `<tr><td>${row.date}</td><td>${QUIZ_CATEGORY_LABELS[row.category]}</td><td>${row.count}</td></tr>`).join("");
+  res.type("html").send(`<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>単語チャレンジ参加人数 ${month}</title>
+<style>body{font:16px system-ui,sans-serif;max-width:720px;margin:2rem auto;padding:0 1rem;color:#17324d}
+table{border-collapse:collapse;width:100%}th,td{padding:.6rem;border-bottom:1px solid #ccd8e2;text-align:left}
+th:last-child,td:last-child{text-align:right}</style></head><body>
+<h1>単語チャレンジ参加人数</h1><p>${month}・サイト回答数。Zoom参加人数とは別の指標です。</p>
+<table><thead><tr><th>日付</th><th>コース</th><th>参加人数</th></tr></thead><tbody>${body}</tbody></table>
+</body></html>`);
+});
+
 app.get("/api/results-history", requireResultsHistoryAuth, (req, res) => {
   const month = String(req.query.month || "");
   if (!validHistoryMonth(month)) return res.status(400).json({ error: "monthはYYYY-MM形式で指定してください" });
