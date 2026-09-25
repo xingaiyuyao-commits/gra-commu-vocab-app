@@ -1318,16 +1318,73 @@ app.get("/participation-counts.html", (req, res) => {
       };
     })
     .sort((a, b) => a.date.localeCompare(b.date) || a.category.localeCompare(b.category));
-  const body = rows.map((row) => `<tr><td>${row.date}</td><td>${QUIZ_CATEGORY_LABELS[row.category]}</td><td>${row.count}</td></tr>`).join("");
+  // Keep the public view limited to the already published aggregate counts.
+  const byDate = new Map();
+  for (const row of rows) {
+    if (!byDate.has(row.date)) byDate.set(row.date, { date: row.date, clacel: null, toeic: null, ielts: null });
+    byDate.get(row.date)[row.category] = row.count;
+  }
+  const days = [...byDate.values()].sort((a, b) => b.date.localeCompare(a.date))
+    .map((day) => ({ ...day, total: ["clacel", "toeic", "ielts"].reduce((sum, category) => sum + (day[category] ?? 0), 0) }));
+  const latest = days[0];
+  const recent = days.slice(0, 7);
+  const prior = days.slice(7, 14);
+  const average = (items) => items.length
+    ? Math.round(items.reduce((sum, day) => sum + day.total, 0) / items.length * 10) / 10 : null;
+  const recentAverage = average(recent);
+  const priorAverage = average(prior);
+  const change = priorAverage === null ? "比較対象なし"
+    : (recentAverage >= priorAverage ? "+" : "") + (recentAverage - priorAverage).toFixed(1) + "人/日";
+  const courseCell = (count) => count === null ? '<span class="missing">—</span>' : count.toLocaleString("ja-JP");
+  const body = days.map((day, index) => {
+    const bar = ["clacel", "toeic", "ielts"].map((category) => {
+      const value = day[category] ?? 0;
+      return value ? '<span class="segment ' + category + '" style="width:' + (value / day.total * 100).toFixed(2)
+        + '%" title="' + QUIZ_CATEGORY_LABELS[category] + " " + value + '人"></span>' : "";
+    }).join("");
+    return '<tr' + (index === 0 ? ' class="latest"' : "") + '><th scope="row">' + day.date.slice(5).replace("-", "/")
+      + (index === 0 ? '<small>最新</small>' : "") + '</th><td class="total">' + day.total.toLocaleString("ja-JP")
+      + '</td><td>' + courseCell(day.clacel) + '</td><td>' + courseCell(day.toeic)
+      + '</td><td>' + courseCell(day.ielts) + '</td><td class="breakdown"><div class="bar" role="img" aria-label="Clacel '
+      + courseCell(day.clacel).replace(/<[^>]*>/g, "") + '人、TOEIC '
+      + courseCell(day.toeic).replace(/<[^>]*>/g, "") + '人、IELTS '
+      + courseCell(day.ielts).replace(/<[^>]*>/g, "") + '人">' + bar + '</div></td></tr>';
+  }).join("");
   res.type("html").send(`<!doctype html><html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>単語チャレンジ参加人数 ${month}</title>
-<style>body{font:16px system-ui,sans-serif;max-width:720px;margin:2rem auto;padding:0 1rem;color:#17324d}
-table{border-collapse:collapse;width:100%}th,td{padding:.6rem;border-bottom:1px solid #ccd8e2;text-align:left}
-th:last-child,td:last-child{text-align:right}</style></head><body>
-<h1>単語チャレンジ参加人数</h1><p>${month}・サイト回答数。Zoom参加人数とは別の指標です。</p>
-<table><thead><tr><th>日付</th><th>コース</th><th>参加人数</th></tr></thead><tbody>${body}</tbody></table>
-</body></html>`);
+<style>
+:root{color-scheme:light}*{box-sizing:border-box}body{font:16px system-ui,-apple-system,sans-serif;background:#f4f8fc;color:#17324d;margin:0}
+main{max-width:1080px;margin:0 auto;padding:32px 20px 64px}h1{font-size:clamp(1.45rem,4vw,2rem);margin:0 0 8px}p{line-height:1.6}
+.subtitle{color:#536b83;margin:0 0 24px}.summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:20px}
+.card{background:#fff;border:1px solid #dce7f2;border-radius:16px;padding:16px;box-shadow:0 3px 12px #183c6010}
+.card span{display:block;color:#536b83;font-size:.83rem}.card strong{display:block;font-size:clamp(1.3rem,3vw,2rem);margin:5px 0}
+.card small,.note{font-size:.78rem;color:#60758a}.table-wrap{overflow-x:auto;background:#fff;border:1px solid #dce7f2;border-radius:16px}
+table{border-collapse:collapse;width:100%;min-width:650px;font-variant-numeric:tabular-nums}caption{text-align:left;font-weight:700;padding:17px 18px}
+th,td{padding:12px 13px;border-top:1px solid #e9eff5;text-align:right;white-space:nowrap}
+thead th{background:#eaf2fa;font-size:.85rem;color:#36516b}th:first-child{text-align:left}tbody th{font-weight:600}
+tbody tr.latest{background:#f0f7ff}.total{font-size:1.18rem;font-weight:800;color:#123e6c}
+tbody th small{display:inline-block;margin-left:6px;color:#1261aa;font-size:.68rem}.breakdown{width:25%;min-width:130px}
+.bar{height:14px;display:flex;overflow:hidden;border-radius:9px;background:#e9eef4}.segment{height:100%}
+.clacel{background:#3182ce}.toeic{background:#26a69a}.ielts{background:#edaa42}.missing{color:#9aabb9}
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin:12px 2px;color:#4b6277;font-size:.83rem}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px}
+@media(max-width:600px){main{padding:24px 12px 48px}.summary{grid-template-columns:1fr 1fr}.card{padding:12px}.card strong{font-size:1.45rem}}
+</style></head><body><main>
+<h1>単語チャレンジ参加人数</h1>
+<p class="subtitle">${month}｜サイト回答数（Zoom参加人数とは別）</p>
+<section class="summary" aria-label="参加状況の概要">
+<div class="card"><span>最新 ${latest ? latest.date : "記録なし"}</span><strong>${latest ? latest.total.toLocaleString("ja-JP") + "人" : "—"}</strong><small>3コースの合計</small></div>
+<div class="card"><span>直近${recent.length}日平均</span><strong>${recentAverage === null ? "—" : recentAverage + "人"}</strong><small>記録がある日だけで計算</small></div>
+<div class="card"><span>直前${prior.length}日との平均差</span><strong>${change}</strong><small>各期間の記録日で比較</small></div>
+</section>
+<div class="table-wrap"><table><caption>日別の合計とコース内訳（新しい日付順）</caption>
+<thead><tr><th scope="col">日付</th><th scope="col">合計</th><th scope="col">Clacel</th><th scope="col">TOEIC</th><th scope="col">IELTS</th><th scope="col">内訳の比率</th></tr></thead>
+<tbody>${body || '<tr><td colspan="6">この月の記録はまだありません</td></tr>'}</tbody></table></div>
+<div class="legend"><span><i class="clacel"></i>Clacel</span><span><i class="toeic"></i>TOEIC</span><span><i class="ielts"></i>IELTS</span></div>
+<p class="note">「—」は記録なしです。合計は記録のあるコースの人数を足した値です。直近7日平均は記録がある日を新しい順に7日選んで計算しています。</p>
+</main></body></html>`);
+
 });
 
 app.get("/api/results-history", requireResultsHistoryAuth, (req, res) => {
