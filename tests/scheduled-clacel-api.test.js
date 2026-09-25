@@ -236,3 +236,61 @@ test("3コースは同じ日に固定URLへ別々のルームを紐づける", a
     status: "lobby", date: TODAY, roomCode: ielts.roomCode,
   });
 });
+
+test("運営者は終了済みの当日ルームだけを固定URLを変えずに作り直せる", async (t) => {
+  const stateFile = makeStateFile(t);
+  const server = await startServer(t, stateFile);
+  const cookie = await login(server.baseUrl);
+  const anonymous = await connect(server.baseUrl);
+  const host = await connect(server.baseUrl, cookie);
+  t.after(() => { anonymous.disconnect(); host.disconnect(); });
+
+  for (const course of ["clacel", "toeic", "ielts"]) {
+    const token = makeScheduledToken(TODAY, LINK_SECRET, course);
+    const fixedUrl = `${server.baseUrl}/quiz.html?mode=scheduled&date=${TODAY}&course=${course}&token=${encodeURIComponent(token)}`;
+    const created = await emit(host, "quiz:createRoom", { category: course, name: "ホスト" });
+    assert.equal(created.scheduledJoinUrl, fixedUrl);
+    assert.deepEqual(await emit(host, "quiz:leave"), { ok: true });
+
+    const finished = await emit(host, "quiz:createRoom", { category: course, name: "ホスト" });
+    assert.equal(finished.code, "scheduled_finished");
+    assert.match(finished.error, /終了しています/);
+    assert.deepEqual(await emit(anonymous, "quiz:resetScheduledRoom", { category: course }), {
+      ok: false,
+      error: "運営者認証が必要です",
+    });
+
+    assert.deepEqual(await emit(host, "quiz:resetScheduledRoom", { category: course }), { ok: true });
+    assert.deepEqual(await (await fetch(courseStatusUrl(server.baseUrl, course))).json(), {
+      status: "waiting", date: TODAY,
+    });
+
+    const recreated = await emit(host, "quiz:createRoom", { category: course, name: "ホスト" });
+    assert.equal(recreated.error, undefined);
+    assert.notEqual(recreated.roomCode, created.roomCode);
+    assert.equal(recreated.scheduledJoinUrl, fixedUrl);
+    assert.deepEqual(await emit(host, "quiz:leave"), { ok: true });
+  }
+});
+
+test("当日ルームが終了済みでない場合は作り直し状態へ戻さない", async (t) => {
+  const stateFile = makeStateFile(t);
+  const server = await startServer(t, stateFile);
+  const cookie = await login(server.baseUrl);
+  const host = await connect(server.baseUrl, cookie);
+  t.after(() => host.disconnect());
+
+  assert.deepEqual(await emit(host, "quiz:resetScheduledRoom", { category: "clacel" }), {
+    ok: false,
+    error: "本日のClacelルームは終了していません",
+  });
+  const created = await emit(host, "quiz:createRoom", { category: "clacel", name: "ホスト" });
+  assert.equal(created.error, undefined);
+  assert.deepEqual(await emit(host, "quiz:resetScheduledRoom", { category: "clacel" }), {
+    ok: false,
+    error: "本日のClacelルームは終了していません",
+  });
+  assert.deepEqual(await (await fetch(scheduledStatusUrl(server.baseUrl))).json(), {
+    status: "lobby", date: TODAY, roomCode: created.roomCode,
+  });
+});

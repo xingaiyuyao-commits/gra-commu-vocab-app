@@ -610,6 +610,52 @@ test("参加・作成画面: 名前を入力してから作成ボタンを押す
   assert.equal(document.getElementById("mh-clacel-lobby").hidden, false);
 });
 
+test("ホスト画面: 終了済みの当日ルームは確認後に固定リンクのまま作り直せる", () => {
+  const { window, document, fakeSockets } = loadQuizPage();
+  setValue(window, document.getElementById("name"), "ホスト太郎");
+  document.getElementById("mh-clacel-create").dispatchEvent(new window.Event("click", { bubbles: true }));
+
+  const socket = fakeSockets[1];
+  const firstCreate = socket.emitted.find((entry) => entry.event === "quiz:createRoom");
+  firstCreate.cb({
+    error: "本日のClacelルームは終了しています",
+    code: "scheduled_finished",
+  });
+
+  const resetButton = document.getElementById("mh-clacel-reset");
+  assertVisible(resetButton, "作り直しボタン");
+  resetButton.dispatchEvent(new window.Event("click", { bubbles: true }));
+  assert.equal(document.getElementById("action-confirm").hidden, false);
+  assert.match(document.getElementById("action-confirm-message").textContent, /配布済みの参加リンクは変わりません/);
+  assert.equal(document.getElementById("action-confirm-ok").textContent, "作り直す");
+
+  document.getElementById("action-confirm-ok").dispatchEvent(new window.Event("click", { bubbles: true }));
+  const resetCall = socket.emitted.find((entry) => entry.event === "quiz:resetScheduledRoom");
+  assert.equal(resetCall.payload.category, "clacel");
+  resetCall.cb({ ok: true });
+
+  const createCalls = socket.emitted.filter((entry) => entry.event === "quiz:createRoom");
+  assert.equal(createCalls.length, 2, "解除後にルームを自動で作り直す");
+  createCalls[1].cb({
+    roomCode: "NEWW",
+    isHost: true,
+    category: "clacel",
+    playerId: "host2",
+    sessionToken: "token2",
+    seriesNames: ["Day 12"],
+    selectedSeriesIndex: 0,
+    scheduledJoinUrl: "https://example.test/quiz.html?mode=scheduled&date=2026-09-25&course=clacel&token=fixed",
+  });
+
+  assert.equal(resetButton.hidden, true);
+  assert.equal(document.getElementById("mh-clacel-error").textContent, "");
+  assert.equal(
+    document.getElementById("mh-clacel-join-url").textContent,
+    "https://example.test/quiz.html?mode=scheduled&date=2026-09-25&course=clacel&token=fixed",
+  );
+  assert.equal(document.getElementById("mh-clacel-lobby").hidden, false);
+});
+
 test("ホスト画面: Clacelは日付固定URLを表示し、TOEICは従来URLを表示する", () => {
   const { window, document, fakeSockets } = loadQuizPage({ url: "http://localhost/quiz.html?mode=create" });
   setValue(window, document.getElementById("name"), "ホスト");

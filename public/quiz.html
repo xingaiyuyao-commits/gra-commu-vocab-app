@@ -338,6 +338,7 @@
         <div class="mh-panel" id="mh-clacel">
           <div class="mh-panel-head">Clacel</div>
           <button id="mh-clacel-create" class="mh-create-btn">Clacelのルームを作成</button>
+          <button id="mh-clacel-reset" class="secondary" hidden>今日のルームを作り直す</button>
           <p class="error" id="mh-clacel-error" role="alert"></p>
           <div id="mh-clacel-lobby" hidden>
             <div class="join-share" id="mh-clacel-share" hidden>
@@ -372,6 +373,7 @@
         <div class="mh-panel" id="mh-toeic">
           <div class="mh-panel-head">TOEIC</div>
           <button id="mh-toeic-create" class="mh-create-btn">TOEICのルームを作成</button>
+          <button id="mh-toeic-reset" class="secondary" hidden>今日のルームを作り直す</button>
           <p class="error" id="mh-toeic-error" role="alert"></p>
           <div id="mh-toeic-lobby" hidden>
             <div class="join-share" id="mh-toeic-share" hidden>
@@ -406,6 +408,7 @@
         <div class="mh-panel" id="mh-ielts">
           <div class="mh-panel-head">IELTS</div>
           <button id="mh-ielts-create" class="mh-create-btn">IELTSのルームを作成</button>
+          <button id="mh-ielts-reset" class="secondary" hidden>今日のルームを作り直す</button>
           <p class="error" id="mh-ielts-error" role="alert"></p>
           <div id="mh-ielts-lobby" hidden>
             <div class="join-share" id="mh-ielts-share" hidden>
@@ -1290,6 +1293,7 @@
       $(`mh-${category}-${p}`).hidden = p !== phase;
     });
     $(`mh-${category}-create`).hidden = phase !== "idle";
+    if (phase !== "idle") $(`mh-${category}-reset`).hidden = true;
     $(`mh-${category}-close`).hidden = phase === "idle";
   }
 
@@ -1450,17 +1454,23 @@
       players: [],
     };
 
-    $(`mh-${category}-create`).addEventListener("click", () => {
+    function createRoom() {
       if (mh[category].phase !== "idle") return;
       const name = $("name").value.trim();
       if (!name) return ($("entry-error").textContent = "名前を入力してください");
       $("entry-error").textContent = "";
       $(`mh-${category}-error`).textContent = "";
+      $(`mh-${category}-reset`).hidden = true;
 
       const s = mhOpenSocket(category);
 
       s.emit("quiz:createRoom", { category, name }, (res) => {
-        if (res.error) { $(`mh-${category}-error`).textContent = res.error; return; }
+        if (res.error) {
+          $(`mh-${category}-error`).textContent = res.error;
+          $(`mh-${category}-reset`).hidden = res.code !== "scheduled_finished";
+          return;
+        }
+        $(`mh-${category}-reset`).hidden = true;
         mh[category].roomCode = res.roomCode;
         mh[category].playerId = res.playerId;
         mh[category].sessionToken = res.sessionToken;
@@ -1473,7 +1483,28 @@
         mhRenderPlayers(category, [{ name, submitted: false }]);
         mhShow(category, "lobby");
       });
+    }
 
+    $(`mh-${category}-create`).addEventListener("click", createRoom);
+
+    $(`mh-${category}-reset`).addEventListener("click", () => {
+      const course = CATEGORY_LABEL[category];
+      openActionConfirm(
+        `終了済みの本日の${course}ルームを作り直します。配布済みの参加リンクは変わりません。`,
+        () => {
+          const s = mhOpenSocket(category);
+          s.emit("quiz:resetScheduledRoom", { category }, (res) => {
+            if (!res?.ok) {
+              $(`mh-${category}-error`).textContent = res?.error || "ルームを作り直せませんでした";
+              return;
+            }
+            $(`mh-${category}-error`).textContent = "";
+            $(`mh-${category}-reset`).hidden = true;
+            createRoom();
+          });
+        },
+        { title: "当日ルームの作り直し", confirmLabel: "作り直す" }
+      );
     });
 
     $(`mh-${category}-player-filter`).addEventListener("input", () => mhRenderFilteredPlayers(category));

@@ -1859,6 +1859,26 @@ function quizFinalizePlayerLeave(roomCode, playerId) {
 }
 
 io.on("connection", (socket) => {
+  socket.on("quiz:resetScheduledRoom", ({ category } = {}, cb = () => {}) => {
+    if (!socketOperatorIsAuthenticated(socket)) return rejectOperatorAction(cb);
+    if (!SCHEDULED_COURSES.includes(category)) return cb({ ok: false, error: "カテゴリが不正です" });
+    const resetNow = quizResultNow();
+    const currentTokyoDate = tokyoDateKey(resetNow);
+    const label = QUIZ_CATEGORY_LABELS[category];
+    if (!SCHEDULE_LINK_SECRET || scheduledDateState(currentTokyoDate, resetNow) !== "today") {
+      return cb({ ok: false, error: `本日の${label}ルームは作り直せません` });
+    }
+    const scheduledEvent = scheduledEventsByCourse[category][currentTokyoDate];
+    if (scheduledEvent?.status !== "finished") {
+      return cb({ ok: false, error: `本日の${label}ルームは終了していません` });
+    }
+    const saved = persistQuizMutation(null, () => {
+      delete scheduledEventsByCourse[category][currentTokyoDate];
+    });
+    if (!saved) return cb({ ok: false, error: QUIZ_PERSISTENCE_ERROR });
+    cb({ ok: true });
+  });
+
   socket.on("quiz:createRoom", ({ category, name } = {}, cb = () => {}) => {
     if (!socketOperatorIsAuthenticated(socket)) return rejectOperatorAction(cb);
     if (!QUIZ_CATEGORIES.includes(category)) return cb({ error: "カテゴリが不正です" });
@@ -1893,7 +1913,10 @@ io.on("connection", (socket) => {
       return quizPlayersUpdate(existingScheduled.roomCode);
     }
     if (existingScheduled?.status === "finished") {
-      return cb({ error: `本日の${QUIZ_CATEGORY_LABELS[category]}ルームは終了しています` });
+      return cb({
+        error: `本日の${QUIZ_CATEGORY_LABELS[category]}ルームは終了しています`,
+        code: "scheduled_finished",
+      });
     }
     const roomCode = makeQuizRoomCode();
     const newRoom = {
