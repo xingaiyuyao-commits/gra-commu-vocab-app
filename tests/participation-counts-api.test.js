@@ -73,8 +73,10 @@ test("public attendance feed returns counts only", async (t) => {
   const view = await fetch(`${baseUrl}/participation-counts.html?month=2026-09`);
   assert.equal(view.status, 200);
   const html = await view.text();
-  assert.ok(html.includes("<td>2026-09-24</td><td>Clacel</td><td>28</td>"));
-  assert.ok(html.includes("<td>2026-09-24</td><td>TOEIC</td><td>20</td>"));
+  assert.ok(html.includes('<th scope="row">09/24<small>最新</small></th><td class="total">48</td><td>28</td><td>20</td>'));
+  assert.ok(html.includes('<strong>48人</strong>'));
+  assert.ok(html.includes('Clacel 28人、TOEIC 20人、IELTS —人'));
+  assert.ok(html.includes("直近1日平均"));
   assert.equal(html.includes("private"), false);
   assert.equal((await fetch(`${baseUrl}/participation-counts.html?month=2026-13`)).status, 400);
 });
