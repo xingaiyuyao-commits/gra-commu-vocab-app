@@ -23,6 +23,12 @@ Production URL: https://gra-commu-vocab-test-production-77e7.up.railway.app/
 
 To rotate the password, repeat these steps with a newly generated value. Rotation invalidates existing results-history sessions, so log in again and confirm the old value no longer works. If the variable is absent, all `/api/results-history` endpoints intentionally return 503.
 
+## Public participation counts feed
+
+`GET /api/participation-counts?month=YYYY-MM` returns only `date`, `category`, and `participantCount` for each completed date/course record. This aggregate feed is public to enable scheduled reports. It does not include participant names, scores, question data, or results-history credentials. The existing `/api/results-history` endpoints remain password protected. The same counts are available as a readable table at `/participation-counts.html?month=YYYY-MM` for scheduled readers.
+
+After deployment, confirm the response contains only the three approved fields, the count for a known date matches the private results-history screen, invalid months return 400, and `/healthz` remains healthy. If saved quiz history cannot be restored, the feed returns 503 rather than a misleading empty report.
+
 ## Shared operator password
 
 `OPERATOR_PASSWORD` is required for creating and controlling rooms. Keep it separate from `RESULTS_ADMIN_PASSWORD`, and never put its value in Git, screenshots, command output, or public messages.
