@@ -1330,7 +1330,7 @@ app.get("/participation-counts.html", (req, res) => {
   const recent = days.slice(0, 7);
   const prior = days.slice(7, 14);
   const average = (items) => items.length
-    ? Math.round(items.reduce((sum, day) => sum + day.total, 0) / items.length * 10) / 10 : null;
+    ? items.reduce((sum, day) => sum + day.total, 0) / items.length : null;
   const recentAverage = average(recent);
   const priorAverage = average(prior);
   const change = priorAverage === null ? "比較対象なし"
@@ -1375,7 +1375,7 @@ tbody th small{display:inline-block;margin-left:6px;color:#1261aa;font-size:.68r
 <p class="subtitle">${month}｜サイト回答数（Zoom参加人数とは別）</p>
 <section class="summary" aria-label="参加状況の概要">
 <div class="card"><span>最新 ${latest ? latest.date : "記録なし"}</span><strong>${latest ? latest.total.toLocaleString("ja-JP") + "人" : "—"}</strong><small>3コースの合計</small></div>
-<div class="card"><span>直近${recent.length}日平均</span><strong>${recentAverage === null ? "—" : recentAverage + "人"}</strong><small>記録がある日だけで計算</small></div>
+<div class="card"><span>直近${recent.length}日平均</span><strong>${recentAverage === null ? "—" : recentAverage.toFixed(1) + "人"}</strong><small>記録がある日だけで計算</small></div>
 <div class="card"><span>直前${prior.length}日との平均差</span><strong>${change}</strong><small>各期間の記録日で比較</small></div>
 </section>
 <div class="table-wrap"><table><caption>日別の合計とコース内訳（新しい日付順）</caption>
