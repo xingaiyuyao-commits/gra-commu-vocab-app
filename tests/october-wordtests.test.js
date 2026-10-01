@@ -57,3 +57,33 @@ test("10月1日・2日と10月4日〜9日は正本どおりのDay 26・27・29�
     }
   }
 });
+
+test("TOEIC・IELTS Day 26・27は確定PDFの問題文・意味・和訳を配信する", () => {
+  const findItem = (course, day, base) => {
+    const series = wordtests[course].series.find((entry) => entry.day === day);
+    return series.items.find((item) => item.base === base);
+  };
+
+  assert.deepEqual(findItem("toeic", 26, "transaction"), {
+    questionId: "2026-10/toeic/day26/q05",
+    sentence: "We need to monitor all ___, including smaller deals.",
+    answer: "transactions",
+    base: "transaction",
+    hint: "t__________",
+    ja: "取引",
+    sentenceJa: "小規模なものも含め、すべての取引を監視する必要がある。",
+  });
+  assert.equal(findItem("toeic", 26, "overhead").sentence, "Rent and utilities are part of our ___.");
+  assert.equal(findItem("toeic", 26, "economist").sentence, "Mr. Toledo is a former World Bank ___.");
+  assert.equal(findItem("toeic", 27, "traditionally").sentence, "___, the company's main markets have been Britain and the US.");
+  assert.equal(findItem("toeic", 27, "electronically").sentence, "The information is stored ___.");
+  assert.equal(findItem("toeic", 27, "drastically").ja, "大幅に、劇的に");
+
+  assert.equal(findItem("ielts", 26, "differential").sentence, "The policy had ___ effects on different age groups.");
+  assert.equal(findItem("ielts", 26, "evolutionary").ja, "進化の、漸進的な");
+  assert.equal(findItem("ielts", 26, "integral").sentence, "Trust is an ___ part of a strong relationship.");
+  assert.equal(findItem("ielts", 26, "oral").sentence, "The course includes an ___ examination.");
+  assert.equal(findItem("ielts", 27, "meanwhile").sentence, "My sister bought a car. ___, I'm renting one.");
+  assert.equal(findItem("ielts", 27, "meanwhile").sentenceJa, "姉は車を買いました。一方、私は車を借りています。");
+  assert.equal(findItem("ielts", 27, "overall").sentence, "___, the situation is good despite a few minor problems.");
+});
