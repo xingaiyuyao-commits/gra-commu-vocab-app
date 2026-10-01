@@ -1,13 +1,18 @@
 const { createHmac, timingSafeEqual } = require("node:crypto");
 
 const SCHEDULE_START_DATE = "2026-09-14";
-const SCHEDULE_END_DATE = "2026-09-30";
+const SCHEDULE_END_DATE = "2026-10-31";
 const SCHEDULED_COURSES = Object.freeze(["clacel", "toeic", "ielts"]);
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 function listScheduledDates() {
   const dates = [];
-  for (let day = 14; day <= 30; day += 1) dates.push(`2026-09-${String(day).padStart(2, "0")}`);
+  const current = new Date(`${SCHEDULE_START_DATE}T00:00:00.000Z`);
+  const end = new Date(`${SCHEDULE_END_DATE}T00:00:00.000Z`);
+  while (current <= end) {
+    dates.push(current.toISOString().slice(0, 10));
+    current.setUTCDate(current.getUTCDate() + 1);
+  }
   return dates;
 }
 

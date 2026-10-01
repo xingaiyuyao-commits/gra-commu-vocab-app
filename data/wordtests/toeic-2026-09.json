@@ -4093,6 +4093,378 @@
           "sentenceJa": "リモートワークは彼のライフスタイル全体を変えた。"
         }
       ]
+    },
+    {
+      "name": "Day 26",
+      "day": 26,
+      "items": [
+        {
+          "questionId": "2026-10/toeic/day26/q01",
+          "sentence": "The store sells a wide range of ___.",
+          "answer": "goods",
+          "base": "goods",
+          "hint": "g____",
+          "ja": "商品、品物",
+          "sentenceJa": "その店は幅広い商品を販売している。"
+        },
+        {
+          "questionId": "2026-10/toeic/day26/q02",
+          "sentence": "The company issued new ___ to raise capital.",
+          "answer": "equity",
+          "base": "equity",
+          "hint": "e_____",
+          "ja": "株式資本、公平",
+          "sentenceJa": "その会社は資金を調達するために新株を発行した。"
+        },
+        {
+          "questionId": "2026-10/toeic/day26/q03",
+          "sentence": "___ will be sent to shareholders.",
+          "answer": "Dividends",
+          "base": "dividend",
+          "hint": "d_______",
+          "ja": "配当金",
+          "sentenceJa": "配当金は株主に送金されます。"
+        },
+        {
+          "questionId": "2026-10/toeic/day26/q04",
+          "sentence": "The orchestra receives £2 million a year in ___ from companies.",
+          "answer": "sponsorship",
+          "base": "sponsorship",
+          "hint": "s__________",
+          "ja": "スポンサーシップ",
+          "sentenceJa": "同オーケストラは企業から年間200万ポンドのスポンサーを受けている。"
+        },
+        {
+          "questionId": "2026-10/toeic/day26/q05",
+          "sentence": "The report discusses ___.",
+          "answer": "transaction",
+          "base": "transaction",
+          "hint": "t__________",
+          "ja": "取引",
+          "sentenceJa": "その報告書は取引について扱っている。"
+        },
+        {
+          "questionId": "2026-10/toeic/day26/q06",
+          "sentence": "The report discusses ___.",
+          "answer": "hedge",
+          "base": "hedge",
+          "hint": "h____",
+          "ja": "生け垣",
+          "sentenceJa": "その報告書は生け垣について扱っている。"
+        },
+        {
+          "questionId": "2026-10/toeic/day26/q07",
+          "sentence": "We're willing to pay a ___ for the best location.",
+          "answer": "premium",
+          "base": "premium",
+          "hint": "p______",
+          "ja": "プレミアム",
+          "sentenceJa": "最高のロケーションのためには、喜んでプレミアムを支払います。"
+        },
+        {
+          "questionId": "2026-10/toeic/day26/q08",
+          "sentence": "The ___ of the crash reduced the car to a third of its original length.",
+          "answer": "impact",
+          "base": "impact",
+          "hint": "i_____",
+          "ja": "影響",
+          "sentenceJa": "衝突の衝撃で車は元の長さの3分の1に縮んでしまった。"
+        },
+        {
+          "questionId": "2026-10/toeic/day26/q09",
+          "sentence": "How long does it take for the chicks to grow to ___?",
+          "answer": "maturity",
+          "base": "maturity",
+          "hint": "m_______",
+          "ja": "成熟度",
+          "sentenceJa": "ヒナが大人になるまでどのくらいかかりますか？"
+        },
+        {
+          "questionId": "2026-10/toeic/day26/q10",
+          "sentence": "Mr Toledo is a former World Bank ___.",
+          "answer": "economist",
+          "base": "economist",
+          "hint": "e________",
+          "ja": "経済学者",
+          "sentenceJa": "トレド氏は元世界銀行のエコノミスト。"
+        },
+        {
+          "questionId": "2026-10/toeic/day26/q11",
+          "sentence": "How do you deal with all the attention from the ___?",
+          "answer": "media",
+          "base": "media",
+          "hint": "m____",
+          "ja": "メディア",
+          "sentenceJa": "メディアからの注目にどう対処していますか？"
+        },
+        {
+          "questionId": "2026-10/toeic/day26/q12",
+          "sentence": "There has been some unusual ___ in temperature this month.",
+          "answer": "variance",
+          "base": "variance",
+          "hint": "v_______",
+          "ja": "分散",
+          "sentenceJa": "今月は気温に異常な変化が見られます。"
+        },
+        {
+          "questionId": "2026-10/toeic/day26/q13",
+          "sentence": "The report discusses ___.",
+          "answer": "depreciation",
+          "base": "depreciation",
+          "hint": "d___________",
+          "ja": "減価償却費",
+          "sentenceJa": "その報告書は減価償却費について扱っている。"
+        },
+        {
+          "questionId": "2026-10/toeic/day26/q14",
+          "sentence": "The report discusses ___.",
+          "answer": "recession",
+          "base": "recession",
+          "hint": "r________",
+          "ja": "不況",
+          "sentenceJa": "その報告書は不況について扱っている。"
+        },
+        {
+          "questionId": "2026-10/toeic/day26/q15",
+          "sentence": "The report describes a ___ issue.",
+          "answer": "overhead",
+          "base": "overhead",
+          "hint": "o_______",
+          "ja": "オーバーヘッド",
+          "sentenceJa": "その報告書はオーバーヘッド問題を説明している。"
+        },
+        {
+          "questionId": "2026-10/toeic/day26/q16",
+          "sentence": "I need to change my pounds into ___.",
+          "answer": "euros",
+          "base": "euro",
+          "hint": "e___",
+          "ja": "ユーロ",
+          "sentenceJa": "ポンドをユーロに両替する必要があります。"
+        },
+        {
+          "questionId": "2026-10/toeic/day26/q17",
+          "sentence": "You can receive a home loan of up to 95 percent of the official ___ of the property.",
+          "answer": "valuation",
+          "base": "valuation",
+          "hint": "v________",
+          "ja": "評価",
+          "sentenceJa": "不動産の正式評価額の最大 95% までの住宅ローンを受け取ることができます。"
+        },
+        {
+          "questionId": "2026-10/toeic/day26/q18",
+          "sentence": "If you collect ten ___ from the newspaper, you can get a free beach towel.",
+          "answer": "coupons",
+          "base": "coupon",
+          "hint": "c_____",
+          "ja": "クーポン",
+          "sentenceJa": "新聞に載っているクーポンを10枚集めると、無料でビーチタオルがもらえます。"
+        },
+        {
+          "questionId": "2026-10/toeic/day26/q19",
+          "sentence": "The report describes a ___ issue.",
+          "answer": "subsidiary",
+          "base": "subsidiary",
+          "hint": "s_________",
+          "ja": "子会社",
+          "sentenceJa": "その報告書は子会社問題を説明している。"
+        },
+        {
+          "questionId": "2026-10/toeic/day26/q20",
+          "sentence": "The report discusses ___.",
+          "answer": "volatility",
+          "base": "volatility",
+          "hint": "v_________",
+          "ja": "ボラティリティ",
+          "sentenceJa": "その報告書はボラティリティについて扱っている。"
+        }
+      ]
+    },
+    {
+      "name": "Day 27",
+      "day": 27,
+      "items": [
+        {
+          "questionId": "2026-10/toeic/day27/q01",
+          "sentence": "The new policy affects small businesses ___.",
+          "answer": "economically",
+          "base": "economically",
+          "hint": "e___________",
+          "ja": "経済的に",
+          "sentenceJa": "その新しい方針は中小企業に経済的な影響を与える。"
+        },
+        {
+          "questionId": "2026-10/toeic/day27/q02",
+          "sentence": "This offer is available ___ to members.",
+          "answer": "exclusively",
+          "base": "exclusively",
+          "hint": "e__________",
+          "ja": "独占的に、限定で",
+          "sentenceJa": "このオファーは会員限定でご利用いただけます。"
+        },
+        {
+          "questionId": "2026-10/toeic/day27/q03",
+          "sentence": "The merger was ___ announced this morning.",
+          "answer": "officially",
+          "base": "officially",
+          "hint": "o_________",
+          "ja": "正式に",
+          "sentenceJa": "その合併は今朝、正式に発表された。"
+        },
+        {
+          "questionId": "2026-10/toeic/day27/q04",
+          "sentence": "The event was ___ organized this year.",
+          "answer": "poorly",
+          "base": "poorly",
+          "hint": "p_____",
+          "ja": "不十分に、下手に",
+          "sentenceJa": "そのイベントは今年、準備が不十分だった。"
+        },
+        {
+          "questionId": "2026-10/toeic/day27/q05",
+          "sentence": "He complained ___ about the delay.",
+          "answer": "loudly",
+          "base": "loudly",
+          "hint": "l_____",
+          "ja": "大声で",
+          "sentenceJa": "彼は遅延について大声で不満を言った。"
+        },
+        {
+          "questionId": "2026-10/toeic/day27/q06",
+          "sentence": "The company has ___ hired from local universities.",
+          "answer": "traditionally",
+          "base": "traditionally",
+          "hint": "t____________",
+          "ja": "伝統的に",
+          "sentenceJa": "その会社は伝統的に地元の大学から採用してきた。"
+        },
+        {
+          "questionId": "2026-10/toeic/day27/q07",
+          "sentence": "The new chairs let employees sit ___ all day.",
+          "answer": "comfortably",
+          "base": "comfortably",
+          "hint": "c__________",
+          "ja": "快適に",
+          "sentenceJa": "新しい椅子は従業員が一日中快適に座れるようにしている。"
+        },
+        {
+          "questionId": "2026-10/toeic/day27/q08",
+          "sentence": "All invoices are now submitted ___.",
+          "answer": "electronically",
+          "base": "electronically",
+          "hint": "e_____________",
+          "ja": "電子的に",
+          "sentenceJa": "全ての請求書は現在、電子的に提出されている。"
+        },
+        {
+          "questionId": "2026-10/toeic/day27/q09",
+          "sentence": "The flight was delayed, but they arrived on time ___.",
+          "answer": "anyhow",
+          "base": "anyhow",
+          "hint": "a_____",
+          "ja": "とにかく、それでも",
+          "sentenceJa": "フライトは遅れたが、それでも彼らは時間通りに到着した。"
+        },
+        {
+          "questionId": "2026-10/toeic/day27/q10",
+          "sentence": "Sales were ___ high this month.",
+          "answer": "unusually",
+          "base": "unusually",
+          "hint": "u________",
+          "ja": "異常に、いつになく",
+          "sentenceJa": "今月の売上は異常に高かった。"
+        },
+        {
+          "questionId": "2026-10/toeic/day27/q11",
+          "sentence": "___, the shipment arrived before the deadline.",
+          "answer": "Fortunately",
+          "base": "fortunately",
+          "hint": "f__________",
+          "ja": "幸いにも",
+          "sentenceJa": "幸いにも、その荷物は締め切り前に到着した。"
+        },
+        {
+          "questionId": "2026-10/toeic/day27/q12",
+          "sentence": "The new factory was designed to be ___ friendly.",
+          "answer": "environmentally",
+          "base": "environmentally",
+          "hint": "e______________",
+          "ja": "環境的に",
+          "sentenceJa": "その新しい工場は環境に優しく設計された。"
+        },
+        {
+          "questionId": "2026-10/toeic/day27/q13",
+          "sentence": "The staff ___ welcomed the new policy.",
+          "answer": "enthusiastically",
+          "base": "enthusiastically",
+          "hint": "e_______________",
+          "ja": "熱心に",
+          "sentenceJa": "スタッフはその新しい方針を熱心に歓迎した。"
+        },
+        {
+          "questionId": "2026-10/toeic/day27/q14",
+          "sentence": "The old branch was ___ closed last year.",
+          "answer": "permanently",
+          "base": "permanently",
+          "hint": "p__________",
+          "ja": "恒久的に",
+          "sentenceJa": "その古い支店は去年、恒久的に閉鎖された。"
+        },
+        {
+          "questionId": "2026-10/toeic/day27/q15",
+          "sentence": "The project was only ___ completed by the deadline.",
+          "answer": "partially",
+          "base": "partially",
+          "hint": "p________",
+          "ja": "部分的に",
+          "sentenceJa": "そのプロジェクトは締め切りまでに部分的にしか完了しなかった。"
+        },
+        {
+          "questionId": "2026-10/toeic/day27/q16",
+          "sentence": "Prices ___ increased after the shortage.",
+          "answer": "drastically",
+          "base": "drastically",
+          "hint": "d__________",
+          "ja": "急激に",
+          "sentenceJa": "その不足の後、価格は急激に上昇した。"
+        },
+        {
+          "questionId": "2026-10/toeic/day27/q17",
+          "sentence": "She is ___ looking for a new job.",
+          "answer": "actively",
+          "base": "actively",
+          "hint": "a_______",
+          "ja": "積極的に",
+          "sentenceJa": "彼女は積極的に新しい仕事を探している。"
+        },
+        {
+          "questionId": "2026-10/toeic/day27/q18",
+          "sentence": "The interviewer listened ___ to every answer.",
+          "answer": "intently",
+          "base": "intently",
+          "hint": "i_______",
+          "ja": "熱心に、じっと",
+          "sentenceJa": "面接官は一つ一つの回答に熱心に耳を傾けた。"
+        },
+        {
+          "questionId": "2026-10/toeic/day27/q19",
+          "sentence": "I ___ confirm my attendance at the meeting.",
+          "answer": "hereby",
+          "base": "hereby",
+          "hint": "h_____",
+          "ja": "ここに、これをもって",
+          "sentenceJa": "私はここに、会議への出席を確認いたします。"
+        },
+        {
+          "questionId": "2026-10/toeic/day27/q20",
+          "sentence": "The system ___ saves your work every five minutes.",
+          "answer": "automatically",
+          "base": "automatically",
+          "hint": "a____________",
+          "ja": "自動的に",
+          "sentenceJa": "そのシステムは5分ごとに自動的に作業内容を保存する。"
+        }
+      ]
     }
   ]
 }

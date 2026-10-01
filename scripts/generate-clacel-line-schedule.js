@@ -16,13 +16,14 @@ function buildScheduleRows({ baseUrl, secret }) {
     url.searchParams.set("date", date);
     url.searchParams.set("course", "clacel");
     url.searchParams.set("token", makeScheduledToken(date, secret));
-    const day = Number(date.slice(-2));
+    const month = Number(date.slice(5, 7));
+    const day = Number(date.slice(8, 10));
     return {
       date,
       weekday,
       scheduledAt: `${date} 19:00`,
       url: url.toString(),
-      message: `9月${day}日（${weekday}）のClacel単語テスト参加リンクです。\n19:30開始です。\n${url}`,
+      message: `${month}月${day}日（${weekday}）のClacel単語テスト参加リンクです。\n19:30開始です。\n${url}`,
     };
   });
 }
