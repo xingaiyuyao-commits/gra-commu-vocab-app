@@ -1517,8 +1517,10 @@ function rejectOperatorAction(cb, error = "運営者認証が必要です") {
 function quizAnswerMatches(q, submitted) {
   const mine = String(submitted || "").trim().toLowerCase();
   if (!mine) return false;
-  if (mine === q.answer) return true;
-  return Array.isArray(q.altAnswers) && q.altAnswers.includes(mine);
+  const answer = String(q.answer || "").trim().toLowerCase();
+  if (mine === answer) return true;
+  return Array.isArray(q.altAnswers)
+    && q.altAnswers.some((value) => mine === String(value || "").trim().toLowerCase());
 }
 
 function quizEditDistance(left, right) {
