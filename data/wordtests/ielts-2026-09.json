@@ -4465,6 +4465,1122 @@
           "sentenceJa": "その症状は時間とともに徐々に悪化した。"
         }
       ]
+    },
+    {
+      "name": "Day 29",
+      "day": 29,
+      "items": [
+        {
+          "questionId": "2026-10/ielts/day29/q01",
+          "sentence": "Astronomers ___ that the comet will reappear in 4000 years.",
+          "answer": "postulate",
+          "base": "postulate",
+          "hint": "p________",
+          "ja": "仮定する、提唱する",
+          "sentenceJa": "天文学者らは、この彗星は4000年後に再び現れると仮定している。"
+        },
+        {
+          "questionId": "2026-10/ielts/day29/q02",
+          "sentence": "Many policies pay out only on ___ items.",
+          "answer": "stipulated",
+          "base": "stipulate",
+          "hint": "s________",
+          "ja": "規定する、明記する",
+          "sentenceJa": "多くの保険では、規定された項目に対してのみ支払いが行われます。"
+        },
+        {
+          "questionId": "2026-10/ielts/day29/q03",
+          "sentence": "Reports that children had been hurt have not been ___.",
+          "answer": "substantiated",
+          "base": "substantiate",
+          "hint": "s___________",
+          "ja": "実証する、裏付ける",
+          "sentenceJa": "子どもたちが負傷したという報告は実証されていない。"
+        },
+        {
+          "questionId": "2026-10/ielts/day29/q04",
+          "sentence": "Recent research seems to ___ his theory.",
+          "answer": "corroborate",
+          "base": "corroborate",
+          "hint": "c__________",
+          "ja": "裏付ける、確証する",
+          "sentenceJa": "最近の研究は彼の理論を裏付けているようです。"
+        },
+        {
+          "questionId": "2026-10/ielts/day29/q05",
+          "sentence": "You can't really ___ a trend from such a small sample.",
+          "answer": "extrapolate",
+          "base": "extrapolate",
+          "hint": "e__________",
+          "ja": "推定する、外挿する",
+          "sentenceJa": "このような小さなサンプルから実際に傾向を推定することはできません。"
+        },
+        {
+          "questionId": "2026-10/ielts/day29/q06",
+          "sentence": "There are many vitamins that the body cannot ___ itself.",
+          "answer": "synthesize",
+          "base": "synthesize",
+          "hint": "s_________",
+          "ja": "統合する、合成する",
+          "sentenceJa": "ビタミンには体内で合成できないものがたくさんあります。"
+        },
+        {
+          "questionId": "2026-10/ielts/day29/q07",
+          "sentence": "The trade agreement was ___ with Congress’s approval of the bill.",
+          "answer": "formalized",
+          "base": "formalize",
+          "hint": "f________",
+          "ja": "正式なものにする",
+          "sentenceJa": "貿易協定は議会の法案承認により正式に成立した。"
+        },
+        {
+          "questionId": "2026-10/ielts/day29/q08",
+          "sentence": "The essential function of our organization is to ___ best banking practice.",
+          "answer": "codify",
+          "base": "codify",
+          "hint": "c_____",
+          "ja": "成文化する、体系化する",
+          "sentenceJa": "私たちの組織の役割は、最良の銀行業務を体系化することだ。"
+        },
+        {
+          "questionId": "2026-10/ielts/day29/q09",
+          "sentence": "The main characters are clearly ___ in the first chapter.",
+          "answer": "delineated",
+          "base": "delineate",
+          "hint": "d________",
+          "ja": "明確に示す、輪郭を描く",
+          "sentenceJa": "主要な登場人物は最初の章で明確に描写されています。"
+        },
+        {
+          "questionId": "2026-10/ielts/day29/q10",
+          "sentence": "The salesman ___ the features of the car.",
+          "answer": "enumerated",
+          "base": "enumerate",
+          "hint": "e________",
+          "ja": "列挙する",
+          "sentenceJa": "セールスマンは車の特徴を列挙した。"
+        },
+        {
+          "questionId": "2026-10/ielts/day29/q11",
+          "sentence": "American fashion is ___ by jeans and T-shirts.",
+          "answer": "exemplified",
+          "base": "exemplify",
+          "hint": "e________",
+          "ja": "例証する、典型となる",
+          "sentenceJa": "アメリカのファッションはジーンズとTシャツに代表されます。"
+        },
+        {
+          "questionId": "2026-10/ielts/day29/q12",
+          "sentence": "The students ___ their photos, saying why they are relevant.",
+          "answer": "annotate",
+          "base": "annotate",
+          "hint": "a_______",
+          "ja": "注釈をつける",
+          "sentenceJa": "生徒は写真に、その関連性を説明する注釈を付ける。"
+        },
+        {
+          "questionId": "2026-10/ielts/day29/q13",
+          "sentence": "The group makes music that ___ traditional pop categories.",
+          "answer": "transcends",
+          "base": "transcend",
+          "hint": "t________",
+          "ja": "超越する",
+          "sentenceJa": "このグループは伝統的なポップのカテゴリーを超えた音楽を制作しています。"
+        },
+        {
+          "questionId": "2026-10/ielts/day29/q14",
+          "sentence": "Falling unemployment was likely to ___ consumer confidence.",
+          "answer": "underpin",
+          "base": "underpin",
+          "hint": "u_______",
+          "ja": "支える、基礎となる",
+          "sentenceJa": "失業率の低下が消費者信頼感を下支えする可能性が高い。"
+        },
+        {
+          "questionId": "2026-10/ielts/day29/q15",
+          "sentence": "One of the organization's aims is to ___ information about the disease.",
+          "answer": "disseminate",
+          "base": "disseminate",
+          "hint": "d__________",
+          "ja": "広める、普及させる",
+          "sentenceJa": "この組織の目的の 1 つは、この病気に関する情報を広めることです。"
+        },
+        {
+          "questionId": "2026-10/ielts/day29/q16",
+          "sentence": "Increasing the supply of weapons will only ___ the violence and anarchy.",
+          "answer": "perpetuate",
+          "base": "perpetuate",
+          "hint": "p_________",
+          "ja": "永続させる",
+          "sentenceJa": "武器の供給を増やしても、暴力と無秩序を永続させるだけだ。"
+        },
+        {
+          "questionId": "2026-10/ielts/day29/q17",
+          "sentence": "Small businesses have ___ in the last ten years.",
+          "answer": "proliferated",
+          "base": "proliferate",
+          "hint": "p__________",
+          "ja": "急増する、増殖する",
+          "sentenceJa": "過去 10 年間で中小企業が急増しました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day29/q18",
+          "sentence": "It's difficult to ___ such different points of view.",
+          "answer": "reconcile",
+          "base": "reconcile",
+          "hint": "r________",
+          "ja": "和解させる、調和させる",
+          "sentenceJa": "このような異なる視点を調和させるのは困難です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day29/q19",
+          "sentence": "Are you ___ the evidence?",
+          "answer": "refuting",
+          "base": "refute",
+          "hint": "r_____",
+          "ja": "論駁する、反証する",
+          "sentenceJa": "その証拠を反証しているのですか。"
+        },
+        {
+          "questionId": "2026-10/ielts/day29/q20",
+          "sentence": "The government has ___ its refusal to compromise with terrorists.",
+          "answer": "reiterated",
+          "base": "reiterate",
+          "hint": "r________",
+          "ja": "繰り返し述べる",
+          "sentenceJa": "政府はテロリストとの妥協を拒否する姿勢を改めて表明した。"
+        }
+      ]
+    },
+    {
+      "name": "Day 30",
+      "day": 30,
+      "items": [
+        {
+          "questionId": "2026-10/ielts/day30/q01",
+          "sentence": "We must take action to ___ the tide of resignations.",
+          "answer": "stem",
+          "base": "stem",
+          "hint": "s___",
+          "ja": "生じる、由来する",
+          "sentenceJa": "辞任の流れを食い止めるために行動を起こさなければなりません。"
+        },
+        {
+          "questionId": "2026-10/ielts/day30/q02",
+          "sentence": "A foul smell of stale beer ___ the whole building.",
+          "answer": "permeated",
+          "base": "permeate",
+          "hint": "p_______",
+          "ja": "浸透する",
+          "sentenceJa": "建物全体に腐ったビールの悪臭が漂っていました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day30/q03",
+          "sentence": "The government will ___ new measures to combat terrorism.",
+          "answer": "instigate",
+          "base": "instigate",
+          "hint": "i________",
+          "ja": "扇動する、引き起こす",
+          "sentenceJa": "政府はテロリズムと闘うための新たな措置を講じるだろう。"
+        },
+        {
+          "questionId": "2026-10/ielts/day30/q04",
+          "sentence": "He called efforts to ___ medical marijuana \"despicable\".",
+          "answer": "legitimize",
+          "base": "legitimize",
+          "hint": "l_________",
+          "ja": "正当化する",
+          "sentenceJa": "彼は医療用マリファナを合法化する取り組みを「卑劣」と呼んだ。"
+        },
+        {
+          "questionId": "2026-10/ielts/day30/q05",
+          "sentence": "We need to ___ our use of the existing technology.",
+          "answer": "optimize",
+          "base": "optimize",
+          "hint": "o_______",
+          "ja": "最適化する",
+          "sentenceJa": "既存のテクノロジーの使用を最適化する必要があります。"
+        },
+        {
+          "questionId": "2026-10/ielts/day30/q06",
+          "sentence": "His vision is of a world that ___ through human connection rather than rules.",
+          "answer": "coheres",
+          "base": "cohere",
+          "hint": "c_____",
+          "ja": "まとまる、一貫する",
+          "sentenceJa": "彼が思い描くのは、規則ではなく人のつながりでまとまる世界だ。"
+        },
+        {
+          "questionId": "2026-10/ielts/day30/q07",
+          "sentence": "These new rules have ___ the tax system even further.",
+          "answer": "complicated",
+          "base": "complicate",
+          "hint": "c_________",
+          "ja": "複雑にする",
+          "sentenceJa": "これらの新しい規則は、税制をさらに複雑にしています。"
+        },
+        {
+          "questionId": "2026-10/ielts/day30/q08",
+          "sentence": "He had to ___ his speech when time ran out.",
+          "answer": "curtail",
+          "base": "curtail",
+          "hint": "c______",
+          "ja": "削減する、切り詰める",
+          "sentenceJa": "時間切れになったとき、彼はスピーチを短縮しなければなりませんでした。"
+        },
+        {
+          "questionId": "2026-10/ielts/day30/q09",
+          "sentence": "More fundamental economic problems may ___ last week’s stock market slide.",
+          "answer": "underlie",
+          "base": "underlie",
+          "hint": "u_______",
+          "ja": "根底にある",
+          "sentenceJa": "先週の株式市場の下落の根底には、より根本的な経済問題があるかもしれない。"
+        },
+        {
+          "questionId": "2026-10/ielts/day30/q10",
+          "sentence": "She ___ the stereotyped image that the British have of Americans.",
+          "answer": "encapsulates",
+          "base": "encapsulate",
+          "hint": "e__________",
+          "ja": "要約する、凝縮する",
+          "sentenceJa": "彼女は、イギリス人が抱く典型的なアメリカ人像を体現している。"
+        },
+        {
+          "questionId": "2026-10/ielts/day30/q11",
+          "sentence": "The company was criticized for failing to ___ risks at the plant.",
+          "answer": "mitigate",
+          "base": "mitigate",
+          "hint": "m_______",
+          "ja": "軽減する",
+          "sentenceJa": "同社は、プラントのリスクを軽減できなかったことで批判されました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day30/q12",
+          "sentence": "The medicine did nothing to ___ her discomfort.",
+          "answer": "alleviate",
+          "base": "alleviate",
+          "hint": "a________",
+          "ja": "緩和する",
+          "sentenceJa": "薬は彼女の不快感を和らげるのに何の効果もありませんでした。"
+        },
+        {
+          "questionId": "2026-10/ielts/day30/q13",
+          "sentence": "This attack will ___ the already tense relations between the two communities.",
+          "answer": "exacerbate",
+          "base": "exacerbate",
+          "hint": "e_________",
+          "ja": "悪化させる",
+          "sentenceJa": "この攻撃で、両地域間の緊張した関係はさらに悪化する。"
+        },
+        {
+          "questionId": "2026-10/ielts/day30/q14",
+          "sentence": "The tax must be adjusted upward to ___ inflation.",
+          "answer": "counteract",
+          "base": "counteract",
+          "hint": "c_________",
+          "ja": "中和する、対抗する",
+          "sentenceJa": "インフレに対抗するために、税金を上方に調整する必要があります。"
+        },
+        {
+          "questionId": "2026-10/ielts/day30/q15",
+          "sentence": "How do we ___ the alarming fall in stock market performance?",
+          "answer": "rectify",
+          "base": "rectify",
+          "hint": "r______",
+          "ja": "是正する、修正する",
+          "sentenceJa": "株式市場の急激な下落をどのように是正しますか？"
+        },
+        {
+          "questionId": "2026-10/ielts/day30/q16",
+          "sentence": "Online brokers let you ___ your holdings with one firm.",
+          "answer": "consolidate",
+          "base": "consolidate",
+          "hint": "c__________",
+          "ja": "統合する、強化する",
+          "sentenceJa": "オンラインブローカーを使用すると、持ち株を1つの会社に統合できます。"
+        },
+        {
+          "questionId": "2026-10/ielts/day30/q17",
+          "sentence": "___ management could save at least 15 percent in costs.",
+          "answer": "Streamlining",
+          "base": "streamline",
+          "hint": "s_________",
+          "ja": "効率化する",
+          "sentenceJa": "管理を合理化することで、少なくとも15 ％のコストを節約できます。"
+        },
+        {
+          "questionId": "2026-10/ielts/day30/q18",
+          "sentence": "The exhibition ___ Picasso's early drawings with some of his later works.",
+          "answer": "juxtaposes",
+          "base": "juxtapose",
+          "hint": "j________",
+          "ja": "並置する",
+          "sentenceJa": "その展覧会では、ピカソの初期の素描と後期の作品を並べて展示している。"
+        },
+        {
+          "questionId": "2026-10/ielts/day30/q19",
+          "sentence": "a ___ stick for measuring the amount of oil in an engine",
+          "answer": "calibrated",
+          "base": "calibrate",
+          "hint": "c________",
+          "ja": "調整する、較正する",
+          "sentenceJa": "エンジン内のオイル量を測定するための校正済みスティック"
+        },
+        {
+          "questionId": "2026-10/ielts/day30/q20",
+          "sentence": "I’ll have to ___ it because I didn’t get a chance to memorize it.",
+          "answer": "paraphrase",
+          "base": "paraphrase",
+          "hint": "p_________",
+          "ja": "言い換える",
+          "sentenceJa": "暗記する機会がなかったので、言い換えなければなりません。"
+        }
+      ]
+    },
+    {
+      "name": "Day 31",
+      "day": 31,
+      "items": [
+        {
+          "questionId": "2026-10/ielts/day31/q01",
+          "sentence": "The environmental ___ of this project will be enormous.",
+          "answer": "impact",
+          "base": "impact",
+          "hint": "i_____",
+          "ja": "影響",
+          "sentenceJa": "このプロジェクトの環境への影響は非常に大きいでしょう。"
+        },
+        {
+          "questionId": "2026-10/ielts/day31/q02",
+          "sentence": "Currency trading is usually the ___ of big banks.",
+          "answer": "domain",
+          "base": "domain",
+          "hint": "d_____",
+          "ja": "ドメイン",
+          "sentenceJa": "通貨取引は通常、大手銀行の領域です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day31/q03",
+          "sentence": "Words are ___ units that convey meaning.",
+          "answer": "semantic",
+          "base": "semantic",
+          "hint": "s_______",
+          "ja": "意味論的な",
+          "sentenceJa": "単語は、意味を伝える意味的な単位です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day31/q04",
+          "sentence": "This shirt still feels a bit ___.",
+          "answer": "damp",
+          "base": "damp",
+          "hint": "d___",
+          "ja": "湿った",
+          "sentenceJa": "このシャツはまだ少し湿っているように感じます。"
+        },
+        {
+          "questionId": "2026-10/ielts/day31/q05",
+          "sentence": "The thyroid gland ___ hormones that affect growth.",
+          "answer": "secretes",
+          "base": "secrete",
+          "hint": "s______",
+          "ja": "分泌する",
+          "sentenceJa": "甲状腺は、成長に影響を与えるホルモンを分泌します。"
+        },
+        {
+          "questionId": "2026-10/ielts/day31/q06",
+          "sentence": "The fossils lie embedded in a ___ of shale and sandstone.",
+          "answer": "matrix",
+          "base": "matrix",
+          "hint": "m_____",
+          "ja": "マトリックス",
+          "sentenceJa": "その化石は、頁岩と砂岩からなる母岩に埋まっている。"
+        },
+        {
+          "questionId": "2026-10/ielts/day31/q07",
+          "sentence": "These mental exercises are designed to break ___ thinking habits.",
+          "answer": "linear",
+          "base": "linear",
+          "hint": "l_____",
+          "ja": "線形",
+          "sentenceJa": "これらの練習は、直線的な思考習慣を崩すためのものだ。"
+        },
+        {
+          "questionId": "2026-10/ielts/day31/q08",
+          "sentence": "Learn how to draw a ___ of the equation.",
+          "answer": "graph",
+          "base": "graph",
+          "hint": "g____",
+          "ja": "グラフ",
+          "sentenceJa": "方程式のグラフを描く方法を学びます。"
+        },
+        {
+          "questionId": "2026-10/ielts/day31/q09",
+          "sentence": "I'm particularly interested in the ___ development of young children.",
+          "answer": "linguistic",
+          "base": "linguistic",
+          "hint": "l_________",
+          "ja": "言語的な",
+          "sentenceJa": "特に幼児の言語発達に興味があります。"
+        },
+        {
+          "questionId": "2026-10/ielts/day31/q10",
+          "sentence": "Vinegar is an ___.",
+          "answer": "acid",
+          "base": "acid",
+          "hint": "a___",
+          "ja": "酸",
+          "sentenceJa": "酢は酸です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day31/q11",
+          "sentence": "Light travels at the highest achievable ___ in the universe.",
+          "answer": "velocity",
+          "base": "velocity",
+          "hint": "v_______",
+          "ja": "速度",
+          "sentenceJa": "光は宇宙で達成可能な最高速度で移動します。"
+        },
+        {
+          "questionId": "2026-10/ielts/day31/q12",
+          "sentence": "During peak hours, the bus will run at 10-minute ___.",
+          "answer": "intervals",
+          "base": "interval",
+          "hint": "i_______",
+          "ja": "間隔",
+          "sentenceJa": "ピーク時には、バスは10分間隔で運行されます。"
+        },
+        {
+          "questionId": "2026-10/ielts/day31/q13",
+          "sentence": "He accused the media of \"dumbing down\" the political ___.",
+          "answer": "discourse",
+          "base": "discourse",
+          "hint": "d________",
+          "ja": "談話",
+          "sentenceJa": "彼はメディアが政治的言説を「馬鹿にしている」と非難した。"
+        },
+        {
+          "questionId": "2026-10/ielts/day31/q14",
+          "sentence": "Tax cuts are the classic ___ for a sluggish economy.",
+          "answer": "stimulus",
+          "base": "stimulus",
+          "hint": "s_______",
+          "ja": "刺激",
+          "sentenceJa": "減税は、景気低迷の典型的な刺激策です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day31/q15",
+          "sentence": "Momentum is a ___ quantity but inertia is not.",
+          "answer": "vector",
+          "base": "vector",
+          "hint": "v_____",
+          "ja": "ベクトル",
+          "sentenceJa": "運動量はベクトル量だが、慣性はそうではない。"
+        },
+        {
+          "questionId": "2026-10/ielts/day31/q16",
+          "sentence": "Cathode rays are ___ in rapid motion.",
+          "answer": "electrons",
+          "base": "electron",
+          "hint": "e_______",
+          "ja": "電子",
+          "sentenceJa": "陰極線は高速で運動する電子である。"
+        },
+        {
+          "questionId": "2026-10/ielts/day31/q17",
+          "sentence": "Serotonin ___ are classified into seven different families depending on their signalling pathways.",
+          "answer": "receptors",
+          "base": "receptor",
+          "hint": "r_______",
+          "ja": "受容体",
+          "sentenceJa": "セロトニン受容体は、伝達経路により7系統に分類される。"
+        },
+        {
+          "questionId": "2026-10/ielts/day31/q18",
+          "sentence": "In this paper we prove the following ___.",
+          "answer": "theorem",
+          "base": "theorem",
+          "hint": "t______",
+          "ja": "定理",
+          "sentenceJa": "本論文では、次の定理を証明する。"
+        },
+        {
+          "questionId": "2026-10/ielts/day31/q19",
+          "sentence": "The theory is in a ___ stage.",
+          "answer": "developmental",
+          "base": "developmental",
+          "hint": "d____________",
+          "ja": "発達的な",
+          "sentenceJa": "この理論は発展段階にあります。"
+        },
+        {
+          "questionId": "2026-10/ielts/day31/q20",
+          "sentence": "These two young musicians are ___ for international success.",
+          "answer": "bound",
+          "base": "bound",
+          "hint": "b____",
+          "ja": "縛られた",
+          "sentenceJa": "この2人の若いミュージシャンは、国際的な成功を目指しています。"
+        }
+      ]
+    },
+    {
+      "name": "Day 32",
+      "day": 32,
+      "items": [
+        {
+          "questionId": "2026-10/ielts/day32/q01",
+          "sentence": "Scientists can study the three-dimensional ___ structure of the proteins.",
+          "answer": "molecular",
+          "base": "molecular",
+          "hint": "m________",
+          "ja": "分子",
+          "sentenceJa": "科学者は、タンパク質の3次元分子構造を研究することができます。"
+        },
+        {
+          "questionId": "2026-10/ielts/day32/q02",
+          "sentence": "This plan means a complete ___ of our organization.",
+          "answer": "transformation",
+          "base": "transformation",
+          "hint": "t_____________",
+          "ja": "変換",
+          "sentenceJa": "この計画は、私たちの組織の完全な変革を意味します。"
+        },
+        {
+          "questionId": "2026-10/ielts/day32/q03",
+          "sentence": "In this case, there is no true ___ effect.",
+          "answer": "spatial",
+          "base": "spatial",
+          "hint": "s______",
+          "ja": "空間的な",
+          "sentenceJa": "この場合、真の空間的効果はない。"
+        },
+        {
+          "questionId": "2026-10/ielts/day32/q04",
+          "sentence": "In 2x + 4y = 7, 2 is the ___ of x.",
+          "answer": "coefficient",
+          "base": "coefficient",
+          "hint": "c__________",
+          "ja": "係数",
+          "sentenceJa": "２ ｘ ＋ ４ ｙ ＝ ７では、２は、ｘの係数である。"
+        },
+        {
+          "questionId": "2026-10/ielts/day32/q05",
+          "sentence": "A literal ___ of \"euthanasia\" would be \"good death\".",
+          "answer": "translation",
+          "base": "translation",
+          "hint": "t__________",
+          "ja": "翻訳",
+          "sentenceJa": "「安楽死」の直訳は「良い死」です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day32/q06",
+          "sentence": "The cornea is the transparent ___ that covers the front of the eye.",
+          "answer": "membrane",
+          "base": "membrane",
+          "hint": "m_______",
+          "ja": "膜",
+          "sentenceJa": "角膜は、目の前面を覆う透明な膜です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day32/q07",
+          "sentence": "Research has shown that aerobic exercise remodels the brain, prompting the growth of new ___.",
+          "answer": "neurons",
+          "base": "neuron",
+          "hint": "n_____",
+          "ja": "ニューロン",
+          "sentenceJa": "有酸素運動は脳を作り変え、新しい神経細胞の成長を促す。"
+        },
+        {
+          "questionId": "2026-10/ielts/day32/q08",
+          "sentence": "Young should have been booked for ___, not awarded a penalty.",
+          "answer": "simulation",
+          "base": "simulation",
+          "hint": "s_________",
+          "ja": "シミュレーション",
+          "sentenceJa": "ヤングには、反則演技として警告を出すべきだった。"
+        },
+        {
+          "questionId": "2026-10/ielts/day32/q09",
+          "sentence": "We can differentiate these categories as purely ___, rather than syntactic.",
+          "answer": "lexical",
+          "base": "lexical",
+          "hint": "l______",
+          "ja": "語彙的な",
+          "sentenceJa": "これらは統語的でなく、純粋に語彙的な分類とみなせる。"
+        },
+        {
+          "questionId": "2026-10/ielts/day32/q10",
+          "sentence": "There has been some unusual ___ in temperature this month.",
+          "answer": "variance",
+          "base": "variance",
+          "hint": "v_______",
+          "ja": "分散",
+          "sentenceJa": "今月は気温に異常なばらつきがありました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day32/q11",
+          "sentence": "We suggest that it is a different spatial organization of the ___.",
+          "answer": "molecules",
+          "base": "molecule",
+          "hint": "m_______",
+          "ja": "分子",
+          "sentenceJa": "これは分子の空間的な配置が異なるためだと考えられる。"
+        },
+        {
+          "questionId": "2026-10/ielts/day32/q12",
+          "sentence": "I've put in some ___ where I planted the seeds.",
+          "answer": "markers",
+          "base": "marker",
+          "hint": "m_____",
+          "ja": "マーカー",
+          "sentenceJa": "種を植えた場所に目印をいくつか置いた。"
+        },
+        {
+          "questionId": "2026-10/ielts/day32/q13",
+          "sentence": "The surgery can be carried out by ___.",
+          "answer": "robots",
+          "base": "robot",
+          "hint": "r____",
+          "ja": "ロボット",
+          "sentenceJa": "手術はロボットで行うことができます。"
+        },
+        {
+          "questionId": "2026-10/ielts/day32/q14",
+          "sentence": "You have to do a detailed ___ analysis.",
+          "answer": "statistical",
+          "base": "statistical",
+          "hint": "s__________",
+          "ja": "統計的",
+          "sentenceJa": "詳細な統計分析を行う必要があります。"
+        },
+        {
+          "questionId": "2026-10/ielts/day32/q15",
+          "sentence": "The ___ in English are a, e, i, o, and u.",
+          "answer": "vowels",
+          "base": "vowel",
+          "hint": "v____",
+          "ja": "母音",
+          "sentenceJa": "英語の母音は、a、e、i、o、uです。"
+        },
+        {
+          "questionId": "2026-10/ielts/day32/q16",
+          "sentence": "The light hit us with such ___ that we ducked.",
+          "answer": "intensity",
+          "base": "intensity",
+          "hint": "i________",
+          "ja": "強度",
+          "sentenceJa": "光があまりに強く当たったので、私たちは身をかがめた。"
+        },
+        {
+          "questionId": "2026-10/ielts/day32/q17",
+          "sentence": "A ___ has occurred in the overall political situation.",
+          "answer": "regression",
+          "base": "regression",
+          "hint": "r_________",
+          "ja": "回帰",
+          "sentenceJa": "全体的な政治情勢に後退が生じている。"
+        },
+        {
+          "questionId": "2026-10/ielts/day32/q18",
+          "sentence": "___ of the disease is difficult in the early stages.",
+          "answer": "Diagnosis",
+          "base": "diagnosis",
+          "hint": "d________",
+          "ja": "診断",
+          "sentenceJa": "病気の診断は初期段階では困難である。"
+        },
+        {
+          "questionId": "2026-10/ielts/day32/q19",
+          "sentence": "We were asked to show ___ at the airport check-in.",
+          "answer": "identification",
+          "base": "identification",
+          "hint": "i_____________",
+          "ja": "識別",
+          "sentenceJa": "空港のチェックイン時に身分証明書の提示を求められました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day32/q20",
+          "sentence": "New plants may emerge from each ___ on a stem.",
+          "answer": "node",
+          "base": "node",
+          "hint": "n___",
+          "ja": "ノード",
+          "sentenceJa": "茎の各ノードから新しい植物が出現する可能性があります。"
+        }
+      ]
+    },
+    {
+      "name": "Day 33",
+      "day": 33,
+      "items": [
+        {
+          "questionId": "2026-10/ielts/day33/q01",
+          "sentence": "Is this only a ___ report?",
+          "answer": "partial",
+          "base": "partial",
+          "hint": "p______",
+          "ja": "部分的な",
+          "sentenceJa": "これは一部だけの報告書ですか。"
+        },
+        {
+          "questionId": "2026-10/ielts/day33/q02",
+          "sentence": "The drug reduces spatial and ___ awareness.",
+          "answer": "temporal",
+          "base": "temporal",
+          "hint": "t_______",
+          "ja": "一時的な",
+          "sentenceJa": "この薬物は、空間的および時間的意識を低下させる。"
+        },
+        {
+          "questionId": "2026-10/ielts/day33/q03",
+          "sentence": "Dust ___ must have got into the motor.",
+          "answer": "particles",
+          "base": "particle",
+          "hint": "p_______",
+          "ja": "粒子",
+          "sentenceJa": "ほこりの粒子がモーターに入ったに違いありません。"
+        },
+        {
+          "questionId": "2026-10/ielts/day33/q04",
+          "sentence": "He planned a stay of two years' ___.",
+          "answer": "duration",
+          "base": "duration",
+          "hint": "d_______",
+          "ja": "期間",
+          "sentenceJa": "彼は2年間の滞在を計画しました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day33/q05",
+          "sentence": "As a nation, our ___ of junk food is horrifying.",
+          "answer": "consumption",
+          "base": "consumption",
+          "hint": "c__________",
+          "ja": "消費",
+          "sentenceJa": "国として、ジャンクフードの消費は恐ろしいものです。"
+        },
+        {
+          "questionId": "2026-10/ielts/day33/q06",
+          "sentence": "It is well known that radiation can cause ___.",
+          "answer": "mutation",
+          "base": "mutation",
+          "hint": "m_______",
+          "ja": "突然変異",
+          "sentenceJa": "放射線が突然変異を引き起こす可能性があることはよく知られています。"
+        },
+        {
+          "questionId": "2026-10/ielts/day33/q07",
+          "sentence": "Small-group activities focus on ___ awareness and language skills.",
+          "answer": "phonological",
+          "base": "phonological",
+          "hint": "p___________",
+          "ja": "音韻論的な",
+          "sentenceJa": "小グループ活動は、音韻意識と言語スキルに焦点を当てています。"
+        },
+        {
+          "questionId": "2026-10/ielts/day33/q08",
+          "sentence": "A wide ___ of opinion was represented at the meeting.",
+          "answer": "spectrum",
+          "base": "spectrum",
+          "hint": "s_______",
+          "ja": "スペクトル",
+          "sentenceJa": "会合には幅広い意見が代表された。"
+        },
+        {
+          "questionId": "2026-10/ielts/day33/q09",
+          "sentence": "DNA is stored in the ___ of a cell.",
+          "answer": "nucleus",
+          "base": "nucleus",
+          "hint": "n______",
+          "ja": "核",
+          "sentenceJa": "ＤＮＡは細胞の核に貯蔵される。"
+        },
+        {
+          "questionId": "2026-10/ielts/day33/q10",
+          "sentence": "He creates a seamless ___ of contemporary and historic images.",
+          "answer": "integration",
+          "base": "integration",
+          "hint": "i__________",
+          "ja": "統合",
+          "sentenceJa": "彼は、現代的なイメージと歴史的なイメージをシームレスに融合させています。"
+        },
+        {
+          "questionId": "2026-10/ielts/day33/q11",
+          "sentence": "New pedestrian ___ are being built alongside the road.",
+          "answer": "pathways",
+          "base": "pathway",
+          "hint": "p______",
+          "ja": "通路",
+          "sentenceJa": "道路沿いに新しい歩行者専用道路が建設されています。"
+        },
+        {
+          "questionId": "2026-10/ielts/day33/q12",
+          "sentence": "Thus, m-reflexives include a ___ of picture noun reflexives.",
+          "answer": "subset",
+          "base": "subset",
+          "hint": "s_____",
+          "ja": "サブセット",
+          "sentenceJa": "したがって、m再帰詞には絵画名詞再帰詞の一部が含まれる。"
+        },
+        {
+          "questionId": "2026-10/ielts/day33/q13",
+          "sentence": "Readers use their ___ and semantic knowledge to decode the text.",
+          "answer": "syntactic",
+          "base": "syntactic",
+          "hint": "s________",
+          "ja": "構文的な",
+          "sentenceJa": "読者は、構文と意味論の知識を使用してテキストをデコードします。"
+        },
+        {
+          "questionId": "2026-10/ielts/day33/q14",
+          "sentence": "The job starts tomorrow with a full week of ___.",
+          "answer": "orientation",
+          "base": "orientation",
+          "hint": "o__________",
+          "ja": "向き",
+          "sentenceJa": "明日から1週間のオリエンテーションが始まります。"
+        },
+        {
+          "questionId": "2026-10/ielts/day33/q15",
+          "sentence": "There remain major ___ of opportunity in the workplace.",
+          "answer": "inequalities",
+          "base": "inequality",
+          "hint": "i_________",
+          "ja": "不平等",
+          "sentenceJa": "職場には大きな機会の不平等が残っています。"
+        },
+        {
+          "questionId": "2026-10/ielts/day33/q16",
+          "sentence": "The ___ of the disease is higher in some families.",
+          "answer": "prevalence",
+          "base": "prevalence",
+          "hint": "p_________",
+          "ja": "普及率",
+          "sentenceJa": "一部の家族では、この病気の有病率が高くなっています。"
+        },
+        {
+          "questionId": "2026-10/ielts/day33/q17",
+          "sentence": "Set the food processor to ___, adding olive oil and herbs.",
+          "answer": "pulse",
+          "base": "pulse",
+          "hint": "p____",
+          "ja": "パルス",
+          "sentenceJa": "フードプロセッサーを断続運転に設定し、オリーブオイルとハーブを加える。"
+        },
+        {
+          "questionId": "2026-10/ielts/day33/q18",
+          "sentence": "His sense of humour is one of his better ___.",
+          "answer": "traits",
+          "base": "trait",
+          "hint": "t____",
+          "ja": "特性",
+          "sentenceJa": "彼のユーモアのセンスは、彼の優れた特性の1つです。"
+        },
+        {
+          "questionId": "2026-10/ielts/day33/q19",
+          "sentence": "Please don't ask me to make any ___ about tomorrow's meeting.",
+          "answer": "predictions",
+          "base": "prediction",
+          "hint": "p_________",
+          "ja": "予測",
+          "sentenceJa": "明日のミーティングを予測するように頼まないでください。"
+        },
+        {
+          "questionId": "2026-10/ielts/day33/q20",
+          "sentence": "There are two ___ in the word silver and three in appetite.",
+          "answer": "syllables",
+          "base": "syllable",
+          "hint": "s_______",
+          "ja": "音節",
+          "sentenceJa": "silverには2音節、appetiteには3音節ある。"
+        }
+      ]
+    },
+    {
+      "name": "Day 34",
+      "day": 34,
+      "items": [
+        {
+          "questionId": "2026-10/ielts/day34/q01",
+          "sentence": "X and Y ___",
+          "answer": "chromosomes",
+          "base": "chromosome",
+          "hint": "c_________",
+          "ja": "染色体",
+          "sentenceJa": "X及びY染色体"
+        },
+        {
+          "questionId": "2026-10/ielts/day34/q02",
+          "sentence": "Iron, steel, nickel, and cobalt are ___ metals.",
+          "answer": "magnetic",
+          "base": "magnetic",
+          "hint": "m_______",
+          "ja": "磁気",
+          "sentenceJa": "鉄、鋼、ニッケル、コバルトは磁性金属です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day34/q03",
+          "sentence": "We apologize for the interruption to our ___ this afternoon.",
+          "answer": "transmissions",
+          "base": "transmission",
+          "hint": "t___________",
+          "ja": "送信",
+          "sentenceJa": "本日午後の放送中断をおわびします。"
+        },
+        {
+          "questionId": "2026-10/ielts/day34/q04",
+          "sentence": "The label says to take one ___ three times a day.",
+          "answer": "dose",
+          "base": "dose",
+          "hint": "d___",
+          "ja": "用量",
+          "sentenceJa": "ラベルには、1日3回1回服用すると記載されています。"
+        },
+        {
+          "questionId": "2026-10/ielts/day34/q05",
+          "sentence": "Her ___ grandmother is still alive.",
+          "answer": "maternal",
+          "base": "maternal",
+          "hint": "m_______",
+          "ja": "母性",
+          "sentenceJa": "彼女の母方の祖母はまだ健在だ。"
+        },
+        {
+          "questionId": "2026-10/ielts/day34/q06",
+          "sentence": "The diameter of a circle is also an ___.",
+          "answer": "axis",
+          "base": "axis",
+          "hint": "a___",
+          "ja": "軸",
+          "sentenceJa": "円の直径も軸である。"
+        },
+        {
+          "questionId": "2026-10/ielts/day34/q07",
+          "sentence": "There's no ___ explanation for this surplus.",
+          "answer": "rational",
+          "base": "rational",
+          "hint": "r_______",
+          "ja": "合理的",
+          "sentenceJa": "この余剰には合理的な説明がありません。"
+        },
+        {
+          "questionId": "2026-10/ielts/day34/q08",
+          "sentence": "The ___ of decision-making is sometimes far from the government's offices.",
+          "answer": "locus",
+          "base": "locus",
+          "hint": "l____",
+          "ja": "軌跡",
+          "sentenceJa": "意思決定の拠点は、時には政府のオフィスから遠く離れています。"
+        },
+        {
+          "questionId": "2026-10/ielts/day34/q09",
+          "sentence": "Sales-tax receipts provide an ___ of retail sales.",
+          "answer": "approximation",
+          "base": "approximation",
+          "hint": "a____________",
+          "ja": "近似",
+          "sentenceJa": "売上税の領収書は、小売売上高の近似値を提供します。"
+        },
+        {
+          "questionId": "2026-10/ielts/day34/q10",
+          "sentence": "His ___ was that World War I could have been avoided.",
+          "answer": "thesis",
+          "base": "thesis",
+          "hint": "t_____",
+          "ja": "論文",
+          "sentenceJa": "彼のテーゼは、第一次世界大戦は避けられたかもしれないというものだった。"
+        },
+        {
+          "questionId": "2026-10/ielts/day34/q11",
+          "sentence": "I have committed a ___, for which I humbly apologize.",
+          "answer": "sin",
+          "base": "sin",
+          "hint": "s__",
+          "ja": "罪",
+          "sentenceJa": "私は罪を犯したので、謙虚に謝罪します。"
+        },
+        {
+          "questionId": "2026-10/ielts/day34/q12",
+          "sentence": "The US economy was on the ___ of a boom.",
+          "answer": "threshold",
+          "base": "threshold",
+          "hint": "t________",
+          "ja": "しきい値",
+          "sentenceJa": "米国経済は好景気の瀬戸際にありました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day34/q13",
+          "sentence": "They said that uninsured-motorist ___ was a chronic condition in the city.",
+          "answer": "syndrome",
+          "base": "syndrome",
+          "hint": "s_______",
+          "ja": "症候群",
+          "sentenceJa": "市では、無保険運転者症候群が慢性的な問題になっていると彼らは述べた。"
+        },
+        {
+          "questionId": "2026-10/ielts/day34/q14",
+          "sentence": "New customers must call an automated line to ___ their card.",
+          "answer": "activate",
+          "base": "activate",
+          "hint": "a_______",
+          "ja": "アクティブ化する",
+          "sentenceJa": "新規のお客様は、自動回線に電話してカードを有効にする必要があります。"
+        },
+        {
+          "questionId": "2026-10/ielts/day34/q15",
+          "sentence": "I teach in a middle school, because I like young ___.",
+          "answer": "adolescents",
+          "base": "adolescent",
+          "hint": "a_________",
+          "ja": "思春期の",
+          "sentenceJa": "私は若い思春期の生徒が好きなので、中学校で教えている。"
+        },
+        {
+          "questionId": "2026-10/ielts/day34/q16",
+          "sentence": "She's a writer and so she has a very broad ___",
+          "answer": "vocabulary",
+          "base": "vocabulary",
+          "hint": "v_________",
+          "ja": "語彙",
+          "sentenceJa": "彼女は作家なので、非常に幅広い語彙を持っています"
+        },
+        {
+          "questionId": "2026-10/ielts/day34/q17",
+          "sentence": "She has one great fear to which she will never give ___.",
+          "answer": "utterance",
+          "base": "utterance",
+          "hint": "u________",
+          "ja": "発言",
+          "sentenceJa": "彼女には、決して口に出さない大きな恐れがある。"
+        },
+        {
+          "questionId": "2026-10/ielts/day34/q18",
+          "sentence": "Her ___ as councillor took place in the town hall.",
+          "answer": "induction",
+          "base": "induction",
+          "hint": "i________",
+          "ja": "誘導",
+          "sentenceJa": "彼女の評議員としての就任式は、町役場で行われました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day34/q19",
+          "sentence": "The missile came in on a very low ___.",
+          "answer": "trajectory",
+          "base": "trajectory",
+          "hint": "t_________",
+          "ja": "軌跡",
+          "sentenceJa": "ミサイルは非常に低い軌道で着弾しました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day34/q20",
+          "sentence": "A ___ sentence.",
+          "answer": "grammatical",
+          "base": "grammatical",
+          "hint": "g__________",
+          "ja": "文法的な",
+          "sentenceJa": "文法的に正しい文。"
+        }
+      ]
     }
   ]
 }

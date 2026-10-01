@@ -8,20 +8,41 @@ const EXPECTED_BASES = {
   clacel: {
     26: ["figure out", "no longer", "so far", "get used to", "as long as", "end up doing", "by accident", "look forward to", "come across", "look after", "pretend", "remove", "stand", "concern", "recognize", "dig", "spread", "disturb", "handle", "waste"],
     27: ["feel like doing", "go with", "be supposed to", "bring up", "take for granted", "tend to do", "catch up with", "for sure", "get along with", "in reality", "few", "engaged", "curious", "basically", "still", "sick of", "none of one's business", "come to", "end up", "due to"],
+    29: ["feel like", "by mistake", "run out of", "tend to", "in spite of", "in vain", "go through", "familiar with", "willing to", "provided that", "show off", "sooner or later", "keep up with", "off to", "turn in", "put in", "take in", "cut in", "break in", "put on"],
+    30: ["get on", "rely on", "work on", "move on", "look at", "arrive at", "listen to", "talk to", "give to", "recover from", "fall in love with", "deal with", "look for", "wait for", "ask for", "pay for", "drop by", "stand by", "pass by", "take out"],
+    31: ["come out", "turn out", "check out", "go out", "find out", "wake up", "pick up", "grow up", "show up", "heat up", "break up", "catch up", "give up", "when it comes to", "come in handy", "be familiar with", "be willing to", "hold back", "get rid of", "stick"],
+    32: ["travel", "lock", "confuse", "contain", "stretch", "award", "guard", "trap", "plant", "organize", "invent", "wonder", "trade", "grow", "bite", "mind", "promise", "fix", "happen", "feed"],
+    33: ["hunt", "connect", "compete", "blow", "reach", "retire", "create", "serve", "switch", "vote", "wake", "continue", "delay", "park", "complete", "depend", "accept", "fail", "ignore", "request"],
+    34: ["search", "hurt", "spill", "imagine", "reply", "encourage", "deliver", "survive", "rent", "decide", "warn", "reserve", "turn", "rise", "attend", "escape", "throw", "lay", "guide", "notice"],
   },
   toeic: {
     26: ["goods", "equity", "dividend", "sponsorship", "transaction", "hedge", "premium", "impact", "maturity", "economist", "media", "variance", "depreciation", "recession", "overhead", "euro", "valuation", "coupon", "subsidiary", "volatility"],
     27: ["economically", "exclusively", "officially", "poorly", "loudly", "traditionally", "comfortably", "electronically", "anyhow", "unusually", "fortunately", "environmentally", "enthusiastically", "permanently", "partially", "drastically", "actively", "intently", "hereby", "automatically"],
+    29: ["acknowledge", "announce", "appoint", "assign", "award", "boost", "brief", "register", "charge", "chair", "collaborate", "combine", "commence", "commission", "consult", "convene", "cut", "withdraw", "decline", "dedicate"],
+    30: ["deliver", "deploy", "detect", "diversify", "earn", "endorse", "engage", "enlist", "escalate", "exceed", "extend", "file", "forecast", "retain", "grant", "hire", "implement", "launch", "sponsor", "sign"],
+    31: ["portfolio", "distribution", "authority", "sometime", "marginal", "entity", "productivity", "organizational", "commodity", "monetary", "aggregate", "fiscal", "payable", "default", "aspect", "calculation", "allocation", "deviation", "receivable", "equilibrium"],
+    32: ["creditor", "derivative", "surplus", "annuity", "disclosure", "regime", "leverage", "internet", "parliament", "coalition", "lender", "liquidity", "stockholder", "fraud", "regulator", "swap", "bankruptcy", "provider", "regression", "turnover"],
+    33: ["incur", "risky", "gross", "constitution", "trader", "monopoly", "correlation", "stockmarket", "breach", "subsidy", "auditor", "banker", "corruption", "issuer", "borrower", "insurer", "profitability", "debit", "duration", "scenario"],
+    34: ["terrorism", "respondent", "regulatory", "takeover", "coefficient", "optimal", "nominal", "infrastructure", "disclose", "offset", "effectiveness", "merchandise", "bound", "bargain", "conversion", "statistics", "stakeholder", "administrative", "taxpayer", "alliance"],
   },
   ielts: {
     26: ["artistic", "dense", "differential", "elastic", "elite", "evolutionary", "fluid", "implicit", "incredible", "indirect", "informal", "innate", "integral", "intermediate", "neutral", "numerical", "optimal", "oral", "philosophical", "pragmatic"],
     27: ["nonetheless", "whereby", "afterward", "internationally", "genetically", "likewise", "moreover", "furthermore", "nevertheless", "hence", "thus", "meanwhile", "henceforth", "overall", "roughly", "virtually", "seemingly", "invariably", "successively", "progressively"],
+    29: ["postulate", "stipulate", "substantiate", "corroborate", "extrapolate", "synthesize", "formalize", "codify", "delineate", "enumerate", "exemplify", "annotate", "transcend", "underpin", "disseminate", "perpetuate", "proliferate", "reconcile", "refute", "reiterate"],
+    30: ["stem", "permeate", "instigate", "legitimize", "optimize", "cohere", "complicate", "curtail", "underlie", "encapsulate", "mitigate", "alleviate", "exacerbate", "counteract", "rectify", "consolidate", "streamline", "juxtapose", "calibrate", "paraphrase"],
+    31: ["impact", "domain", "semantic", "damp", "secrete", "matrix", "linear", "graph", "linguistic", "acid", "velocity", "interval", "discourse", "stimulus", "vector", "electron", "receptor", "theorem", "developmental", "bound"],
+    32: ["molecular", "transformation", "spatial", "coefficient", "translation", "membrane", "neuron", "simulation", "lexical", "variance", "molecule", "marker", "robot", "statistical", "vowel", "intensity", "regression", "diagnosis", "identification", "node"],
+    33: ["partial", "temporal", "particle", "duration", "consumption", "mutation", "phonological", "spectrum", "nucleus", "integration", "pathway", "subset", "syntactic", "orientation", "inequality", "prevalence", "pulse", "trait", "prediction", "syllable"],
+    34: ["chromosome", "magnetic", "transmission", "dose", "maternal", "axis", "rational", "locus", "approximation", "thesis", "sin", "threshold", "syndrome", "activate", "adolescent", "vocabulary", "utterance", "induction", "trajectory", "grammatical"],
   },
 };
 
-test("10月1日と2日は正本どおりのDay 26・27を3コースで配信する", () => {
+test("10月1日・2日と10月4日〜9日は正本どおりのDay 26・27・29〜34を3コースで配信する", () => {
   assert.equal(getHomeStudyDay(new Date("2026-10-01T12:00:00+09:00")), 26);
   assert.equal(getHomeStudyDay(new Date("2026-10-02T12:00:00+09:00")), 27);
+  for (const [date, day] of [["04", 29], ["05", 30], ["06", 31], ["07", 32], ["08", 33], ["09", 34]]) {
+    assert.equal(getHomeStudyDay(new Date(`2026-10-${date}T12:00:00+09:00`)), day);
+  }
   for (const [course, days] of Object.entries(EXPECTED_BASES)) {
     for (const [day, expectedBases] of Object.entries(days)) {
       const series = wordtests[course].series.find((entry) => entry.day === Number(day));
