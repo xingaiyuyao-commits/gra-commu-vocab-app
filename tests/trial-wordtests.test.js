@@ -16,7 +16,7 @@ test("体験会は各コースの先頭に20問ずつ残す", () => {
 test("体験会の問題文・答え・例文訳は承認済みPDFから生成した通常問題と一致する", () => {
   for (const [course, data] of Object.entries(WORDTESTS)) {
     const studyItems = data.series
-      .filter(({ isTrial }) => !isTrial)
+      .filter(({ isTrial, day }) => !isTrial && day <= 25)
       .flatMap(({ items }) => items);
     const trial = data.series[0];
     for (const item of trial.items) {
@@ -44,9 +44,10 @@ test("体験会の問題文・答え・例文訳は承認済みPDFから生成�
   }
 });
 
-test("実行時教材は承認済み9月JSONだけを使う", () => {
+test("実行時教材は承認済み9月教材に10月1日・2日の正本だけを追加する", () => {
   for (const data of Object.values(WORDTESTS)) {
-    assert.equal(data.series.some(({ name }) => name === "Day 26"), false);
+    assert.equal(data.series.some(({ name }) => name === "Day 26"), true);
+    assert.equal(data.series.some(({ name }) => name === "Day 27"), true);
     assert.equal(data.series.some(({ name }) => name === "Day 30"), false);
   }
   assert.equal(WORDTESTS.clacel.series.find(({ name }) => name === "Day 25").items.length, 10);

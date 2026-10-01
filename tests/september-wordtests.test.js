@@ -20,8 +20,9 @@ test("承認済み9月教材は対象Dayと問題数が一致する", () => {
   const expectedTotals = { clacel: 420, toeic: 440, ielts: 440 };
   for (const [course, total] of Object.entries(expectedTotals)) {
     const data = loadDataset(course);
-    assert.deepEqual(data.series.map(({ day }) => day), STUDY_DAYS, course);
-    assert.equal(data.series.flatMap(({ items }) => items).length, total, course);
+    const septemberSeries = data.series.filter(({ day }) => STUDY_DAYS.includes(day));
+    assert.deepEqual(septemberSeries.map(({ day }) => day), STUDY_DAYS, course);
+    assert.equal(septemberSeries.flatMap(({ items }) => items).length, total, course);
   }
 });
 
@@ -31,7 +32,8 @@ test("全問題に固定IDと必須表示内容がある", () => {
     const ids = new Set();
     for (const series of data.series) {
       series.items.forEach((item, index) => {
-        assert.equal(item.questionId, `2026-09/${course}/day${String(series.day).padStart(2, "0")}/q${String(index + 1).padStart(2, "0")}`);
+        const month = series.day <= 25 ? "09" : "10";
+        assert.equal(item.questionId, `2026-${month}/${course}/day${String(series.day).padStart(2, "0")}/q${String(index + 1).padStart(2, "0")}`);
         assert.equal(ids.has(item.questionId), false, item.questionId);
         ids.add(item.questionId);
         for (const key of ["sentence", "answer", "base", "hint", "ja", "sentenceJa"]) {

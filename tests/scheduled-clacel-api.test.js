@@ -110,7 +110,7 @@ function makeStateFile(t) {
   return stateFile;
 }
 
-test("運営者だけが9月14日から30日までの固定参加URLを取得できる", async (t) => {
+test("運営者だけが9月14日から10月31日までの固定参加URLを取得できる", async (t) => {
   const stateFile = makeStateFile(t);
   const { baseUrl } = await startServer(t, stateFile);
 
@@ -119,9 +119,9 @@ test("運営者だけが9月14日から30日までの固定参加URLを取得で
   const response = await fetch(`${baseUrl}/api/operator/scheduled-clacel-links`, { headers: { Cookie: cookie } });
   assert.equal(response.status, 200);
   const body = await response.json();
-  assert.equal(body.links.length, 17);
+  assert.equal(body.links.length, 48);
   assert.equal(body.links[0].date, "2026-09-14");
-  assert.equal(body.links[16].date, "2026-09-30");
+  assert.equal(body.links[47].date, "2026-10-31");
   assert.equal(body.links[0].scheduledAt, "2026-09-14T19:00:00+09:00");
   assert.match(body.links[0].url, new RegExp(`^${baseUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}/quiz\\.html\\?`));
   assert.match(body.links[0].url, /mode=scheduled/);
@@ -133,7 +133,7 @@ test("運営者だけが9月14日から30日までの固定参加URLを取得で
   const allBody = await allResponse.json();
   assert.deepEqual(Object.keys(allBody.courses), ["clacel", "toeic", "ielts"]);
   for (const course of ["clacel", "toeic", "ielts"]) {
-    assert.equal(allBody.courses[course].length, 17);
+    assert.equal(allBody.courses[course].length, 48);
     assert.match(allBody.courses[course][10].url, new RegExp(`course=${course}`));
   }
 });
@@ -148,7 +148,11 @@ test("公開ステータスAPIは署名と東京日付を検証する", async (t
     { status: "future", date: "2026-09-15" },
   );
   assert.equal((await fetch(scheduledStatusUrl(baseUrl, TODAY, "modified-token"))).status, 403);
-  assert.equal((await fetch(scheduledStatusUrl(baseUrl, "2026-10-01", "anything"))).status, 404);
+  assert.deepEqual(
+    await (await fetch(scheduledStatusUrl(baseUrl, "2026-10-01"))).json(),
+    { status: "future", date: "2026-10-01" },
+  );
+  assert.equal((await fetch(scheduledStatusUrl(baseUrl, "2026-11-01", "anything"))).status, 404);
 });
 
 test("当日のClacelルームは一度だけ固定URLへ紐づき、開始・終了・再起動後も状態を保持する", async (t) => {

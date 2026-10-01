@@ -3913,6 +3913,378 @@
           "sentenceJa": "うわさ話はしたいけれど、それは私には関係ないことです。"
         }
       ]
+    },
+    {
+      "name": "Day 26",
+      "day": 26,
+      "items": [
+        {
+          "questionId": "2026-10/clacel/day26/q01",
+          "sentence": "It took me a while to ___ the puzzle.",
+          "answer": "figure out",
+          "base": "figure out",
+          "hint": "f_________",
+          "ja": "理解する、解決する",
+          "sentenceJa": "そのパズルを解くのにしばらく時間がかかった。"
+        },
+        {
+          "questionId": "2026-10/clacel/day26/q02",
+          "sentence": "He ___ works at that company.",
+          "answer": "no longer",
+          "base": "no longer",
+          "hint": "n________",
+          "ja": "もはや〜ない",
+          "sentenceJa": "彼はもうその会社では働いていない。"
+        },
+        {
+          "questionId": "2026-10/clacel/day26/q03",
+          "sentence": "___, the trip has been amazing.",
+          "answer": "So far",
+          "base": "so far",
+          "hint": "s_____",
+          "ja": "今のところ",
+          "sentenceJa": "今のところ、旅行はとても素晴らしい。"
+        },
+        {
+          "questionId": "2026-10/clacel/day26/q04",
+          "sentence": "It took months to ___ the cold weather.",
+          "answer": "get used to",
+          "base": "get used to",
+          "hint": "g__________",
+          "ja": "〜に慣れる",
+          "sentenceJa": "その寒さに慣れるのに数ヶ月かかった。"
+        },
+        {
+          "questionId": "2026-10/clacel/day26/q05",
+          "sentence": "You can borrow my car ___ you return it by six.",
+          "answer": "as long as",
+          "base": "as long as",
+          "hint": "a_________",
+          "ja": "〜する限り、〜さえすれば",
+          "sentenceJa": "6時までに返してくれるなら、車を貸してもいいよ。"
+        },
+        {
+          "questionId": "2026-10/clacel/day26/q06",
+          "sentence": "I finished all my work, so I ___ home early.",
+          "answer": "ended up going",
+          "base": "end up doing",
+          "hint": "e___________",
+          "ja": "最終的に～になる、結局～になる",
+          "sentenceJa": "仕事をすべて終えたので、結局早く帰宅しました。"
+        },
+        {
+          "questionId": "2026-10/clacel/day26/q07",
+          "sentence": "I deleted the file completely ___.",
+          "answer": "by accident",
+          "base": "by accident",
+          "hint": "b__________",
+          "ja": "偶然に、うっかり",
+          "sentenceJa": "私はうっかりそのファイルを完全に削除してしまった。"
+        },
+        {
+          "questionId": "2026-10/clacel/day26/q08",
+          "sentence": "We're really ___ the summer festival.",
+          "answer": "looking forward to",
+          "base": "look forward to",
+          "hint": "l______________",
+          "ja": "楽しみにする",
+          "sentenceJa": "私たちは夏祭りを本当に楽しみにしている。"
+        },
+        {
+          "questionId": "2026-10/clacel/day26/q09",
+          "sentence": "Last weekend, I ___ an old letter while cleaning the attic.",
+          "answer": "came across",
+          "base": "come across",
+          "hint": "c__________",
+          "ja": "偶然出会う",
+          "sentenceJa": "先週末、屋根裏を掃除していたら古い手紙を偶然見つけた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day26/q10",
+          "sentence": "Can you ___ my bags while I run to the restroom, please?",
+          "answer": "look after",
+          "base": "look after",
+          "hint": "l_________",
+          "ja": "世話をする、見ておく",
+          "sentenceJa": "私がトイレに行っている間、荷物を見ていてもらえますか？"
+        },
+        {
+          "questionId": "2026-10/clacel/day26/q11",
+          "sentence": "The children ___ to be superheroes.",
+          "answer": "pretended",
+          "base": "pretend",
+          "hint": "p______",
+          "ja": "ふりをする",
+          "sentenceJa": "子供たちはスーパーヒーローのふりをした。"
+        },
+        {
+          "questionId": "2026-10/clacel/day26/q12",
+          "sentence": "She ___ her shoes before entering the room.",
+          "answer": "removed",
+          "base": "remove",
+          "hint": "r_____",
+          "ja": "取り除く",
+          "sentenceJa": "彼女は部屋に入る前に靴を脱いだ。"
+        },
+        {
+          "questionId": "2026-10/clacel/day26/q13",
+          "sentence": "She can't ___ the summer heat.",
+          "answer": "stand",
+          "base": "stand",
+          "hint": "s____",
+          "ja": "立つ、耐える",
+          "sentenceJa": "彼女は夏の暑さに耐えられない。"
+        },
+        {
+          "questionId": "2026-10/clacel/day26/q14",
+          "sentence": "The rising prices ___ many families.",
+          "answer": "concern",
+          "base": "concern",
+          "hint": "c______",
+          "ja": "心配させる、関係する",
+          "sentenceJa": "物価の上昇は多くの家庭を心配させている。"
+        },
+        {
+          "questionId": "2026-10/clacel/day26/q15",
+          "sentence": "He ___ an old classmate of his on the street.",
+          "answer": "recognized",
+          "base": "recognize",
+          "hint": "r________",
+          "ja": "認識する、見分ける、認める",
+          "sentenceJa": "彼は道で昔の同級生に気づいた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day26/q16",
+          "sentence": "The dog likes to ___ holes in the garden.",
+          "answer": "dig",
+          "base": "dig",
+          "hint": "d__",
+          "ja": "掘る",
+          "sentenceJa": "その犬は庭に穴を掘るのが好きだ。"
+        },
+        {
+          "questionId": "2026-10/clacel/day26/q17",
+          "sentence": "News ___ quickly on social media.",
+          "answer": "spreads",
+          "base": "spread",
+          "hint": "s_____",
+          "ja": "広げる、広がる",
+          "sentenceJa": "ニュースはSNSで素早く広がる。"
+        },
+        {
+          "questionId": "2026-10/clacel/day26/q18",
+          "sentence": "Please don't ___ her while she is studying.",
+          "answer": "disturb",
+          "base": "disturb",
+          "hint": "d______",
+          "ja": "邪魔する",
+          "sentenceJa": "勉強している間は彼女の邪魔をしないでください。"
+        },
+        {
+          "questionId": "2026-10/clacel/day26/q19",
+          "sentence": "She ___ the difficult question very calmly.",
+          "answer": "handled",
+          "base": "handle",
+          "hint": "h_____",
+          "ja": "扱う、対処する、手を触れる",
+          "sentenceJa": "彼女はその難しい質問にとても冷静に対応した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day26/q20",
+          "sentence": "He ___ an entire afternoon looking for his keys.",
+          "answer": "wasted",
+          "base": "waste",
+          "hint": "w____",
+          "ja": "無駄にする",
+          "sentenceJa": "彼は鍵を探すのに午後をまるまる無駄にした。"
+        }
+      ]
+    },
+    {
+      "name": "Day 27",
+      "day": 27,
+      "items": [
+        {
+          "questionId": "2026-10/clacel/day27/q01",
+          "sentence": "I don’t really ___ eating right now.",
+          "answer": "feel like",
+          "base": "feel like doing",
+          "hint": "f______________",
+          "ja": "～したい気分",
+          "sentenceJa": "今はあまり食べたい気分ではありません。"
+        },
+        {
+          "questionId": "2026-10/clacel/day27/q02",
+          "sentence": "This tie doesn't ___ your shirt.",
+          "answer": "go with",
+          "base": "go with",
+          "hint": "g______",
+          "ja": "合う、選ぶ",
+          "sentenceJa": "このネクタイはあなたのシャツに合わない。"
+        },
+        {
+          "questionId": "2026-10/clacel/day27/q03",
+          "sentence": "What am I ___ do?",
+          "answer": "supposed to",
+          "base": "be supposed to",
+          "hint": "b_____________",
+          "ja": "～することになっている",
+          "sentenceJa": "私は何をすればいいことになっているのですか？"
+        },
+        {
+          "questionId": "2026-10/clacel/day27/q04",
+          "sentence": "Do you remember that thing you ___ the other day?",
+          "answer": "brought up",
+          "base": "bring up",
+          "hint": "b_______",
+          "ja": "話題に出す",
+          "sentenceJa": "この前あなたが話題に出したことを覚えていますか？"
+        },
+        {
+          "questionId": "2026-10/clacel/day27/q05",
+          "sentence": "We often ___ that clean water is always available.",
+          "answer": "take for granted",
+          "base": "take for granted",
+          "hint": "t_______________",
+          "ja": "当然のことと思う",
+          "sentenceJa": "私たちはきれいな水がいつでも手に入ることを当然だと思いがちだ。"
+        },
+        {
+          "questionId": "2026-10/clacel/day27/q06",
+          "sentence": "I feel like I ___ speak very fast.",
+          "answer": "tend to",
+          "base": "tend to do",
+          "hint": "t_________",
+          "ja": "～しがち、～する傾向がある",
+          "sentenceJa": "私はかなり速く話してしまいがちな気がします。"
+        },
+        {
+          "questionId": "2026-10/clacel/day27/q07",
+          "sentence": "Let's ___ each other over coffee.",
+          "answer": "catch up with",
+          "base": "catch up with",
+          "hint": "c____________",
+          "ja": "追いつく、近況を語り合う",
+          "sentenceJa": "コーヒーでも飲みながら近況を話そう。"
+        },
+        {
+          "questionId": "2026-10/clacel/day27/q08",
+          "sentence": "I don't know ___ if she's coming.",
+          "answer": "for sure",
+          "base": "for sure",
+          "hint": "f_______",
+          "ja": "確かに、間違いなく",
+          "sentenceJa": "彼女が来るかどうか確かなことは分からない。"
+        },
+        {
+          "questionId": "2026-10/clacel/day27/q09",
+          "sentence": "She ___ everyone in the office.",
+          "answer": "gets along with",
+          "base": "get along with",
+          "hint": "g_____________",
+          "ja": "仲良くやっていく",
+          "sentenceJa": "彼女はオフィスの誰とでもうまくやっている。"
+        },
+        {
+          "questionId": "2026-10/clacel/day27/q10",
+          "sentence": "The plan sounds simple, but ___ it's quite complex.",
+          "answer": "in reality",
+          "base": "in reality",
+          "hint": "i_________",
+          "ja": "実際には",
+          "sentenceJa": "その計画は単純に聞こえるが、実際にはかなり複雑だ。"
+        },
+        {
+          "questionId": "2026-10/clacel/day27/q11",
+          "sentence": "Only a ___ students came to the early class.",
+          "answer": "few",
+          "base": "few",
+          "hint": "f__",
+          "ja": "ほとんどない、少しの",
+          "sentenceJa": "早朝の授業に来た学生はほとんどいなかった。"
+        },
+        {
+          "questionId": "2026-10/clacel/day27/q12",
+          "sentence": "The students were fully ___ in the discussion.",
+          "answer": "engaged",
+          "base": "engaged",
+          "hint": "e______",
+          "ja": "従事して、婚約して",
+          "sentenceJa": "生徒たちは議論に完全に没頭していた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day27/q13",
+          "sentence": "The children were ___ about the old house.",
+          "answer": "curious",
+          "base": "curious",
+          "hint": "c______",
+          "ja": "好奇心が強い",
+          "sentenceJa": "子供たちはその古い家に好奇心を抱いていた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day27/q14",
+          "sentence": "___, we need more time to finish.",
+          "answer": "Basically",
+          "base": "basically",
+          "hint": "b________",
+          "ja": "基本的に",
+          "sentenceJa": "基本的に、終わらせるにはもっと時間が必要だ。"
+        },
+        {
+          "questionId": "2026-10/clacel/day27/q15",
+          "sentence": "She ___ lives in her hometown.",
+          "answer": "still",
+          "base": "still",
+          "hint": "s____",
+          "ja": "まだ、依然として",
+          "sentenceJa": "彼女は今も故郷に住んでいる。"
+        },
+        {
+          "questionId": "2026-10/clacel/day27/q16",
+          "sentence": "I'm really ___ this constant noise.",
+          "answer": "sick of",
+          "base": "sick of",
+          "hint": "s______",
+          "ja": "うんざりしている",
+          "sentenceJa": "この絶え間ない騒音には本当にうんざりしている。"
+        },
+        {
+          "questionId": "2026-10/clacel/day27/q17",
+          "sentence": "Who I invite to my party is ___.",
+          "answer": "none of your business",
+          "base": "none of one's business",
+          "hint": "n_____________________",
+          "ja": "他人には関係ないこと",
+          "sentenceJa": "私が誰をパーティーに招待しようと、あなたには関係ない。"
+        },
+        {
+          "questionId": "2026-10/clacel/day27/q18",
+          "sentence": "With tax, the total bill ___ $42.",
+          "answer": "came to",
+          "base": "come to",
+          "hint": "c______",
+          "ja": "合計で〜になる",
+          "sentenceJa": "税込みで、合計金額は42ドルになった。"
+        },
+        {
+          "questionId": "2026-10/clacel/day27/q19",
+          "sentence": "We missed the train and ___ waiting two hours.",
+          "answer": "ended up",
+          "base": "end up",
+          "hint": "e_____",
+          "ja": "結局〜することになる",
+          "sentenceJa": "電車を逃して、結局2時間待つことになった。"
+        },
+        {
+          "questionId": "2026-10/clacel/day27/q20",
+          "sentence": "The game was cancelled ___ heavy rain.",
+          "answer": "due to",
+          "base": "due to",
+          "hint": "d_____",
+          "ja": "〜のために、〜が原因で",
+          "sentenceJa": "その試合は大雨のため中止になった。"
+        }
+      ]
     }
   ]
 }

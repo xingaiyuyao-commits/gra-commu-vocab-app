@@ -10,15 +10,14 @@ const {
   scheduledDateState,
 } = require("../scheduled-clacel-links");
 
-test("LINE予約用の日付を9月14日から30日まで17日分だけ列挙する", () => {
+test("固定参加リンクの日付を9月14日から10月31日まで48日分列挙する", () => {
   assert.equal(SCHEDULE_START_DATE, "2026-09-14");
-  assert.equal(SCHEDULE_END_DATE, "2026-09-30");
-  assert.deepEqual(listScheduledDates(), [
-    "2026-09-14", "2026-09-15", "2026-09-16", "2026-09-17", "2026-09-18",
-    "2026-09-19", "2026-09-20", "2026-09-21", "2026-09-22", "2026-09-23",
-    "2026-09-24", "2026-09-25", "2026-09-26", "2026-09-27", "2026-09-28",
-    "2026-09-29", "2026-09-30",
-  ]);
+  assert.equal(SCHEDULE_END_DATE, "2026-10-31");
+  const dates = listScheduledDates();
+  assert.equal(dates.length, 48);
+  assert.deepEqual(dates.slice(0, 3), ["2026-09-14", "2026-09-15", "2026-09-16"]);
+  assert.deepEqual(dates.slice(-3), ["2026-10-29", "2026-10-30", "2026-10-31"]);
+  assert.equal(new Set(dates).size, 48);
 });
 
 test("Clacelの日付に対して再現可能な署名を作成する", () => {
@@ -49,6 +48,8 @@ test("正しい署名だけを受理し日付・署名・対象範囲の改変�
   assert.equal(verifyScheduledToken("2026-09-15", token, "test-secret"), false);
   assert.equal(verifyScheduledToken("2026-09-14", `${token}x`, "test-secret"), false);
   assert.equal(verifyScheduledToken("2026-10-01", token, "test-secret"), false);
+  assert.notEqual(makeScheduledToken("2026-10-01", "test-secret"), "");
+  assert.equal(makeScheduledToken("2026-11-01", "test-secret"), "");
   assert.equal(verifyScheduledToken("2026-09-14", token, ""), false);
 });
 

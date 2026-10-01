@@ -4093,6 +4093,378 @@
           "sentenceJa": "その報告書には明らかな矛盾がある。"
         }
       ]
+    },
+    {
+      "name": "Day 26",
+      "day": 26,
+      "items": [
+        {
+          "questionId": "2026-10/ielts/day26/q01",
+          "sentence": "She has always shown strong ___ talent.",
+          "answer": "artistic",
+          "base": "artistic",
+          "hint": "a_______",
+          "ja": "芸術的な",
+          "sentenceJa": "彼女は常に強い芸術的才能を示してきた。"
+        },
+        {
+          "questionId": "2026-10/ielts/day26/q02",
+          "sentence": "The forest was too ___ to walk through easily.",
+          "answer": "dense",
+          "base": "dense",
+          "hint": "d____",
+          "ja": "密生した、密集した",
+          "sentenceJa": "その森は簡単には歩き抜けられないほど密生していた。"
+        },
+        {
+          "questionId": "2026-10/ielts/day26/q03",
+          "sentence": "The two groups showed a clear ___ response to treatment.",
+          "answer": "differential",
+          "base": "differential",
+          "hint": "d___________",
+          "ja": "差異のある、差別的な",
+          "sentenceJa": "その二つのグループは治療に対して明確に異なる反応を示した。"
+        },
+        {
+          "questionId": "2026-10/ielts/day26/q04",
+          "sentence": "The material is highly ___ and returns to its shape.",
+          "answer": "elastic",
+          "base": "elastic",
+          "hint": "e______",
+          "ja": "弾力性のある",
+          "sentenceJa": "その素材は非常に弾力性があり、元の形に戻る。"
+        },
+        {
+          "questionId": "2026-10/ielts/day26/q05",
+          "sentence": "Only an ___ group of athletes qualified for the finals.",
+          "answer": "elite",
+          "base": "elite",
+          "hint": "e____",
+          "ja": "選ばれた",
+          "sentenceJa": "エリート集団の選手たちだけが決勝に進んだ。"
+        },
+        {
+          "questionId": "2026-10/ielts/day26/q06",
+          "sentence": "The trait offers a clear ___ advantage.",
+          "answer": "evolutionary",
+          "base": "evolutionary",
+          "hint": "e___________",
+          "ja": "進化上の",
+          "sentenceJa": "その特徴は明確な進化上の利点をもたらす。"
+        },
+        {
+          "questionId": "2026-10/ielts/day26/q07",
+          "sentence": "Her writing style is ___ and easy to follow.",
+          "answer": "fluid",
+          "base": "fluid",
+          "hint": "f____",
+          "ja": "流暢な、流動的な",
+          "sentenceJa": "彼女の文体は流暢で読みやすい。"
+        },
+        {
+          "questionId": "2026-10/ielts/day26/q08",
+          "sentence": "There was an ___ agreement between the two parties.",
+          "answer": "implicit",
+          "base": "implicit",
+          "hint": "i_______",
+          "ja": "暗黙の",
+          "sentenceJa": "その二者の間には暗黙の合意があった。"
+        },
+        {
+          "questionId": "2026-10/ielts/day26/q09",
+          "sentence": "The team achieved ___ results in a short time.",
+          "answer": "incredible",
+          "base": "incredible",
+          "hint": "i_________",
+          "ja": "信じられないほどの",
+          "sentenceJa": "そのチームは短期間で信じられないほどの結果を達成した。"
+        },
+        {
+          "questionId": "2026-10/ielts/day26/q10",
+          "sentence": "The policy had an ___ effect on employment.",
+          "answer": "indirect",
+          "base": "indirect",
+          "hint": "i_______",
+          "ja": "間接的な",
+          "sentenceJa": "その方針は雇用に間接的な影響を与えた。"
+        },
+        {
+          "questionId": "2026-10/ielts/day26/q11",
+          "sentence": "The meeting was ___ and relaxed.",
+          "answer": "informal",
+          "base": "informal",
+          "hint": "i_______",
+          "ja": "非公式の、くだけた",
+          "sentenceJa": "その会議は非公式で和やかだった。"
+        },
+        {
+          "questionId": "2026-10/ielts/day26/q12",
+          "sentence": "Curiosity seems to be an ___ human trait.",
+          "answer": "innate",
+          "base": "innate",
+          "hint": "i_____",
+          "ja": "生まれつきの",
+          "sentenceJa": "好奇心は人間の生まれつきの特性のようだ。"
+        },
+        {
+          "questionId": "2026-10/ielts/day26/q13",
+          "sentence": "Trust is ___ to any successful partnership.",
+          "answer": "integral",
+          "base": "integral",
+          "hint": "i_______",
+          "ja": "不可欠な",
+          "sentenceJa": "信頼はどんな成功したパートナーシップにも不可欠だ。"
+        },
+        {
+          "questionId": "2026-10/ielts/day26/q14",
+          "sentence": "The course is designed for ___ learners.",
+          "answer": "intermediate",
+          "base": "intermediate",
+          "hint": "i___________",
+          "ja": "中級の、中間の",
+          "sentenceJa": "そのコースは中級学習者向けに設計されている。"
+        },
+        {
+          "questionId": "2026-10/ielts/day26/q15",
+          "sentence": "The mediator remained ___ throughout the negotiation.",
+          "answer": "neutral",
+          "base": "neutral",
+          "hint": "n______",
+          "ja": "中立の",
+          "sentenceJa": "その調停者は交渉を通じて中立を保った。"
+        },
+        {
+          "questionId": "2026-10/ielts/day26/q16",
+          "sentence": "The report presents ___ evidence for the trend.",
+          "answer": "numerical",
+          "base": "numerical",
+          "hint": "n________",
+          "ja": "数値の",
+          "sentenceJa": "その報告書はその傾向を裏付ける数値的な証拠を提示している。"
+        },
+        {
+          "questionId": "2026-10/ielts/day26/q17",
+          "sentence": "Researchers identified the ___ temperature for growth.",
+          "answer": "optimal",
+          "base": "optimal",
+          "hint": "o______",
+          "ja": "最適な",
+          "sentenceJa": "研究者たちは成長にとって最適な温度を特定した。"
+        },
+        {
+          "questionId": "2026-10/ielts/day26/q18",
+          "sentence": "Students must pass both a written and an ___ exam.",
+          "answer": "oral",
+          "base": "oral",
+          "hint": "o___",
+          "ja": "口頭の",
+          "sentenceJa": "学生は筆記試験と口頭試験の両方に合格しなければならない。"
+        },
+        {
+          "questionId": "2026-10/ielts/day26/q19",
+          "sentence": "The lecture raised several ___ questions.",
+          "answer": "philosophical",
+          "base": "philosophical",
+          "hint": "p____________",
+          "ja": "哲学的な",
+          "sentenceJa": "その講義はいくつかの哲学的な問いを提起した。"
+        },
+        {
+          "questionId": "2026-10/ielts/day26/q20",
+          "sentence": "The manager took a ___ approach to the problem.",
+          "answer": "pragmatic",
+          "base": "pragmatic",
+          "hint": "p________",
+          "ja": "実用的な",
+          "sentenceJa": "そのマネージャーはその問題に実用的な手法で取り組んだ。"
+        }
+      ]
+    },
+    {
+      "name": "Day 27",
+      "day": 27,
+      "items": [
+        {
+          "questionId": "2026-10/ielts/day27/q01",
+          "sentence": "The plan was risky; ___, the board approved it.",
+          "answer": "nonetheless",
+          "base": "nonetheless",
+          "hint": "n__________",
+          "ja": "それでも",
+          "sentenceJa": "その計画は危険だったが、それでも取締役会はそれを承認した。"
+        },
+        {
+          "questionId": "2026-10/ielts/day27/q02",
+          "sentence": "The company introduced a new system ___ employees can work remotely.",
+          "answer": "whereby",
+          "base": "whereby",
+          "hint": "w______",
+          "ja": "それによって",
+          "sentenceJa": "その会社は従業員が在宅勤務できる新しい制度を導入した。"
+        },
+        {
+          "questionId": "2026-10/ielts/day27/q03",
+          "sentence": "They discussed the results and went for lunch ___.",
+          "answer": "afterward",
+          "base": "afterward",
+          "hint": "a________",
+          "ja": "その後で",
+          "sentenceJa": "彼らは結果について話し合い、その後で昼食に行った。"
+        },
+        {
+          "questionId": "2026-10/ielts/day27/q04",
+          "sentence": "The research findings were recognized ___.",
+          "answer": "internationally",
+          "base": "internationally",
+          "hint": "i______________",
+          "ja": "国際的に",
+          "sentenceJa": "その研究結果は国際的に認められた。"
+        },
+        {
+          "questionId": "2026-10/ielts/day27/q05",
+          "sentence": "The two species are ___ very similar.",
+          "answer": "genetically",
+          "base": "genetically",
+          "hint": "g__________",
+          "ja": "遺伝的に",
+          "sentenceJa": "その二つの種は遺伝的に非常に似ている。"
+        },
+        {
+          "questionId": "2026-10/ielts/day27/q06",
+          "sentence": "The professor praised the essay, and the reviewers did ___.",
+          "answer": "likewise",
+          "base": "likewise",
+          "hint": "l_______",
+          "ja": "同様に",
+          "sentenceJa": "教授はその論文を称賛し、査読者たちも同様にそうした。"
+        },
+        {
+          "questionId": "2026-10/ielts/day27/q07",
+          "sentence": "The plan is expensive; ___, it lacks clear benefits.",
+          "answer": "moreover",
+          "base": "moreover",
+          "hint": "m_______",
+          "ja": "その上、さらに",
+          "sentenceJa": "その計画は費用がかかる上に、明確な利点も欠けている。"
+        },
+        {
+          "questionId": "2026-10/ielts/day27/q08",
+          "sentence": "The data is outdated; ___, the sample size was too small.",
+          "answer": "furthermore",
+          "base": "furthermore",
+          "hint": "f__________",
+          "ja": "さらに、その上",
+          "sentenceJa": "そのデータは古い上に、サンプルサイズも小さすぎた。"
+        },
+        {
+          "questionId": "2026-10/ielts/day27/q09",
+          "sentence": "The results were disappointing; ___, the team continued the research.",
+          "answer": "nevertheless",
+          "base": "nevertheless",
+          "hint": "n___________",
+          "ja": "それにもかかわらず",
+          "sentenceJa": "その結果はがっかりするものだったが、それでもチームは研究を続けた。"
+        },
+        {
+          "questionId": "2026-10/ielts/day27/q10",
+          "sentence": "The bridge was closed for repairs, ___ the traffic delay.",
+          "answer": "hence",
+          "base": "hence",
+          "hint": "h____",
+          "ja": "それゆえに",
+          "sentenceJa": "その橋は修理のために閉鎖されており、それゆえに交通渋滞が起きた。"
+        },
+        {
+          "questionId": "2026-10/ielts/day27/q11",
+          "sentence": "The experiment failed, and ___ the theory was rejected.",
+          "answer": "thus",
+          "base": "thus",
+          "hint": "t___",
+          "ja": "こうして、それゆえ",
+          "sentenceJa": "その実験は失敗し、こうしてその理論は否定された。"
+        },
+        {
+          "questionId": "2026-10/ielts/day27/q12",
+          "sentence": "The manager reviewed the budget; ___, the team prepared the presentation.",
+          "answer": "meanwhile",
+          "base": "meanwhile",
+          "hint": "m________",
+          "ja": "その間、一方で",
+          "sentenceJa": "マネージャーは予算を見直し、その間チームはプレゼンの準備をした。"
+        },
+        {
+          "questionId": "2026-10/ielts/day27/q13",
+          "sentence": "The rule takes effect today; ___, all visitors must register.",
+          "answer": "henceforth",
+          "base": "henceforth",
+          "hint": "h_________",
+          "ja": "これ以降",
+          "sentenceJa": "その規則は本日より発効し、これ以降全ての訪問者は登録しなければならない。"
+        },
+        {
+          "questionId": "2026-10/ielts/day27/q14",
+          "sentence": "___, the project was considered a success.",
+          "answer": "Overall",
+          "base": "overall",
+          "hint": "o______",
+          "ja": "全体として",
+          "sentenceJa": "全体として、そのプロジェクトは成功とみなされた。"
+        },
+        {
+          "questionId": "2026-10/ielts/day27/q15",
+          "sentence": "The survey included ___ one thousand participants.",
+          "answer": "roughly",
+          "base": "roughly",
+          "hint": "r______",
+          "ja": "およそ",
+          "sentenceJa": "その調査にはおよそ1000人の参加者が含まれていた。"
+        },
+        {
+          "questionId": "2026-10/ielts/day27/q16",
+          "sentence": "The two designs are ___ identical.",
+          "answer": "virtually",
+          "base": "virtually",
+          "hint": "v________",
+          "ja": "実質的に、ほぼ",
+          "sentenceJa": "その二つのデザインは実質的に同一だ。"
+        },
+        {
+          "questionId": "2026-10/ielts/day27/q17",
+          "sentence": "The two events were, ___, unrelated.",
+          "answer": "seemingly",
+          "base": "seemingly",
+          "hint": "s________",
+          "ja": "見たところ、一見",
+          "sentenceJa": "その二つの出来事は、見たところ、無関係だった。"
+        },
+        {
+          "questionId": "2026-10/ielts/day27/q18",
+          "sentence": "The results ___ point to the same conclusion.",
+          "answer": "invariably",
+          "base": "invariably",
+          "hint": "i_________",
+          "ja": "決まって、常に",
+          "sentenceJa": "その結果は決まって同じ結論を示す。"
+        },
+        {
+          "questionId": "2026-10/ielts/day27/q19",
+          "sentence": "The candidates were interviewed ___ throughout the day.",
+          "answer": "successively",
+          "base": "successively",
+          "hint": "s___________",
+          "ja": "次々に、連続して",
+          "sentenceJa": "その候補者たちはその日を通じて次々に面接を受けた。"
+        },
+        {
+          "questionId": "2026-10/ielts/day27/q20",
+          "sentence": "The symptoms became ___ worse over time.",
+          "answer": "progressively",
+          "base": "progressively",
+          "hint": "p____________",
+          "ja": "徐々に",
+          "sentenceJa": "その症状は時間とともに徐々に悪化した。"
+        }
+      ]
     }
   ]
 }
