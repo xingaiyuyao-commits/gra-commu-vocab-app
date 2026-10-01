@@ -44,11 +44,15 @@ test("体験会の問題文・答え・例文訳は承認済みPDFから生成�
   }
 });
 
-test("実行時教材は承認済み9月教材に10月1日・2日の正本だけを追加する", () => {
+test("実行時教材は承認済み9月教材に10月1日・2日と10月4日〜9日の正本を追加する", () => {
   for (const data of Object.values(WORDTESTS)) {
     assert.equal(data.series.some(({ name }) => name === "Day 26"), true);
     assert.equal(data.series.some(({ name }) => name === "Day 27"), true);
-    assert.equal(data.series.some(({ name }) => name === "Day 30"), false);
+    assert.equal(data.series.some(({ name }) => name === "Day 28"), false);
+    for (let day = 29; day <= 34; day += 1) {
+      assert.equal(data.series.some(({ name }) => name === `Day ${day}`), true);
+    }
+    assert.equal(data.series.some(({ name }) => name === "Day 35"), false);
   }
   assert.equal(WORDTESTS.clacel.series.find(({ name }) => name === "Day 25").items.length, 10);
   assert.match(WORDTESTS.clacel.datasetRevision, /^2026-09-04-/);

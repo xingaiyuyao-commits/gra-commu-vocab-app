@@ -4465,6 +4465,1122 @@
           "sentenceJa": "そのシステムは5分ごとに自動的に作業内容を保存する。"
         }
       ]
+    },
+    {
+      "name": "Day 29",
+      "day": 29,
+      "items": [
+        {
+          "questionId": "2026-10/toeic/day29/q01",
+          "sentence": "Historians generally ___ her as a genius in her field.",
+          "answer": "acknowledge",
+          "base": "acknowledge",
+          "hint": "a__________",
+          "ja": "認める、謝意を示す",
+          "sentenceJa": "歴史家は一般に彼女をその分野の天才として認めています。"
+        },
+        {
+          "questionId": "2026-10/toeic/day29/q02",
+          "sentence": "They ___ the death of their mother in the local paper.",
+          "answer": "announced",
+          "base": "announce",
+          "hint": "a_______",
+          "ja": "発表する",
+          "sentenceJa": "彼らは母親の死を地元紙で発表した。"
+        },
+        {
+          "questionId": "2026-10/toeic/day29/q03",
+          "sentence": "A commission has just been ___ to investigate fraud claims.",
+          "answer": "appointed",
+          "base": "appoint",
+          "hint": "a______",
+          "ja": "任命する",
+          "sentenceJa": "詐欺行為の申し立てを調査するための委員会が任命されたばかりです。"
+        },
+        {
+          "questionId": "2026-10/toeic/day29/q04",
+          "sentence": "The case has been ___ to our most senior officer.",
+          "answer": "assigned",
+          "base": "assign",
+          "hint": "a_____",
+          "ja": "割り当てる",
+          "sentenceJa": "この事件は私たちの最上級の警察官に割り当てられました。"
+        },
+        {
+          "questionId": "2026-10/toeic/day29/q05",
+          "sentence": "Her poodle was ___ first prize in the dog show.",
+          "answer": "awarded",
+          "base": "award",
+          "hint": "a____",
+          "ja": "授与する",
+          "sentenceJa": "彼女のプードルはドッグショーで一等賞を受賞した。"
+        },
+        {
+          "questionId": "2026-10/toeic/day29/q06",
+          "sentence": "I tried to ___ his morale by praising his cooking.",
+          "answer": "boost",
+          "base": "boost",
+          "hint": "b____",
+          "ja": "押し上げる、高める",
+          "sentenceJa": "私は彼の料理を褒めることで彼の士気を高めようとした。"
+        },
+        {
+          "questionId": "2026-10/toeic/day29/q07",
+          "sentence": "Managers were touring the US to ___ investors on last week's interim results.",
+          "answer": "brief",
+          "base": "brief",
+          "hint": "b____",
+          "ja": "説明する、簡単に伝える",
+          "sentenceJa": "経営陣は先週の中間決算について投資家に説明するため、全米を回っていた。"
+        },
+        {
+          "questionId": "2026-10/toeic/day29/q08",
+          "sentence": "Students have to ___ for the new course by the end of April.",
+          "answer": "register",
+          "base": "register",
+          "hint": "r_______",
+          "ja": "登録する",
+          "sentenceJa": "学生は4月末までに新しいコースへ登録しなければならない。"
+        },
+        {
+          "questionId": "2026-10/toeic/day29/q09",
+          "sentence": "The local museum doesn't ___ for admission.",
+          "answer": "charge",
+          "base": "charge",
+          "hint": "c_____",
+          "ja": "請求する",
+          "sentenceJa": "地元の博物館は入場料を請求しない。"
+        },
+        {
+          "questionId": "2026-10/toeic/day29/q10",
+          "sentence": "Would you like to ___ tomorrow's meeting?",
+          "answer": "chair",
+          "base": "chair",
+          "hint": "c____",
+          "ja": "議長を務める",
+          "sentenceJa": "明日の会議で議長を務めませんか。"
+        },
+        {
+          "questionId": "2026-10/toeic/day29/q11",
+          "sentence": "Personnel at Intel and MIT will ___ on the study.",
+          "answer": "collaborate",
+          "base": "collaborate",
+          "hint": "c__________",
+          "ja": "協力する",
+          "sentenceJa": "インテルとマサチューセッツ工科大学の担当者が共同で研究を進めます。"
+        },
+        {
+          "questionId": "2026-10/toeic/day29/q12",
+          "sentence": "She manages to successfully ___ family life and a career.",
+          "answer": "combine",
+          "base": "combine",
+          "hint": "c______",
+          "ja": "組み合わせる",
+          "sentenceJa": "彼女は家庭生活とキャリアをうまく両立している。"
+        },
+        {
+          "questionId": "2026-10/toeic/day29/q13",
+          "sentence": "We will ___ building work in August of next year.",
+          "answer": "commence",
+          "base": "commence",
+          "hint": "c_______",
+          "ja": "開始する",
+          "sentenceJa": "来年8月には建築工事に着手する予定です。"
+        },
+        {
+          "questionId": "2026-10/toeic/day29/q14",
+          "sentence": "The newspaper ___ a series of articles on the fashion industry.",
+          "answer": "commissioned",
+          "base": "commission",
+          "hint": "c_________",
+          "ja": "委託する、依頼する",
+          "sentenceJa": "その新聞社はファッション業界に関する連載記事を依頼した。"
+        },
+        {
+          "questionId": "2026-10/toeic/day29/q15",
+          "sentence": "They will ___ customers on what precisely they want.",
+          "answer": "consult",
+          "base": "consult",
+          "hint": "c______",
+          "ja": "相談する",
+          "sentenceJa": "彼らは顧客が何を望んでいるのかを正確に相談します。"
+        },
+        {
+          "questionId": "2026-10/toeic/day29/q16",
+          "sentence": "The council will be ___ on the morning of the 25th.",
+          "answer": "convening",
+          "base": "convene",
+          "hint": "c______",
+          "ja": "招集する、開催する",
+          "sentenceJa": "評議会は２５日午前に召集される。"
+        },
+        {
+          "questionId": "2026-10/toeic/day29/q17",
+          "sentence": "She wanted to have her hair ___.",
+          "answer": "cut",
+          "base": "cut",
+          "hint": "c__",
+          "ja": "削減する、切る",
+          "sentenceJa": "彼女は髪を切ってもらいたかった。"
+        },
+        {
+          "questionId": "2026-10/toeic/day29/q18",
+          "sentence": "The economic crisis saw people queuing to ___ their savings.",
+          "answer": "withdraw",
+          "base": "withdraw",
+          "hint": "w_______",
+          "ja": "撤回する、引き出す",
+          "sentenceJa": "経済危機により、人々は貯金を引き出すために列をなした。"
+        },
+        {
+          "questionId": "2026-10/toeic/day29/q19",
+          "sentence": "He ___ my offer.",
+          "answer": "declined",
+          "base": "decline",
+          "hint": "d______",
+          "ja": "断る、減少する",
+          "sentenceJa": "彼は私の申し出を断った。"
+        },
+        {
+          "questionId": "2026-10/toeic/day29/q20",
+          "sentence": "He has ___ his life to scientific research.",
+          "answer": "dedicated",
+          "base": "dedicate",
+          "hint": "d_______",
+          "ja": "捧げる",
+          "sentenceJa": "彼は科学研究に生涯を捧げてきた。"
+        }
+      ]
+    },
+    {
+      "name": "Day 30",
+      "day": 30,
+      "items": [
+        {
+          "questionId": "2026-10/toeic/day30/q01",
+          "sentence": "The furniture store is ___ our new bed on Thursday.",
+          "answer": "delivering",
+          "base": "deliver",
+          "hint": "d______",
+          "ja": "配達する、実現する",
+          "sentenceJa": "家具店が木曜日に新しいベッドをお届けします。"
+        },
+        {
+          "questionId": "2026-10/toeic/day30/q02",
+          "sentence": "The decision has been made to ___ extra troops.",
+          "answer": "deploy",
+          "base": "deploy",
+          "hint": "d_____",
+          "ja": "配備する、展開する",
+          "sentenceJa": "追加の部隊を配備することを決定しました。"
+        },
+        {
+          "questionId": "2026-10/toeic/day30/q03",
+          "sentence": "Some sounds cannot be ___ by the human ear.",
+          "answer": "detected",
+          "base": "detect",
+          "hint": "d_____",
+          "ja": "検出する",
+          "sentenceJa": "人間の耳では検出できない音もあります。"
+        },
+        {
+          "questionId": "2026-10/toeic/day30/q04",
+          "sentence": "Farmers are increasingly ___ into other activities to supplement their incomes.",
+          "answer": "diversifying",
+          "base": "diversify",
+          "hint": "d________",
+          "ja": "多角化する",
+          "sentenceJa": "農家は、収入を補うために他の活動にますます多様化しています。"
+        },
+        {
+          "questionId": "2026-10/toeic/day30/q05",
+          "sentence": "After all the work I’ve done, I’ve ___ a vacation.",
+          "answer": "earned",
+          "base": "earn",
+          "hint": "e___",
+          "ja": "稼ぐ、獲得する",
+          "sentenceJa": "すべての仕事をした後、私は休暇を取得しました。"
+        },
+        {
+          "questionId": "2026-10/toeic/day30/q06",
+          "sentence": "He ___ the check and deposited it in his account.",
+          "answer": "endorsed",
+          "base": "endorse",
+          "hint": "e______",
+          "ja": "支持する、推薦する",
+          "sentenceJa": "彼は小切手を裏書し、自分の口座に預けました。"
+        },
+        {
+          "questionId": "2026-10/toeic/day30/q07",
+          "sentence": "The debate about food safety has ___ the whole nation.",
+          "answer": "engaged",
+          "base": "engage",
+          "hint": "e_____",
+          "ja": "従事させる、引き付ける",
+          "sentenceJa": "食品の安全性についての議論は、全国を巻き込んでいます。"
+        },
+        {
+          "questionId": "2026-10/toeic/day30/q08",
+          "sentence": "We ___ some people to help prepare the food.",
+          "answer": "enlisted",
+          "base": "enlist",
+          "hint": "e_____",
+          "ja": "協力を求める、入隊する",
+          "sentenceJa": "食料の準備を手伝ってもらうために、何人かの人々を徴募しました。"
+        },
+        {
+          "questionId": "2026-10/toeic/day30/q09",
+          "sentence": "Our costs ___ considerably over the next few years.",
+          "answer": "escalated",
+          "base": "escalate",
+          "hint": "e_______",
+          "ja": "拡大する",
+          "sentenceJa": "今後数年間で、当社のコストは大幅に上昇しました。"
+        },
+        {
+          "questionId": "2026-10/toeic/day30/q10",
+          "sentence": "The success of our campaign has ___ our wildest expectations.",
+          "answer": "exceeded",
+          "base": "exceed",
+          "hint": "e_____",
+          "ja": "超える",
+          "sentenceJa": "私たちのキャンペーンの成功は、私たちの予想を上回っています。"
+        },
+        {
+          "questionId": "2026-10/toeic/day30/q11",
+          "sentence": "The meeting ___ into the late hours of the night.",
+          "answer": "extended",
+          "base": "extend",
+          "hint": "e_____",
+          "ja": "延長する",
+          "sentenceJa": "会合は夜遅くまで続いた。"
+        },
+        {
+          "questionId": "2026-10/toeic/day30/q12",
+          "sentence": "Can you ___ this document for me?",
+          "answer": "file",
+          "base": "file",
+          "hint": "f___",
+          "ja": "提出する",
+          "sentenceJa": "この書類を提出してもらえますか。"
+        },
+        {
+          "questionId": "2026-10/toeic/day30/q13",
+          "sentence": "The government is ___ that unemployment will continue to fall.",
+          "answer": "forecasting",
+          "base": "forecast",
+          "hint": "f_______",
+          "ja": "予測する",
+          "sentenceJa": "政府は失業率が引き続き低下すると予測している。"
+        },
+        {
+          "questionId": "2026-10/toeic/day30/q14",
+          "sentence": "The sea ___ the sun's warmth longer than the land.",
+          "answer": "retains",
+          "base": "retain",
+          "hint": "r_____",
+          "ja": "保持する、維持する",
+          "sentenceJa": "海は陸よりも太陽の暖かさを長く保ちます。"
+        },
+        {
+          "questionId": "2026-10/toeic/day30/q15",
+          "sentence": "The government ___ the company a special license.",
+          "answer": "granted",
+          "base": "grant",
+          "hint": "g____",
+          "ja": "付与する、認める",
+          "sentenceJa": "政府はその会社に特別な免許を与えた。"
+        },
+        {
+          "questionId": "2026-10/toeic/day30/q16",
+          "sentence": "I was ___ by the first company I applied to.",
+          "answer": "hired",
+          "base": "hire",
+          "hint": "h___",
+          "ja": "雇う",
+          "sentenceJa": "私は最初に応募した会社に雇われました。"
+        },
+        {
+          "questionId": "2026-10/toeic/day30/q17",
+          "sentence": "Congress refused to pass the bill that would ___ tax reforms.",
+          "answer": "implement",
+          "base": "implement",
+          "hint": "i________",
+          "ja": "実施する",
+          "sentenceJa": "議会は、税制改革を実施する法案の可決を拒否した。"
+        },
+        {
+          "questionId": "2026-10/toeic/day30/q18",
+          "sentence": "The airline will ___ its new transatlantic service next month.",
+          "answer": "launch",
+          "base": "launch",
+          "hint": "l_____",
+          "ja": "開始する、発売する",
+          "sentenceJa": "同社は来月、新しい大西洋横断サービスを開始する予定です。"
+        },
+        {
+          "questionId": "2026-10/toeic/day30/q19",
+          "sentence": "The Rotary Club ___ Little League baseball in the summer.",
+          "answer": "sponsors",
+          "base": "sponsor",
+          "hint": "s______",
+          "ja": "後援する",
+          "sentenceJa": "ロータリークラブは、夏にリトルリーグの野球を後援します。"
+        },
+        {
+          "questionId": "2026-10/toeic/day30/q20",
+          "sentence": "He ___ his name at the end of the letter.",
+          "answer": "signed",
+          "base": "sign",
+          "hint": "s___",
+          "ja": "署名する",
+          "sentenceJa": "彼は手紙の最後に署名した。"
+        }
+      ]
+    },
+    {
+      "name": "Day 31",
+      "day": 31,
+      "items": [
+        {
+          "questionId": "2026-10/toeic/day31/q01",
+          "sentence": "Customer reaction to our product ___ has been extremely positive.",
+          "answer": "portfolio",
+          "base": "portfolio",
+          "hint": "p________",
+          "ja": "製品群",
+          "sentenceJa": "当社の製品ポートフォリオに対する顧客の反応は非常にポジティブです。"
+        },
+        {
+          "questionId": "2026-10/toeic/day31/q02",
+          "sentence": "We signed a ___ agreement with a company in Spain.",
+          "answer": "distribution",
+          "base": "distribution",
+          "hint": "d___________",
+          "ja": "配布",
+          "sentenceJa": "スペインの会社と販売契約を締結しました。"
+        },
+        {
+          "questionId": "2026-10/toeic/day31/q03",
+          "sentence": "The police have no legal ___ in these disputes.",
+          "answer": "authority",
+          "base": "authority",
+          "hint": "a________",
+          "ja": "権威",
+          "sentenceJa": "警察はこれらの紛争に法的権限を持っていません。"
+        },
+        {
+          "questionId": "2026-10/toeic/day31/q04",
+          "sentence": "I’m having lunch with an old friend ___ next week.",
+          "answer": "sometime",
+          "base": "sometime",
+          "hint": "s_______",
+          "ja": "いつか",
+          "sentenceJa": "来週、旧友と昼食を食べる予定です。"
+        },
+        {
+          "questionId": "2026-10/toeic/day31/q05",
+          "sentence": "These MPs have rural seats, many of them ___.",
+          "answer": "marginal",
+          "base": "marginal",
+          "hint": "m_______",
+          "ja": "限界的な",
+          "sentenceJa": "これらの国会議員は地方選挙区の議席を持ち、その多くは僅差である。"
+        },
+        {
+          "questionId": "2026-10/toeic/day31/q06",
+          "sentence": "Nearly 90 ___, mainly private companies, mint gold in bars.",
+          "answer": "entities",
+          "base": "entity",
+          "hint": "e_____",
+          "ja": "事業体",
+          "sentenceJa": "主に民間企業からなる約90の事業体が、金の延べ棒を鋳造している。"
+        },
+        {
+          "questionId": "2026-10/toeic/day31/q07",
+          "sentence": "___ in the steel industry improved by five percent last year.",
+          "answer": "Productivity",
+          "base": "productivity",
+          "hint": "p___________",
+          "ja": "生産性",
+          "sentenceJa": "鉄鋼業界の生産性は昨年5 ％向上した。"
+        },
+        {
+          "questionId": "2026-10/toeic/day31/q08",
+          "sentence": "The changes will affect people at all ___ levels.",
+          "answer": "organizational",
+          "base": "organizational",
+          "hint": "o_____________",
+          "ja": "組織的な",
+          "sentenceJa": "この変更は、すべての組織レベルの人々に影響を与えます。"
+        },
+        {
+          "questionId": "2026-10/toeic/day31/q09",
+          "sentence": "If you're going into teaching, energy is a necessary ___.",
+          "answer": "commodity",
+          "base": "commodity",
+          "hint": "c________",
+          "ja": "商品",
+          "sentenceJa": "教師になるのであれば、エネルギーは必要な資源です。"
+        },
+        {
+          "questionId": "2026-10/toeic/day31/q10",
+          "sentence": "More ___ easing to lower interest rates may be necessary.",
+          "answer": "monetary",
+          "base": "monetary",
+          "hint": "m_______",
+          "ja": "金銭的な",
+          "sentenceJa": "金利を下げるためには、より多くの金融緩和が必要かもしれません。"
+        },
+        {
+          "questionId": "2026-10/toeic/day31/q11",
+          "sentence": "The family owned over 2 million shares in the ___.",
+          "answer": "aggregate",
+          "base": "aggregate",
+          "hint": "a________",
+          "ja": "集合体",
+          "sentenceJa": "家族は合計で200万株以上を所有していました。"
+        },
+        {
+          "questionId": "2026-10/toeic/day31/q12",
+          "sentence": "Our ___ 2009 results were challenged by the world economic downturn.",
+          "answer": "fiscal",
+          "base": "fiscal",
+          "hint": "f_____",
+          "ja": "財政",
+          "sentenceJa": "2009年度の業績は、世界経済の低迷に直面しました。"
+        },
+        {
+          "questionId": "2026-10/toeic/day31/q13",
+          "sentence": "The debt is ___ in one lump sum or by instalments.",
+          "answer": "payable",
+          "base": "payable",
+          "hint": "p______",
+          "ja": "支払われる",
+          "sentenceJa": "債務は、一時金または分割払いで支払われます。"
+        },
+        {
+          "questionId": "2026-10/toeic/day31/q14",
+          "sentence": "I have never ___ or been late with previous payments.",
+          "answer": "defaulted",
+          "base": "default",
+          "hint": "d______",
+          "ja": "債務不履行",
+          "sentenceJa": "以前の支払いで債務不履行や遅延が発生したことはありません。"
+        },
+        {
+          "questionId": "2026-10/toeic/day31/q15",
+          "sentence": "A farmer has to handle various ___ of the business.",
+          "answer": "aspects",
+          "base": "aspect",
+          "hint": "a_____",
+          "ja": "側面",
+          "sentenceJa": "農家は、ビジネスのさまざまな側面を処理する必要があります。"
+        },
+        {
+          "questionId": "2026-10/toeic/day31/q16",
+          "sentence": "I think this ___ is wrong.",
+          "answer": "calculation",
+          "base": "calculation",
+          "hint": "c__________",
+          "ja": "計算",
+          "sentenceJa": "私はこの計算が間違っていると思います。"
+        },
+        {
+          "questionId": "2026-10/toeic/day31/q17",
+          "sentence": "The program is financed with a $5 billion annual ___.",
+          "answer": "allocation",
+          "base": "allocation",
+          "hint": "a_________",
+          "ja": "割り当て",
+          "sentenceJa": "このプログラムは年間50億ドルの配分金で運営されている。"
+        },
+        {
+          "questionId": "2026-10/toeic/day31/q18",
+          "sentence": "Any ___ from the party philosophy is seen as betrayal.",
+          "answer": "deviation",
+          "base": "deviation",
+          "hint": "d________",
+          "ja": "偏差",
+          "sentenceJa": "党の哲学からの逸脱は裏切りと見なされる。"
+        },
+        {
+          "questionId": "2026-10/toeic/day31/q19",
+          "sentence": "Profits have come from income from listed securities and other interests ___.",
+          "answer": "receivable",
+          "base": "receivable",
+          "hint": "r_________",
+          "ja": "受取可能",
+          "sentenceJa": "利益は、上場有価証券およびその他の受取利息からの収入から生じています。"
+        },
+        {
+          "questionId": "2026-10/toeic/day31/q20",
+          "sentence": "Yoga is said to restore one's inner ___.",
+          "answer": "equilibrium",
+          "base": "equilibrium",
+          "hint": "e__________",
+          "ja": "平衡",
+          "sentenceJa": "ヨガは内面のバランスを取り戻すと言われています。"
+        }
+      ]
+    },
+    {
+      "name": "Day 32",
+      "day": 32,
+      "items": [
+        {
+          "questionId": "2026-10/toeic/day32/q01",
+          "sentence": "He’s trying to earn enough to pay off his ___.",
+          "answer": "creditors",
+          "base": "creditor",
+          "hint": "c_______",
+          "ja": "債権者",
+          "sentenceJa": "彼は債権者を返済するのに十分な収入を得ようとしています。"
+        },
+        {
+          "questionId": "2026-10/toeic/day32/q02",
+          "sentence": "Too much of the music feels ___.",
+          "answer": "derivative",
+          "base": "derivative",
+          "hint": "d_________",
+          "ja": "派生関数",
+          "sentenceJa": "あまりにも多くの音楽が派生的に感じられます。"
+        },
+        {
+          "questionId": "2026-10/toeic/day32/q03",
+          "sentence": "There's no rational explanation for this ___.",
+          "answer": "surplus",
+          "base": "surplus",
+          "hint": "s______",
+          "ja": "余剰",
+          "sentenceJa": "この余剰には合理的な説明がありません。"
+        },
+        {
+          "questionId": "2026-10/toeic/day32/q04",
+          "sentence": "A small ___ lets her travel.",
+          "answer": "annuity",
+          "base": "annuity",
+          "hint": "a______",
+          "ja": "年金",
+          "sentenceJa": "少額の年金で旅行することができます。"
+        },
+        {
+          "questionId": "2026-10/toeic/day32/q05",
+          "sentence": "Insurers may request the ___ of existing genetic test results.",
+          "answer": "disclosure",
+          "base": "disclosure",
+          "hint": "d_________",
+          "ja": "開示",
+          "sentenceJa": "保険会社は、既存の遺伝子検査結果の開示を要求することができます。"
+        },
+        {
+          "questionId": "2026-10/toeic/day32/q06",
+          "sentence": "Many individual employees will benefit from this favourable tax ___.",
+          "answer": "regime",
+          "base": "regime",
+          "hint": "r_____",
+          "ja": "体制",
+          "sentenceJa": "多くの個々の従業員は、この有利な税制の恩恵を受けるでしょう。"
+        },
+        {
+          "questionId": "2026-10/toeic/day32/q07",
+          "sentence": "The US has very little ___ in that part of the world.",
+          "answer": "leverage",
+          "base": "leverage",
+          "hint": "l_______",
+          "ja": "影響力",
+          "sentenceJa": "米国は世界のその地域ではほとんど影響力を持っていません。"
+        },
+        {
+          "questionId": "2026-10/toeic/day32/q08",
+          "sentence": "We are one of the cheapest providers of mobile ___.",
+          "answer": "internet",
+          "base": "internet",
+          "hint": "i_______",
+          "ja": "インターネット",
+          "sentenceJa": "当社は、モバイルインターネットの最も安価なプロバイダーの1つです。"
+        },
+        {
+          "questionId": "2026-10/toeic/day32/q09",
+          "sentence": "On Tuesday the country's ___ voted to establish its own army.",
+          "answer": "parliament",
+          "base": "parliament",
+          "hint": "p_________",
+          "ja": "議会",
+          "sentenceJa": "火曜日、同国議会は独自の軍隊を設立することを可決した。"
+        },
+        {
+          "questionId": "2026-10/toeic/day32/q10",
+          "sentence": "Government by ___ has its own peculiar set of problems.",
+          "answer": "coalition",
+          "base": "coalition",
+          "hint": "c________",
+          "ja": "連合",
+          "sentenceJa": "連立政権は独自の問題を抱えている。"
+        },
+        {
+          "questionId": "2026-10/toeic/day32/q11",
+          "sentence": "Major ___ were criticized for not passing on interest rate cuts.",
+          "answer": "lenders",
+          "base": "lender",
+          "hint": "l_____",
+          "ja": "貸し手",
+          "sentenceJa": "大手金融機関は、金利引き下げを利用者に還元しなかったとして批判された。"
+        },
+        {
+          "questionId": "2026-10/toeic/day32/q12",
+          "sentence": "This ___ problem is very serious for small and medium-sized business.",
+          "answer": "liquidity",
+          "base": "liquidity",
+          "hint": "l________",
+          "ja": "流動性",
+          "sentenceJa": "この流動性の問題は、中小企業にとって非常に深刻です。"
+        },
+        {
+          "questionId": "2026-10/toeic/day32/q13",
+          "sentence": "___ will be voting on the proposed merger of the companies next week.",
+          "answer": "Stockholders",
+          "base": "stockholder",
+          "hint": "s__________",
+          "ja": "株主",
+          "sentenceJa": "株主は来週、提案されている両社の合併について投票する予定です。"
+        },
+        {
+          "questionId": "2026-10/toeic/day32/q14",
+          "sentence": "What happens if the investment turns out to be a ___?",
+          "answer": "fraud",
+          "base": "fraud",
+          "hint": "f____",
+          "ja": "詐欺",
+          "sentenceJa": "投資が詐欺であることが判明した場合はどうなりますか？"
+        },
+        {
+          "questionId": "2026-10/toeic/day32/q15",
+          "sentence": "The move was announced by the state's chief banking ___.",
+          "answer": "regulator",
+          "base": "regulator",
+          "hint": "r________",
+          "ja": "規制当局",
+          "sentenceJa": "この動きは、州の最高銀行規制当局によって発表された。"
+        },
+        {
+          "questionId": "2026-10/toeic/day32/q16",
+          "sentence": "I'll ___ you my chocolate bar for your peanuts.",
+          "answer": "swap",
+          "base": "swap",
+          "hint": "s___",
+          "ja": "交換する",
+          "sentenceJa": "私のチョコレートバーをあなたのピーナッツと交換します。"
+        },
+        {
+          "questionId": "2026-10/toeic/day32/q17",
+          "sentence": "Now he's $37,000 in debt and plans to file for ___.",
+          "answer": "bankruptcy",
+          "base": "bankruptcy",
+          "hint": "b_________",
+          "ja": "破産",
+          "sentenceJa": "現在、彼は37,000 $の負債を抱えており、破産を申請する予定です。"
+        },
+        {
+          "questionId": "2026-10/toeic/day32/q18",
+          "sentence": "The bank is now a major ___ of financial services to industry.",
+          "answer": "provider",
+          "base": "provider",
+          "hint": "p_______",
+          "ja": "提供業者",
+          "sentenceJa": "同行は現在、業界への金融サービスの主要プロバイダーです。"
+        },
+        {
+          "questionId": "2026-10/toeic/day32/q19",
+          "sentence": "A ___ has occurred in the overall political situation.",
+          "answer": "regression",
+          "base": "regression",
+          "hint": "r_________",
+          "ja": "回帰",
+          "sentenceJa": "全体的な政治情勢に後退が生じている。"
+        },
+        {
+          "questionId": "2026-10/toeic/day32/q20",
+          "sentence": "They've had a lot of ___ at the factory recently.",
+          "answer": "turnover",
+          "base": "turnover",
+          "hint": "t_______",
+          "ja": "売上高",
+          "sentenceJa": "彼らは最近、工場で多くの離職者を抱えています。"
+        }
+      ]
+    },
+    {
+      "name": "Day 33",
+      "day": 33,
+      "items": [
+        {
+          "questionId": "2026-10/toeic/day33/q01",
+          "sentence": "Companies ___ additional costs in dealing with non-paying customers.",
+          "answer": "incur",
+          "base": "incur",
+          "hint": "i____",
+          "ja": "被る",
+          "sentenceJa": "企業は、未払いの顧客に対処するために追加のコストを負担します。"
+        },
+        {
+          "questionId": "2026-10/toeic/day33/q02",
+          "sentence": "It's ___ to buy a car without some good advice.",
+          "answer": "risky",
+          "base": "risky",
+          "hint": "r____",
+          "ja": "危険な",
+          "sentenceJa": "良いアドバイスなしに車を購入するのは危険です。"
+        },
+        {
+          "questionId": "2026-10/toeic/day33/q03",
+          "sentence": "These people have been the victims of a ___ injustice.",
+          "answer": "gross",
+          "base": "gross",
+          "hint": "g____",
+          "ja": "ひどい",
+          "sentenceJa": "これらの人々は、重大な不正の犠牲者となっています。"
+        },
+        {
+          "questionId": "2026-10/toeic/day33/q04",
+          "sentence": "Mexico's ___ guarantees the right of free travel to its citizens.",
+          "answer": "constitution",
+          "base": "constitution",
+          "hint": "c___________",
+          "ja": "憲法",
+          "sentenceJa": "メキシコの憲法は、市民の自由な旅行の権利を保証しています。"
+        },
+        {
+          "questionId": "2026-10/toeic/day33/q05",
+          "sentence": "His father is a market ___, selling fruit and vegetables.",
+          "answer": "trader",
+          "base": "trader",
+          "hint": "t_____",
+          "ja": "市場取引業者",
+          "sentenceJa": "父親は市場トレーダーで、果物や野菜を販売しています。"
+        },
+        {
+          "questionId": "2026-10/toeic/day33/q06",
+          "sentence": "The network is a ___ of the state telephone company.",
+          "answer": "monopoly",
+          "base": "monopoly",
+          "hint": "m_______",
+          "ja": "独占",
+          "sentenceJa": "このネットワークは、国営電話会社が独占しています。"
+        },
+        {
+          "questionId": "2026-10/toeic/day33/q07",
+          "sentence": "There is a proven ___ between educational level and income.",
+          "answer": "correlation",
+          "base": "correlation",
+          "hint": "c__________",
+          "ja": "相関関係",
+          "sentenceJa": "教育レベルと収入の間には、実証済みの相関関係があります。"
+        },
+        {
+          "questionId": "2026-10/toeic/day33/q08",
+          "sentence": "The company is planning to float on the ___.",
+          "answer": "stock market",
+          "base": "stockmarket",
+          "hint": "s__________",
+          "ja": "株式市場",
+          "sentenceJa": "その会社は株式市場への上場を計画している。"
+        },
+        {
+          "questionId": "2026-10/toeic/day33/q09",
+          "sentence": "The public are used to ___ of promise by governments.",
+          "answer": "breaches",
+          "base": "breach",
+          "hint": "b_____",
+          "ja": "違反",
+          "sentenceJa": "一般の人々は、政府による約束違反に慣れています。"
+        },
+        {
+          "questionId": "2026-10/toeic/day33/q10",
+          "sentence": "The government has cut ___ on electricity and petrol.",
+          "answer": "subsidies",
+          "base": "subsidy",
+          "hint": "s______",
+          "ja": "補助金",
+          "sentenceJa": "政府は電気とガソリンの補助金を削減した。"
+        },
+        {
+          "questionId": "2026-10/toeic/day33/q11",
+          "sentence": "The accounts are audited once a year by an ___.",
+          "answer": "auditor",
+          "base": "auditor",
+          "hint": "a______",
+          "ja": "監査人",
+          "sentenceJa": "会計は、監査人によって年に1回監査されます。"
+        },
+        {
+          "questionId": "2026-10/toeic/day33/q12",
+          "sentence": "The firm hopes to become the region's top ___.",
+          "answer": "banker",
+          "base": "banker",
+          "hint": "b_____",
+          "ja": "銀行家",
+          "sentenceJa": "同社は、この地域のトップ銀行家になることを望んでいます。"
+        },
+        {
+          "questionId": "2026-10/toeic/day33/q13",
+          "sentence": "In some of these markets ___ is rife.",
+          "answer": "corruption",
+          "base": "corruption",
+          "hint": "c_________",
+          "ja": "汚職",
+          "sentenceJa": "これらの市場の中には、腐敗が蔓延しているものもあります。"
+        },
+        {
+          "questionId": "2026-10/toeic/day33/q14",
+          "sentence": "California is one of the largest ___ of municipal bonds.",
+          "answer": "issuers",
+          "base": "issuer",
+          "hint": "i_____",
+          "ja": "発行者",
+          "sentenceJa": "カリフォルニア州は、地方債の最大の発行者の1つです。"
+        },
+        {
+          "questionId": "2026-10/toeic/day33/q15",
+          "sentence": "___ of library books should return them when they are due.",
+          "answer": "Borrowers",
+          "base": "borrower",
+          "hint": "b_______",
+          "ja": "借り手",
+          "sentenceJa": "図書館の本を借りる人は、期限が来たら返却する必要があります。"
+        },
+        {
+          "questionId": "2026-10/toeic/day33/q16",
+          "sentence": "Please contact your ___ if you have any questions.",
+          "answer": "insurer",
+          "base": "insurer",
+          "hint": "i______",
+          "ja": "保険会社",
+          "sentenceJa": "ご不明な点がございましたら、保険会社にお問い合わせください。"
+        },
+        {
+          "questionId": "2026-10/toeic/day33/q17",
+          "sentence": "They are reorganizing the company in order to improve ___.",
+          "answer": "profitability",
+          "base": "profitability",
+          "hint": "p____________",
+          "ja": "収益性",
+          "sentenceJa": "収益性を向上させるために会社を再編しています。"
+        },
+        {
+          "questionId": "2026-10/toeic/day33/q18",
+          "sentence": "The statement showed a ___ of £350 on January 22.",
+          "answer": "debit",
+          "base": "debit",
+          "hint": "d____",
+          "ja": "引き落とし",
+          "sentenceJa": "明細書には1月22日付で350ポンドの引き落としが記載されていた。"
+        },
+        {
+          "questionId": "2026-10/toeic/day33/q19",
+          "sentence": "He planned a stay of two years' ___.",
+          "answer": "duration",
+          "base": "duration",
+          "hint": "d_______",
+          "ja": "期間",
+          "sentenceJa": "彼は2年間の滞在を計画しました。"
+        },
+        {
+          "questionId": "2026-10/toeic/day33/q20",
+          "sentence": "In the worst-case ___, the whole coast would be under water.",
+          "answer": "scenario",
+          "base": "scenario",
+          "hint": "s_______",
+          "ja": "想定される事態",
+          "sentenceJa": "最悪のシナリオでは、海岸全体が水面下になります。"
+        }
+      ]
+    },
+    {
+      "name": "Day 34",
+      "day": 34,
+      "items": [
+        {
+          "questionId": "2026-10/toeic/day34/q01",
+          "sentence": "How can we best combat ___ in our own backyard?",
+          "answer": "terrorism",
+          "base": "terrorism",
+          "hint": "t________",
+          "ja": "テロ",
+          "sentenceJa": "私たちの身近な場所で起きるテロに、どう立ち向かうのが最善だろうか。"
+        },
+        {
+          "questionId": "2026-10/toeic/day34/q02",
+          "sentence": "Most ___ opposed nuclear weapons.",
+          "answer": "respondents",
+          "base": "respondent",
+          "hint": "r_________",
+          "ja": "回答者",
+          "sentenceJa": "回答者の大半が核兵器に反対した。"
+        },
+        {
+          "questionId": "2026-10/toeic/day34/q03",
+          "sentence": "___ bodies in Europe are questioning the drug's safety.",
+          "answer": "Regulatory",
+          "base": "regulatory",
+          "hint": "r_________",
+          "ja": "規制上の",
+          "sentenceJa": "欧州の規制機関は、この薬の安全性に疑問を投げかけている。"
+        },
+        {
+          "questionId": "2026-10/toeic/day34/q04",
+          "sentence": "Huge corporate ___ were the big financial news this year.",
+          "answer": "takeovers",
+          "base": "takeover",
+          "hint": "t_______",
+          "ja": "乗っ取り",
+          "sentenceJa": "今年は、大規模な企業買収が大きな財務ニュースとなりました。"
+        },
+        {
+          "questionId": "2026-10/toeic/day34/q05",
+          "sentence": "In 2x + 4y = 7, 2 is the ___ of x.",
+          "answer": "coefficient",
+          "base": "coefficient",
+          "hint": "c__________",
+          "ja": "係数",
+          "sentenceJa": "2x＋4y＝7では、2がxの係数である。"
+        },
+        {
+          "questionId": "2026-10/toeic/day34/q06",
+          "sentence": "Different outsourcing levels may be considered ___ at different times.",
+          "answer": "optimal",
+          "base": "optimal",
+          "hint": "o______",
+          "ja": "最適な",
+          "sentenceJa": "外部委託の最適な水準は、時期によって異なる場合がある。"
+        },
+        {
+          "questionId": "2026-10/toeic/day34/q07",
+          "sentence": "For a ___ fee, they will deliver orders to customers' homes.",
+          "answer": "nominal",
+          "base": "nominal",
+          "hint": "n______",
+          "ja": "公称",
+          "sentenceJa": "わずかな手数料で、注文者の自宅に注文品を配達します。"
+        },
+        {
+          "questionId": "2026-10/toeic/day34/q08",
+          "sentence": "The war has badly damaged the country's ___.",
+          "answer": "infrastructure",
+          "base": "infrastructure",
+          "hint": "i_____________",
+          "ja": "インフラストラクチャ",
+          "sentenceJa": "戦争は国のインフラに深刻な損害を与えました。"
+        },
+        {
+          "questionId": "2026-10/toeic/day34/q09",
+          "sentence": "The company has ___ profits of over £200 million.",
+          "answer": "disclosed",
+          "base": "disclose",
+          "hint": "d_______",
+          "ja": "開示する",
+          "sentenceJa": "同社は2億£以上の利益を開示しています。"
+        },
+        {
+          "questionId": "2026-10/toeic/day34/q10",
+          "sentence": "___ any losses against your overall income.",
+          "answer": "Offset",
+          "base": "offset",
+          "hint": "o_____",
+          "ja": "相殺する",
+          "sentenceJa": "すべての損失を総収入と相殺します。"
+        },
+        {
+          "questionId": "2026-10/toeic/day34/q11",
+          "sentence": "The ___ of ads like this lies in their simplicity.",
+          "answer": "effectiveness",
+          "base": "effectiveness",
+          "hint": "e____________",
+          "ja": "有効性",
+          "sentenceJa": "このような広告の有効性は、そのシンプルさにあります。"
+        },
+        {
+          "questionId": "2026-10/toeic/day34/q12",
+          "sentence": "This store has a wide selection of ___ for sale.",
+          "answer": "merchandise",
+          "base": "merchandise",
+          "hint": "m__________",
+          "ja": "商品",
+          "sentenceJa": "この店では幅広い商品を販売している。"
+        },
+        {
+          "questionId": "2026-10/toeic/day34/q13",
+          "sentence": "These two young musicians are ___ for international success.",
+          "answer": "bound",
+          "base": "bound",
+          "hint": "b____",
+          "ja": "縛られた",
+          "sentenceJa": "この2人の若いミュージシャンは、国際的な成功を目指しています。"
+        },
+        {
+          "questionId": "2026-10/toeic/day34/q14",
+          "sentence": "He failed to carry out his side of the ___.",
+          "answer": "bargain",
+          "base": "bargain",
+          "hint": "b______",
+          "ja": "取引",
+          "sentenceJa": "彼は取引を遂行できなかった。"
+        },
+        {
+          "questionId": "2026-10/toeic/day34/q15",
+          "sentence": "Her ___ to Buddhism/Islam was a very gradual process.",
+          "answer": "conversion",
+          "base": "conversion",
+          "hint": "c_________",
+          "ja": "変換",
+          "sentenceJa": "彼女の仏教/イスラム教への改宗は非常に段階的なプロセスでした。"
+        },
+        {
+          "questionId": "2026-10/toeic/day34/q16",
+          "sentence": "The ___ show that, in general, women live longer than men.",
+          "answer": "statistics",
+          "base": "statistics",
+          "hint": "s_________",
+          "ja": "統計",
+          "sentenceJa": "統計によると、一般的に女性は男性よりも長生きすることが示されています。"
+        },
+        {
+          "questionId": "2026-10/toeic/day34/q17",
+          "sentence": "The bill faces opposition from a number of key ___, including the California Chamber of Commerce.",
+          "answer": "stakeholders",
+          "base": "stakeholder",
+          "hint": "s__________",
+          "ja": "利害関係者",
+          "sentenceJa": "この法案には、カリフォルニア商工会議所など主要関係者が反対している。"
+        },
+        {
+          "questionId": "2026-10/toeic/day34/q18",
+          "sentence": "We will provide financial and ___ support to member companies.",
+          "answer": "administrative",
+          "base": "administrative",
+          "hint": "a_____________",
+          "ja": "管理的な",
+          "sentenceJa": "会員企業様への財務・事務支援を行います。"
+        },
+        {
+          "questionId": "2026-10/toeic/day34/q19",
+          "sentence": "This project has already cost the ___ millions of dollars.",
+          "answer": "taxpayer",
+          "base": "taxpayer",
+          "hint": "t_______",
+          "ja": "納税者",
+          "sentenceJa": "このプロジェクトはすでに納税者に何百万ドルもの費用がかかっています。"
+        },
+        {
+          "questionId": "2026-10/toeic/day34/q20",
+          "sentence": "___ against our common enemy is our only hope for survival.",
+          "answer": "Alliance",
+          "base": "alliance",
+          "hint": "a_______",
+          "ja": "同盟",
+          "sentenceJa": "共通の敵との同盟は、生き残るための唯一の希望です。"
+        }
+      ]
     }
   ]
 }
