@@ -1473,6 +1473,29 @@ test("結果画面: 最上部に本人の点数が表示される", () => {
   assert.match(document.getElementById("personal-score").textContent, /1\s*\/\s*2/);
 });
 
+test("結果画面: 正解データの大文字小文字を無視して誤答欄と正解語数を一致させる", () => {
+  const { window, document, fireSocketEvent } = loadQuizPage();
+  const questions = [
+    { sentence: "___, the trip has been amazing.", answer: "So far", base: "so far", hint: "s_ f__", ja: "今のところ", sentenceJa: "今のところ、旅は素晴らしい。" },
+  ];
+  fireSocketEvent("quiz:started", {
+    setLabel: "Clacel Day 26", total: 1, endsAt: Date.now() + 60000, questions,
+  });
+
+  document.getElementById("answer").value = "so far";
+  document.getElementById("btn-next").dispatchEvent(new window.Event("click", { bubbles: true }));
+  fireSocketEvent("quiz:results", {
+    setLabel: "Clacel Day 26",
+    perfect: [{ id: "participant", name: "参加者" }],
+    review: questions,
+  });
+
+  assert.match(document.getElementById("personal-score").textContent, /1\s*\/\s*1/);
+  assert.equal(document.getElementById("review-card").style.display, "none");
+  assert.equal(document.getElementById("correct-summary").textContent.trim(), "正解だった単語 1語");
+  assert.match(document.getElementById("correct-list").textContent, /So far/);
+});
+
 test("結果画面: 誤答見出しを重複させず、行動を限定しない復習案内を表示する", () => {
   const { document } = loadQuizPage();
   const heading = document.querySelector(".review-heading");

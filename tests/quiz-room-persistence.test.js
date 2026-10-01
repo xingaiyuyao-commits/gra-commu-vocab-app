@@ -160,6 +160,51 @@ function playingRoom({ category = "clacel", setLabel = "Clacel Day 1", players, 
   };
 }
 
+test("正解データに大文字があっても小文字回答を正解・満点として集計する", async (t) => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-answer-case-"));
+  const stateFile = path.join(tempDir, "quiz-rooms.json");
+  const room = playingRoom({
+    players: {
+      host: player("運営", "host-token"),
+      participant: player("参加者", "participant-token"),
+    },
+  });
+  room.questions = [{
+    questionId: "test/clacel/day26/q03",
+    sentence: "___, the trip has been amazing.",
+    answer: "So far",
+    base: "so far",
+    hint: "s_ f__",
+    ja: "今のところ",
+    sentenceJa: "今のところ、旅は素晴らしい。",
+  }];
+  fs.writeFileSync(stateFile, JSON.stringify({ version: 4, rooms: { ABCD: room }, resultHistory: {} }));
+
+  const { child, baseUrl } = await startServer(stateFile);
+  const host = await connect(baseUrl);
+  const participant = await connect(baseUrl);
+  t.after(async () => {
+    host.disconnect();
+    participant.disconnect();
+    await stopServer(child);
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  });
+
+  assert.equal((await rejoin(host, "ABCD", "host", "host-token")).ok, true);
+  assert.equal((await rejoin(participant, "ABCD", "participant", "participant-token")).ok, true);
+  assert.deepEqual(await emitWithAck(participant, "quiz:submit", { answers: ["so far"] }), { ok: true });
+
+  const submitted = JSON.parse(fs.readFileSync(stateFile, "utf8"));
+  assert.equal(submitted.rooms.ABCD.players.participant.score, 1);
+  assert.deepEqual(submitted.rooms.ABCD.players.participant.wrongQuestionIndexes, []);
+
+  const resultsEvent = waitForEvent(host, "quiz:results");
+  assert.deepEqual(await emitWithoutPayloadWithAck(host, "quiz:revealResults"), { ok: true });
+  const [results] = await resultsEvent;
+  assert.deepEqual(results.perfect, [{ id: "participant", name: "参加者" }]);
+  assert.deepEqual(results.mistakes, []);
+});
+
 test("復習日は上位5名を発表し、5人目と同点の参加者も同順位で全員含める", async (t) => {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "osh-quiz-review-ranking-"));
   const stateFile = path.join(tempDir, "quiz-rooms.json");

@@ -1808,12 +1808,12 @@
     $("summary-divider").style.display = isHost ? "none" : "";
     $("study-panel").style.display = isHost ? "none" : "";
     const reviewed = review.map((r, i) => ({ r, i, mine: (answers[i] || "").trim().toLowerCase() }));
-    const wrongReviews = reviewed.filter(({ r, mine }) => {
-      return mine !== r.answer && !(Array.isArray(r.altAnswers) && r.altAnswers.includes(mine));
-    });
-    const correctReviews = reviewed.filter(({ r, mine }) => {
-      return mine === r.answer || (Array.isArray(r.altAnswers) && r.altAnswers.includes(mine));
-    });
+    const reviewAnswerMatches = ({ r, mine }) =>
+      [r.answer, ...(Array.isArray(r.altAnswers) ? r.altAnswers : [])]
+        .map((answer) => String(answer || "").trim().toLowerCase())
+        .includes(mine);
+    const wrongReviews = reviewed.filter((item) => !reviewAnswerMatches(item));
+    const correctReviews = reviewed.filter(reviewAnswerMatches);
     // 間違えた単語が無いときは、スクショの案内文ごと隠す
     const hasWrong = !isHost && wrongReviews.length > 0;
     $("review-card").style.display = hasWrong ? "" : "none";
