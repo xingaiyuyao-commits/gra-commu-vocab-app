@@ -3836,7 +3836,7 @@
           "sentence": "I’m ___ chicken.",
           "answer": "sick of",
           "base": "be sick of",
-          "hint": "b_________",
+          "hint": "s_________",
           "ja": "～にうんざりしている",
           "sentenceJa": "チキンにはうんざりです。"
         },
@@ -4127,7 +4127,7 @@
           "sentence": "What am I ___ do?",
           "answer": "supposed to",
           "base": "be supposed to",
-          "hint": "b_____________",
+          "hint": "s_____________",
           "ja": "～することになっている",
           "sentenceJa": "私は何をすればいいことになっているのですか？"
         },
@@ -4349,7 +4349,7 @@
           "sentence": "She ___ a difficult time last year.",
           "answer": "went through",
           "base": "go through",
-          "hint": "g_________",
+          "hint": "w_________",
           "ja": "経験する、目を通す",
           "sentenceJa": "彼女は去年、辛い時期を経験した。"
         },
@@ -4802,7 +4802,7 @@
           "sentence": "I’m not really ___ this area.",
           "answer": "familiar with",
           "base": "be familiar with",
-          "hint": "b_______________",
+          "hint": "f_______________",
           "ja": "～に精通している",
           "sentenceJa": "私はこの地域にはあまり詳しくありません。"
         },
