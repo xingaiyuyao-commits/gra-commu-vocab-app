@@ -1555,12 +1555,13 @@ function quizMistakeReason(q, submitted) {
   return "other";
 }
 
-function quizHint(base) {
-  return base[0] + "_".repeat(base.length - 1);
+function quizHint(base, answer) {
+  const initial = String(answer || base || "").trim().slice(0, 1).toLowerCase();
+  return initial + "_".repeat(Math.max(0, String(base || "").length - 1));
 }
 
 function quizSanitizedQuestions(room) {
-  return room.questions.map((q) => ({ sentence: q.sentence, hint: quizHint(q.base), ja: q.ja, sentenceJa: q.sentenceJa }));
+  return room.questions.map((q) => ({ sentence: q.sentence, hint: quizHint(q.base, q.answer), ja: q.ja, sentenceJa: q.sentenceJa }));
 }
 
 function quizSanitizeAnswers(room, answers) {

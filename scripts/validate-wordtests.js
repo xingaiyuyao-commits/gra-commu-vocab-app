@@ -22,10 +22,9 @@ if (!Array.isArray(data.series) || data.series.length !== expectedCounts.length)
     // イディオム・句動詞は複数語（単語間は半角スペース1つ）のためスペースを許容する
     if (!/^[a-z][a-z'-]*( [a-z][a-z'-]*)*$/.test(it.answer || "")) errors.push(`${tag}: answer の形式が不正: ${it.answer}`);
     if (!it.base || it.base !== it.base.toLowerCase()) errors.push(`${tag}: base が小文字ではありません`);
-    // hintは実際のゲーム内ではサーバー側quizHint(base)がその場で計算し直すため、
-    // ここではhintがbase（見出し語）の文字数・先頭文字と対応しているかを検査する
-    if (!it.hint || it.hint.length !== it.base.length || it.hint[0] !== it.base[0])
-      errors.push(`${tag}: hint が base（見出し語）と対応していません`);
+    // 長さは見出し語を基準にするが、画面に出す頭文字は実際に入力するanswerを基準にする。
+    if (!it.hint || it.hint.length !== it.base.length || it.hint[0].toLowerCase() !== it.answer[0].toLowerCase())
+      errors.push(`${tag}: hint が baseの長さ・answerの頭文字と対応していません`);
     if (!it.ja) errors.push(`${tag}: ja がありません`);
     if (seen.has(it.base)) errors.push(`${s.name}: base 重複 ${it.base}`);
     seen.add(it.base);

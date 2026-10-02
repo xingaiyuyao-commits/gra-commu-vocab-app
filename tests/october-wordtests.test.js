@@ -53,6 +53,7 @@ test("10月1日・2日と10月4日〜9日は正本どおりのDay 26・27・29�
         assert.match(item.questionId, new RegExp(`^2026-10/${course}/day${day}/q\\d{2}$`));
         assert.ok(item.sentence.includes("___"), `${item.questionId}: 空欄なし`);
         assert.ok(item.answer && item.hint && item.ja && item.sentenceJa, `${item.questionId}: 必須項目不足`);
+        assert.equal(item.hint[0].toLowerCase(), item.answer[0].toLowerCase(), `${item.questionId}: 頭文字ヒント`);
       }
     }
   }
@@ -86,4 +87,13 @@ test("TOEIC・IELTS Day 26・27は確定PDFの問題文・意味・和訳を配�
   assert.equal(findItem("ielts", 27, "meanwhile").sentence, "My sister bought a car. ___, I'm renting one.");
   assert.equal(findItem("ielts", 27, "meanwhile").sentenceJa, "姉は車を買いました。一方、私は車を借りています。");
   assert.equal(findItem("ielts", 27, "overall").sentence, "___, the situation is good despite a few minor problems.");
+});
+
+test("頭文字ヒントは見出し語ではなく実際に入力する正解から作る", () => {
+  const day27 = wordtests.clacel.series.find((entry) => entry.day === 27);
+  const supposedTo = day27.items.find((item) => item.base === "be supposed to");
+
+  assert.equal(supposedTo.answer, "supposed to");
+  assert.equal(supposedTo.hint[0], "s");
+  assert.equal(supposedTo.hint.length, supposedTo.base.length);
 });

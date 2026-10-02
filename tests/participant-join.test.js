@@ -279,3 +279,56 @@ test("実サーバー: 3コースとも制限時間内の途中参加者へ同�
     await progressAfterLateJoin;
   }
 });
+
+test("実サーバー: 見出し語と解答の先頭が異なる句は解答側の頭文字を配信する", async (t) => {
+  const port = await reservePort();
+  const baseUrl = `http://127.0.0.1:${port}`;
+  const child = spawn(process.execPath, ["server.js"], {
+    cwd: path.join(__dirname, ".."),
+    env: { ...process.env, PORT: String(port), OPERATOR_PASSWORD: TEST_OPERATOR_PASSWORD },
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  const sockets = [];
+  let stderr = "";
+  child.stderr.on("data", (chunk) => { stderr += chunk.toString(); });
+
+  t.after(async () => {
+    for (const socket of sockets) {
+      socket.removeAllListeners();
+      socket.disconnect();
+    }
+    await stopChild(child);
+  });
+
+  await waitForHealthy(baseUrl, child, () => stderr);
+  const login = await fetch(`${baseUrl}/api/operator/login`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ password: TEST_OPERATOR_PASSWORD }),
+  });
+  const operatorCookie = login.headers.get("set-cookie").split(";", 1)[0];
+
+  async function openSocket(cookie = operatorCookie) {
+    const connection = connectSocket(baseUrl, cookie);
+    sockets.push(connection.socket);
+    await connection.connected;
+    return connection.socket;
+  }
+
+  const host = await openSocket();
+  const room = await emitWithAck(host, "quiz:createRoom", { category: "clacel", name: "ホスト" });
+  const day27Index = room.seriesNames.findIndex((name) => name === "Day 27");
+  assert.notEqual(day27Index, -1, "Clacel Day 27が選択肢にある");
+
+  const participant = await openSocket("");
+  await emitWithAck(participant, "quiz:joinRoom", { roomCode: room.roomCode, name: "参加者" });
+  const startedEvent = waitForEvent(participant, "quiz:started", ({ questions } = {}) => Array.isArray(questions));
+  const startedAck = await emitWithAck(host, "quiz:startGame", { seriesIndex: day27Index });
+  assert.equal(startedAck.ok, true);
+
+  const started = await startedEvent;
+  const supposedTo = started.questions.find((question) => question.sentence === "What am I ___ do?");
+  assert.ok(supposedTo, "be supposed to の問題を配信する");
+  assert.equal(supposedTo.hint[0], "s");
+  assert.equal(Object.hasOwn(supposedTo, "answer"), false, "正解は参加者へ送らない");
+});
