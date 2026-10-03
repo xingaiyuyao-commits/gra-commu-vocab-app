@@ -20,9 +20,9 @@ const EXPECTED_BASES = {
     27: ["economically", "exclusively", "officially", "poorly", "loudly", "traditionally", "comfortably", "electronically", "anyhow", "unusually", "fortunately", "environmentally", "enthusiastically", "permanently", "partially", "drastically", "actively", "intently", "hereby", "automatically"],
     29: ["acknowledge", "announce", "appoint", "assign", "award", "boost", "brief", "register", "charge", "chair", "collaborate", "combine", "commence", "commission", "consult", "convene", "cut", "withdraw", "decline", "dedicate"],
     30: ["deliver", "deploy", "detect", "diversify", "earn", "endorse", "engage", "enlist", "escalate", "exceed", "extend", "file", "forecast", "retain", "grant", "hire", "implement", "launch", "sponsor", "sign"],
-    31: ["portfolio", "distribution", "authority", "sometime", "marginal", "entity", "productivity", "organizational", "commodity", "monetary", "aggregate", "fiscal", "payable", "default", "aspect", "calculation", "allocation", "deviation", "receivable", "equilibrium"],
+    31: ["portfolio", "distribution", "authority", "sometime", "marginal", "entity", "productivity", "organizational", "commodity", "monetary", "in the aggregate", "fiscal", "payable", "default", "aspect", "calculation", "allocation", "deviation", "receivable", "equilibrium"],
     32: ["creditor", "derivative", "surplus", "annuity", "disclosure", "regime", "leverage", "internet", "parliament", "coalition", "lender", "liquidity", "stockholder", "fraud", "regulator", "swap", "bankruptcy", "provider", "regression", "turnover"],
-    33: ["incur", "risky", "gross", "constitution", "trader", "monopoly", "correlation", "stockmarket", "breach", "subsidy", "auditor", "banker", "corruption", "issuer", "borrower", "insurer", "profitability", "debit", "duration", "scenario"],
+    33: ["incur", "risky", "gross", "constitution", "trader", "monopoly", "correlation", "stock market", "breach", "subsidy", "auditor", "banker", "corruption", "issuer", "borrower", "insurer", "profitability", "debit", "duration", "scenario"],
     34: ["terrorism", "respondent", "regulatory", "takeover", "coefficient", "optimal", "nominal", "infrastructure", "disclose", "offset", "effectiveness", "merchandise", "bound", "bargain", "conversion", "statistics", "stakeholder", "administrative", "taxpayer", "alliance"],
   },
   ielts: {
@@ -97,6 +97,26 @@ test("Clacel Day 29〜34は10月4日〜9日のPDF v06と一致する", () => {
   assert.equal(findItem(34, 8).ja, "生き延びる、持ちこたえる");
   assert.equal(findItem(34, 8).sentenceJa, "去年の地震で倒壊を免れた建物はほとんどなかった。");
   assert.equal(findItem(34, 13).sentenceJa, "急に寒くなった。");
+});
+
+test("TOEIC・IELTS Day 29〜34は10月4日〜9日の確定PDFと一致し、正解をヒントへ露出しない", () => {
+  const findItem = (course, day, questionNumber) => wordtests[course].series
+    .find((entry) => entry.day === day).items[questionNumber - 1];
+
+  assert.equal(findItem("toeic", 30, 12).sentence, "You must ___ an application by Friday.");
+  assert.equal(findItem("toeic", 31, 11).base, "in the aggregate");
+  assert.equal(findItem("toeic", 33, 8).base, "stock market");
+  assert.equal(findItem("toeic", 34, 13).ja, "国際的に成功する見込みの、成功へ向かっている");
+
+  assert.equal(findItem("ielts", 30, 1).sentence, "Many problems ___ from poor communication.");
+  assert.equal(findItem("ielts", 33, 12).sentence, "This group is a ___ of the larger population.");
+  assert.equal(findItem("ielts", 34, 13).sentence, "Early diagnosis of the ___ is difficult, but it is important to begin treatment as soon as possible.");
+  assert.equal(findItem("ielts", 34, 20).sentence, "This is a ___ sentence.");
+
+  const threshold = findItem("ielts", 34, 12);
+  assert.equal(threshold.answer, "threshold");
+  assert.equal(threshold.ja, "〜の始まりに、〜を目前にして");
+  assert.equal(/threshold/i.test(`${threshold.ja} ${threshold.sentenceJa}`), false);
 });
 
 test("TOEIC・IELTS Day 26・27は確定PDFの問題文・意味・和訳を配信する", () => {
