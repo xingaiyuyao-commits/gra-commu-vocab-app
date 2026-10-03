@@ -14,6 +14,7 @@ const REVIEW_DAYS = [
   { day: 7, sourceDays: [1, 2, 3, 4, 5, 6] },
   { day: 14, sourceDays: [8, 9, 10, 11, 12, 13] },
   { day: 21, sourceDays: [15, 16, 17, 18, 19, 20] },
+  { day: 28, sourceDays: [22, 23, 24, 25, 26, 27] },
 ];
 
 function fixedReviewQuestionIds(category, datasetRevision, reviewDay, sourceDays, studySeries) {
