@@ -10,9 +10,9 @@ const EXPECTED_BASES = {
     27: ["feel like doing", "go with", "be supposed to", "bring up", "take for granted", "tend to do", "catch up with", "for sure", "get along with", "in reality", "few", "engaged", "curious", "basically", "still", "sick of", "none of one's business", "come to", "end up", "due to"],
     29: ["feel like", "by mistake", "run out of", "tend to", "in spite of", "in vain", "go through", "familiar with", "willing to", "provided that", "show off", "sooner or later", "keep up with", "off to", "turn in", "put in", "take in", "cut in", "break in", "put on"],
     30: ["get on", "rely on", "work on", "move on", "look at", "arrive at", "listen to", "talk to", "give to", "recover from", "fall in love with", "deal with", "look for", "wait for", "ask for", "pay for", "drop by", "stand by", "pass by", "take out"],
-    31: ["come out", "turn out", "check out", "go out", "find out", "wake up", "pick up", "grow up", "show up", "heat up", "break up", "catch up", "give up", "when it comes to", "come in handy", "be familiar with", "be willing to", "hold back", "get rid of", "stick"],
+    31: ["come out", "turn out", "check out", "go out", "find out", "wake up", "pick up", "grow up", "show up", "heat up", "break up", "catch up", "give up", "when it comes to", "come in handy", "be familiar with", "be willing to", "hold back", "get rid of", "stick to"],
     32: ["travel", "lock", "confuse", "contain", "stretch", "award", "guard", "trap", "plant", "organize", "invent", "wonder", "trade", "grow", "bite", "mind", "promise", "fix", "happen", "feed"],
-    33: ["hunt", "connect", "compete", "blow", "reach", "retire", "create", "serve", "switch", "vote", "wake", "continue", "delay", "park", "complete", "depend", "accept", "fail", "ignore", "request"],
+    33: ["hunt", "connect", "compete", "blow", "reach", "retire", "create", "serve", "switch", "vote", "wake", "continue", "delay", "park", "complete", "depend on", "accept", "fail", "ignore", "request"],
     34: ["search", "hurt", "spill", "imagine", "reply", "encourage", "deliver", "survive", "rent", "decide", "warn", "reserve", "turn", "rise", "attend", "escape", "throw", "lay", "guide", "notice"],
   },
   toeic: {
@@ -57,6 +57,46 @@ test("10月1日・2日と10月4日〜9日は正本どおりのDay 26・27・29�
       }
     }
   }
+});
+
+test("Clacel Day 29〜34は10月4日〜9日のPDF v06と一致する", () => {
+  const findItem = (day, questionNumber) => wordtests.clacel.series
+    .find((entry) => entry.day === day).items[questionNumber - 1];
+
+  assert.deepEqual(findItem(31, 3), {
+    questionId: "2026-10/clacel/day31/q03",
+    sentence: "You should ___ this new restaurant.",
+    answer: "check out",
+    base: "check out",
+    hint: "c________",
+    ja: "確認する、見に行く、試してみる",
+    sentenceJa: "この新しいレストランに行ってみるといいよ。",
+  });
+  assert.equal(findItem(31, 7).ja, "拾う、迎えに行く、覚える、買ってくる");
+  assert.deepEqual(findItem(31, 18), {
+    questionId: "2026-10/clacel/day31/q18",
+    sentence: "Don’t ___—tell us what you think.",
+    answer: "hold back",
+    base: "hold back",
+    hint: "h________",
+    ja: "ためらう、抑える",
+    sentenceJa: "ためらわずに、あなたの考えを聞かせてください。",
+  });
+  assert.deepEqual(findItem(31, 20), {
+    questionId: "2026-10/clacel/day31/q20",
+    sentence: "It's hard to ___ a diet during the holidays.",
+    answer: "stick to",
+    base: "stick to",
+    hint: "s_______",
+    ja: "〜を続ける、〜を守る",
+    sentenceJa: "休暇中にダイエットを続けるのは難しい。",
+  });
+  assert.equal(findItem(32, 20).ja, "食べさせる、供給する、〜に反映される、〜に組み込まれる");
+  assert.equal(findItem(33, 16).base, "depend on");
+  assert.equal(findItem(33, 16).ja, "〜次第である、〜に頼る");
+  assert.equal(findItem(34, 8).ja, "生き延びる、持ちこたえる");
+  assert.equal(findItem(34, 8).sentenceJa, "去年の地震で倒壊を免れた建物はほとんどなかった。");
+  assert.equal(findItem(34, 13).sentenceJa, "急に寒くなった。");
 });
 
 test("TOEIC・IELTS Day 26・27は確定PDFの問題文・意味・和訳を配信する", () => {

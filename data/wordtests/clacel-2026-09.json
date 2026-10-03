@@ -4686,8 +4686,8 @@
           "answer": "check out",
           "base": "check out",
           "hint": "c________",
-          "ja": "確認する、チェックアウトする",
-          "sentenceJa": "この新しいレストランを確認してみるといいよ。"
+          "ja": "確認する、見に行く、試してみる",
+          "sentenceJa": "この新しいレストランに行ってみるといいよ。"
         },
         {
           "questionId": "2026-10/clacel/day31/q04",
@@ -4722,7 +4722,7 @@
           "answer": "pick up",
           "base": "pick up",
           "hint": "p______",
-          "ja": "拾う、迎えに行く、覚える",
+          "ja": "拾う、迎えに行く、覚える、買ってくる",
           "sentenceJa": "帰りに牛乳を買ってきてくれますか。"
         },
         {
@@ -4817,12 +4817,12 @@
         },
         {
           "questionId": "2026-10/clacel/day31/q18",
-          "sentence": "Don’t ___.",
-          "answer": "hold you back",
+          "sentence": "Don’t ___—tell us what you think.",
+          "answer": "hold back",
           "base": "hold back",
           "hint": "h________",
           "ja": "ためらう、抑える",
-          "sentenceJa": "あなたを引き止めないで。"
+          "sentenceJa": "ためらわずに、あなたの考えを聞かせてください。"
         },
         {
           "questionId": "2026-10/clacel/day31/q19",
@@ -4835,11 +4835,11 @@
         },
         {
           "questionId": "2026-10/clacel/day31/q20",
-          "sentence": "It's hard to ___ to a diet during the holidays.",
-          "answer": "stick",
-          "base": "stick",
-          "hint": "s____",
-          "ja": "やり通す、固執する",
+          "sentence": "It's hard to ___ a diet during the holidays.",
+          "answer": "stick to",
+          "base": "stick to",
+          "hint": "s_______",
+          "ja": "〜を続ける、〜を守る",
           "sentenceJa": "休暇中にダイエットを続けるのは難しい。"
         }
       ]
@@ -5025,7 +5025,7 @@
           "answer": "feeds",
           "base": "feed",
           "hint": "f___",
-          "ja": "食べさせる、供給する",
+          "ja": "食べさせる、供給する、〜に反映される、〜に組み込まれる",
           "sentenceJa": "毎週、このデータは直接メインレポートに反映される。"
         }
       ]
@@ -5173,9 +5173,9 @@
           "questionId": "2026-10/clacel/day33/q16",
           "sentence": "Our plans ___ on the weather this weekend.",
           "answer": "depend",
-          "base": "depend",
+          "base": "depend on",
           "hint": "d_____",
-          "ja": "左右される、頼る",
+          "ja": "〜次第である、〜に頼る",
           "sentenceJa": "私たちの計画は今週末の天気次第だ。"
         },
         {
@@ -5289,8 +5289,8 @@
           "answer": "survived",
           "base": "survive",
           "hint": "s______",
-          "ja": "生き延びる",
-          "sentenceJa": "去年の地震を生き延びた建物はほとんどなかった。"
+          "ja": "生き延びる、持ちこたえる",
+          "sentenceJa": "去年の地震で倒壊を免れた建物はほとんどなかった。"
         },
         {
           "questionId": "2026-10/clacel/day34/q09",
@@ -5335,7 +5335,7 @@
           "base": "turn",
           "hint": "t___",
           "ja": "曲がる、〜になる",
-          "sentenceJa": "天気は急に寒くなった。"
+          "sentenceJa": "急に寒くなった。"
         },
         {
           "questionId": "2026-10/clacel/day34/q14",
