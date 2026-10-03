@@ -45,12 +45,12 @@ test("全問題に固定IDと必須表示内容がある", () => {
   }
 });
 
-test("問題文と日本語ヒントに正答または見出し語を露出しない", () => {
+test("問題文・日本語ヒント・例文訳に正答または見出し語を露出しない", () => {
   for (const course of ["clacel", "toeic", "ielts"]) {
     const data = loadDataset(course);
     for (const { items } of data.series) {
       for (const item of items) {
-        const clue = `${item.sentence.replaceAll("___", "")} ${item.ja}`;
+        const clue = `${item.sentence.replaceAll("___", "")} ${item.ja} ${item.sentenceJa}`;
         for (const value of [item.answer, item.base]) {
           assert.equal(standalonePattern(value).test(clue), false, `${item.questionId}: ${value}`);
         }

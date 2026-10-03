@@ -4603,7 +4603,7 @@
           "base": "consult",
           "hint": "c______",
           "ja": "相談する",
-          "sentenceJa": "彼らは顧客が何を望んでいるのかを正確に相談します。"
+          "sentenceJa": "顧客が具体的に何を求めているか、顧客に意見を聞く予定です。"
         },
         {
           "questionId": "2026-10/toeic/day29/q16",
@@ -4690,7 +4690,7 @@
           "base": "diversify",
           "hint": "d________",
           "ja": "多角化する",
-          "sentenceJa": "農家は、収入を補うために他の活動にますます多様化しています。"
+          "sentenceJa": "農家は収入を補うため、他の事業にも進出するようになっている。"
         },
         {
           "questionId": "2026-10/toeic/day30/q05",
@@ -4699,7 +4699,7 @@
           "base": "earn",
           "hint": "e___",
           "ja": "稼ぐ、獲得する",
-          "sentenceJa": "すべての仕事をした後、私は休暇を取得しました。"
+          "sentenceJa": "これだけ働いたのだから、休暇を取ってもいいはずだ。"
         },
         {
           "questionId": "2026-10/toeic/day30/q06",
@@ -4707,7 +4707,7 @@
           "answer": "endorsed",
           "base": "endorse",
           "hint": "e______",
-          "ja": "支持する、推薦する",
+          "ja": "裏書きする",
           "sentenceJa": "彼は小切手を裏書し、自分の口座に預けました。"
         },
         {
@@ -4726,7 +4726,7 @@
           "base": "enlist",
           "hint": "e_____",
           "ja": "協力を求める、入隊する",
-          "sentenceJa": "食料の準備を手伝ってもらうために、何人かの人々を徴募しました。"
+          "sentenceJa": "食事の準備を手伝ってもらうため、何人かに協力を頼んだ。"
         },
         {
           "questionId": "2026-10/toeic/day30/q09",
@@ -4734,8 +4734,8 @@
           "answer": "escalated",
           "base": "escalate",
           "hint": "e_______",
-          "ja": "拡大する",
-          "sentenceJa": "今後数年間で、当社のコストは大幅に上昇しました。"
+          "ja": "増大する、急増する",
+          "sentenceJa": "その後の数年間で、当社の費用は大幅に増加した。"
         },
         {
           "questionId": "2026-10/toeic/day30/q10",
@@ -4757,12 +4757,12 @@
         },
         {
           "questionId": "2026-10/toeic/day30/q12",
-          "sentence": "Can you ___ this document for me?",
+          "sentence": "You must ___ an application by Friday.",
           "answer": "file",
           "base": "file",
           "hint": "f___",
           "ja": "提出する",
-          "sentenceJa": "この書類を提出してもらえますか。"
+          "sentenceJa": "金曜日までに申請書を提出しなければなりません。"
         },
         {
           "questionId": "2026-10/toeic/day30/q13",
@@ -4857,7 +4857,7 @@
           "answer": "distribution",
           "base": "distribution",
           "hint": "d___________",
-          "ja": "配布",
+          "ja": "販売、流通",
           "sentenceJa": "スペインの会社と販売契約を締結しました。"
         },
         {
@@ -4866,7 +4866,7 @@
           "answer": "authority",
           "base": "authority",
           "hint": "a________",
-          "ja": "権威",
+          "ja": "権限",
           "sentenceJa": "警察はこれらの紛争に法的権限を持っていません。"
         },
         {
@@ -4884,7 +4884,7 @@
           "answer": "marginal",
           "base": "marginal",
           "hint": "m_______",
-          "ja": "限界的な",
+          "ja": "僅差の、接戦の",
           "sentenceJa": "これらの国会議員は地方選挙区の議席を持ち、その多くは僅差である。"
         },
         {
@@ -4929,16 +4929,16 @@
           "answer": "monetary",
           "base": "monetary",
           "hint": "m_______",
-          "ja": "金銭的な",
+          "ja": "金融の",
           "sentenceJa": "金利を下げるためには、より多くの金融緩和が必要かもしれません。"
         },
         {
           "questionId": "2026-10/toeic/day31/q11",
-          "sentence": "The family owned over 2 million shares in the ___.",
-          "answer": "aggregate",
-          "base": "aggregate",
-          "hint": "a________",
-          "ja": "集合体",
+          "sentence": "The family owned over 2 million shares ___.",
+          "answer": "in the aggregate",
+          "base": "in the aggregate",
+          "hint": "i_______________",
+          "ja": "合計で、全体として",
           "sentenceJa": "家族は合計で200万株以上を所有していました。"
         },
         {
@@ -4947,7 +4947,7 @@
           "answer": "fiscal",
           "base": "fiscal",
           "hint": "f_____",
-          "ja": "財政",
+          "ja": "財政の、会計の",
           "sentenceJa": "2009年度の業績は、世界経済の低迷に直面しました。"
         },
         {
@@ -4965,7 +4965,7 @@
           "answer": "defaulted",
           "base": "default",
           "hint": "d______",
-          "ja": "債務不履行",
+          "ja": "債務を履行しない",
           "sentenceJa": "以前の支払いで債務不履行や遅延が発生したことはありません。"
         },
         {
@@ -5001,7 +5001,7 @@
           "answer": "deviation",
           "base": "deviation",
           "hint": "d________",
-          "ja": "偏差",
+          "ja": "逸脱",
           "sentenceJa": "党の哲学からの逸脱は裏切りと見なされる。"
         },
         {
@@ -5035,7 +5035,7 @@
           "base": "creditor",
           "hint": "c_______",
           "ja": "債権者",
-          "sentenceJa": "彼は債権者を返済するのに十分な収入を得ようとしています。"
+          "sentenceJa": "彼は債権者への借金を返済できるだけの収入を得ようとしている。"
         },
         {
           "questionId": "2026-10/toeic/day32/q02",
@@ -5043,8 +5043,8 @@
           "answer": "derivative",
           "base": "derivative",
           "hint": "d_________",
-          "ja": "派生関数",
-          "sentenceJa": "あまりにも多くの音楽が派生的に感じられます。"
+          "ja": "独創性のない、模倣的な",
+          "sentenceJa": "多くの楽曲が模倣的に感じられる。"
         },
         {
           "questionId": "2026-10/toeic/day32/q03",
@@ -5129,7 +5129,7 @@
         },
         {
           "questionId": "2026-10/toeic/day32/q12",
-          "sentence": "This ___ problem is very serious for small and medium-sized business.",
+          "sentence": "This ___ problem is very serious for small and medium-sized businesses.",
           "answer": "liquidity",
           "base": "liquidity",
           "hint": "l________",
@@ -5196,7 +5196,7 @@
           "answer": "regression",
           "base": "regression",
           "hint": "r_________",
-          "ja": "回帰",
+          "ja": "後退",
           "sentenceJa": "全体的な政治情勢に後退が生じている。"
         },
         {
@@ -5205,7 +5205,7 @@
           "answer": "turnover",
           "base": "turnover",
           "hint": "t_______",
-          "ja": "売上高",
+          "ja": "従業員の入れ替わり",
           "sentenceJa": "彼らは最近、工場で多くの離職者を抱えています。"
         }
       ]
@@ -5281,8 +5281,8 @@
           "questionId": "2026-10/toeic/day33/q08",
           "sentence": "The company is planning to float on the ___.",
           "answer": "stock market",
-          "base": "stockmarket",
-          "hint": "s__________",
+          "base": "stock market",
+          "hint": "s___________",
           "ja": "株式市場",
           "sentenceJa": "その会社は株式市場への上場を計画している。"
         },
@@ -5433,7 +5433,7 @@
           "answer": "takeovers",
           "base": "takeover",
           "hint": "t_______",
-          "ja": "乗っ取り",
+          "ja": "企業買収",
           "sentenceJa": "今年は、大規模な企業買収が大きな財務ニュースとなりました。"
         },
         {
@@ -5460,7 +5460,7 @@
           "answer": "nominal",
           "base": "nominal",
           "hint": "n______",
-          "ja": "公称",
+          "ja": "わずかな、少額の",
           "sentenceJa": "わずかな手数料で、注文者の自宅に注文品を配達します。"
         },
         {
@@ -5469,7 +5469,7 @@
           "answer": "infrastructure",
           "base": "infrastructure",
           "hint": "i_____________",
-          "ja": "インフラストラクチャ",
+          "ja": "インフラ",
           "sentenceJa": "戦争は国のインフラに深刻な損害を与えました。"
         },
         {
@@ -5514,8 +5514,8 @@
           "answer": "bound",
           "base": "bound",
           "hint": "b____",
-          "ja": "縛られた",
-          "sentenceJa": "この2人の若いミュージシャンは、国際的な成功を目指しています。"
+          "ja": "国際的に成功する見込みの、成功へ向かっている",
+          "sentenceJa": "この2人の若いミュージシャンは、国際的に成功する見込みです。"
         },
         {
           "questionId": "2026-10/toeic/day34/q14",
@@ -5532,7 +5532,7 @@
           "answer": "conversion",
           "base": "conversion",
           "hint": "c_________",
-          "ja": "変換",
+          "ja": "改宗",
           "sentenceJa": "彼女の仏教/イスラム教への改宗は非常に段階的なプロセスでした。"
         },
         {
@@ -5559,7 +5559,7 @@
           "answer": "administrative",
           "base": "administrative",
           "hint": "a_____________",
-          "ja": "管理的な",
+          "ja": "事務上の、管理上の",
           "sentenceJa": "会員企業様への財務・事務支援を行います。"
         },
         {
@@ -5578,7 +5578,7 @@
           "base": "alliance",
           "hint": "a_______",
           "ja": "同盟",
-          "sentenceJa": "共通の敵との同盟は、生き残るための唯一の希望です。"
+          "sentenceJa": "共通の敵に対抗するための同盟が、生き残る唯一の希望だ。"
         }
       ]
     }

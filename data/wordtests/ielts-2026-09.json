@@ -4658,12 +4658,12 @@
       "items": [
         {
           "questionId": "2026-10/ielts/day30/q01",
-          "sentence": "We must take action to ___ the tide of resignations.",
-          "answer": "stem",
+          "sentence": "Many problems ___ from poor communication.",
+          "answer": "stemmed",
           "base": "stem",
           "hint": "s___",
           "ja": "生じる、由来する",
-          "sentenceJa": "辞任の流れを食い止めるために行動を起こさなければなりません。"
+          "sentenceJa": "多くの問題は意思疎通の不足に由来していた。"
         },
         {
           "questionId": "2026-10/ielts/day30/q02",
@@ -4743,7 +4743,7 @@
           "answer": "encapsulates",
           "base": "encapsulate",
           "hint": "e__________",
-          "ja": "要約する、凝縮する",
+          "ja": "要約する、凝縮する、体現する",
           "sentenceJa": "彼女は、イギリス人が抱く典型的なアメリカ人像を体現している。"
         },
         {
@@ -4857,7 +4857,7 @@
           "answer": "domain",
           "base": "domain",
           "hint": "d_____",
-          "ja": "ドメイン",
+          "ja": "領域、分野",
           "sentenceJa": "通貨取引は通常、大手銀行の領域です。"
         },
         {
@@ -4893,7 +4893,7 @@
           "answer": "matrix",
           "base": "matrix",
           "hint": "m_____",
-          "ja": "マトリックス",
+          "ja": "母岩、基質",
           "sentenceJa": "その化石は、頁岩と砂岩からなる母岩に埋まっている。"
         },
         {
@@ -4957,7 +4957,7 @@
           "base": "discourse",
           "hint": "d________",
           "ja": "談話",
-          "sentenceJa": "彼はメディアが政治的言説を「馬鹿にしている」と非難した。"
+          "sentenceJa": "彼は、メディアが政治的な議論を過度に単純化していると非難した。"
         },
         {
           "questionId": "2026-10/ielts/day31/q14",
@@ -5019,8 +5019,8 @@
           "answer": "bound",
           "base": "bound",
           "hint": "b____",
-          "ja": "縛られた",
-          "sentenceJa": "この2人の若いミュージシャンは、国際的な成功を目指しています。"
+          "ja": "成功する見込みの",
+          "sentenceJa": "この2人の若いミュージシャンは、国際的に成功する見込みです。"
         }
       ]
     },
@@ -5034,7 +5034,7 @@
           "answer": "molecular",
           "base": "molecular",
           "hint": "m________",
-          "ja": "分子",
+          "ja": "分子の",
           "sentenceJa": "科学者は、タンパク質の3次元分子構造を研究することができます。"
         },
         {
@@ -5088,7 +5088,7 @@
           "answer": "neurons",
           "base": "neuron",
           "hint": "n_____",
-          "ja": "ニューロン",
+          "ja": "神経細胞",
           "sentenceJa": "有酸素運動は脳を作り変え、新しい神経細胞の成長を促す。"
         },
         {
@@ -5097,8 +5097,8 @@
           "answer": "simulation",
           "base": "simulation",
           "hint": "s_________",
-          "ja": "シミュレーション",
-          "sentenceJa": "ヤングには、反則演技として警告を出すべきだった。"
+          "ja": "反則を受けたふりをする行為",
+          "sentenceJa": "ヤングにはPKではなく、反則を受けたふりで警告を出すべきだった。"
         },
         {
           "questionId": "2026-10/ielts/day32/q09",
@@ -5133,7 +5133,7 @@
           "answer": "markers",
           "base": "marker",
           "hint": "m_____",
-          "ja": "マーカー",
+          "ja": "目印",
           "sentenceJa": "種を植えた場所に目印をいくつか置いた。"
         },
         {
@@ -5178,7 +5178,7 @@
           "answer": "regression",
           "base": "regression",
           "hint": "r_________",
-          "ja": "回帰",
+          "ja": "後退",
           "sentenceJa": "全体的な政治情勢に後退が生じている。"
         },
         {
@@ -5196,7 +5196,7 @@
           "answer": "identification",
           "base": "identification",
           "hint": "i_____________",
-          "ja": "識別",
+          "ja": "身分証明書",
           "sentenceJa": "空港のチェックイン時に身分証明書の提示を求められました。"
         },
         {
@@ -5205,8 +5205,8 @@
           "answer": "node",
           "base": "node",
           "hint": "n___",
-          "ja": "ノード",
-          "sentenceJa": "茎の各ノードから新しい植物が出現する可能性があります。"
+          "ja": "節",
+          "sentenceJa": "茎の各節から新しい株が生じることがある。"
         }
       ]
     },
@@ -5229,7 +5229,7 @@
           "answer": "temporal",
           "base": "temporal",
           "hint": "t_______",
-          "ja": "一時的な",
+          "ja": "時間の、時間に関する",
           "sentenceJa": "この薬物は、空間的および時間的意識を低下させる。"
         },
         {
@@ -5283,7 +5283,7 @@
           "answer": "spectrum",
           "base": "spectrum",
           "hint": "s_______",
-          "ja": "スペクトル",
+          "ja": "範囲",
           "sentenceJa": "会合には幅広い意見が代表された。"
         },
         {
@@ -5315,12 +5315,12 @@
         },
         {
           "questionId": "2026-10/ielts/day33/q12",
-          "sentence": "Thus, m-reflexives include a ___ of picture noun reflexives.",
+          "sentence": "This group is a ___ of the larger population.",
           "answer": "subset",
           "base": "subset",
           "hint": "s_____",
-          "ja": "サブセット",
-          "sentenceJa": "したがって、m再帰詞には絵画名詞再帰詞の一部が含まれる。"
+          "ja": "一部",
+          "sentenceJa": "このグループは、より大きな母集団の一部です。"
         },
         {
           "questionId": "2026-10/ielts/day33/q13",
@@ -5337,7 +5337,7 @@
           "answer": "orientation",
           "base": "orientation",
           "hint": "o__________",
-          "ja": "向き",
+          "ja": "新入社員向け説明、研修",
           "sentenceJa": "明日から1週間のオリエンテーションが始まります。"
         },
         {
@@ -5355,7 +5355,7 @@
           "answer": "prevalence",
           "base": "prevalence",
           "hint": "p_________",
-          "ja": "普及率",
+          "ja": "有病率",
           "sentenceJa": "一部の家族では、この病気の有病率が高くなっています。"
         },
         {
@@ -5364,7 +5364,7 @@
           "answer": "pulse",
           "base": "pulse",
           "hint": "p____",
-          "ja": "パルス",
+          "ja": "断続運転",
           "sentenceJa": "フードプロセッサーを断続運転に設定し、オリーブオイルとハーブを加える。"
         },
         {
@@ -5434,7 +5434,7 @@
           "base": "dose",
           "hint": "d___",
           "ja": "用量",
-          "sentenceJa": "ラベルには、1日3回1回服用すると記載されています。"
+          "sentenceJa": "ラベルには、1回分を1日3回服用すると書かれている。"
         },
         {
           "questionId": "2026-10/ielts/day34/q05",
@@ -5442,7 +5442,7 @@
           "answer": "maternal",
           "base": "maternal",
           "hint": "m_______",
-          "ja": "母性",
+          "ja": "母方の",
           "sentenceJa": "彼女の母方の祖母はまだ健在だ。"
         },
         {
@@ -5469,7 +5469,7 @@
           "answer": "locus",
           "base": "locus",
           "hint": "l____",
-          "ja": "軌跡",
+          "ja": "場所、中心、拠点",
           "sentenceJa": "意思決定の拠点は、時には政府のオフィスから遠く離れています。"
         },
         {
@@ -5479,7 +5479,7 @@
           "base": "approximation",
           "hint": "a____________",
           "ja": "近似",
-          "sentenceJa": "売上税の領収書は、小売売上高の近似値を提供します。"
+          "sentenceJa": "売上税の税収から、小売売上高のおおよその額を推定できる。"
         },
         {
           "questionId": "2026-10/ielts/day34/q10",
@@ -5487,7 +5487,7 @@
           "answer": "thesis",
           "base": "thesis",
           "hint": "t_____",
-          "ja": "論文",
+          "ja": "主張、論点",
           "sentenceJa": "彼のテーゼは、第一次世界大戦は避けられたかもしれないというものだった。"
         },
         {
@@ -5505,17 +5505,17 @@
           "answer": "threshold",
           "base": "threshold",
           "hint": "t________",
-          "ja": "しきい値",
-          "sentenceJa": "米国経済は好景気の瀬戸際にありました。"
+          "ja": "〜の始まりに、〜を目前にして",
+          "sentenceJa": "米国経済は好景気を目前にしていた。"
         },
         {
           "questionId": "2026-10/ielts/day34/q13",
-          "sentence": "They said that uninsured-motorist ___ was a chronic condition in the city.",
+          "sentence": "Early diagnosis of the ___ is difficult, but it is important to begin treatment as soon as possible.",
           "answer": "syndrome",
           "base": "syndrome",
           "hint": "s_______",
           "ja": "症候群",
-          "sentenceJa": "市では、無保険運転者症候群が慢性的な問題になっていると彼らは述べた。"
+          "sentenceJa": "この症候群は早期診断が難しく、早期治療が重要だ。"
         },
         {
           "questionId": "2026-10/ielts/day34/q14",
@@ -5523,7 +5523,7 @@
           "answer": "activate",
           "base": "activate",
           "hint": "a_______",
-          "ja": "アクティブ化する",
+          "ja": "有効にする",
           "sentenceJa": "新規のお客様は、自動回線に電話してカードを有効にする必要があります。"
         },
         {
@@ -5532,7 +5532,7 @@
           "answer": "adolescents",
           "base": "adolescent",
           "hint": "a_________",
-          "ja": "思春期の",
+          "ja": "思春期の若者",
           "sentenceJa": "私は若い思春期の生徒が好きなので、中学校で教えている。"
         },
         {
@@ -5559,7 +5559,7 @@
           "answer": "induction",
           "base": "induction",
           "hint": "i________",
-          "ja": "誘導",
+          "ja": "就任式",
           "sentenceJa": "彼女の評議員としての就任式は、町役場で行われました。"
         },
         {
@@ -5569,16 +5569,16 @@
           "base": "trajectory",
           "hint": "t_________",
           "ja": "軌跡",
-          "sentenceJa": "ミサイルは非常に低い軌道で着弾しました。"
+          "sentenceJa": "ミサイルは非常に低い軌道で飛来した。"
         },
         {
           "questionId": "2026-10/ielts/day34/q20",
-          "sentence": "A ___ sentence.",
+          "sentence": "This is a ___ sentence.",
           "answer": "grammatical",
           "base": "grammatical",
           "hint": "g__________",
           "ja": "文法的な",
-          "sentenceJa": "文法的に正しい文。"
+          "sentenceJa": "これは文法的に正しい文です。"
         }
       ]
     }
