@@ -579,6 +579,7 @@
         </div>
       </div>
       <section id="study-panel">
+        <p class="results-guidance" id="authoritative-result-note" hidden></p>
         <p class="shot-hint" id="shot-hint">間違えてからの復習が大事！結果を写真に撮る・メモする・もう一度解き直すなど、忘れずに復習しましょう！</p>
         <div class="card" id="review-card">
           <p class="review-heading">あなたが間違えた単語<span class="review-legend">意味・あなたの回答・例文</span></p>
@@ -665,6 +666,10 @@
   let timerInterval = null;
   let waitingTimerInterval = null;
   let draftSaveTimer = null;
+  let draftRevision = 0;
+  let submissionLocked = false;
+  let submissionInFlight = false;
+  let submissionAttempt = 0;
   let submissionWasAutomatic = false;
   let waitingSubmitted = 0;
   let waitingTotal = 0;
@@ -726,16 +731,16 @@
   $("btn-absentee-pdf-waiting").addEventListener("click", openAbsenteePdf);
   $("btn-absentee-pdf-results").addEventListener("click", openAbsenteePdf);
   function persistAnswers() {
-    if (currentRoomCode) localStorage.setItem("quizAnswers", JSON.stringify({ roomCode: currentRoomCode, answers, idx }));
+    if (currentRoomCode) localStorage.setItem("quizAnswers", JSON.stringify({ roomCode: currentRoomCode, answers, idx, revision: draftRevision, endsAt: quizEndsAt }));
   }
   function loadSavedAnswers(roomCode, length) {
     try {
       const saved = JSON.parse(localStorage.getItem("quizAnswers") || "null");
       if (saved && saved.roomCode === roomCode && Array.isArray(saved.answers) && saved.answers.length === length) {
-        return { found: true, answers: saved.answers, idx: Math.min(Math.max(saved.idx || 0, 0), length - 1) };
+        return { found: true, answers: saved.answers, idx: Math.min(Math.max(saved.idx || 0, 0), length - 1), revision: Number.isSafeInteger(saved.revision) ? saved.revision : 0, endsAt: saved.endsAt };
       }
     } catch {}
-    return { found: false, answers: Array(length).fill(""), idx: 0 };
+    return { found: false, answers: Array(length).fill(""), idx: 0, revision: 0 };
   }
 
   function setQuizTimer(endsAt, remainingMs) {
@@ -759,13 +764,15 @@
 
   function sendDraftNow() {
     clearDraftSaveTimer();
-    if (isHost || !currentRoomCode || !questions.length) return;
-    socket.emit("quiz:saveDraft", { answers });
+    if (isHost || submissionLocked || !currentRoomCode || !questions.length || !draftRevision
+      || socket.connected === false) return;
+    socket.emit("quiz:saveDraft", { answers: answers.slice(), revision: draftRevision, endsAt: quizEndsAt });
   }
 
   function scheduleDraftSave() {
     clearDraftSaveTimer();
-    // 連続入力中のディスク保存をまとめ、問題移動時と期限直前は別途即時保存する。
+    // Usually coalesce disk writes, but never debounce input near the server deadline.
+    if (quizRemainingMs() <= 5_000) return sendDraftNow();
     draftSaveTimer = setTimeout(sendDraftNow, 750);
   }
   function loadPendingSubmission() {
@@ -776,7 +783,7 @@
     return null;
   }
   function savePendingSubmission(automatic) {
-    if (currentRoomCode) localStorage.setItem("quizPendingSubmission", JSON.stringify({ roomCode: currentRoomCode, answers, automatic }));
+    if (currentRoomCode) localStorage.setItem("quizPendingSubmission", JSON.stringify({ roomCode: currentRoomCode, answers: answers.slice(), automatic, revision: draftRevision, endsAt: quizEndsAt }));
   }
   function clearPendingSubmission() {
     localStorage.removeItem("quizPendingSubmission");
@@ -803,6 +810,8 @@
           perfect: data.perfect,
           leaderboard: data.leaderboard,
           review: data.review,
+          personalResult: data.personalResult,
+          localAnswerRevision: draftRevision,
           answers,
           playerId,
           isTrial: data.isTrial === true,
@@ -825,7 +834,8 @@
     currentSetLabel = saved.setLabel;
     playerId = saved.playerId || playerId;
     answers = saved.answers.slice();
-    renderResults(saved);
+    draftRevision = saved.localAnswerRevision || 0;
+    renderResults({ ...saved, legacyLocalResult: !saved.personalResult });
     show("screen-results");
     return true;
   }
@@ -875,12 +885,23 @@
       saveCurrent();
       sendDraftNow();
     }
-    if (remainMs <= 0) clearQuizTimer();
+    if (remainMs <= 0) {
+      clearQuizTimer();
+      clearDraftSaveTimer();
+      submissionLocked = true;
+      $("answer").disabled = true;
+      $("btn-confirm-submit").disabled = true;
+    }
   }
 
   function submitQuiz(automatic = false) {
+    if (isHost || submissionLocked) return;
     clearQuizTimer();
     saveCurrent();
+    clearDraftSaveTimer();
+    submissionLocked = true;
+    $("answer").disabled = true;
+    $("btn-confirm-submit").disabled = true;
     submissionWasAutomatic = automatic;
     savePendingSubmission(automatic);
     $("waiting-count").textContent = "…";
@@ -890,14 +911,25 @@
   }
 
   function sendPendingSubmission(fallbackAnswers = answers) {
+    if (submissionInFlight || socket.connected === false) return;
     const pending = loadPendingSubmission();
     const answersToSend = pending ? pending.answers : fallbackAnswers;
     const automatic = pending ? pending.automatic === true : submissionWasAutomatic;
-    socket.emit("quiz:submit", { answers: answersToSend, automatic }, (res) => {
+    submissionInFlight = true;
+    const attempt = ++submissionAttempt;
+    const submissionRoom = currentRoomCode;
+    const submissionDeadline = quizEndsAt;
+    socket.emit("quiz:submit", { answers: answersToSend.slice(), automatic,
+      revision: pending?.revision ?? draftRevision, endsAt: pending?.endsAt ?? quizEndsAt }, (res) => {
+      if (attempt !== submissionAttempt || submissionRoom !== currentRoomCode || submissionDeadline !== quizEndsAt) return;
+      submissionInFlight = false;
       if (!res?.ok) {
         if (automatic && Number.isFinite(res?.remainingMs) && res.remainingMs > 0 && questions.length) {
           clearPendingSubmission();
           submissionWasAutomatic = false;
+          submissionLocked = false;
+          $("answer").disabled = false;
+          $("btn-confirm-submit").disabled = false;
           setQuizTimer(quizEndsAt, res.remainingMs);
           renderQuestion();
           show("screen-quiz");
@@ -1642,8 +1674,15 @@
     idx = 0;
     editingFromConfirmation = false;
     submissionWasAutomatic = false;
-    persistAnswers();
+    submissionLocked = false;
+    submissionInFlight = false;
+    submissionAttempt += 1;
+    draftRevision = 0;
+    clearDraftSaveTimer();
+    $("answer").disabled = false;
+    $("btn-confirm-submit").disabled = false;
     setQuizTimer(endsAt, remainingMs);
+    persistAnswers();
     currentSetLabel = setLabel;
     isReviewSet = isReview === true;
     renderAbsenteePdfButtons();
@@ -1684,7 +1723,11 @@
   }
 
   function saveCurrent() {
-    answers[idx] = $("answer").value;
+    if (isHost || submissionLocked || !questions.length) return;
+    const value = $("answer").value;
+    if (answers[idx] === value) return;
+    answers[idx] = value;
+    draftRevision += 1;
     persistAnswers();
     scheduleDraftSave();
   }
@@ -1726,6 +1769,7 @@
   }
 
   $("btn-back").addEventListener("click", () => {
+    if (submissionLocked || idx <= 0) return;
     saveCurrent();
     sendDraftNow();
     idx--;
@@ -1735,6 +1779,7 @@
   });
 
   $("btn-next").addEventListener("click", () => {
+    if (submissionLocked) return;
     saveCurrent();
     sendDraftNow();
     if (editingFromConfirmation) {
@@ -1772,13 +1817,43 @@
   });
 
   // --- 結果 ---
-  function renderResults({ resultAt, setLabel, perfect = [], leaderboard = [], review = [], isTrial = false, isReview = false }) {
+  function renderResults({ resultAt, setLabel, perfect = [], others = [], leaderboard = [], review = [], personalResult, legacyLocalResult = false, isTrial = false, isReview = false }) {
     clearQuizTimer();
     clearWaitingTimer();
+    clearDraftSaveTimer();
+    submissionLocked = true;
+    submissionAttempt += 1;
     clearPendingSubmission();
     $("results-set").textContent = setLabel || "";
-    const result = QuizUi.calculateResult(answers, review);
-    $("personal-score").textContent = `${result.score} / ${result.total}点`;
+    const accepted = QuizSavedResults.normalizePersonalResult(personalResult, review.length);
+    const legacyScore = perfect.some((entry) => entry.id === playerId)
+      ? { score: review.length, total: review.length }
+      : (others.find((entry) => entry.id === playerId)
+        || leaderboard.find((group) => group.players?.some((entry) => entry.id === playerId)));
+    // Older browser caches contain no official score for non-awarded players. Preserve
+    // their former grading rules and label that local-only fallback; never regrade history.
+    const reviewNormalize = legacyLocalResult && !accepted
+      ? (value) => String(value || "").trim().toLowerCase()
+      : QuizUi.normalizeAnswer;
+    const localReference = legacyLocalResult && !accepted && !legacyScore;
+    const referenceScore = localReference ? review.reduce((score, item, index) =>
+      score + ([item.answer, ...(item.altAnswers || [])].map(reviewNormalize).includes(reviewNormalize(answers[index])) ? 1 : 0), 0) : 0;
+    const result = accepted || legacyScore || (localReference ? { score: referenceScore, total: review.length } : null);
+    $("personal-score").textContent = result
+      ? `${localReference ? "参考 " : ""}${result.score} / ${result.total}点` : "採点結果を確認できません";
+    const localOutcomeMatches = accepted && accepted.answerRevision === draftRevision
+      && review.every((item, index) => {
+        const mine = QuizUi.normalizeAnswer(answers[index]);
+        const correct = Boolean(mine) && [item.answer, ...(item.altAnswers || [])].map(QuizUi.normalizeAnswer).includes(mine);
+        return correct === !accepted.wrongQuestionIndexes.includes(index);
+      });
+    const resultNote = $("authoritative-result-note");
+    resultNote.hidden = isHost || Boolean(localOutcomeMatches);
+    resultNote.textContent = accepted
+      ? "点数と正誤は、締切までにサーバーに保存された回答で確定しています。この端末の入力と異なる場合があります。"
+      : (localReference
+        ? "以前この端末に保存された入力から計算した参考値です。サーバーの採点結果は保存されていません。"
+        : "保存された正誤の詳細がないため、復習欄にはこの端末の入力を表示しています。");
     // 復習日は5人目と同点の参加者まで、通常日は従来どおり満点者を発表する
     $("perfect-count").textContent = isReview
       ? "🏆 復習日 TOP 5"
@@ -1807,11 +1882,11 @@
     $("summary-score").style.display = isHost ? "none" : "";
     $("summary-divider").style.display = isHost ? "none" : "";
     $("study-panel").style.display = isHost ? "none" : "";
-    const reviewed = review.map((r, i) => ({ r, i, mine: (answers[i] || "").trim().toLowerCase() }));
-    const reviewAnswerMatches = ({ r, mine }) =>
-      [r.answer, ...(Array.isArray(r.altAnswers) ? r.altAnswers : [])]
-        .map((answer) => String(answer || "").trim().toLowerCase())
-        .includes(mine);
+    const reviewed = review.map((r, i) => ({ r, i, mine: reviewNormalize(answers[i]) }));
+    const reviewAnswerMatches = ({ r, i, mine }) => accepted
+      ? !accepted.wrongQuestionIndexes.includes(i)
+      : legacyScore?.score === review.length || Boolean(mine)
+        && [r.answer, ...(Array.isArray(r.altAnswers) ? r.altAnswers : [])].map(reviewNormalize).includes(mine);
     const wrongReviews = reviewed.filter((item) => !reviewAnswerMatches(item));
     const correctReviews = reviewed.filter(reviewAnswerMatches);
     // 間違えた単語が無いときは、スクショの案内文ごと隠す
@@ -1828,7 +1903,7 @@
           <p class="review-word">${escapeHtml(answerDisplay)}</p>
           <span class="review-meaning">${escapeHtml(r.ja)}</span>
         </div>
-        <p class="review-mine">あなたの回答：${escapeHtml(mineLabel)}</p>
+        <p class="review-mine">${accepted && !localOutcomeMatches ? "この端末の入力" : "あなたの回答"}：${escapeHtml(mineLabel)}</p>
         <p class="review-example"><span class="review-qno">Q${i + 1}</span> ${r.sentence.replace("___", `<strong>${escapeHtml(r.answer)}</strong>`)}</p>
       </div>`;
     }).join("");
@@ -1873,7 +1948,7 @@
     const saveStatus = $("results-save-status");
     saveStatus.hidden = isHost;
     if (!isHost) {
-      const saved = saveParticipantResult({ resultAt, setLabel, perfect, leaderboard, review, isTrial, isReview });
+      const saved = saveParticipantResult({ resultAt, setLabel, perfect, leaderboard, review, personalResult: accepted, isTrial, isReview });
       saveStatus.textContent = saved === false
         ? "この画面を閉じると結果を復元できません"
         : "この結果と復習内容は、このブラウザに7日間保存されます";
@@ -1908,9 +1983,9 @@
 
   function checkRetest() {
     const item = retestItems[retestIdx];
-    const mine = $("retest-answer").value.trim().toLowerCase();
-    const accepted = [item.answer, ...item.altAnswers].map((a) => String(a).trim().toLowerCase());
-    const ok = accepted.includes(mine);
+    const mine = QuizUi.normalizeAnswer($("retest-answer").value);
+    const accepted = [item.answer, ...item.altAnswers].map(QuizUi.normalizeAnswer);
+    const ok = Boolean(mine) && accepted.includes(mine);
     if (ok) retestCorrect += 1;
     $("retest-feedback").textContent = ok ? "正解 🎉" : "惜しい！もう一度覚えよう！";
     $("retest-feedback").className = `retest-feedback ${ok ? "ok" : "ng"}`;
@@ -1978,7 +2053,12 @@
   socket.on("quiz:timeExpired", ({ submitted, total } = {}) => {
     setQuizTimer(quizEndsAt, 0);
     clearQuizTimer();
+    clearDraftSaveTimer();
+    submissionLocked = true;
+    $("answer").disabled = true;
+    $("btn-confirm-submit").disabled = true;
     submissionWasAutomatic = true;
+    submissionAttempt += 1;
     clearPendingSubmission();
     if (isHost) return;
     $("waiting-count").textContent = `${Number(submitted) || 0} / ${Number(total) || 0}人`;
@@ -1990,6 +2070,9 @@
   socket.on("quiz:backToLobby", ({ cancelled } = {}) => {
     clearQuizTimer();
     clearWaitingTimer();
+    clearDraftSaveTimer();
+    submissionLocked = true;
+    submissionAttempt += 1;
     localStorage.removeItem("quizAnswers");
     clearPendingSubmission();
     if (cancelled) $("entry-error").textContent = "開催は中止されました　ホストの案内をお待ちください";
@@ -2028,10 +2111,18 @@
       fillSeries();
       if (isHost) $("sel-series").value = String(res.selectedSeriesIndex || 0);
 
-      const pending = loadPendingSubmission();
+      submissionInFlight = false;
+      submissionAttempt += 1;
+      let pending = loadPendingSubmission();
+      if (pending && pending.endsAt !== undefined && pending.endsAt !== res.endsAt) {
+        clearPendingSubmission();
+        pending = null;
+      }
       if (res.phase === "playing" && !res.isHost && pending && !res.submitted) {
         questions = res.questions;
         answers = pending.answers;
+        draftRevision = pending.revision || 0;
+        submissionLocked = true;
         setQuizTimer(res.endsAt, res.remainingMs);
         currentSetLabel = res.setLabel;
         $("quiz-set").textContent = res.setLabel;
@@ -2046,18 +2137,38 @@
         currentSetLabel = res.setLabel;
         $("quiz-set").textContent = res.setLabel;
         const restored = loadSavedAnswers(currentRoomCode, questions.length);
-        answers = restored.found
+        const serverRevision = Number.isSafeInteger(res.draftRevision) ? res.draftRevision : 0;
+        const useLocal = restored.found && restored.revision >= serverRevision
+          && (restored.endsAt === undefined || restored.endsAt === res.endsAt);
+        answers = useLocal
           ? restored.answers
           : (Array.isArray(res.draftAnswers) && res.draftAnswers.length === questions.length
             ? res.draftAnswers
             : restored.answers);
+        draftRevision = Math.max(useLocal ? restored.revision : 0, serverRevision);
         idx = restored.idx;
+        submissionLocked = false;
+        $("answer").disabled = false;
+        $("btn-confirm-submit").disabled = false;
+        persistAnswers();
+        sendDraftNow();
         renderQuestion();
         show("screen-quiz");
         clearQuizTimer();
         updateTimerDisplay();
         timerInterval = setInterval(updateTimerDisplay, 1000);
       } else if (res.phase === "playing" && (res.isHost || res.submitted)) {
+        questions = res.questions || [];
+        setQuizTimer(res.endsAt, res.remainingMs);
+        if (!res.isHost) {
+          const restored = loadSavedAnswers(currentRoomCode, questions.length);
+          const sameRound = restored.endsAt === undefined || restored.endsAt === res.endsAt;
+          answers = sameRound ? restored.answers : Array(questions.length).fill("");
+          draftRevision = sameRound ? restored.revision : 0;
+          idx = restored.idx;
+        }
+        submissionLocked = true;
+        clearDraftSaveTimer();
         if (res.submitted) clearPendingSubmission();
         submissionWasAutomatic = res.autoSubmitted === true;
         currentSetLabel = res.setLabel;
@@ -2069,6 +2180,7 @@
       } else if (res.phase === "finished" && res.results) {
         const restored = loadSavedAnswers(currentRoomCode, res.results.review.length);
         answers = restored.answers;
+        draftRevision = restored.revision;
         renderResults(res.results);
         show("screen-results");
       } else {
@@ -2076,6 +2188,7 @@
       }
     });
   }
+  socket.on("disconnect", () => { submissionInFlight = false; submissionAttempt += 1; clearDraftSaveTimer(); });
   socket.on("connect", attemptRejoin);
 
   if (presetRoom && (!savedSession || savedSession.roomCode !== presetRoom)) {

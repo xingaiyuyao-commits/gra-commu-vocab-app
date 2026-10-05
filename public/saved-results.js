@@ -28,6 +28,18 @@
     });
   }
 
+  function normalizePersonalResult(value, expectedTotal) {
+    if (!value || !Number.isInteger(value.score) || !Number.isInteger(value.total)
+      || value.total !== expectedTotal || value.score < 0 || value.score > value.total
+      || !Array.isArray(value.wrongQuestionIndexes)) return null;
+    const wrong = [...new Set(value.wrongQuestionIndexes)];
+    if (wrong.some((i) => !Number.isInteger(i) || i < 0 || i >= value.total)
+      || wrong.length !== value.total - value.score) return null;
+    return { score: value.score, total: value.total, wrongQuestionIndexes: wrong,
+      submissionKind: value.submissionKind === "timeout" ? "timeout" : "manual",
+      answerRevision: Number.isSafeInteger(value.answerRevision) ? value.answerRevision : 0 };
+  }
+
   function normalizeRecord(value, now = Date.now()) {
     if (!value || typeof value !== "object") return null;
     const roomCode = String(value.roomCode || "").trim().toUpperCase();
@@ -59,6 +71,9 @@
         ja: String(item?.ja || ""),
         sentenceJa: String(item?.sentenceJa || ""),
       })),
+      ...(normalizePersonalResult(value.personalResult, value.review.length)
+        ? { personalResult: normalizePersonalResult(value.personalResult, value.review.length) } : {}),
+      ...(Number.isSafeInteger(value.localAnswerRevision) ? { localAnswerRevision: value.localAnswerRevision } : {}),
       answers: value.answers.map((answer) => String(answer || "")),
       playerId: String(value.playerId || ""),
       isTrial: value.isTrial === true,
@@ -94,5 +109,5 @@
     return parse(raw, now).find((record) => record.roomCode === code) || null;
   }
 
-  return { STORAGE_KEY, RETENTION_MS, MAX_RECORDS, normalizeRecord, parse, serialize, upsert, find };
+  return { STORAGE_KEY, RETENTION_MS, MAX_RECORDS, normalizeRecord, normalizePersonalResult, parse, serialize, upsert, find };
 });
