@@ -196,7 +196,7 @@
   }
 
   function normalizeAnswer(answer) {
-    return String(answer || "").trim().toLowerCase();
+    return String(answer || "").replace(/\s+/g, " ").trim().toLowerCase();
   }
 
   function getSubmissionSummary(answers) {
@@ -230,6 +230,7 @@
     readWeeklyMistakes,
     writeWeeklyMistakeRecord,
     canCreateRoom,
+    normalizeAnswer,
     getSubmissionSummary,
     calculateResult,
   };

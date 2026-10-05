@@ -1151,6 +1151,8 @@ test("回答中: 入力途中の一文字ごとに現在の回答と問題番号
     roomCode: "ABCD",
     answers: ["dri"],
     idx: 0,
+    revision: 1,
+    endsAt: window.eval("quizEndsAt"),
   });
 });
 
@@ -1244,7 +1246,7 @@ test("過去の招待リンク: 7日以内なら終了済みルームの結果�
     records: [{
       roomCode: "ABCD", category: "clacel", setLabel: "Clacel Day 1",
       resultAt: "2026-09-04T10:30:00.000Z", expiresAt: Date.parse("2026-09-11T10:30:00.000Z"),
-      perfect: [{ id: "participant", name: "Kaho" }],
+      perfect: [],
       review: [{ sentence: "I ___ tea.", answer: "drink", altAnswers: [], ja: "飲む", sentenceJa: "私はお茶を飲む。" }],
       answers: ["dlink"], playerId: "participant", isTrial: false,
     }],
@@ -1259,7 +1261,7 @@ test("過去の招待リンク: 7日以内なら終了済みルームの結果�
   });
   assert.equal(document.getElementById("screen-results").classList.contains("active"), true);
   assert.equal(document.getElementById("results-set").textContent, "Clacel Day 1");
-  assert.match(document.getElementById("personal-score").textContent, /0 \/ 1点/);
+  assert.match(document.getElementById("personal-score").textContent, /参考 0 \/ 1点/);
   assert.equal(document.getElementById("btn-retest").style.display, "");
 });
 
@@ -1464,6 +1466,7 @@ test("結果画面: 最上部に本人の点数が表示される", () => {
 
   fireSocketEvent("quiz:results", {
     perfect: [],
+    personalResult: { score: 1, total: 2, wrongQuestionIndexes: [1], answerRevision: 2 },
     review: [
       { sentence: "I ___ tea.", answer: "drink", ja: "飲む", sentenceJa: "" },
       { sentence: "She ___ books.", answer: "reads", ja: "読む", sentenceJa: "" },
@@ -1486,6 +1489,7 @@ test("結果画面: 正解データの大文字小文字を無視して誤答欄
   document.getElementById("btn-next").dispatchEvent(new window.Event("click", { bubbles: true }));
   fireSocketEvent("quiz:results", {
     setLabel: "Clacel Day 26",
+    personalResult: { score: 1, total: 1, wrongQuestionIndexes: [], answerRevision: 1 },
     perfect: [{ id: "participant", name: "参加者" }],
     review: questions,
   });

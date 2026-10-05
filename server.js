@@ -16,6 +16,7 @@ const {
 } = require("./scheduled-clacel-links");
 const QUESTIONS = require("./questions");
 const SENTENCES = require("./sentences");
+const { normalizeAnswer } = require("./public/ui-logic");
 
 const HIGHSCORE_FILE = path.join(__dirname, "highscore.json");
 
@@ -727,6 +728,7 @@ function loadQuizState() {
               : (Array.isArray(player.draftAnswers)
                 ? player.draftAnswers.map((answer) => String(answer ?? "").slice(0, 100))
                 : []),
+            draftRevision: resetLegacySubmission ? 0 : (Number.isSafeInteger(player.draftRevision) ? Math.max(0, player.draftRevision) : 0),
             score: resetLegacySubmission ? 0 : (Number(player.score) || 0),
             wrongQuestionIndexes: resetLegacySubmission
               ? []
@@ -858,6 +860,7 @@ function persistQuizState() {
         submittedAt: player.submittedAt,
         submissionKind: player.submissionKind,
         draftAnswers: player.draftAnswers,
+        draftRevision: player.draftRevision || 0,
         score: player.score,
         wrongQuestionIndexes: player.wrongQuestionIndexes,
         wrongAnswerReasons: player.wrongAnswerReasons,
@@ -1515,12 +1518,12 @@ function rejectOperatorAction(cb, error = "運営者認証が必要です") {
 // 例文に時制を示す語がなく現在形・過去形どちらも文法的に成立してしまう設問は、
 // altAnswers に許容する別解（三単現形など）を列挙しておくと両方を正解扱いにできる。
 function quizAnswerMatches(q, submitted) {
-  const mine = String(submitted || "").trim().toLowerCase();
+  const mine = normalizeAnswer(submitted);
   if (!mine) return false;
-  const answer = String(q.answer || "").trim().toLowerCase();
+  const answer = normalizeAnswer(q.answer);
   if (mine === answer) return true;
   return Array.isArray(q.altAnswers)
-    && q.altAnswers.some((value) => mine === String(value || "").trim().toLowerCase());
+    && q.altAnswers.some((value) => mine === normalizeAnswer(value));
 }
 
 function quizEditDistance(left, right) {
@@ -1542,13 +1545,13 @@ function quizEditDistance(left, right) {
 }
 
 function quizMistakeReason(q, submitted) {
-  const mine = String(submitted || "").trim().toLowerCase();
+  const mine = normalizeAnswer(submitted);
   if (!mine) return "blank";
-  const answer = String(q.answer || "").trim().toLowerCase();
-  const base = String(q.base || "").trim().toLowerCase();
+  const answer = normalizeAnswer(q.answer);
+  const base = normalizeAnswer(q.base);
   if (base && answer !== base && mine === base) return "inflection";
   const accepted = [answer, ...(Array.isArray(q.altAnswers) ? q.altAnswers : [])]
-    .map((value) => String(value || "").trim().toLowerCase())
+    .map((value) => normalizeAnswer(value))
     .filter(Boolean);
   const spellingThreshold = answer.length >= 6 ? 2 : 1;
   if (accepted.some((value) => quizEditDistance(mine, value) <= spellingThreshold)) return "spelling";
@@ -1567,6 +1570,52 @@ function quizSanitizedQuestions(room) {
 function quizSanitizeAnswers(room, answers) {
   const source = Array.isArray(answers) ? answers : [];
   return room.questions.map((_question, index) => String(source[index] ?? "").slice(0, 100));
+}
+
+// Keep one latest on-time draft per participant in memory, then persist the batch.
+// Never acknowledge durability until the atomic write succeeds. This avoids blocking
+// receipt of everyone else's final keystrokes on one full-state write per keystroke.
+const pendingQuizDrafts = new Map();
+let quizDraftFlushTimer = null;
+
+function scheduleQuizDraftFlush(delayMs = 50) {
+  if (!quizDraftFlushTimer) quizDraftFlushTimer = setTimeout(flushQuizDrafts, delayMs);
+}
+
+function flushQuizDrafts() {
+  if (quizDraftFlushTimer) clearTimeout(quizDraftFlushTimer);
+  quizDraftFlushTimer = null;
+  if (!pendingQuizDrafts.size) return true;
+  const batch = [...pendingQuizDrafts.entries()];
+  pendingQuizDrafts.clear();
+  const eligible = batch.filter(([, draft]) => {
+    const room = quizRooms[draft.roomCode];
+    const player = room?.players[draft.playerId];
+    return room?.phase === "playing" && room.endsAt === draft.endsAt
+      && player && draft.playerId !== room.host && player.submittedAt === null;
+  });
+  const eligibleKeys = new Set(eligible.map(([key]) => key));
+  const saved = !eligible.length || persistQuizMutation(eligible[0][1].roomCode, () => {
+    for (const [, draft] of eligible) {
+      const player = quizRooms[draft.roomCode].players[draft.playerId];
+      player.draftAnswers = draft.answers;
+      player.draftRevision = draft.revision || 0;
+    }
+  });
+  for (const [key, draft] of batch) {
+    const valid = eligibleKeys.has(key);
+    for (const { cb, stale } of draft.callbacks) {
+      cb(saved && valid
+        ? { ok: true, ...(draft.revision ? { revision: draft.revision } : {}), ...(stale ? { stale: true } : {}) }
+        : { ok: false, error: valid ? QUIZ_PERSISTENCE_ERROR : "回答を保存できませんでした" });
+    }
+    draft.callbacks = [];
+    // Retain only the latest accepted snapshot during a temporary storage outage.
+    // Timeout/submit cannot finalize from an older draft until this flush succeeds.
+    if (!saved && valid) pendingQuizDrafts.set(key, draft);
+  }
+  if (!saved) scheduleQuizDraftFlush(1_000);
+  return saved;
 }
 
 function quizApplySubmission(room, player, answers, submissionKind) {
@@ -1594,8 +1643,18 @@ function quizParticipants(room) {
 // 制限時間が来たら、まだ提出していない参加者をサーバー保存済みの最新回答で確定させる。
 // ただしこれだけでは結果発表は行わない（発表はホストのquiz:revealResults操作を待つ）。
 function quizForceFinish(roomCode) {
+  if (!flushQuizDrafts()) {
+    const pendingRoom = quizRooms[roomCode];
+    if (pendingRoom?.phase === "playing") pendingRoom.timeoutHandle = setTimeout(() => quizForceFinish(roomCode), 1_000);
+    return;
+  }
   const room = quizRooms[roomCode];
   if (!room || room.phase !== "playing") return;
+  const remainingMs = room.endsAt - Date.now();
+  if (remainingMs > 0) {
+    room.timeoutHandle = setTimeout(() => quizForceFinish(roomCode), remainingMs);
+    return;
+  }
   const saved = persistQuizMutation(roomCode, () => {
     room.timeoutHandle = null;
     for (const p of quizParticipants(room)) {
@@ -1757,6 +1816,23 @@ function buildReviewLeaderboard(entries) {
   }));
 }
 
+function quizPersonalResult(room, playerId) {
+  const player = room.players[playerId];
+  if (!player || playerId === room.host || player.submittedAt === null) return null;
+  return {
+    score: player.score,
+    total: room.questions.length,
+    wrongQuestionIndexes: player.wrongQuestionIndexes.slice(),
+    submissionKind: player.submissionKind,
+    answerRevision: player.draftRevision || 0,
+  };
+}
+
+function quizResultsForPlayer(room, playerId) {
+  const personalResult = quizPersonalResult(room, playerId);
+  return personalResult ? { ...room.results, personalResult } : room.results;
+}
+
 // ホストの操作で結果発表を確定させる。参加者全員が提出済みであることを再確認してから発表する。
 function quizRevealResults(roomCode) {
   const room = quizRooms[roomCode];
@@ -1827,7 +1903,12 @@ function quizRevealResults(roomCode) {
     });
   });
   if (!saved) return false;
-  io.to(roomCode).emit("quiz:results", room.results);
+  for (const socketId of io.sockets.adapter.rooms.get(roomCode) || []) {
+    const recipient = io.sockets.sockets.get(socketId);
+    if (recipient?.data.quizRoomCode === roomCode) {
+      recipient.emit("quiz:results", quizResultsForPlayer(room, recipient.data.quizPlayerId));
+    }
+  }
   return true;
 }
 
@@ -1961,12 +2042,16 @@ io.on("connection", (socket) => {
   // リロード・再接続で同じplayerIdが戻ってきたら、進行中の状態のまま復帰させる
   socket.on("quiz:rejoin", ({ roomCode, playerId, sessionToken } = {}, cb = () => {}) => {
     const code = String(roomCode || "").toUpperCase().trim();
-    const room = quizRooms[code];
-    const player = room && playerId && room.players[playerId];
+    let room = quizRooms[code];
+    let player = room && playerId && room.players[playerId];
     if (!room || !player || !quizSessionTokenMatches(player.sessionToken, sessionToken)) return cb({ ok: false });
     if (room.host === playerId && !socketOperatorIsAuthenticated(socket)) {
       return rejectOperatorAction(cb);
     }
+    // Only authenticated participants can force a durable flush; reload after rollback.
+    flushQuizDrafts();
+    room = quizRooms[code];
+    player = room.players[playerId];
 
     if (player.leaveTimer) {
       clearTimeout(player.leaveTimer);
@@ -1996,6 +2081,7 @@ io.on("connection", (socket) => {
       res.total = room.questions.length;
       res.endsAt = room.endsAt;
       res.remainingMs = Math.max(0, room.endsAt - Date.now());
+      res.draftRevision = player.draftRevision || 0;
       res.questions = quizSanitizedQuestions(room);
       if (!res.isHost && !res.submitted) res.draftAnswers = quizSanitizeAnswers(room, player.draftAnswers);
       const participants = quizParticipants(room);
@@ -2003,7 +2089,7 @@ io.on("connection", (socket) => {
       res.totalCount = participants.length;
       res.allSubmitted = participants.length > 0 && res.submittedCount === res.totalCount;
     } else if (room.phase === "finished" && room.results) {
-      res.results = room.results;
+      res.results = quizResultsForPlayer(room, playerId);
     }
     cb(res);
     quizPlayersUpdate(code);
@@ -2086,6 +2172,7 @@ io.on("connection", (socket) => {
         p.submittedAt = null;
         p.submissionKind = null;
         p.draftAnswers = [];
+        p.draftRevision = 0;
         p.score = 0;
         p.wrongQuestionIndexes = [];
         p.wrongAnswerReasons = {};
@@ -2108,7 +2195,8 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("quiz:saveDraft", ({ answers } = {}, cb = () => {}) => {
+  socket.on("quiz:saveDraft", ({ answers, revision, endsAt } = {}, cb = () => {}) => {
+    if (typeof cb !== "function") cb = () => {};
     const roomCode = socket.data.quizRoomCode;
     const room = quizRooms[roomCode];
     const playerId = socket.data.quizPlayerId;
@@ -2116,43 +2204,73 @@ io.on("connection", (socket) => {
     if (!room || room.phase !== "playing" || !player || playerId === room.host || player.submittedAt !== null) {
       return cb({ ok: false, error: "回答を保存できませんでした" });
     }
-    const normalizedAnswers = quizSanitizeAnswers(room, answers);
-    if (!persistQuizMutation(roomCode, () => { player.draftAnswers = normalizedAnswers; })) {
-      return cb({ ok: false, error: QUIZ_PERSISTENCE_ERROR });
+    // Use receipt time, never a client timestamp or a late timer callback, as the cutoff.
+    if ((endsAt !== undefined && endsAt !== room.endsAt) || Date.now() >= room.endsAt) {
+      return cb({ ok: false, error: "回答の受付時間が終了しました" });
     }
-    cb({ ok: true });
+    const key = `${roomCode}:${playerId}`;
+    let pending = pendingQuizDrafts.get(key);
+    if (pending && pending.endsAt !== room.endsAt) {
+      for (const { cb: oldCallback } of pending.callbacks) oldCallback({ ok: false, error: "このテストの回答ではありません" });
+      pendingQuizDrafts.delete(key);
+      pending = null;
+    }
+    const currentRevision = pending?.revision || player.draftRevision || 0;
+    if (revision !== undefined && (!Number.isSafeInteger(revision) || revision < 1)) {
+      return cb({ ok: false, error: "回答の更新番号が無効です" });
+    }
+    // Legacy clients remain usable, but cannot overwrite a revision-aware client's newer draft.
+    if ((revision === undefined && currentRevision > 0) || revision <= currentRevision) {
+      if (pending) {
+        pending.callbacks.push({ cb, stale: true });
+        scheduleQuizDraftFlush();
+        return;
+      }
+      return cb({ ok: true, stale: true, revision: currentRevision });
+    }
+    pendingQuizDrafts.set(key, { roomCode, playerId, endsAt: room.endsAt,
+      answers: quizSanitizeAnswers(room, answers), revision: revision || 0,
+      callbacks: [...(pending?.callbacks || []), { cb, stale: false }] });
+    scheduleQuizDraftFlush();
   });
 
-  socket.on("quiz:submit", ({ answers, automatic = false } = {}, cb = () => {}) => {
+  socket.on("quiz:submit", ({ answers, automatic = false, revision, endsAt } = {}, cb = () => {}) => {
+    const receivedAt = Date.now();
     const roomCode = socket.data.quizRoomCode;
     const room = quizRooms[roomCode];
-    if (!room || room.phase !== "playing") return cb({ ok: false, error: "提出できませんでした" });
-    if (socket.data.quizPlayerId === room.host) return cb({ ok: false, error: "運営者は提出できません" }); // ホストは開催者であり回答しない
+    if (!room || !["playing", "finished"].includes(room.phase)) return cb({ ok: false, error: "提出できませんでした" });
+    if (socket.data.quizPlayerId === room.host) return cb({ ok: false, error: "運営者は提出できません" });
     const player = room.players[socket.data.quizPlayerId];
     if (!player) return cb({ ok: false, error: "参加者が見つかりません" });
-    if (automatic && Date.now() < room.endsAt) {
-      return cb({
-        ok: false,
-        error: "制限時間前の自動提出は受け付けません",
-        remainingMs: Math.max(0, room.endsAt - Date.now()),
-      });
-    }
+    if (endsAt !== undefined && endsAt !== room.endsAt) return cb({ ok: false, error: "このテストの回答ではありません" });
+    if (!flushQuizDrafts()) return cb({ ok: false, error: QUIZ_PERSISTENCE_ERROR });
     if (player.submittedAt !== null) {
       const participants = quizParticipants(room);
-      const submittedCount = participants.filter((p) => p.submittedAt !== null).length;
-      return cb({ ok: true, submittedCount, totalCount: participants.length });
+      return cb({ ok: true, submittedCount: participants.filter((p) => p.submittedAt !== null).length,
+        totalCount: participants.length });
     }
+    const expired = receivedAt >= room.endsAt;
+    if (automatic && !expired) {
+      return cb({ ok: false, error: "制限時間前の自動提出は受け付けません",
+        remainingMs: Math.max(0, room.endsAt - Date.now()) });
+    }
+    if (revision !== undefined && (!Number.isSafeInteger(revision) || revision < 0)) {
+      return cb({ ok: false, error: "回答の更新番号が無効です" });
+    }
+    const stale = (revision === undefined && player.draftRevision > 0)
+      || (revision !== undefined && revision < (player.draftRevision || 0));
     const saved = persistQuizMutation(roomCode, () => {
-      quizApplySubmission(room, player, answers, automatic ? "timeout" : "manual");
+      // At/after the deadline, including a delayed manual click, only the last on-time draft counts.
+      // A stale submit cannot replace a more recent on-time draft either.
+      const acceptedAnswers = expired || stale ? player.draftAnswers : answers;
+      if (!expired && !stale && revision !== undefined) player.draftRevision = revision;
+      quizApplySubmission(room, player, acceptedAnswers, expired ? "timeout" : "manual");
     });
     if (!saved) return cb({ ok: false, error: QUIZ_PERSISTENCE_ERROR });
     const participants = quizParticipants(room);
     const submittedCount = participants.filter((p) => p.submittedAt !== null).length;
     cb({ ok: true });
-    io.to(roomCode).emit("quiz:submitProgress", {
-      submitted: submittedCount,
-      total: participants.length,
-    });
+    io.to(roomCode).emit("quiz:submitProgress", { submitted: submittedCount, total: participants.length });
     quizCheckAllSubmitted(roomCode);
   });
 
@@ -2187,6 +2305,7 @@ io.on("connection", (socket) => {
         p.submittedAt = null;
         p.submissionKind = null;
         p.draftAnswers = [];
+        p.draftRevision = 0;
         p.score = 0;
         p.wrongQuestionIndexes = [];
         p.wrongAnswerReasons = {};
@@ -2222,6 +2341,7 @@ io.on("connection", (socket) => {
         p.submittedAt = null;
         p.submissionKind = null;
         p.draftAnswers = [];
+        p.draftRevision = 0;
         p.score = 0;
         p.wrongQuestionIndexes = [];
         p.wrongAnswerReasons = {};
@@ -2269,6 +2389,7 @@ io.on("connection", (socket) => {
         submittedAt: null,
         submissionKind: null,
         draftAnswers: [],
+        draftRevision: 0,
         score: 0,
         wrongQuestionIndexes: [],
         wrongAnswerReasons: {},
