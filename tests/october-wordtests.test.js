@@ -92,8 +92,17 @@ test("Clacel Day 29〜34は10月4日〜9日のPDF v06と一致する", () => {
     sentenceJa: "休暇中にダイエットを続けるのは難しい。",
   });
   assert.equal(findItem(32, 20).ja, "食べさせる、供給する、〜に反映される、〜に組み込まれる");
-  assert.equal(findItem(33, 16).base, "depend on");
-  assert.equal(findItem(33, 16).ja, "〜次第である、〜に頼る");
+  assert.deepEqual(findItem(33, 16), {
+    questionId: "2026-10/clacel/day33/q16",
+    sentence: "Our plans ___ the weather this weekend.",
+    answer: "depend on",
+    base: "depend on",
+    hint: "d________",
+    ja: "〜次第である、〜に頼る",
+    sentenceJa: "私たちの計画は今週末の天気次第だ。",
+  });
+  assert.equal(findItem(33, 16).sentence.replace("___", findItem(33, 16).answer),
+    "Our plans depend on the weather this weekend.");
   assert.equal(findItem(34, 8).ja, "生き延びる、持ちこたえる");
   assert.equal(findItem(34, 8).sentenceJa, "去年の地震で倒壊を免れた建物はほとんどなかった。");
   assert.equal(findItem(34, 13).sentenceJa, "急に寒くなった。");

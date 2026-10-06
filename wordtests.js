@@ -15,6 +15,7 @@ const REVIEW_DAYS = [
   { day: 14, sourceDays: [8, 9, 10, 11, 12, 13] },
   { day: 21, sourceDays: [15, 16, 17, 18, 19, 20] },
   { day: 28, sourceDays: [22, 23, 24, 25, 26, 27] },
+  { day: 35, sourceDays: [29, 30, 31, 32, 33, 34] },
 ];
 
 function fixedReviewQuestionIds(category, datasetRevision, reviewDay, sourceDays, studySeries) {
@@ -41,7 +42,14 @@ function withReviewDays(category, data) {
   const studySeries = data.series;
   const reviewsByDay = new Map(REVIEW_DAYS.map((review) => [review.day, review]));
   const studyByDay = new Map(studySeries.map((series) => [series.day, series]));
-  const lastDay = Math.max(...studyByDay.keys());
+  // Include a trailing review once all six source days exist, without drawing
+  // its questions until the final source day's results are announced.
+  const lastDay = Math.max(
+    ...studyByDay.keys(),
+    ...REVIEW_DAYS
+      .filter((review) => review.sourceDays.every((day) => studyByDay.has(day)))
+      .map((review) => review.day),
+  );
   const series = [];
   for (let day = 1; day <= lastDay; day += 1) {
     const review = reviewsByDay.get(day);

@@ -5171,10 +5171,10 @@
         },
         {
           "questionId": "2026-10/clacel/day33/q16",
-          "sentence": "Our plans ___ on the weather this weekend.",
-          "answer": "depend",
+          "sentence": "Our plans ___ the weather this weekend.",
+          "answer": "depend on",
           "base": "depend on",
-          "hint": "d_____",
+          "hint": "d________",
           "ja": "〜次第である、〜に頼る",
           "sentenceJa": "私たちの計画は今週末の天気次第だ。"
         },

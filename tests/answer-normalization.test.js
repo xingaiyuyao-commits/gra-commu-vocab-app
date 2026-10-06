@@ -9,6 +9,17 @@ const wordtests = require("../wordtests");
 
 const SPACE_VARIANTS = [" ", "   ", "\u3000", "\u00a0", "\u202f", "\u2003", "\t", "\r\n", " \u3000\u00a0\t "];
 
+test("Clacel Day33のdepend onは最新PDFどおり2語の解答を採点する", () => {
+  const question = wordtests.clacel.series.find(({ day }) => day === 33).items
+    .find(({ questionId }) => questionId === "2026-10/clacel/day33/q16");
+  for (const space of SPACE_VARIANTS) {
+    assert.equal(calculateResult([`${space}DEPEND${space}ON${space}`], [question]).score, 1);
+  }
+  for (const wrong of ["depend", "on", "depend on on", "dependon"]) {
+    assert.equal(calculateResult([wrong], [question]).score, 0, wrong);
+  }
+});
+
 test("回答の大文字・前後空白・連続したUnicode空白を共通の半角スペースへ正規化する", () => {
   for (const space of SPACE_VARIANTS) {
     assert.equal(normalizeAnswer(`${space}COME${space}UP${space}WITH${space}`), "come up with");
