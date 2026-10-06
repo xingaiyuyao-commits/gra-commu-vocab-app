@@ -5401,6 +5401,1122 @@
           "sentenceJa": "今朝、私は壁に小さなひびがあることに気づいた。"
         }
       ]
+    },
+    {
+      "name": "Day 36",
+      "day": 36,
+      "items": [
+        {
+          "questionId": "2026-10/clacel/day36/q01",
+          "sentence": "She ___ to the report several times during the meeting.",
+          "answer": "referred",
+          "base": "refer",
+          "hint": "r_______",
+          "ja": "言及する、紹介する",
+          "sentenceJa": "彼女は会議中に何度もその報告書に言及した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day36/q02",
+          "sentence": "I really ___ your help with this.",
+          "answer": "appreciate",
+          "base": "appreciate",
+          "hint": "a_________",
+          "ja": "感謝する、真価を認める",
+          "sentenceJa": "これを手伝ってくれて本当に感謝しています。"
+        },
+        {
+          "questionId": "2026-10/clacel/day36/q03",
+          "sentence": "The senator ___ the new policy in his speech.",
+          "answer": "attacked",
+          "base": "attack",
+          "hint": "a_______",
+          "ja": "攻撃する",
+          "sentenceJa": "その上院議員は演説の中で新しい政策を批判した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day36/q04",
+          "sentence": "Let's ___ some other options before deciding.",
+          "answer": "explore",
+          "base": "explore",
+          "hint": "e______",
+          "ja": "探検する、探る",
+          "sentenceJa": "決める前に他の選択肢も検討してみましょう。"
+        },
+        {
+          "questionId": "2026-10/clacel/day36/q05",
+          "sentence": "Her English has ___ a lot this year.",
+          "answer": "improved",
+          "base": "improve",
+          "hint": "i_______",
+          "ja": "改善する",
+          "sentenceJa": "彼女の英語は今年、大きく上達した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day36/q06",
+          "sentence": "This price ___ breakfast and Wi-Fi.",
+          "answer": "includes",
+          "base": "include",
+          "hint": "i_______",
+          "ja": "含む",
+          "sentenceJa": "この料金には朝食とWi-Fiが含まれている。"
+        },
+        {
+          "questionId": "2026-10/clacel/day36/q07",
+          "sentence": "The doctor ___ him to rest for a week.",
+          "answer": "advised",
+          "base": "advise",
+          "hint": "a______",
+          "ja": "助言する",
+          "sentenceJa": "医者は彼に1週間休むよう助言した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day36/q08",
+          "sentence": "She ___ the table after dinner.",
+          "answer": "wiped",
+          "base": "wipe",
+          "hint": "w____",
+          "ja": "拭く",
+          "sentenceJa": "彼女は夕食後にテーブルを拭いた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day36/q09",
+          "sentence": "He ___ waking up early.",
+          "answer": "dislikes",
+          "base": "dislike",
+          "hint": "d_______",
+          "ja": "嫌う",
+          "sentenceJa": "彼は早起きが嫌いだ。"
+        },
+        {
+          "questionId": "2026-10/clacel/day36/q10",
+          "sentence": "It ___ that we made a mistake.",
+          "answer": "appears",
+          "base": "appear",
+          "hint": "a______",
+          "ja": "現れる、〜のように見える",
+          "sentenceJa": "私たちは間違いを犯したようだ。"
+        },
+        {
+          "questionId": "2026-10/clacel/day36/q11",
+          "sentence": "My laptop ___ right before I saved the file.",
+          "answer": "crashed",
+          "base": "crash",
+          "hint": "c______",
+          "ja": "衝突する、（コンピュータが）落ちる",
+          "sentenceJa": "ファイルを保存する直前にノートパソコンがクラッシュした。"
+        },
+        {
+          "questionId": "2026-10/clacel/day36/q12",
+          "sentence": "Last night, we ___ pizza for the party.",
+          "answer": "ordered",
+          "base": "order",
+          "hint": "o______",
+          "ja": "注文する、命令する",
+          "sentenceJa": "昨夜、私たちはパーティーのためにピザを注文した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day36/q13",
+          "sentence": "We ___ nearly an hour for the bus.",
+          "answer": "waited",
+          "base": "wait",
+          "hint": "w_____",
+          "ja": "待つ",
+          "sentenceJa": "私たちはバスを1時間近く待った。"
+        },
+        {
+          "questionId": "2026-10/clacel/day36/q14",
+          "sentence": "Don't ___ a book by its cover.",
+          "answer": "judge",
+          "base": "judge",
+          "hint": "j____",
+          "ja": "判断する、審査する",
+          "sentenceJa": "見た目で判断してはいけない。"
+        },
+        {
+          "questionId": "2026-10/clacel/day36/q15",
+          "sentence": "She ___ the entire speech.",
+          "answer": "memorized",
+          "base": "memorize",
+          "hint": "m________",
+          "ja": "暗記する",
+          "sentenceJa": "彼女はそのスピーチを丸暗記した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day36/q16",
+          "sentence": "She decided to ___ the plan at the last minute.",
+          "answer": "drop",
+          "base": "drop",
+          "hint": "d___",
+          "ja": "落とす、やめる",
+          "sentenceJa": "彼女は土壇場で計画をやめることにした。"
+        },
+        {
+          "questionId": "2026-10/clacel/day36/q17",
+          "sentence": "Scientists ___ a new species of frog.",
+          "answer": "discovered",
+          "base": "discover",
+          "hint": "d_________",
+          "ja": "発見する",
+          "sentenceJa": "科学者たちは新種のカエルを発見した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day36/q18",
+          "sentence": "I ___ I could travel more often.",
+          "answer": "wish",
+          "base": "wish",
+          "hint": "w___",
+          "ja": "望む",
+          "sentenceJa": "もっと頻繁に旅行できたらいいのに。"
+        },
+        {
+          "questionId": "2026-10/clacel/day36/q19",
+          "sentence": "The train ___ exactly on time.",
+          "answer": "arrived",
+          "base": "arrive",
+          "hint": "a______",
+          "ja": "到着する",
+          "sentenceJa": "電車はちょうど時間通りに到着した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day36/q20",
+          "sentence": "Someone ___ on the door late last night.",
+          "answer": "knocked",
+          "base": "knock",
+          "hint": "k______",
+          "ja": "ノックする、ぶつける",
+          "sentenceJa": "昨夜遅く、誰かがドアをノックした。"
+        }
+      ]
+    },
+    {
+      "name": "Day 37",
+      "day": 37,
+      "items": [
+        {
+          "questionId": "2026-10/clacel/day37/q01",
+          "sentence": "These shoes don't ___ me anymore.",
+          "answer": "fit",
+          "base": "fit",
+          "hint": "f__",
+          "ja": "合う",
+          "sentenceJa": "この靴はもう私に合わない。"
+        },
+        {
+          "questionId": "2026-10/clacel/day37/q02",
+          "sentence": "Our team ___ the final game by one point.",
+          "answer": "lost",
+          "base": "lose",
+          "hint": "l___",
+          "ja": "なくす、負ける",
+          "sentenceJa": "私たちのチームは決勝戦を1点差で落とした。"
+        },
+        {
+          "questionId": "2026-10/clacel/day37/q03",
+          "sentence": "We ___ the meeting to end by five o'clock.",
+          "answer": "expect",
+          "base": "expect",
+          "hint": "e_____",
+          "ja": "予期する、期待する",
+          "sentenceJa": "私たちは会議が5時までに終わると予想している。"
+        },
+        {
+          "questionId": "2026-10/clacel/day37/q04",
+          "sentence": "Her kind words ___ everyone in the room.",
+          "answer": "touched",
+          "base": "touch",
+          "hint": "t______",
+          "ja": "触れる、感動させる",
+          "sentenceJa": "彼女の優しい言葉はその場にいた全員の心を打った。"
+        },
+        {
+          "questionId": "2026-10/clacel/day37/q05",
+          "sentence": "The waiter ___ the seafood pasta.",
+          "answer": "recommended",
+          "base": "recommend",
+          "hint": "r__________",
+          "ja": "勧める",
+          "sentenceJa": "ウェイターはシーフードパスタを勧めた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day37/q06",
+          "sentence": "They got ___ last summer.",
+          "answer": "married",
+          "base": "marry",
+          "hint": "m______",
+          "ja": "結婚する",
+          "sentenceJa": "彼らは去年の夏に結婚した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day37/q07",
+          "sentence": "You can ___ him to keep his promise.",
+          "answer": "trust",
+          "base": "trust",
+          "hint": "t____",
+          "ja": "信頼する",
+          "sentenceJa": "彼は約束を守ると信頼できる。"
+        },
+        {
+          "questionId": "2026-10/clacel/day37/q08",
+          "sentence": "She ___ quickly and left for work.",
+          "answer": "dressed",
+          "base": "dress",
+          "hint": "d______",
+          "ja": "服を着せる、着る",
+          "sentenceJa": "彼女は急いで着替えて仕事に出かけた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day37/q09",
+          "sentence": "We need to ___ quickly before it's too late.",
+          "answer": "act",
+          "base": "act",
+          "hint": "a__",
+          "ja": "行動する、演じる",
+          "sentenceJa": "手遅れになる前に素早く行動する必要がある。"
+        },
+        {
+          "questionId": "2026-10/clacel/day37/q10",
+          "sentence": "They ___ the mountain in six hours.",
+          "answer": "climbed",
+          "base": "climb",
+          "hint": "c______",
+          "ja": "登る",
+          "sentenceJa": "彼らは6時間でその山に登った。"
+        },
+        {
+          "questionId": "2026-10/clacel/day37/q11",
+          "sentence": "We ___ about our weekend plans.",
+          "answer": "chatted",
+          "base": "chat",
+          "hint": "c______",
+          "ja": "おしゃべりする",
+          "sentenceJa": "私たちは週末の予定についておしゃべりした。"
+        },
+        {
+          "questionId": "2026-10/clacel/day37/q12",
+          "sentence": "I still ___ she is telling the truth.",
+          "answer": "believe",
+          "base": "believe",
+          "hint": "b______",
+          "ja": "信じる",
+          "sentenceJa": "私は今でも彼女が本当のことを言っていると思う。"
+        },
+        {
+          "questionId": "2026-10/clacel/day37/q13",
+          "sentence": "He ___ that he might move abroad.",
+          "answer": "mentioned",
+          "base": "mention",
+          "hint": "m________",
+          "ja": "言及する",
+          "sentenceJa": "彼は海外に引っ越すかもしれないと言っていた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day37/q14",
+          "sentence": "The ice cream ___ before we got home.",
+          "answer": "melted",
+          "base": "melt",
+          "hint": "m_____",
+          "ja": "溶ける",
+          "sentenceJa": "家に着く前にアイスクリームは溶けてしまった。"
+        },
+        {
+          "questionId": "2026-10/clacel/day37/q15",
+          "sentence": "The phone ___ three times before she answered.",
+          "answer": "rang",
+          "base": "ring",
+          "hint": "r___",
+          "ja": "鳴る、電話する",
+          "sentenceJa": "彼女が出るまでに電話は3回鳴った。"
+        },
+        {
+          "questionId": "2026-10/clacel/day37/q16",
+          "sentence": "This lawyer ___ in international business.",
+          "answer": "specializes",
+          "base": "specialize",
+          "hint": "s__________",
+          "ja": "専門にする",
+          "sentenceJa": "この弁護士は国際ビジネスを専門にしている。"
+        },
+        {
+          "questionId": "2026-10/clacel/day37/q17",
+          "sentence": "He ___ the bill before leaving the restaurant.",
+          "answer": "paid",
+          "base": "pay",
+          "hint": "p___",
+          "ja": "支払う",
+          "sentenceJa": "彼はレストランを出る前に会計を済ませた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day37/q18",
+          "sentence": "Please ___ the page to see the latest results.",
+          "answer": "refresh",
+          "base": "refresh",
+          "hint": "r______",
+          "ja": "元気を回復させる、更新する",
+          "sentenceJa": "最新の結果を見るにはページを更新してください。"
+        },
+        {
+          "questionId": "2026-10/clacel/day37/q19",
+          "sentence": "She ___ a letter from her old friend.",
+          "answer": "received",
+          "base": "receive",
+          "hint": "r_______",
+          "ja": "受け取る",
+          "sentenceJa": "彼女は旧友から手紙を受け取った。"
+        },
+        {
+          "questionId": "2026-10/clacel/day37/q20",
+          "sentence": "The tight deadline ___ her to work faster.",
+          "answer": "pressed",
+          "base": "press",
+          "hint": "p______",
+          "ja": "押す、迫る",
+          "sentenceJa": "厳しい締め切りが彼女に急いで作業するよう迫った。"
+        }
+      ]
+    },
+    {
+      "name": "Day 38",
+      "day": 38,
+      "items": [
+        {
+          "questionId": "2026-10/clacel/day38/q01",
+          "sentence": "The company is ___ serious financial problems.",
+          "answer": "facing",
+          "base": "face",
+          "hint": "f_____",
+          "ja": "直面する、向く",
+          "sentenceJa": "その会社は深刻な財政問題に直面している。"
+        },
+        {
+          "questionId": "2026-10/clacel/day38/q02",
+          "sentence": "My dog ___ last week.",
+          "answer": "died",
+          "base": "die",
+          "hint": "d___",
+          "ja": "死ぬ",
+          "sentenceJa": "私の犬は先週死んだ。"
+        },
+        {
+          "questionId": "2026-10/clacel/day38/q03",
+          "sentence": "He ___ for being late.",
+          "answer": "apologized",
+          "base": "apologize",
+          "hint": "a_________",
+          "ja": "謝る",
+          "sentenceJa": "彼は遅刻したことを謝った。"
+        },
+        {
+          "questionId": "2026-10/clacel/day38/q04",
+          "sentence": "The ending of the movie ___ a lot of fans.",
+          "answer": "disappointed",
+          "base": "disappoint",
+          "hint": "d___________",
+          "ja": "がっかりさせる",
+          "sentenceJa": "その映画の結末は多くのファンをがっかりさせた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day38/q05",
+          "sentence": "The reporter ___ several witnesses.",
+          "answer": "interviewed",
+          "base": "interview",
+          "hint": "i__________",
+          "ja": "面接する、取材する",
+          "sentenceJa": "その記者は複数の目撃者に取材した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day38/q06",
+          "sentence": "This museum ___ artifacts from ancient Egypt.",
+          "answer": "displays",
+          "base": "display",
+          "hint": "d_______",
+          "ja": "展示する",
+          "sentenceJa": "この博物館は古代エジプトの遺物を展示している。"
+        },
+        {
+          "questionId": "2026-10/clacel/day38/q07",
+          "sentence": "Firefighters ___ the family from the burning house.",
+          "answer": "rescued",
+          "base": "rescue",
+          "hint": "r______",
+          "ja": "救助する",
+          "sentenceJa": "消防士たちは燃えている家からその家族を救出した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day38/q08",
+          "sentence": "She ___ the gift in colorful paper.",
+          "answer": "wrapped",
+          "base": "wrap",
+          "hint": "w______",
+          "ja": "包む",
+          "sentenceJa": "彼女はプレゼントをカラフルな紙で包んだ。"
+        },
+        {
+          "questionId": "2026-10/clacel/day38/q09",
+          "sentence": "He spends hours ___ the internet every night.",
+          "answer": "surfing",
+          "base": "surf",
+          "hint": "s______",
+          "ja": "サーフィンする、（ネットを）見て回る",
+          "sentenceJa": "彼は毎晩何時間もネットサーフィンをして過ごす。"
+        },
+        {
+          "questionId": "2026-10/clacel/day38/q10",
+          "sentence": "They ___ to a bigger house last month.",
+          "answer": "moved",
+          "base": "move",
+          "hint": "m____",
+          "ja": "動く、引っ越す",
+          "sentenceJa": "彼らは先月、もっと大きな家に引っ越した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day38/q11",
+          "sentence": "She ___ at us from across the street.",
+          "answer": "waved",
+          "base": "wave",
+          "hint": "w____",
+          "ja": "手を振る",
+          "sentenceJa": "彼女は通りの向こうから私たちに手を振った。"
+        },
+        {
+          "questionId": "2026-10/clacel/day38/q12",
+          "sentence": "He often ___ breakfast when he's busy.",
+          "answer": "skips",
+          "base": "skip",
+          "hint": "s____",
+          "ja": "抜かす、跳ねる",
+          "sentenceJa": "彼は忙しいとよく朝食を抜く。"
+        },
+        {
+          "questionId": "2026-10/clacel/day38/q13",
+          "sentence": "She ___ very confident about the interview.",
+          "answer": "seems",
+          "base": "seem",
+          "hint": "s____",
+          "ja": "〜のように見える",
+          "sentenceJa": "彼女はその面接についてとても自信があるように見える。"
+        },
+        {
+          "questionId": "2026-10/clacel/day38/q14",
+          "sentence": "The police ___ two suspects near the station.",
+          "answer": "arrested",
+          "base": "arrest",
+          "hint": "a_______",
+          "ja": "逮捕する",
+          "sentenceJa": "警察は駅の近くで容疑者2人を逮捕した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day38/q15",
+          "sentence": "The news ___ everyone in the office.",
+          "answer": "surprised",
+          "base": "surprise",
+          "hint": "s________",
+          "ja": "驚かせる",
+          "sentenceJa": "そのニュースはオフィスの全員を驚かせた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day38/q16",
+          "sentence": "He ___ the heavy box onto the shelf.",
+          "answer": "lifted",
+          "base": "lift",
+          "hint": "l_____",
+          "ja": "持ち上げる",
+          "sentenceJa": "彼は重い箱を持ち上げて棚に乗せた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day38/q17",
+          "sentence": "The company ___ its prices for the holiday sale.",
+          "answer": "reduced",
+          "base": "reduce",
+          "hint": "r______",
+          "ja": "減らす",
+          "sentenceJa": "その会社はホリデーセールのために価格を下げた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day38/q18",
+          "sentence": "She ___ her neighbor's kids every weekend.",
+          "answer": "babysits",
+          "base": "babysit",
+          "hint": "b_______",
+          "ja": "子守りをする",
+          "sentenceJa": "彼女は毎週末、近所の子供たちの子守りをする。"
+        },
+        {
+          "questionId": "2026-10/clacel/day38/q19",
+          "sentence": "He ___ the cart down the aisle.",
+          "answer": "pushed",
+          "base": "push",
+          "hint": "p_____",
+          "ja": "押す",
+          "sentenceJa": "彼はカートを通路の先へ押していった。"
+        },
+        {
+          "questionId": "2026-10/clacel/day38/q20",
+          "sentence": "She ___ at the animal shelter every weekend.",
+          "answer": "volunteers",
+          "base": "volunteer",
+          "hint": "v_________",
+          "ja": "志願する、無償で行う",
+          "sentenceJa": "彼女は毎週末、動物保護施設でボランティアをしている。"
+        }
+      ]
+    },
+    {
+      "name": "Day 39",
+      "day": 39,
+      "items": [
+        {
+          "questionId": "2026-10/clacel/day39/q01",
+          "sentence": "She ___ some tea for her guests.",
+          "answer": "poured",
+          "base": "pour",
+          "hint": "p_____",
+          "ja": "注ぐ",
+          "sentenceJa": "彼女はお客さんにお茶を注いだ。"
+        },
+        {
+          "questionId": "2026-10/clacel/day39/q02",
+          "sentence": "Please ___ your password to continue.",
+          "answer": "enter",
+          "base": "enter",
+          "hint": "e____",
+          "ja": "入る、入力する",
+          "sentenceJa": "続けるにはパスワードを入力してください。"
+        },
+        {
+          "questionId": "2026-10/clacel/day39/q03",
+          "sentence": "The factory ___ thousands of cars each year.",
+          "answer": "produces",
+          "base": "produce",
+          "hint": "p_______",
+          "ja": "生産する",
+          "sentenceJa": "その工場は毎年何千台もの車を生産している。"
+        },
+        {
+          "questionId": "2026-10/clacel/day39/q04",
+          "sentence": "Public opinion ___ quickly after the debate.",
+          "answer": "swung",
+          "base": "swing",
+          "hint": "s____",
+          "ja": "揺れる、変動する",
+          "sentenceJa": "討論の後、世論は急速に変化した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day39/q05",
+          "sentence": "She struggled to ___ her temper.",
+          "answer": "control",
+          "base": "control",
+          "hint": "c______",
+          "ja": "制御する",
+          "sentenceJa": "彼女は感情を抑えるのに苦労した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day39/q06",
+          "sentence": "They ___ all their neighbors to the barbecue.",
+          "answer": "invited",
+          "base": "invite",
+          "hint": "i______",
+          "ja": "招待する",
+          "sentenceJa": "彼らは近所の人を全員バーベキューに招待した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day39/q07",
+          "sentence": "The river ___ through three different countries.",
+          "answer": "flows",
+          "base": "flow",
+          "hint": "f____",
+          "ja": "流れる",
+          "sentenceJa": "その川は3つの異なる国を流れている。"
+        },
+        {
+          "questionId": "2026-10/clacel/day39/q08",
+          "sentence": "We ___ the budget for over an hour.",
+          "answer": "discussed",
+          "base": "discuss",
+          "hint": "d________",
+          "ja": "話し合う",
+          "sentenceJa": "私たちは1時間以上予算について話し合った。"
+        },
+        {
+          "questionId": "2026-10/clacel/day39/q09",
+          "sentence": "The manager ___ the report before the meeting.",
+          "answer": "reviewed",
+          "base": "review",
+          "hint": "r_______",
+          "ja": "見直す、批評する",
+          "sentenceJa": "マネージャーは会議の前にその報告書を見直した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day39/q10",
+          "sentence": "She ___ not asking for more time.",
+          "answer": "regretted",
+          "base": "regret",
+          "hint": "r________",
+          "ja": "後悔する",
+          "sentenceJa": "彼女はもっと時間をもらうよう頼まなかったことを後悔した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day39/q11",
+          "sentence": "He ___ the table before the guests arrived.",
+          "answer": "set",
+          "base": "set",
+          "hint": "s__",
+          "ja": "置く、設定する、（食卓などを）整える",
+          "sentenceJa": "彼はお客さんが来る前に食卓の準備をした。"
+        },
+        {
+          "questionId": "2026-10/clacel/day39/q12",
+          "sentence": "The comment ___ her more than she expected.",
+          "answer": "upset",
+          "base": "upset",
+          "hint": "u____",
+          "ja": "動揺させる",
+          "sentenceJa": "そのコメントは彼女が思っていた以上に彼女を動揺させた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day39/q13",
+          "sentence": "The school doesn't ___ phones in class.",
+          "answer": "allow",
+          "base": "allow",
+          "hint": "a____",
+          "ja": "許可する",
+          "sentenceJa": "その学校では授業中の携帯電話を許可していない。"
+        },
+        {
+          "questionId": "2026-10/clacel/day39/q14",
+          "sentence": "Please ___ us if you have any questions.",
+          "answer": "contact",
+          "base": "contact",
+          "hint": "c______",
+          "ja": "連絡する",
+          "sentenceJa": "ご質問があればご連絡ください。"
+        },
+        {
+          "questionId": "2026-10/clacel/day39/q15",
+          "sentence": "Many farmers ___ from the long drought.",
+          "answer": "suffered",
+          "base": "suffer",
+          "hint": "s_______",
+          "ja": "苦しむ",
+          "sentenceJa": "多くの農家がその長い干ばつで苦しんだ。"
+        },
+        {
+          "questionId": "2026-10/clacel/day39/q16",
+          "sentence": "The whole family ___ for the holidays.",
+          "answer": "gathered",
+          "base": "gather",
+          "hint": "g_______",
+          "ja": "集まる、集める",
+          "sentenceJa": "家族全員が休暇のために集まった。"
+        },
+        {
+          "questionId": "2026-10/clacel/day39/q17",
+          "sentence": "She ___ the book to the library on time.",
+          "answer": "returned",
+          "base": "return",
+          "hint": "r_______",
+          "ja": "戻る、返す",
+          "sentenceJa": "彼女は期限内に本を図書館に返却した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day39/q18",
+          "sentence": "The festival ___ thousands of visitors every year.",
+          "answer": "attracts",
+          "base": "attract",
+          "hint": "a_______",
+          "ja": "引きつける",
+          "sentenceJa": "その祭りは毎年何千人もの来場者を引きつける。"
+        },
+        {
+          "questionId": "2026-10/clacel/day39/q19",
+          "sentence": "The doctor advised him to ___ his sugar intake.",
+          "answer": "limit",
+          "base": "limit",
+          "hint": "l____",
+          "ja": "制限する",
+          "sentenceJa": "医者は彼に糖分の摂取を制限するよう助言した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day39/q20",
+          "sentence": "We need to ___ the broken window.",
+          "answer": "replace",
+          "base": "replace",
+          "hint": "r______",
+          "ja": "交換する、取り替える",
+          "sentenceJa": "私たちは壊れた窓を交換する必要がある。"
+        }
+      ]
+    },
+    {
+      "name": "Day 40",
+      "day": 40,
+      "items": [
+        {
+          "questionId": "2026-10/clacel/day40/q01",
+          "sentence": "The weather ___ suddenly in the afternoon.",
+          "answer": "changed",
+          "base": "change",
+          "hint": "c______",
+          "ja": "変える、変わる",
+          "sentenceJa": "午後になって天気が急に変わった。"
+        },
+        {
+          "questionId": "2026-10/clacel/day40/q02",
+          "sentence": "For the first time in her career, she ___ success.",
+          "answer": "tasted",
+          "base": "taste",
+          "hint": "t_____",
+          "ja": "味わう、経験する",
+          "sentenceJa": "彼女はキャリアで初めて成功を味わった。"
+        },
+        {
+          "questionId": "2026-10/clacel/day40/q03",
+          "sentence": "I ___ he'll be late again.",
+          "answer": "suppose",
+          "base": "suppose",
+          "hint": "s______",
+          "ja": "想定する、〜だと思う",
+          "sentenceJa": "彼はまた遅刻するだろうと思う。"
+        },
+        {
+          "questionId": "2026-10/clacel/day40/q04",
+          "sentence": "The soup was so hot it ___ my tongue.",
+          "answer": "burned",
+          "base": "burn",
+          "hint": "b_____",
+          "ja": "燃える、燃やす、やけどをする／させる、ひりひりする",
+          "sentenceJa": "そのスープはとても熱くて舌を火傷した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day40/q05",
+          "sentence": "Sales ___ a record high this quarter.",
+          "answer": "hit",
+          "base": "hit",
+          "hint": "h__",
+          "ja": "打つ、達する",
+          "sentenceJa": "今四半期、売上は過去最高を記録した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day40/q06",
+          "sentence": "The school will ___ its annual festival next week.",
+          "answer": "hold",
+          "base": "hold",
+          "hint": "h___",
+          "ja": "持つ、開催する",
+          "sentenceJa": "その学校は来週、恒例の学園祭を開催する。"
+        },
+        {
+          "questionId": "2026-10/clacel/day40/q07",
+          "sentence": "We're ___ moving to a new city.",
+          "answer": "considering",
+          "base": "consider",
+          "hint": "c__________",
+          "ja": "検討する",
+          "sentenceJa": "私たちは新しい街に引っ越すことを検討している。"
+        },
+        {
+          "questionId": "2026-10/clacel/day40/q08",
+          "sentence": "Please ___ your email for the confirmation.",
+          "answer": "check",
+          "base": "check",
+          "hint": "c____",
+          "ja": "確認する",
+          "sentenceJa": "確認メールをチェックしてください。"
+        },
+        {
+          "questionId": "2026-10/clacel/day40/q09",
+          "sentence": "Sales ___ sharply during the winter months.",
+          "answer": "decreased",
+          "base": "decrease",
+          "hint": "d________",
+          "ja": "減少する",
+          "sentenceJa": "冬の間、売上は急激に減少した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day40/q10",
+          "sentence": "She ___ in finishing the project early.",
+          "answer": "succeeded",
+          "base": "succeed",
+          "hint": "s________",
+          "ja": "成功する",
+          "sentenceJa": "彼女はそのプロジェクトを早めに終わらせることに成功した。"
+        },
+        {
+          "questionId": "2026-10/clacel/day40/q11",
+          "sentence": "His heart ___ when he heard the news.",
+          "answer": "sank",
+          "base": "sink",
+          "hint": "s___",
+          "ja": "沈む、（気持ちが）沈む",
+          "sentenceJa": "そのニュースを聞いて彼は気持ちが沈んだ。"
+        },
+        {
+          "questionId": "2026-10/clacel/day40/q12",
+          "sentence": "Could you ___ two copies of this document?",
+          "answer": "print",
+          "base": "print",
+          "hint": "p____",
+          "ja": "印刷する",
+          "sentenceJa": "この書類を2部印刷してもらえますか。"
+        },
+        {
+          "questionId": "2026-10/clacel/day40/q13",
+          "sentence": "She ___ her gratitude to the whole team.",
+          "answer": "expressed",
+          "base": "express",
+          "hint": "e________",
+          "ja": "表現する",
+          "sentenceJa": "彼女はチーム全員に感謝の気持ちを伝えた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day40/q14",
+          "sentence": "The store ___ its prices for the summer sale.",
+          "answer": "lowered",
+          "base": "lower",
+          "hint": "l______",
+          "ja": "下げる",
+          "sentenceJa": "その店は夏のセールのために価格を下げた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day40/q15",
+          "sentence": "It took them a week to ___ the puzzle.",
+          "answer": "solve",
+          "base": "solve",
+          "hint": "s____",
+          "ja": "解決する",
+          "sentenceJa": "そのパズルを解くのに彼らは1週間かかった。"
+        },
+        {
+          "questionId": "2026-10/clacel/day40/q16",
+          "sentence": "___ a little salt to the soup.",
+          "answer": "Add",
+          "base": "add",
+          "hint": "a__",
+          "ja": "加える",
+          "sentenceJa": "スープに少し塩を加えてください。"
+        },
+        {
+          "questionId": "2026-10/clacel/day40/q17",
+          "sentence": "She ___ cookies for the school event.",
+          "answer": "baked",
+          "base": "bake",
+          "hint": "b____",
+          "ja": "焼く",
+          "sentenceJa": "彼女は学校行事のためにクッキーを焼いた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day40/q18",
+          "sentence": "I can't ___ where I put my keys.",
+          "answer": "remember",
+          "base": "remember",
+          "hint": "r_______",
+          "ja": "覚えている",
+          "sentenceJa": "鍵をどこに置いたか思い出せない。"
+        },
+        {
+          "questionId": "2026-10/clacel/day40/q19",
+          "sentence": "She ___ the picture on the wall.",
+          "answer": "hung",
+          "base": "hang",
+          "hint": "h___",
+          "ja": "掛ける、ぶら下がる",
+          "sentenceJa": "彼女は壁に絵をかけた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day40/q20",
+          "sentence": "I will ___ a meeting for next week.",
+          "answer": "arrange",
+          "base": "arrange",
+          "hint": "a______",
+          "ja": "手配する、整える",
+          "sentenceJa": "来週の会議を手配します。"
+        }
+      ]
+    },
+    {
+      "name": "Day 41",
+      "day": 41,
+      "items": [
+        {
+          "questionId": "2026-10/clacel/day41/q01",
+          "sentence": "Many people ___ advice before making a big decision.",
+          "answer": "seek",
+          "base": "seek",
+          "hint": "s___",
+          "ja": "探し求める",
+          "sentenceJa": "多くの人は大きな決断をする前に助言を求める。"
+        },
+        {
+          "questionId": "2026-10/clacel/day41/q02",
+          "sentence": "The company ___ fresh vegetables to the school.",
+          "answer": "supplies",
+          "base": "supply",
+          "hint": "s_______",
+          "ja": "供給する",
+          "sentenceJa": "その会社は学校に新鮮な野菜を供給している。"
+        },
+        {
+          "questionId": "2026-10/clacel/day41/q03",
+          "sentence": "The teacher ___ the class into four groups.",
+          "answer": "divided",
+          "base": "divide",
+          "hint": "d______",
+          "ja": "分ける、割る",
+          "sentenceJa": "先生はクラスを4つのグループに分けた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day41/q04",
+          "sentence": "She ___ her umbrella on the train yesterday.",
+          "answer": "left",
+          "base": "leave",
+          "hint": "l___",
+          "ja": "去る、残す、置き忘れる",
+          "sentenceJa": "彼女は昨日、電車に傘を置き忘れた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day41/q05",
+          "sentence": "He always ___ the same route to work.",
+          "answer": "follows",
+          "base": "follow",
+          "hint": "f______",
+          "ja": "ついていく、従う",
+          "sentenceJa": "彼はいつも同じ道順で通勤している。"
+        },
+        {
+          "questionId": "2026-10/clacel/day41/q06",
+          "sentence": "She likes to ___ pictures of animals.",
+          "answer": "draw",
+          "base": "draw",
+          "hint": "d___",
+          "ja": "描く、引く",
+          "sentenceJa": "彼女は動物の絵を描くのが好きだ。"
+        },
+        {
+          "questionId": "2026-10/clacel/day41/q07",
+          "sentence": "This textbook ___ all the basic grammar rules.",
+          "answer": "covers",
+          "base": "cover",
+          "hint": "c_____",
+          "ja": "覆う、（話題を）扱う",
+          "sentenceJa": "この教科書は基本的な文法規則をすべて扱っている。"
+        },
+        {
+          "questionId": "2026-10/clacel/day41/q08",
+          "sentence": "Childhood experiences often ___ our personalities.",
+          "answer": "shape",
+          "base": "shape",
+          "hint": "s____",
+          "ja": "形作る",
+          "sentenceJa": "幼少期の経験はしばしば私たちの性格を形作る。"
+        },
+        {
+          "questionId": "2026-10/clacel/day41/q09",
+          "sentence": "The store ___ open despite the storm.",
+          "answer": "remained",
+          "base": "remain",
+          "hint": "r_______",
+          "ja": "とどまる、～のままである、残る",
+          "sentenceJa": "その店は嵐にもかかわらず営業を続けた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day41/q10",
+          "sentence": "Please ___ the plastic from the paper waste.",
+          "answer": "separate",
+          "base": "separate",
+          "hint": "s_______",
+          "ja": "分ける、分離する",
+          "sentenceJa": "プラスチックと紙ゴミを分けてください。"
+        },
+        {
+          "questionId": "2026-10/clacel/day41/q11",
+          "sentence": "She ___ to finish the report on time.",
+          "answer": "managed",
+          "base": "manage",
+          "hint": "m______",
+          "ja": "なんとかやり遂げる、管理する",
+          "sentenceJa": "彼女は何とか時間通りにレポートを終わらせた。"
+        },
+        {
+          "questionId": "2026-10/clacel/day41/q12",
+          "sentence": "The storm ___ us to cancel the trip.",
+          "answer": "forced",
+          "base": "force",
+          "hint": "f_____",
+          "ja": "強制する",
+          "sentenceJa": "嵐のせいで私たちは旅行を中止せざるを得なかった。"
+        },
+        {
+          "questionId": "2026-10/clacel/day41/q13",
+          "sentence": "If you don't hurry, you'll ___ the bus.",
+          "answer": "miss",
+          "base": "miss",
+          "hint": "m___",
+          "ja": "逃す、寂しく思う",
+          "sentenceJa": "急がないとバスに乗り遅れますよ。"
+        },
+        {
+          "questionId": "2026-10/clacel/day41/q14",
+          "sentence": "This job ___ good communication skills.",
+          "answer": "requires",
+          "base": "require",
+          "hint": "r_______",
+          "ja": "必要とする",
+          "sentenceJa": "この仕事は優れたコミュニケーション能力を必要としている。"
+        },
+        {
+          "questionId": "2026-10/clacel/day41/q15",
+          "sentence": "A ticket to the concert ___ fifty dollars.",
+          "answer": "costs",
+          "base": "cost",
+          "hint": "c____",
+          "ja": "（費用が）かかる、（労力・犠牲などを）要する",
+          "sentenceJa": "コンサートのチケットは50ドルする。"
+        },
+        {
+          "questionId": "2026-10/clacel/day41/q16",
+          "sentence": "This umbrella ___ to my sister.",
+          "answer": "belongs",
+          "base": "belong",
+          "hint": "b______",
+          "ja": "所属する、〜のものである",
+          "sentenceJa": "この傘は私の妹のものだ。"
+        },
+        {
+          "questionId": "2026-10/clacel/day41/q17",
+          "sentence": "Can you ___ the man you saw?",
+          "answer": "describe",
+          "base": "describe",
+          "hint": "d_______",
+          "ja": "描写する、説明する",
+          "sentenceJa": "あなたが見た男性について説明してもらえますか？"
+        },
+        {
+          "questionId": "2026-10/clacel/day41/q18",
+          "sentence": "She ___ the piano for an hour every day.",
+          "answer": "practices",
+          "base": "practice",
+          "hint": "p________",
+          "ja": "練習する",
+          "sentenceJa": "彼女は毎日1時間ピアノを練習している。"
+        },
+        {
+          "questionId": "2026-10/clacel/day41/q19",
+          "sentence": "Loud noises ___ me when I'm studying.",
+          "answer": "bother",
+          "base": "bother",
+          "hint": "b_____",
+          "ja": "悩ます、わざわざ〜する",
+          "sentenceJa": "勉強しているとき、大きな音は私を悩ませる。"
+        },
+        {
+          "questionId": "2026-10/clacel/day41/q20",
+          "sentence": "Please don't ___ answers from your classmate.",
+          "answer": "copy",
+          "base": "copy",
+          "hint": "c___",
+          "ja": "複写する、まねる",
+          "sentenceJa": "クラスメートの答えを写さないでください。"
+        }
+      ]
     }
   ]
 }
