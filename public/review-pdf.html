@@ -57,7 +57,7 @@
         <section aria-label="問題">${questions.map((question, index) => `
           <article class="question">
             <p class="qno">QUESTION ${String(index + 1).padStart(2, "0")}</p>
-            <p class="meaning">${escapeHtml(question.ja)}</p>
+            <p class="meaning">${escapeHtml(question.questionJa || question.ja)}</p>
             <p class="hint">${escapeHtml(question.hint || "")}</p>
             <p class="sentence">${escapeHtml(question.sentence)}</p>
             <p class="sentence-ja">${escapeHtml(question.sentenceJa)}</p>
@@ -68,7 +68,7 @@
           <h2>答え・復習用一覧</h2>
           ${questions.map((question, index) => {
             const answers = [question.answer, ...(question.altAnswers || [])].join(" / ");
-            const completed = String(question.sentence || "").replace("___", answers);
+            const completed = String(question.sentence || "").replace("___", question.answerInSentence || answers);
             return `<article class="answer">
               <h3>${index + 1}. ${escapeHtml(answers)}　<span>${escapeHtml(question.ja)}</span></h3>
               <p>${escapeHtml(completed)}</p>
