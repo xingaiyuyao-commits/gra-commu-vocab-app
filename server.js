@@ -1192,9 +1192,11 @@ app.post("/api/operator/review-pdf", express.json({ limit: "2kb" }), (req, res) 
   }
   res.json({
     setLabel: room.setLabel,
-    questions: room.questions.map(({ sentence, answer, altAnswers, hint, ja, sentenceJa }) => ({
+    questions: room.questions.map(({ sentence, answer, answerInSentence, questionJa, altAnswers, hint, ja, sentenceJa }) => ({
       sentence,
       answer,
+      ...(answerInSentence ? { answerInSentence } : {}),
+      ...(questionJa ? { questionJa } : {}),
       altAnswers: Array.isArray(altAnswers) ? altAnswers : [],
       hint,
       ja,
@@ -1564,7 +1566,7 @@ function quizHint(base, answer) {
 }
 
 function quizSanitizedQuestions(room) {
-  return room.questions.map((q) => ({ sentence: q.sentence, hint: quizHint(q.base, q.answer), ja: q.ja, sentenceJa: q.sentenceJa }));
+  return room.questions.map((q) => ({ sentence: q.sentence, hint: quizHint(q.base, q.answer), ja: q.questionJa || q.ja, sentenceJa: q.sentenceJa }));
 }
 
 function quizSanitizeAnswers(room, answers) {
@@ -1868,7 +1870,7 @@ function quizRevealResults(roomCode) {
       perfect,
       others,
       leaderboard,
-      review: room.questions.map((q) => ({ sentence: q.sentence, answer: q.answer, altAnswers: q.altAnswers, ja: q.ja, sentenceJa: q.sentenceJa })),
+      review: room.questions.map((q) => ({ sentence: q.sentence, answer: q.answer, ...(q.answerInSentence ? { answerInSentence: q.answerInSentence } : {}), ...(q.questionJa ? { questionJa: q.questionJa } : {}), altAnswers: q.altAnswers, ja: q.ja, sentenceJa: q.sentenceJa })),
       mistakes,
       isTrial: room.isTrial === true,
       isReview: room.isReview === true,

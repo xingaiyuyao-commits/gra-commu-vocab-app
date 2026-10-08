@@ -5581,6 +5581,1122 @@
           "sentenceJa": "これは文法的に正しい文です。"
         }
       ]
+    },
+    {
+      "name": "Day 36",
+      "day": 36,
+      "items": [
+        {
+          "questionId": "2026-10/ielts/day36/q01",
+          "sentence": "The sheer ___ of the novel invites comparisons with Tolstoy.",
+          "answer": "amplitude",
+          "base": "amplitude",
+          "hint": "a________",
+          "ja": "幅広さ",
+          "sentenceJa": "この小説の幅広さはトルストイとの比較を誘います。"
+        },
+        {
+          "questionId": "2026-10/ielts/day36/q02",
+          "sentence": "Research shows that the cerebral ___ plays a crucial role in higher-level cognitive functions such as decision-making.",
+          "answer": "cortex",
+          "base": "cortex",
+          "hint": "c_____",
+          "ja": "皮質",
+          "sentenceJa": "研究によると、大脳皮質は意思決定などの高等な認知機能において重要な役割を果たしていることが示されています。"
+        },
+        {
+          "questionId": "2026-10/ielts/day36/q03",
+          "sentence": "There were no injuries and damage to the building was ___.",
+          "answer": "minimal",
+          "base": "minimal",
+          "hint": "m______",
+          "ja": "軽微な",
+          "sentenceJa": "けが人はなく、建物への被害も軽微だった。"
+        },
+        {
+          "questionId": "2026-10/ielts/day36/q04",
+          "sentence": "Draw a ___ line across the bottom of the page.",
+          "answer": "horizontal",
+          "base": "horizontal",
+          "hint": "h_________",
+          "ja": "水平の",
+          "sentenceJa": "ページの下部に水平線を引きます。"
+        },
+        {
+          "questionId": "2026-10/ielts/day36/q05",
+          "sentence": "The company has failed to achieve last year's sales ___ by 30 percent.",
+          "answer": "projections",
+          "base": "projection",
+          "hint": "p__________",
+          "ja": "予測",
+          "sentenceJa": "同社の売上高は、昨年の売上予測を30％下回った。"
+        },
+        {
+          "questionId": "2026-10/ielts/day36/q06",
+          "sentence": "He describes his latest record as \"a ___ of African and Latin rhythms\".",
+          "answer": "synthesis",
+          "base": "synthesis",
+          "hint": "s________",
+          "ja": "融合",
+          "sentenceJa": "彼は自身の最新レコードを「アフリカとラテンのリズムを融合させたもの」と表現している。"
+        },
+        {
+          "questionId": "2026-10/ielts/day36/q07",
+          "sentence": "The ___ measures twice the radius.",
+          "answer": "diameter",
+          "base": "diameter",
+          "hint": "d_______",
+          "ja": "直径",
+          "sentenceJa": "直径は半径の 2 倍になります。"
+        },
+        {
+          "questionId": "2026-10/ielts/day36/q08",
+          "sentence": "How do you calculate the area of a ___?",
+          "answer": "cone",
+          "base": "cone",
+          "hint": "c___",
+          "ja": "円錐",
+          "sentenceJa": "円錐の面積はどのように計算しますか?"
+        },
+        {
+          "questionId": "2026-10/ielts/day36/q09",
+          "sentence": "The company needs to reduce its ___ on just one particular product.",
+          "answer": "dependence",
+          "base": "dependence",
+          "hint": "d_________",
+          "ja": "依存",
+          "sentenceJa": "同社は、特定の 1 つの製品への依存を減らす必要があります。"
+        },
+        {
+          "questionId": "2026-10/ielts/day36/q10",
+          "sentence": "Amoebae and bacteria are single-celled ___.",
+          "answer": "organisms",
+          "base": "organism",
+          "hint": "o________",
+          "ja": "生物",
+          "sentenceJa": "アメーバと細菌は単細胞生物です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day36/q11",
+          "sentence": "The two schedules ___.",
+          "answer": "overlap",
+          "base": "overlap",
+          "hint": "o______",
+          "ja": "重なる",
+          "sentenceJa": "二つの予定は時間が重なっている。"
+        },
+        {
+          "questionId": "2026-10/ielts/day36/q12",
+          "sentence": "Party bosses insisted on the ___ of Smith with another candidate.",
+          "answer": "substitution",
+          "base": "substitution",
+          "hint": "s___________",
+          "ja": "置き換え",
+          "sentenceJa": "党幹部らはスミス氏を別の候補者に置き換えるよう主張した。"
+        },
+        {
+          "questionId": "2026-10/ielts/day36/q13",
+          "sentence": "Early ___ of the cancer improves the chances of successful treatment.",
+          "answer": "detection",
+          "base": "detection",
+          "hint": "d________",
+          "ja": "発見",
+          "sentenceJa": "がんを早期に発見すると、治療が成功する可能性が高まります。"
+        },
+        {
+          "questionId": "2026-10/ielts/day36/q14",
+          "sentence": "Some people suffered severe ___ damage as a result of the disease.",
+          "answer": "neural",
+          "base": "neural",
+          "hint": "n_____",
+          "ja": "神経の",
+          "sentenceJa": "この病気の結果、重度の神経損傷を負った人もいます。"
+        },
+        {
+          "questionId": "2026-10/ielts/day36/q15",
+          "sentence": "An ___ in the saliva of the mouth starts the process of breaking down the food.",
+          "answer": "enzyme",
+          "base": "enzyme",
+          "hint": "e_____",
+          "ja": "酵素",
+          "sentenceJa": "口の唾液中の酵素が食べ物を分解するプロセスを開始します。"
+        },
+        {
+          "questionId": "2026-10/ielts/day36/q16",
+          "sentence": "Keynote speakers from around the world were invited to address the annual technology ___.",
+          "answer": "conference",
+          "base": "conference",
+          "hint": "c_________",
+          "ja": "会議",
+          "sentenceJa": "年に一度のテクノロジーカンファレンスで講演を行うため、世界中から基調講演者が招かれました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day36/q17",
+          "sentence": "The original ___ of the project was simple, but its scope expanded dramatically over time.",
+          "answer": "conception",
+          "base": "conception",
+          "hint": "c_________",
+          "ja": "概念",
+          "sentenceJa": "プロジェクトの最初の概念はシンプルでしたが、時間の経過とともにその規模は飛躍的に拡大しました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day36/q18",
+          "sentence": "This exercise is designed to trim your ___ and stomach.",
+          "answer": "hips",
+          "base": "hip",
+          "hint": "h___",
+          "ja": "ヒップ",
+          "sentenceJa": "このエクササイズは、ヒップとお腹を整えることを目的としています。"
+        },
+        {
+          "questionId": "2026-10/ielts/day36/q19",
+          "sentence": "The course examines the political ___ behind the movement.",
+          "answer": "ideology",
+          "base": "ideology",
+          "hint": "i_______",
+          "ja": "イデオロギー",
+          "sentenceJa": "その授業では、その運動の背景にある政治的イデオロギーを検討する。"
+        },
+        {
+          "questionId": "2026-10/ielts/day36/q20",
+          "sentence": "In human reproduction, one female egg is usually fertilized by one ___.",
+          "answer": "sperm",
+          "base": "sperm",
+          "hint": "s____",
+          "ja": "精子",
+          "sentenceJa": "人間の生殖では、通常、1 つの女性の卵子が 1 つの精子によって受精します。"
+        }
+      ]
+    },
+    {
+      "name": "Day 37",
+      "day": 37,
+      "items": [
+        {
+          "questionId": "2026-10/ielts/day37/q01",
+          "sentence": "Doctors have replaced the top of his hip bone with a metal ___.",
+          "answer": "sphere",
+          "base": "sphere",
+          "hint": "s_____",
+          "ja": "球体",
+          "sentenceJa": "医師らは彼の腰骨の上部を金属球に置き換えた。"
+        },
+        {
+          "questionId": "2026-10/ielts/day37/q02",
+          "sentence": "Political ___ made it difficult for local businesses to plan ahead.",
+          "answer": "instability",
+          "base": "instability",
+          "hint": "i__________",
+          "ja": "不安定",
+          "sentenceJa": "政治的な不安定により、地元企業は先の計画を立てることが難しくなった。"
+        },
+        {
+          "questionId": "2026-10/ielts/day37/q03",
+          "sentence": "The engineering team reviewed the technical ___s before starting the manufacturing process.",
+          "answer": "specification",
+          "base": "specification",
+          "hint": "s____________",
+          "ja": "仕様書",
+          "sentenceJa": "エンジニアリングチームは、製造プロセスを開始する前に技術仕様書を確認しました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day37/q04",
+          "sentence": "Patients are advised to consult a primary care ___ before starting any intense training regimen.",
+          "answer": "physician",
+          "base": "physician",
+          "hint": "p________",
+          "ja": "医師",
+          "sentenceJa": "激しいトレーニング計画を開始する前に、かかりつけの医師に相談することが勧められています。"
+        },
+        {
+          "questionId": "2026-10/ielts/day37/q05",
+          "sentence": "The computer completed a complex ___ in seconds.",
+          "answer": "computation",
+          "base": "computation",
+          "hint": "c__________",
+          "ja": "計算",
+          "sentenceJa": "そのコンピューターは複雑な計算を数秒で完了した。"
+        },
+        {
+          "questionId": "2026-10/ielts/day37/q06",
+          "sentence": "The family has managed a sustainable coffee ___ in Central America for generations.",
+          "answer": "plantation",
+          "base": "plantation",
+          "hint": "p_________",
+          "ja": "農園",
+          "sentenceJa": "その一族は世代にわたり、中米で持続可能なコーヒー農園を運営してきました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day37/q07",
+          "sentence": "Commodity prices can be a useful ___ of inflation.",
+          "answer": "indicator",
+          "base": "indicator",
+          "hint": "i________",
+          "ja": "指標",
+          "sentenceJa": "コモディティ価格はインフレを示す有用な指標となり得る。"
+        },
+        {
+          "questionId": "2026-10/ielts/day37/q08",
+          "sentence": "Lab testing confirmed that the new ___ responded well to the updated treatment protocol.",
+          "answer": "variant",
+          "base": "variant",
+          "hint": "v______",
+          "ja": "変異株",
+          "sentenceJa": "研究室での試験により、新しい変異株が更新された治療プロトコルによく反応することが確認されました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day37/q09",
+          "sentence": "Have you had any ___ from customers about the new soap?",
+          "answer": "feedback",
+          "base": "feedback",
+          "hint": "f_______",
+          "ja": "感想",
+          "sentenceJa": "新しい石鹸についてお客様から何か感想はありましたか？"
+        },
+        {
+          "questionId": "2026-10/ielts/day37/q10",
+          "sentence": "¼ and 0.25 are different ways of representing the same ___.",
+          "answer": "fraction",
+          "base": "fraction",
+          "hint": "f_______",
+          "ja": "分数",
+          "sentenceJa": "1/4 と 0.25 は、同じ分数を表す別の方法です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day37/q11",
+          "sentence": "In my ___ a lot of other banks are going to have the same problem.",
+          "answer": "estimation",
+          "base": "estimation",
+          "hint": "e_________",
+          "ja": "推測",
+          "sentenceJa": "私の推測では、他の多くの銀行も同じ問題を抱えているでしょう。"
+        },
+        {
+          "questionId": "2026-10/ielts/day37/q12",
+          "sentence": "His galleries have a ___ arrangement, and paintings are hung at different heights along the sloped walls.",
+          "answer": "nonlinear",
+          "base": "nonlinear",
+          "hint": "n________",
+          "ja": "非直線的な",
+          "sentenceJa": "彼のギャラリーは非直線的な配置になっており、傾斜した壁に沿ってさまざまな高さに絵画が掛けられています。"
+        },
+        {
+          "questionId": "2026-10/ielts/day37/q13",
+          "sentence": "The camera has a ___ design.",
+          "answer": "compact",
+          "base": "compact",
+          "hint": "c______",
+          "ja": "小型の",
+          "sentenceJa": "そのカメラは小型に設計されている。"
+        },
+        {
+          "questionId": "2026-10/ielts/day37/q14",
+          "sentence": "Any ___ from the party philosophy is seen as betrayal.",
+          "answer": "deviation",
+          "base": "deviation",
+          "hint": "d________",
+          "ja": "逸脱",
+          "sentenceJa": "党の理念からの逸脱は裏切りとみなされます。"
+        },
+        {
+          "questionId": "2026-10/ielts/day37/q15",
+          "sentence": "The teacher drew a ___ showing how the blood flows through the heart.",
+          "answer": "diagram",
+          "base": "diagram",
+          "hint": "d______",
+          "ja": "図",
+          "sentenceJa": "先生は血液が心臓をどのように流れるかを示す図を描きました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day37/q16",
+          "sentence": "Many ___ plants need a warm climate.",
+          "answer": "tropical",
+          "base": "tropical",
+          "hint": "t_______",
+          "ja": "熱帯の",
+          "sentenceJa": "多くの熱帯植物は温暖な気候を必要とする。"
+        },
+        {
+          "questionId": "2026-10/ielts/day37/q17",
+          "sentence": "Linguists analyze the ___ of verbs to understand how words are formed across different languages.",
+          "answer": "morphology",
+          "base": "morphology",
+          "hint": "m_________",
+          "ja": "形態論",
+          "sentenceJa": "言語学者は、さまざまな言語において単語がどのように形成されるかを理解するために動詞の形態論を分析します。"
+        },
+        {
+          "questionId": "2026-10/ielts/day37/q18",
+          "sentence": "The examples should always illustrate correct ___.",
+          "answer": "syntax",
+          "base": "syntax",
+          "hint": "s_____",
+          "ja": "構文",
+          "sentenceJa": "例では常に正しい構文を示している必要があります。"
+        },
+        {
+          "questionId": "2026-10/ielts/day37/q19",
+          "sentence": "All the company's aircraft have been grounded, after a ___ in the engine cooling system was discovered.",
+          "answer": "defect",
+          "base": "defect",
+          "hint": "d_____",
+          "ja": "欠陥",
+          "sentenceJa": "エンジン冷却システムの欠陥が発見され、同社の航空機はすべて運航停止となった。"
+        },
+        {
+          "questionId": "2026-10/ielts/day37/q20",
+          "sentence": "Proper ___ of waste materials is essential for an effective recycling program.",
+          "answer": "separation",
+          "base": "separation",
+          "hint": "s_________",
+          "ja": "分別",
+          "sentenceJa": "効果的なリサイクルプログラムを行うためには、廃棄物の適切な分別が不可欠です。"
+        }
+      ]
+    },
+    {
+      "name": "Day 38",
+      "day": 38,
+      "items": [
+        {
+          "questionId": "2026-10/ielts/day38/q01",
+          "sentence": "McGeechan has not recovered ___ to play in the semifinal tomorrow.",
+          "answer": "sufficiently",
+          "base": "sufficiently",
+          "hint": "s___________",
+          "ja": "十分に",
+          "sentenceJa": "マギーチャンは明日の準決勝に出場できるほど回復していない。"
+        },
+        {
+          "questionId": "2026-10/ielts/day38/q02",
+          "sentence": "The argument is ___.",
+          "answer": "valid",
+          "base": "valid",
+          "hint": "v____",
+          "ja": "妥当な",
+          "sentenceJa": "その主張には妥当性がある。"
+        },
+        {
+          "questionId": "2026-10/ielts/day38/q03",
+          "sentence": "My computer has a network ___, which allows me to get to other computers.",
+          "answer": "interface",
+          "base": "interface",
+          "hint": "i________",
+          "ja": "インターフェイス",
+          "sentenceJa": "私のコンピュータにはネットワーク インターフェイスがあり、他のコンピュータにアクセスできます。"
+        },
+        {
+          "questionId": "2026-10/ielts/day38/q04",
+          "sentence": "The workers wore devices to measure their exposure to ___.",
+          "answer": "radiation",
+          "base": "radiation",
+          "hint": "r________",
+          "ja": "放射線",
+          "sentenceJa": "作業員たちは、放射線の被ばく量を測定する機器を身に着けていた。"
+        },
+        {
+          "questionId": "2026-10/ielts/day38/q05",
+          "sentence": "She looked over the cliff and found she was standing at the edge of a ___ drop.",
+          "answer": "vertical",
+          "base": "vertical",
+          "hint": "v_______",
+          "ja": "垂直の",
+          "sentenceJa": "彼女は崖から下をのぞき、自分が垂直に切り立った崖の端に立っていることに気づいた。"
+        },
+        {
+          "questionId": "2026-10/ielts/day38/q06",
+          "sentence": "The biggest financial worries are mortgages followed by ___ bills.",
+          "answer": "utility",
+          "base": "utility",
+          "hint": "u______",
+          "ja": "公共サービス（電気・ガス・水道など）",
+          "sentenceJa": "経済的な最大の不安は住宅ローン、次に公共料金です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day38/q07",
+          "sentence": "Cooking fish in a banana ___ is a very traditional south Indian cooking method.",
+          "answer": "leaf",
+          "base": "leaf",
+          "hint": "l___",
+          "ja": "葉",
+          "sentenceJa": "バナナの葉で魚を調理するのは、非常に伝統的な南インドの調理法です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day38/q08",
+          "sentence": "They reached a ___ agreement.",
+          "answer": "verbal",
+          "base": "verbal",
+          "hint": "v_____",
+          "ja": "口頭の",
+          "sentenceJa": "彼らは口頭で合意した。"
+        },
+        {
+          "questionId": "2026-10/ielts/day38/q09",
+          "sentence": "The organisation campaigns for ___ in access to education.",
+          "answer": "equality",
+          "base": "equality",
+          "hint": "e_______",
+          "ja": "平等",
+          "sentenceJa": "その団体は、教育を受ける機会の平等を求めて活動している。"
+        },
+        {
+          "questionId": "2026-10/ielts/day38/q10",
+          "sentence": "The heart is a vital ___ responsible for pumping oxygen-rich blood throughout the human body.",
+          "answer": "organ",
+          "base": "organ",
+          "hint": "o____",
+          "ja": "臓器",
+          "sentenceJa": "心臓は、人間のお体に酸素を多く含む血液を送り出す役割を担う生命維持に不可欠な臓器です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day38/q11",
+          "sentence": "The brakes are not suitable for steep ___.",
+          "answer": "gradients",
+          "base": "gradient",
+          "hint": "g________",
+          "ja": "勾配",
+          "sentenceJa": "ブレーキは急な勾配には適していません。"
+        },
+        {
+          "questionId": "2026-10/ielts/day38/q12",
+          "sentence": "Early detection of the ___ significantly increased the chances of a successful recovery.",
+          "answer": "tumor",
+          "base": "tumor",
+          "hint": "t____",
+          "ja": "腫瘍",
+          "sentenceJa": "腫瘍の早期発見により、回復の可能性が大幅に高まりました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day38/q13",
+          "sentence": "Police detectives found cloth ___ at the crime scene that matched those from the coat the suspect was wearing.",
+          "answer": "fibers",
+          "base": "fiber",
+          "hint": "f_____",
+          "ja": "繊維",
+          "sentenceJa": "警察の刑事は犯行現場で、容疑者が着ていたコートの繊維と一致する布の繊維を発見した。"
+        },
+        {
+          "questionId": "2026-10/ielts/day38/q14",
+          "sentence": "She studied ___ at Harvard.",
+          "answer": "psychology",
+          "base": "psychology",
+          "hint": "p_________",
+          "ja": "心理学",
+          "sentenceJa": "彼女はハーバード大学で心理学を学びました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day38/q15",
+          "sentence": "The clinic uses advanced ___ tools to identify health issues long before symptoms appear.",
+          "answer": "diagnostic",
+          "base": "diagnostic",
+          "hint": "d_________",
+          "ja": "診断用の",
+          "sentenceJa": "そのクリニックは、症状が現れるずっと前に健康上の問題を特定するため、高度な診断ツールを使用しています。"
+        },
+        {
+          "questionId": "2026-10/ielts/day38/q16",
+          "sentence": "The polar regions exhibit the largest climatic ___ on Earth.",
+          "answer": "variability",
+          "base": "variability",
+          "hint": "v__________",
+          "ja": "変動",
+          "sentenceJa": "極地は地球上で最も大きな気候変動を示します。"
+        },
+        {
+          "questionId": "2026-10/ielts/day38/q17",
+          "sentence": "The ___ layer protects the fruit.",
+          "answer": "outer",
+          "base": "outer",
+          "hint": "o____",
+          "ja": "外側の",
+          "sentenceJa": "外側の層が果実を保護している。"
+        },
+        {
+          "questionId": "2026-10/ielts/day38/q18",
+          "sentence": "It's best to use scientific ___ to talk about numbers over a billion.",
+          "answer": "notation",
+          "base": "notation",
+          "hint": "n_______",
+          "ja": "表記法",
+          "sentenceJa": "10 億を超える数値について話すには、科学的表記法を使用するのが最善です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day38/q19",
+          "sentence": "The interviewer continued to ___.",
+          "answer": "probe",
+          "base": "probe",
+          "hint": "p____",
+          "ja": "深く問いただす",
+          "sentenceJa": "インタビュアーはさらに深く問いただし続けた。"
+        },
+        {
+          "questionId": "2026-10/ielts/day38/q20",
+          "sentence": "This latest dispute greatly increases the ___ of a strike.",
+          "answer": "likelihood",
+          "base": "likelihood",
+          "hint": "l_________",
+          "ja": "可能性",
+          "sentenceJa": "この最近の紛争により、ストライキの可能性が大幅に高まっています。"
+        }
+      ]
+    },
+    {
+      "name": "Day 39",
+      "day": 39,
+      "items": [
+        {
+          "questionId": "2026-10/ielts/day39/q01",
+          "sentence": "They don't seem to grasp the ___ of the problem.",
+          "answer": "magnitude",
+          "base": "magnitude",
+          "hint": "m________",
+          "ja": "大きさ",
+          "sentenceJa": "彼らは問題の大きさを理解していないようだ。"
+        },
+        {
+          "questionId": "2026-10/ielts/day39/q02",
+          "sentence": "All patients gave informed consent before ___ in the study.",
+          "answer": "inclusion",
+          "base": "inclusion",
+          "hint": "i________",
+          "ja": "参加",
+          "sentenceJa": "すべての患者は、研究に参加する前に十分な説明を受けたうえで同意した。"
+        },
+        {
+          "questionId": "2026-10/ielts/day39/q03",
+          "sentence": "Bioluminescence is the ___ of light from living organisms.",
+          "answer": "emission",
+          "base": "emission",
+          "hint": "e_______",
+          "ja": "放射",
+          "sentenceJa": "生物発光は、生物からの光の放射です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day39/q04",
+          "sentence": "They were warned to expect a heavy air attack and by ___ many casualties.",
+          "answer": "inference",
+          "base": "inference",
+          "hint": "i________",
+          "ja": "推論",
+          "sentenceJa": "彼らは激しい空襲が予想され、多くの死傷者が出ることが予想されると警告された。"
+        },
+        {
+          "questionId": "2026-10/ielts/day39/q05",
+          "sentence": "The ___ is a popular site for ear piercings.",
+          "answer": "helix",
+          "base": "helix",
+          "hint": "h____",
+          "ja": "耳輪（耳の外側の縁）",
+          "sentenceJa": "耳輪は、耳にピアスを開ける場所として人気がある。"
+        },
+        {
+          "questionId": "2026-10/ielts/day39/q06",
+          "sentence": "Residents are tired of the ___ caused by the nightclub.",
+          "answer": "disturbance",
+          "base": "disturbance",
+          "hint": "d__________",
+          "ja": "騒動",
+          "sentenceJa": "住民はナイトクラブが引き起こす騒動にうんざりしている。"
+        },
+        {
+          "questionId": "2026-10/ielts/day39/q07",
+          "sentence": "The engineer checked the ___ of the wheel before the test.",
+          "answer": "rotation",
+          "base": "rotation",
+          "hint": "r_______",
+          "ja": "回転",
+          "sentenceJa": "その技師は、試験の前に車輪の回転を確認した。"
+        },
+        {
+          "questionId": "2026-10/ielts/day39/q08",
+          "sentence": "He suffers ___ mental breakdowns.",
+          "answer": "periodic",
+          "base": "periodic",
+          "hint": "p_______",
+          "ja": "定期的な",
+          "sentenceJa": "彼は定期的に精神崩壊に見舞われます。"
+        },
+        {
+          "questionId": "2026-10/ielts/day39/q09",
+          "sentence": "Not for one moment did he doubt the ___ of those ideas.",
+          "answer": "validity",
+          "base": "validity",
+          "hint": "v_______",
+          "ja": "正当性",
+          "sentenceJa": "彼は一瞬たりともそれらの考えの正当性を疑いませんでした。"
+        },
+        {
+          "questionId": "2026-10/ielts/day39/q10",
+          "sentence": "___ of the engine to run on lead-free fuel is fairly simple.",
+          "answer": "Modification",
+          "base": "modification",
+          "hint": "m___________",
+          "ja": "改造",
+          "sentenceJa": "鉛フリー燃料で動作するようにエンジンを改造するのは非常に簡単です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day39/q11",
+          "sentence": "Except for the vowels in English – a, e, i, o, u, and sometimes y – all the letters are ___.",
+          "answer": "consonants",
+          "base": "consonant",
+          "hint": "c_________",
+          "ja": "子音",
+          "sentenceJa": "英語の母音 (a、e、i、o、u、および場合によっては y) を除いて、すべての文字は子音です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day39/q12",
+          "sentence": "The offer is ___ on approval.",
+          "answer": "conditional",
+          "base": "conditional",
+          "hint": "c__________",
+          "ja": "～を条件とする",
+          "sentenceJa": "その申し出は承認されることを条件としている。"
+        },
+        {
+          "questionId": "2026-10/ielts/day39/q13",
+          "sentence": "Students learning computer studies spend two days each week in a computer lab and four days in the ___.",
+          "answer": "classroom",
+          "base": "classroom",
+          "hint": "c________",
+          "ja": "教室",
+          "sentenceJa": "コンピューターの勉強をしている学生は、毎週 2 日間をコンピューター室で過ごし、4 日間を教室で過ごします。"
+        },
+        {
+          "questionId": "2026-10/ielts/day39/q14",
+          "sentence": "The lizards were examined for a number of ___ characteristics such as body proportions and colour.",
+          "answer": "morphological",
+          "base": "morphological",
+          "hint": "m____________",
+          "ja": "形態学的な",
+          "sentenceJa": "トカゲは、体の比率や色などの多くの形態学的特徴が検査されました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day39/q15",
+          "sentence": "The machine allows ___ movement.",
+          "answer": "lateral",
+          "base": "lateral",
+          "hint": "l______",
+          "ja": "横方向の",
+          "sentenceJa": "その機械は横方向に動くことができる。"
+        },
+        {
+          "questionId": "2026-10/ielts/day39/q16",
+          "sentence": "Daily insulin ___ are necessary for some diabetics.",
+          "answer": "injections",
+          "base": "injection",
+          "hint": "i_________",
+          "ja": "注射",
+          "sentenceJa": "一部の糖尿病患者には毎日のインスリン注射が必要です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day39/q17",
+          "sentence": "The study will review the ___ of reading and mathematics software products.",
+          "answer": "effectiveness",
+          "base": "effectiveness",
+          "hint": "e____________",
+          "ja": "有効性",
+          "sentenceJa": "この研究では、読書と数学のソフトウェア製品の有効性をレビューします。"
+        },
+        {
+          "questionId": "2026-10/ielts/day39/q18",
+          "sentence": "Ants, beetles, butterflies, and flies are all ___.",
+          "answer": "insects",
+          "base": "insect",
+          "hint": "i______",
+          "ja": "昆虫",
+          "sentenceJa": "アリ、カブトムシ、蝶、ハエはすべて昆虫です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day39/q19",
+          "sentence": "Her proposal presented a ___ structure that easily convinced the board members.",
+          "answer": "logical",
+          "base": "logical",
+          "hint": "l______",
+          "ja": "論理的な",
+          "sentenceJa": "彼女の提案は論理的な構成になっており、役員たちを容易に納得させました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day39/q20",
+          "sentence": "Did you do ___ at A level?",
+          "answer": "calculus",
+          "base": "calculus",
+          "hint": "c_______",
+          "ja": "微積分",
+          "sentenceJa": "微積分はAレベルでやりましたか？"
+        }
+      ]
+    },
+    {
+      "name": "Day 40",
+      "day": 40,
+      "items": [
+        {
+          "questionId": "2026-10/ielts/day40/q01",
+          "sentence": "___ lines run from north to south.",
+          "answer": "Longitudinal",
+          "base": "longitudinal",
+          "hint": "l___________",
+          "ja": "縦方向の",
+          "sentenceJa": "縦線が北から南に伸びています。"
+        },
+        {
+          "questionId": "2026-10/ielts/day40/q02",
+          "sentence": "The dictionary provides examples of the correct ___ of this verb.",
+          "answer": "usage",
+          "base": "usage",
+          "hint": "u____",
+          "ja": "使用法",
+          "sentenceJa": "その辞書には、この動詞の正しい使用法を示す例が載っている。"
+        },
+        {
+          "questionId": "2026-10/ielts/day40/q03",
+          "sentence": "The law firm assigned a dedicated team to handle the international ___'s legal requirements.",
+          "answer": "client",
+          "base": "client",
+          "hint": "c_____",
+          "ja": "クライアント",
+          "sentenceJa": "その法律事務所は、海外クライアントの法的な要望に対応するための専門チームを配置しました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day40/q04",
+          "sentence": "This is clearly the work of a ___ artist.",
+          "answer": "superior",
+          "base": "superior",
+          "hint": "s_______",
+          "ja": "優れた",
+          "sentenceJa": "これは明らかに優れたアーティストの作品です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day40/q05",
+          "sentence": "The train's ___ time of arrival is 10.30.",
+          "answer": "approximate",
+          "base": "approximate",
+          "hint": "a__________",
+          "ja": "おおよその",
+          "sentenceJa": "電車の到着予定時刻は 10 時 30 分です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day40/q06",
+          "sentence": "The original soundtrack was written by a renowned ___ known for blending classical and electronic music.",
+          "answer": "composer",
+          "base": "composer",
+          "hint": "c_______",
+          "ja": "作曲家",
+          "sentenceJa": "そのオリジナルサウンドトラックは、クラシックとエレクトロニックミュージックの融合で知られる有名な作曲家によって手掛けられました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day40/q07",
+          "sentence": "The word is in its ___ form.",
+          "answer": "singular",
+          "base": "singular",
+          "hint": "s_______",
+          "ja": "単数の",
+          "sentenceJa": "その単語は単数形になっている。"
+        },
+        {
+          "questionId": "2026-10/ielts/day40/q08",
+          "sentence": "Regular ultrasound scans allow doctors to monitor ___ development throughout the pregnancy.",
+          "answer": "fetal",
+          "base": "fetal",
+          "hint": "f____",
+          "ja": "胎児の",
+          "sentenceJa": "定期的な超音波検査により、医師は妊娠全期間を通じて胎児の発育状況を観察することができます。"
+        },
+        {
+          "questionId": "2026-10/ielts/day40/q09",
+          "sentence": "He has a short attention ___.",
+          "answer": "span",
+          "base": "span",
+          "hint": "s___",
+          "ja": "持続時間",
+          "sentenceJa": "彼は集中力の持続時間が短いです。"
+        },
+        {
+          "questionId": "2026-10/ielts/day40/q10",
+          "sentence": "___ has the atomic number 8, which represents the number of protons in its nucleus.",
+          "answer": "Oxygen",
+          "base": "oxygen",
+          "hint": "o_____",
+          "ja": "酸素",
+          "sentenceJa": "酸素の原子番号は 8 で、これは原子核内の陽子の数を表します。"
+        },
+        {
+          "questionId": "2026-10/ielts/day40/q11",
+          "sentence": "Both groups are involved in policy ___.",
+          "answer": "formulation",
+          "base": "formulation",
+          "hint": "f__________",
+          "ja": "策定",
+          "sentenceJa": "両グループは政策策定に関与している。"
+        },
+        {
+          "questionId": "2026-10/ielts/day40/q12",
+          "sentence": "The various regional ___ are still spoken locally.",
+          "answer": "dialects",
+          "base": "dialect",
+          "hint": "d_______",
+          "ja": "方言",
+          "sentenceJa": "さまざまな地域の方言が今でも地元で話されています。"
+        },
+        {
+          "questionId": "2026-10/ielts/day40/q13",
+          "sentence": "Tie the ends of the rope together in a ___.",
+          "answer": "loop",
+          "base": "loop",
+          "hint": "l___",
+          "ja": "輪",
+          "sentenceJa": "ロープの端を一緒に結び、輪にします。"
+        },
+        {
+          "questionId": "2026-10/ielts/day40/q14",
+          "sentence": "Students learn how to solve equations involving unknown variables during their first year of ___.",
+          "answer": "algebra",
+          "base": "algebra",
+          "hint": "a______",
+          "ja": "代数学",
+          "sentenceJa": "生徒たちは代数学の1年目の授業で、未知の変数を含む方程式の解き方を学びます。"
+        },
+        {
+          "questionId": "2026-10/ielts/day40/q15",
+          "sentence": "His style is very ___.",
+          "answer": "derivative",
+          "base": "derivative",
+          "hint": "d_________",
+          "ja": "模倣的な",
+          "sentenceJa": "彼の作風は非常に模倣的だ。"
+        },
+        {
+          "questionId": "2026-10/ielts/day40/q16",
+          "sentence": "I'll give you a brief ___ of what the job involves.",
+          "answer": "overview",
+          "base": "overview",
+          "hint": "o_______",
+          "ja": "概要",
+          "sentenceJa": "どのようなお仕事なのかを簡単にご説明させていただきます。"
+        },
+        {
+          "questionId": "2026-10/ielts/day40/q17",
+          "sentence": "Powerful global institutions drive the ___ of new technologies.",
+          "answer": "diffusion",
+          "base": "diffusion",
+          "hint": "d________",
+          "ja": "普及",
+          "sentenceJa": "強力な世界的機関が新しいテクノロジーの普及を推進します。"
+        },
+        {
+          "questionId": "2026-10/ielts/day40/q18",
+          "sentence": "He has a collection of rare insect ___.",
+          "answer": "specimens",
+          "base": "specimen",
+          "hint": "s________",
+          "ja": "標本",
+          "sentenceJa": "彼は珍しい昆虫の標本のコレクションを持っています。"
+        },
+        {
+          "questionId": "2026-10/ielts/day40/q19",
+          "sentence": "There are reports of ___ flooding in northern France.",
+          "answer": "widespread",
+          "base": "widespread",
+          "hint": "w_________",
+          "ja": "広範囲にわたる",
+          "sentenceJa": "フランス北部で広範囲にわたる洪水が発生しているとの報告がある。"
+        },
+        {
+          "questionId": "2026-10/ielts/day40/q20",
+          "sentence": "The scanner checks travel documents for ___ traces of explosives.",
+          "answer": "residual",
+          "base": "residual",
+          "hint": "r_______",
+          "ja": "残留する",
+          "sentenceJa": "スキャナーは旅行書類に爆発物の残留痕跡がないかチェックします。"
+        }
+      ]
+    },
+    {
+      "name": "Day 41",
+      "day": 41,
+      "items": [
+        {
+          "questionId": "2026-10/ielts/day41/q01",
+          "sentence": "Their music is described as \"an explosive ___ of Latin American and modern jazz rhythms\".",
+          "answer": "fusion",
+          "base": "fusion",
+          "hint": "f_____",
+          "ja": "融合",
+          "sentenceJa": "彼らの音楽は「ラテンアメリカとモダンジャズのリズムの爆発的な融合」と評されています。"
+        },
+        {
+          "questionId": "2026-10/ielts/day41/q02",
+          "sentence": "Patience is a ___.",
+          "answer": "virtue",
+          "base": "virtue",
+          "hint": "v_____",
+          "ja": "美徳",
+          "sentenceJa": "忍耐は美徳です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day41/q03",
+          "sentence": "Proteins are formed by long chains of ___s linked together in specific sequences.",
+          "answer": "amino acid",
+          "base": "amino acid",
+          "hint": "a_________",
+          "ja": "アミノ酸",
+          "sentenceJa": "タンパク質は、特定のアミノ酸配列が長く結合することによって形成されます。"
+        },
+        {
+          "questionId": "2026-10/ielts/day41/q04",
+          "sentence": "The meat was only ___ cooked.",
+          "answer": "partially",
+          "base": "partially",
+          "hint": "p________",
+          "ja": "部分的に",
+          "sentenceJa": "肉は部分的にしか調理されていませんでした。"
+        },
+        {
+          "questionId": "2026-10/ielts/day41/q05",
+          "sentence": "Small firms struggled to compete because of the company's ___ of the market.",
+          "answer": "domination",
+          "base": "domination",
+          "hint": "d_________",
+          "ja": "支配",
+          "sentenceJa": "その会社が市場を支配していたため、小規模な企業は競争に苦しんだ。"
+        },
+        {
+          "questionId": "2026-10/ielts/day41/q06",
+          "sentence": "You will receive a confirmation email with a summary of the details once the ___ is complete.",
+          "answer": "transaction",
+          "base": "transaction",
+          "hint": "t__________",
+          "ja": "取引",
+          "sentenceJa": "取引が完了すると、詳細の概要が記載された確認メールが送信されます。"
+        },
+        {
+          "questionId": "2026-10/ielts/day41/q07",
+          "sentence": "Several ___ researchers in the field of linguistics were invited to speak at the symposium.",
+          "answer": "prominent",
+          "base": "prominent",
+          "hint": "p________",
+          "ja": "著名な",
+          "sentenceJa": "言語学の分野で著名な研究者が数名、シンポジウムでの登壇に招かれました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day41/q08",
+          "sentence": "The two leaders planted a tree as a ___ gesture of friendship.",
+          "answer": "symbolic",
+          "base": "symbolic",
+          "hint": "s_______",
+          "ja": "象徴的な",
+          "sentenceJa": "二人の指導者は、友情を表す象徴的な行為として木を植えた。"
+        },
+        {
+          "questionId": "2026-10/ielts/day41/q09",
+          "sentence": "Touching causes a ___ reaction.",
+          "answer": "physiological",
+          "base": "physiological",
+          "hint": "p____________",
+          "ja": "生理的な",
+          "sentenceJa": "触れると生理的な反応が起こります。"
+        },
+        {
+          "questionId": "2026-10/ielts/day41/q10",
+          "sentence": "Milk contains ___.",
+          "answer": "calcium",
+          "base": "calcium",
+          "hint": "c______",
+          "ja": "カルシウム",
+          "sentenceJa": "牛乳にはカルシウムが含まれている。"
+        },
+        {
+          "questionId": "2026-10/ielts/day41/q11",
+          "sentence": "Hacking was admitted to the hospital's ___ unit, where he remained until Monday.",
+          "answer": "psychiatric",
+          "base": "psychiatric",
+          "hint": "p__________",
+          "ja": "精神科の",
+          "sentenceJa": "ハッキングさんは病院の精神科病棟に入院し、月曜日まで入院した。"
+        },
+        {
+          "questionId": "2026-10/ielts/day41/q12",
+          "sentence": "Working together on the project strengthened ___ within the team.",
+          "answer": "unity",
+          "base": "unity",
+          "hint": "u____",
+          "ja": "団結",
+          "sentenceJa": "そのプロジェクトに協力して取り組むことで、チーム内の団結が強まった。"
+        },
+        {
+          "questionId": "2026-10/ielts/day41/q13",
+          "sentence": "We make no ___ between so-called high and low culture.",
+          "answer": "differentiation",
+          "base": "differentiation",
+          "hint": "d______________",
+          "ja": "区別",
+          "sentenceJa": "私たちは、いわゆる高級文化と大衆文化を区別しない。"
+        },
+        {
+          "questionId": "2026-10/ielts/day41/q14",
+          "sentence": "As a teacher she was very ___, accepting only a small number of exceptionally gifted pupils.",
+          "answer": "selective",
+          "base": "selective",
+          "hint": "s________",
+          "ja": "厳選する",
+          "sentenceJa": "教師としての彼女は非常に厳選し、少数の例外的に才能のある生徒のみを受け入れました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day41/q15",
+          "sentence": "They started washing up, so that was our ___ to leave the party.",
+          "answer": "cue",
+          "base": "cue",
+          "hint": "c__",
+          "ja": "合図",
+          "sentenceJa": "彼らは洗い物を始めたので、それが私たちがパーティーを去る合図でした。"
+        },
+        {
+          "questionId": "2026-10/ielts/day41/q16",
+          "sentence": "The report discusses ___ involvement in education.",
+          "answer": "parental",
+          "base": "parental",
+          "hint": "p_______",
+          "ja": "親の",
+          "sentenceJa": "その報告書は教育への親の関わりについて扱っている。"
+        },
+        {
+          "questionId": "2026-10/ielts/day41/q17",
+          "sentence": "Coffee and the newspaper are part of my morning ___.",
+          "answer": "ritual",
+          "base": "ritual",
+          "hint": "r_____",
+          "ja": "儀式",
+          "sentenceJa": "コーヒーと新聞は私の朝の儀式の一部です。"
+        },
+        {
+          "questionId": "2026-10/ielts/day41/q18",
+          "sentence": "Researchers are studying ___ in wild animals.",
+          "answer": "fertility",
+          "base": "fertility",
+          "hint": "f________",
+          "ja": "生殖能力",
+          "sentenceJa": "研究者たちは、野生動物の生殖能力を研究している。"
+        },
+        {
+          "questionId": "2026-10/ielts/day41/q19",
+          "sentence": "They lived in a house ___ to the railway.",
+          "answer": "adjacent",
+          "base": "adjacent",
+          "hint": "a_______",
+          "ja": "隣接する",
+          "sentenceJa": "彼らは線路に隣接した家に住んでいました。"
+        },
+        {
+          "questionId": "2026-10/ielts/day41/q20",
+          "sentence": "After a couple of drinks, he lost his ___ and started talking and laughing loudly.",
+          "answer": "inhibitions",
+          "base": "inhibition",
+          "hint": "i__________",
+          "ja": "抑制",
+          "sentenceJa": "数杯飲んだ後、彼は抑制を失い、大声で話したり笑ったりし始めました。"
+        }
+      ]
     }
   ]
 }

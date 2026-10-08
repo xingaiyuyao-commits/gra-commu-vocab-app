@@ -33,12 +33,13 @@ function day35Sets(sets) {
   return sets.filter(({ reviewDay }) => reviewDay === 35);
 }
 
-test("10月10日のDay35は3コースの末尾に一度だけ登録し、Day29〜34の未確定復習にする", () => {
+test("10月10日のDay35は3コースに一度だけ登録し、Day29〜34の未確定復習にする", () => {
   assert.equal(getStudyDateLabel(35), "10月10日");
   for (const category of COURSES) {
     const reviews = wordtests[category].series.filter(({ day }) => day === 35);
     assert.equal(reviews.length, 1, `${category}: Day35 must be registered`);
-    assert.equal(wordtests[category].series.at(-1), reviews[0]);
+    assert.equal(wordtests[category].series.findIndex(({ day }) => day === 35),
+      wordtests[category].series.findIndex(({ day }) => day === 34) + 1);
     assert.equal(reviews[0].name, "Day 35（復習50問）");
     assert.equal(reviews[0].isReview, true);
     assert.deepEqual(reviews[0].sourceDays, SOURCE_DAYS);
