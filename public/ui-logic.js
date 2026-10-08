@@ -125,6 +125,10 @@
     if (!isValidWeeklyWord(word)) return null;
     return {
       answer: word.answer,
+      ...(typeof word.questionJa === "string" && word.questionJa
+        ? { questionJa: word.questionJa } : {}),
+      ...(typeof word.answerInSentence === "string" && word.answerInSentence
+        ? { answerInSentence: word.answerInSentence } : {}),
       altAnswers: word.altAnswers.slice(),
       ja: word.ja,
       sentence: word.sentence,
