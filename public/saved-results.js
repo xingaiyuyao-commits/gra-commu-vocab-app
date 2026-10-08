@@ -67,6 +67,10 @@
       review: value.review.map((item) => ({
         sentence: String(item?.sentence || ""),
         answer: String(item?.answer || ""),
+        ...(typeof item?.questionJa === "string" && item.questionJa
+          ? { questionJa: item.questionJa } : {}),
+        ...(typeof item?.answerInSentence === "string" && item.answerInSentence
+          ? { answerInSentence: item.answerInSentence } : {}),
         altAnswers: Array.isArray(item?.altAnswers) ? item.altAnswers.map(String) : [],
         ja: String(item?.ja || ""),
         sentenceJa: String(item?.sentenceJa || ""),
