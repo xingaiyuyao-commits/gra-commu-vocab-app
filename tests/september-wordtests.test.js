@@ -50,7 +50,7 @@ test("問題文・日本語ヒント・例文訳に正答または見出し語�
     const data = loadDataset(course);
     for (const { items } of data.series) {
       for (const item of items) {
-        const clue = `${item.sentence.replaceAll("___", "")} ${item.ja} ${item.sentenceJa}`;
+        const clue = `${item.sentence.replaceAll("___", "")} ${item.questionJa || item.ja} ${item.sentenceJa}`;
         for (const value of [item.answer, item.base]) {
           assert.equal(standalonePattern(value).test(clue), false, `${item.questionId}: ${value}`);
         }
