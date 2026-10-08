@@ -1904,13 +1904,15 @@
           <span class="review-meaning">${escapeHtml(r.ja)}</span>
         </div>
         <p class="review-mine">${accepted && !localOutcomeMatches ? "この端末の入力" : "あなたの回答"}：${escapeHtml(mineLabel)}</p>
-        <p class="review-example"><span class="review-qno">Q${i + 1}</span> ${r.sentence.replace("___", `<strong>${escapeHtml(r.answer)}</strong>`)}</p>
+        <p class="review-example"><span class="review-qno">Q${i + 1}</span> ${r.sentence.replace("___", `<strong>${escapeHtml(r.answerInSentence || r.answer)}</strong>`)}</p>
       </div>`;
     }).join("");
 
     // 間違えた単語だけを、あとから自分のペースで解き直せるようにする
     retestSource = wrongReviews.map(({ r }) => ({
       answer: r.answer,
+      ...(r.answerInSentence ? { answerInSentence: r.answerInSentence } : {}),
+      ...(r.questionJa ? { questionJa: r.questionJa } : {}),
       altAnswers: Array.isArray(r.altAnswers) ? r.altAnswers : [],
       ja: r.ja,
       sentence: r.sentence,
@@ -1926,6 +1928,8 @@
         setLabel: setLabel || currentSetLabel || "",
         words: wrongReviews.map(({ r }) => ({
           answer: r.answer,
+          ...(r.answerInSentence ? { answerInSentence: r.answerInSentence } : {}),
+          ...(r.questionJa ? { questionJa: r.questionJa } : {}),
           altAnswers: Array.isArray(r.altAnswers) ? r.altAnswers : [],
           ja: r.ja,
           sentence: r.sentence,
@@ -1967,7 +1971,7 @@
     const item = retestItems[retestIdx];
     $("retest-num").textContent = `${retestIdx + 1} / ${retestItems.length}`;
     $("retest-bar").style.width = `${(retestIdx / retestItems.length) * 100}%`;
-    $("retest-ja").textContent = item.ja;
+    $("retest-ja").textContent = item.questionJa || item.ja;
     const initial = String(item.answer || "").slice(0, 1);
     $("retest-hint").innerHTML = `${escapeHtml(initial)}<span class="hint-line" aria-label="スペルのヒントの線"></span>`;
     $("retest-sentence").innerHTML = item.sentence.replace("___", '<span class="blank">___</span>');
